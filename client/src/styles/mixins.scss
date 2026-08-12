@@ -1,0 +1,172 @@
+@use 'variables' as *;
+@use "sass:color" as color;
+
+// ═══════════════════════════════════════════════════════
+// MedAxis Design System – SCSS Mixins
+// ═══════════════════════════════════════════════════════
+
+// ── Responsive Breakpoint (max-width) ────────────────
+@mixin responsive($bp) {
+  @if $bp == 'xs' {
+    @media (max-width: #{$breakpoint-xs - 1px}) { @content; }
+  } @else if $bp == 'sm' {
+    @media (max-width: #{$breakpoint-sm - 1px}) { @content; }
+  } @else if $bp == 'md' {
+    @media (max-width: #{$breakpoint-md - 1px}) { @content; }
+  } @else if $bp == 'lg' {
+    @media (max-width: #{$breakpoint-lg - 1px}) { @content; }
+  } @else if $bp == 'xl' {
+    @media (max-width: #{$breakpoint-xl - 1px}) { @content; }
+  } @else if $bp == 'xxl' {
+    @media (max-width: #{$breakpoint-xxl - 1px}) { @content; }
+  }
+}
+
+// ── Responsive Up (min-width) ────────────────────────
+@mixin up($bp) {
+  @if $bp == 'sm' {
+    @media (min-width: $breakpoint-sm) { @content; }
+  } @else if $bp == 'md' {
+    @media (min-width: $breakpoint-md) { @content; }
+  } @else if $bp == 'lg' {
+    @media (min-width: $breakpoint-lg) { @content; }
+  } @else if $bp == 'xl' {
+    @media (min-width: $breakpoint-xl) { @content; }
+  } @else if $bp == 'xxl' {
+    @media (min-width: $breakpoint-xxl) { @content; }
+  }
+}
+
+// ── Flex Center ──────────────────────────────────────
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+// ── Flex Between ─────────────────────────────────────
+@mixin flex-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+// ── Truncate Text ────────────────────────────────────
+@mixin truncate($width: 100%) {
+  width: $width;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+// ── Card Base ────────────────────────────────────────
+@mixin card-base {
+  background: $surface;
+  border: 1px solid $border;
+  border-radius: $radius-lg;
+  box-shadow: $shadow-sm;
+  padding: $space-6;
+}
+
+// ── Mobile Bottom Action ─────────────────────────────
+@mixin mobile-bottom-action {
+  @include responsive('md') {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: $space-4;
+    background: $surface;
+    border-top: 1px solid $border;
+    box-shadow: 0 -4px 6px -1px rgba(0, 0, 0, 0.05);
+    z-index: $z-sticky;
+  }
+}
+
+// ── Status Badge ─────────────────────────────────────
+@mixin status-badge($color) {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  border-radius: $radius-full;
+  font-size: $font-caption;
+  font-weight: $font-medium;
+  color: $color;
+  background: rgba($color, 0.1);
+  white-space: nowrap;
+
+  &::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: $radius-full;
+    flex-shrink: 0;
+    background: $color;
+  }
+}
+
+// ── Hover Lift ───────────────────────────────────────
+@mixin hover-lift($distance: -2px, $shadow: $shadow-md) {
+  transition: transform $transition-fast, box-shadow $transition-fast;
+
+  &:hover {
+    transform: translateY($distance);
+    box-shadow: $shadow;
+  }
+}
+
+// ── Status Color (by name) ───────────────────────────
+@mixin status-color($status) {
+  @if $status == 'scheduled' {
+    color: $status-scheduled;
+    background: rgba($status-scheduled, 0.1);
+  } @else if $status == 'checked-in' or $status == 'checkedIn' {
+    color: $status-checked-in;
+    background: rgba($status-checked-in, 0.1);
+  } @else if $status == 'in-progress' or $status == 'inProgress' {
+    color: $status-in-progress;
+    background: rgba($status-in-progress, 0.1);
+  } @else if $status == 'completed' {
+    color: $status-completed;
+    background: rgba($status-completed, 0.1);
+  } @else if $status == 'cancelled' {
+    color: $status-cancelled;
+    background: rgba($status-cancelled, 0.1);
+  } @else if $status == 'no-show' or $status == 'noShow' {
+    color: $status-no-show;
+    background: rgba($status-no-show, 0.1);
+  }
+}
+
+// ── Custom Scrollbar ─────────────────────────────────
+@mixin custom-scrollbar($width: 6px, $thumb-color: $divider, $track-color: transparent) {
+  &::-webkit-scrollbar {
+    width: $width;
+    height: $width;
+  }
+  &::-webkit-scrollbar-track {
+    background: $track-color;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: $thumb-color;
+    border-radius: $radius-full;
+  }
+  &::-webkit-scrollbar-thumb:hover {
+    background: color.adjust($thumb-color, $lightness: -10%);
+  }
+}
+
+// ── Dark Mode ────────────────────────────────────────
+@mixin dark {
+  .dark & {
+    @content;
+  }
+}
+
+// ── RTL ──────────────────────────────────────────────
+@mixin rtl {
+  [dir='rtl'] & {
+    @content;
+  }
+}

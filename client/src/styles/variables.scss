@@ -1,0 +1,162 @@
+// ═══════════════════════════════════════════════════════
+// MedAxis Design System – SCSS Variables
+// ═══════════════════════════════════════════════════════
+
+// ── Colors ───────────────────────────────────────────
+$primary: #2563EB;
+$primary-hover: #1D4ED8;
+$primary-light: #EFF6FF;
+$primary-50: #EFF6FF;
+$primary-100: #DBEAFE;
+$primary-200: #BFDBFE;
+$primary-600: #2563EB;
+$primary-700: #1D4ED8;
+$primary-800: #1E40AF;
+
+$secondary: #0F172A;
+$accent: #14B8A6;
+
+$success: #16A34A;
+$success-light: #F0FDF4;
+$success-border: #BBF7D0;
+
+$warning: #F59E0B;
+$warning-light: #FFFBEB;
+$warning-border: #FDE68A;
+
+$error: #DC2626;
+$error-light: #FEF2F2;
+$error-border: #FECACA;
+
+$info: #0284C7;
+$info-light: #F0F9FF;
+$info-border: #BAE6FD;
+
+$background: #F8FAFC;
+$surface: #FFFFFF;
+$border: #E2E8F0;
+$divider: #CBD5E1;
+
+$text-primary: #0F172A;
+$text-secondary: #475569;
+$text-muted: #94A3B8;
+$text-disabled: #CBD5E1;
+$text-inverse: #FFFFFF;
+
+// ── Sidebar ──────────────────────────────────────────
+$sidebar-bg: #FFFFFF;
+$sidebar-active: #EFF6FF;
+$sidebar-active-text: #2563EB;
+$sidebar-hover: #F8FAFC;
+$sidebar-border: #E2E8F0;
+$sidebar-width: 260px;
+$sidebar-collapsed-width: 72px;
+
+// ── Status Colors ────────────────────────────────────
+$status-scheduled: #2563EB;
+$status-checked-in: #14B8A6;
+$status-in-progress: #7C3AED;
+$status-completed: #16A34A;
+$status-cancelled: #DC2626;
+$status-no-show: #F97316;
+
+// ── Font Sizes ───────────────────────────────────────
+$font-caption: 12px;
+$font-body-sm: 14px;
+$font-body: 16px;
+$font-body-lg: 18px;
+$font-h5: 20px;
+$font-h4: 24px;
+$font-h3: 30px;
+$font-h2: 36px;
+$font-h1: 48px;
+
+// ── Font Weights ─────────────────────────────────────
+$font-normal: 400;
+$font-medium: 500;
+$font-semibold: 600;
+$font-bold: 700;
+
+// ── Line Heights ─────────────────────────────────────
+$line-height-tight: 1.25;
+$line-height-normal: 1.5;
+$line-height-relaxed: 1.75;
+
+// ── Border Radius ────────────────────────────────────
+$radius-sm: 4px;
+$radius: 6px;
+$radius-md: 8px;
+$radius-lg: 12px;
+$radius-xl: 16px;
+$radius-2xl: 20px;
+$radius-full: 9999px;
+
+// ── Shadows ──────────────────────────────────────────
+$shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+$shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.07), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+$shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -4px rgba(0, 0, 0, 0.05);
+$shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.08), 0 8px 10px -6px rgba(0, 0, 0, 0.04);
+
+// ── Spacing Scale ────────────────────────────────────
+$space-1: 4px;
+$space-2: 8px;
+$space-3: 12px;
+$space-4: 16px;
+$space-5: 20px;
+$space-6: 24px;
+$space-8: 32px;
+$space-10: 40px;
+$space-12: 48px;
+$space-16: 64px;
+
+// ── Breakpoints ──────────────────────────────────────
+$breakpoint-xs: 576px;
+$breakpoint-sm: 576px;
+$breakpoint-md: 768px;
+$breakpoint-lg: 992px;
+$breakpoint-xl: 1200px;
+$breakpoint-xxl: 1400px;
+
+// ── Transitions ──────────────────────────────────────
+$transition-fast: 150ms ease;
+$transition-base: 250ms ease;
+$transition-slow: 350ms ease;
+
+// ── Z-Index ──────────────────────────────────────────
+$z-dropdown: 1000;
+$z-sticky: 1020;
+$z-fixed: 1030;
+$z-modal-backdrop: 1040;
+$z-modal: 1050;
+$z-popover: 1060;
+$z-tooltip: 1070;
+
+// ── Layout ───────────────────────────────────────────
+$header-height: 64px;
+$sidebar-width: 260px;
+$sidebar-collapsed-width: 72px;
+
+// ═══════════════════════════════════════════════════════
+// Dark Mode Color Overrides
+// ═══════════════════════════════════════════════════════
+$dark-background: #0B1120;
+$dark-surface: #151F32;
+$dark-surface-elevated: #1E293B;
+$dark-border: #1E293B;
+$dark-divider: #334155;
+$dark-text-primary: #F1F5F9;
+$dark-text-secondary: #94A3B8;
+$dark-text-muted: #64748B;
+$dark-text-disabled: #475569;
+$dark-sidebar-bg: #0F172A;
+$dark-sidebar-active: #1E3A5F;
+$dark-sidebar-hover: #1E293B;
+$dark-sidebar-border: #1E293B;
+$dark-primary-light: rgba(37, 99, 235, 0.15);
+$dark-success-light: rgba(22, 163, 74, 0.15);
+$dark-warning-light: rgba(245, 158, 11, 0.15);
+$dark-error-light: rgba(220, 38, 38, 0.15);
+$dark-info-light: rgba(2, 132, 199, 0.15);
+$dark-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+$dark-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4);
+$dark-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5);

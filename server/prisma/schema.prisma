@@ -1,0 +1,248 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Gender {
+  MALE
+  FEMALE
+}
+
+enum OperationStatus {
+  SCHEDULED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+enum PaymentMethod {
+  CASH
+  CARD
+  INSURANCE
+  BANK_TRANSFER
+  OTHER
+}
+
+enum PaymentStatus {
+  PAID
+  UNPAID
+  PARTIAL
+}
+
+enum FileType {
+  BEFORE_IMAGE
+  BEFORE_XRAY
+  BEFORE_MRI
+  BEFORE_CT
+  BEFORE_LAB
+  BEFORE_PDF
+  AFTER_IMAGE
+  AFTER_REPORT
+  AFTER_PDF
+  AFTER_OTHER
+}
+
+enum TimelineAction {
+  OPERATION_CREATED
+  OPERATION_UPDATED
+  OPERATION_DELETED
+  STATUS_CHANGED
+  FILES_UPLOADED
+  COST_UPDATED
+  NOTES_UPDATED
+  TEAM_UPDATED
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String
+  name      String
+  phone     String?
+  role      String   @default("doctor")
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  operations        Operation[]
+  operationTimelines OperationTimeline[]
+  uploadedFiles      OperationFile[]
+
+  @@map("users")
+}
+
+model Patient {
+  id        String   @id @default(uuid())
+  fullName  String
+  age       Int
+  gender    Gender   @default(MALE)
+  mobile    String?
+  notes     String?
+  createdBy String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  operations Operation[]
+
+  @@map("patients")
+}
+
+model Specialty {
+  id        String   @id @default(uuid())
+  name      String   @unique
+  nameAr    String?
+  icon      String?
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  doctors  DoctorSpecialty[]
+  operations Operation[]
+
+  @@map("specialties")
+}
+
+model Doctor {
+  id        String   @id @default(uuid())
+  name      String
+  phone     String?
+  email     String?
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  specialties   DoctorSpecialty[]
+  primarySurgeon OperationMedicalTeam[]
+  assistant     OperationMedicalTeam[] @relation("AssistantSurgeon")
+  anesthesiologist OperationMedicalTeam[] @relation("Anesthesiologist")
+  assistantAnesthesia OperationMedicalTeam[] @relation("AssistantAnesthesia")
+
+  @@map("doctors")
+}
+
+model DoctorSpecialty {
+  id          String    @id @default(uuid())
+  doctorId    String
+  specialtyId String
+  createdAt   DateTime  @default(now())
+
+  doctor    Doctor    @relation(fields: [doctorId], references: [id], onDelete: Cascade)
+  specialty Specialty @relation(fields: [specialtyId], references: [id], onDelete: Cascade)
+
+  @@unique([doctorId, specialtyId])
+  @@map("doctor_specialties")
+}
+
+model Hospital {
+  id        String   @id @default(uuid())
+  name      String
+  address   String?
+  phone     String?
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  operations Operation[]
+
+  @@map("hospitals")
+}
+
+model Operation {
+  id               String          @id @default(uuid())
+  name             String
+  diagnosis        String
+  hospitalId       String
+  operationDate    DateTime
+  operationTime    String
+  operationRoom    String?
+  duration         Int?
+  status           OperationStatus @default(COMPLETED)
+  notes            String?
+  patientId        String
+  createdBy        String
+  specialtyId      String?
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
+
+  patient   Patient               @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  hospital  Hospital              @relation(fields: [hospitalId], references: [id])
+  creator   User                  @relation(fields: [createdBy], references: [id])
+  specialty Specialty?            @relation(fields: [specialtyId], references: [id])
+  medicalTeam OperationMedicalTeam[]
+  files      OperationFile[]
+  cost       OperationCost?
+  timeline   OperationTimeline[]
+
+  @@map("operations")
+}
+
+model OperationMedicalTeam {
+  id                  String  @id @default(uuid())
+  operationId         String
+  primarySurgeonId    String?
+  assistantSurgeonId  String?
+  anesthesiologistId  String?
+  assistantAnesthesiaId String?
+  nurse               String?
+  notes               String?
+  createdAt           DateTime @default(now())
+
+  operation         Operation  @relation(fields: [operationId], references: [id], onDelete: Cascade)
+  primarySurgeon    Doctor?    @relation(fields: [primarySurgeonId], references: [id])
+  assistantSurgeon  Doctor?    @relation("AssistantSurgeon", fields: [assistantSurgeonId], references: [id])
+  anesthesiologist  Doctor?    @relation("Anesthesiologist", fields: [anesthesiologistId], references: [id])
+  assistantAnesthesia Doctor?   @relation("AssistantAnesthesia", fields: [assistantAnesthesiaId], references: [id])
+
+  @@map("operation_medical_team")
+}
+
+model OperationCost {
+  id              String        @id @default(uuid())
+  operationId     String        @unique
+  totalCost       Decimal       @default(0) @db.Decimal(10, 2)
+  paidAmount      Decimal       @default(0) @db.Decimal(10, 2)
+  remainingAmount Decimal       @default(0) @db.Decimal(10, 2)
+  paymentMethod   PaymentMethod  @default(CASH)
+  paymentStatus   PaymentStatus  @default(PAID)
+  paymentNotes    String?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  operation Operation @relation(fields: [operationId], references: [id], onDelete: Cascade)
+
+  @@map("operation_costs")
+}
+
+model OperationFile {
+  id          String   @id @default(uuid())
+  operationId String
+  fileType    FileType
+  fileName    String
+  filePath    String
+  fileSize    Int?
+  mimeType    String?
+  uploadedBy  String
+  createdAt   DateTime @default(now())
+
+  operation Operation @relation(fields: [operationId], references: [id], onDelete: Cascade)
+  uploader  User      @relation(fields: [uploadedBy], references: [id])
+
+  @@map("operation_files")
+}
+
+model OperationTimeline {
+  id          String         @id @default(uuid())
+  operationId String
+  action      TimelineAction
+  description String?
+  userId      String
+  createdAt   DateTime       @default(now())
+
+  operation Operation @relation(fields: [operationId], references: [id], onDelete: Cascade)
+  user      User      @relation(fields: [userId], references: [id])
+
+  @@map("operation_timeline")
+}

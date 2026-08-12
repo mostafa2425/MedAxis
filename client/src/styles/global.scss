@@ -1,0 +1,1200 @@
+@use 'variables' as *;
+@use 'mixins' as *;
+
+// ═══════════════════════════════════════════════════════
+// MedAxis – Global Styles
+// ═══════════════════════════════════════════════════════
+
+// ── Reset ────────────────────────────────────────────
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 16px;
+  -webkit-text-size-adjust: 100%;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  scroll-behavior: smooth;
+}
+
+// ── Body ─────────────────────────────────────────────
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+    'Helvetica Neue', Arial, sans-serif;
+  font-size: $font-body;
+  font-weight: $font-normal;
+  line-height: $line-height-normal;
+  color: $text-primary;
+  background-color: $background;
+  min-height: 100vh;
+  transition: background-color $transition-base, color $transition-base;
+  @include custom-scrollbar(6px, $divider, transparent);
+}
+
+// ── Arabic Font ──────────────────────────────────────
+[lang='ar'] body,
+[dir='rtl'] body {
+  font-family: 'IBM Plex Sans Arabic', 'Cairo', 'Inter', sans-serif;
+}
+
+// ── Base Elements ────────────────────────────────────
+a {
+  color: $primary;
+  text-decoration: none;
+  transition: color $transition-fast;
+
+  &:hover {
+    color: $primary-hover;
+  }
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-weight: $font-semibold;
+  line-height: $line-height-tight;
+  color: $text-primary;
+  margin: 0;
+}
+
+h1 { font-size: $font-h1; }
+h2 { font-size: $font-h2; }
+h3 { font-size: $font-h3; }
+h4 { font-size: $font-h4; }
+h5 { font-size: $font-h5; }
+
+p {
+  margin: 0;
+  color: $text-secondary;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  background: none;
+  font-family: inherit;
+  font-size: inherit;
+}
+
+input,
+select,
+textarea {
+  font-family: inherit;
+  font-size: inherit;
+}
+
+ul, ol {
+  list-style: none;
+}
+
+// ── Utility Classes ──────────────────────────────────
+.flex-center {
+  @include flex-center;
+}
+
+.flex-between {
+  @include flex-between;
+}
+
+.truncate {
+  @include truncate;
+}
+
+// Text alignment
+.text-center { text-align: center; }
+.text-start { text-align: start; }
+.text-end { text-align: end; }
+.text-left { text-align: left; }
+.text-right { text-align: right; }
+
+// Text colors
+.text-muted { color: $text-muted; }
+.text-primary-color { color: $text-primary; }
+.text-secondary-color { color: $text-secondary; }
+.text-muted-color { color: $text-muted; }
+.text-success { color: $success; }
+.text-warning { color: $warning; }
+.text-error { color: $error; }
+.text-info { color: $info; }
+
+// Font weights
+.font-normal { font-weight: $font-normal; }
+.font-medium { font-weight: $font-medium; }
+.font-semibold { font-weight: $font-semibold; }
+.font-bold { font-weight: $font-bold; }
+
+// Margin top
+.mt-1 { margin-top: $space-1; }
+.mt-2 { margin-top: $space-2; }
+.mt-3 { margin-top: $space-3; }
+.mt-4 { margin-top: $space-4; }
+.mt-5 { margin-top: $space-5; }
+.mt-6 { margin-top: $space-6; }
+.mt-8 { margin-top: $space-8; }
+.mt-10 { margin-top: $space-10; }
+.mt-12 { margin-top: $space-12; }
+.mt-16 { margin-top: $space-16; }
+
+// Margin bottom
+.mb-1 { margin-bottom: $space-1; }
+.mb-2 { margin-bottom: $space-2; }
+.mb-3 { margin-bottom: $space-3; }
+.mb-4 { margin-bottom: $space-4; }
+.mb-5 { margin-bottom: $space-5; }
+.mb-6 { margin-bottom: $space-6; }
+.mb-8 { margin-bottom: $space-8; }
+.mb-10 { margin-bottom: $space-10; }
+.mb-12 { margin-bottom: $space-12; }
+.mb-16 { margin-bottom: $space-16; }
+
+// Margin left / right
+.ml-1 { margin-left: $space-1; }
+.ml-2 { margin-left: $space-2; }
+.ml-3 { margin-left: $space-3; }
+.ml-4 { margin-left: $space-4; }
+.mr-1 { margin-right: $space-1; }
+.mr-2 { margin-right: $space-2; }
+.mr-3 { margin-right: $space-3; }
+.mr-4 { margin-right: $space-4; }
+.ml-auto { margin-left: auto; }
+.mr-auto { margin-right: auto; }
+.mx-auto { margin-left: auto; margin-right: auto; }
+
+// Margin y
+.my-2 { margin-top: $space-2; margin-bottom: $space-2; }
+.my-4 { margin-top: $space-4; margin-bottom: $space-4; }
+.my-6 { margin-top: $space-6; margin-bottom: $space-6; }
+
+// Padding
+.p-1 { padding: $space-1; }
+.p-2 { padding: $space-2; }
+.p-3 { padding: $space-3; }
+.p-4 { padding: $space-4; }
+.p-5 { padding: $space-5; }
+.p-6 { padding: $space-6; }
+.p-8 { padding: $space-8; }
+.p-10 { padding: $space-10; }
+.p-12 { padding: $space-12; }
+
+// Padding x / y
+.px-2 { padding-left: $space-2; padding-right: $space-2; }
+.px-3 { padding-left: $space-3; padding-right: $space-3; }
+.px-4 { padding-left: $space-4; padding-right: $space-4; }
+.px-6 { padding-left: $space-6; padding-right: $space-6; }
+.py-2 { padding-top: $space-2; padding-bottom: $space-2; }
+.py-4 { padding-top: $space-4; padding-bottom: $space-4; }
+.py-6 { padding-top: $space-6; padding-bottom: $space-6; }
+
+// Gap
+.gap-1 { gap: $space-1; }
+.gap-2 { gap: $space-2; }
+.gap-3 { gap: $space-3; }
+.gap-4 { gap: $space-4; }
+.gap-5 { gap: $space-5; }
+.gap-6 { gap: $space-6; }
+.gap-8 { gap: $space-8; }
+
+// Dimensions
+.w-full { width: 100%; }
+.w-auto { width: auto; }
+.h-full { height: 100%; }
+.h-auto { height: auto; }
+.min-h-screen { min-height: 100vh; }
+
+// Display
+.hidden { display: none; }
+.block { display: block; }
+.inline-block { display: inline-block; }
+.flex { display: flex; }
+.inline-flex { display: inline-flex; }
+.grid { display: grid; }
+
+// Flex direction
+.flex-col { flex-direction: column; }
+.flex-row { flex-direction: row; }
+.flex-wrap { flex-wrap: wrap; }
+.flex-1 { flex: 1; }
+.flex-shrink-0 { flex-shrink: 0; }
+
+// Flex alignment
+.items-center { align-items: center; }
+.items-start { align-items: flex-start; }
+.items-end { align-items: flex-end; }
+.items-stretch { align-items: stretch; }
+.justify-center { justify-content: center; }
+.justify-between { justify-content: space-between; }
+.justify-end { justify-content: flex-end; }
+.justify-start { justify-content: flex-start; }
+
+// Border radius
+.rounded { border-radius: $radius-md; }
+.rounded-sm { border-radius: $radius-sm; }
+.rounded-lg { border-radius: $radius-lg; }
+.rounded-xl { border-radius: $radius-xl; }
+.rounded-full { border-radius: $radius-full; }
+
+// Shadows
+.shadow-sm { box-shadow: $shadow-sm; }
+.shadow-md { box-shadow: $shadow-md; }
+.shadow-lg { box-shadow: $shadow-lg; }
+.shadow-xl { box-shadow: $shadow-xl; }
+
+// Cursor
+.cursor-pointer { cursor: pointer; }
+.select-none { user-select: none; }
+
+// Overflow
+.overflow-hidden { overflow: hidden; }
+.overflow-auto { overflow: auto; }
+.overflow-x-auto { overflow-x: auto; }
+.overflow-y-auto { overflow-y: auto; }
+
+// Position
+.relative { position: relative; }
+.absolute { position: absolute; }
+.fixed { position: fixed; }
+.sticky { position: sticky; }
+
+// ── Custom Scrollbar ────────────────────────────────
+.custom-scrollbar {
+  @include custom-scrollbar(6px, $divider, transparent);
+}
+
+// ── Ant Design Theme Overrides ─────────────────────
+
+// Primary button
+.ant-btn-primary {
+  background-color: $primary !important;
+  border-color: $primary !important;
+
+  &:hover {
+    background-color: $primary-hover !important;
+    border-color: $primary-hover !important;
+  }
+}
+
+// Link button
+.ant-btn-link {
+  color: $primary !important;
+
+  &:hover {
+    color: $primary-hover !important;
+  }
+}
+
+// Border radius overrides
+.ant-btn {
+  border-radius: $radius-md !important;
+}
+
+.ant-input,
+.ant-input-affix-wrapper,
+.ant-select-selector,
+.ant-picker {
+  border-radius: $radius-md !important;
+}
+
+.ant-card {
+  border-radius: $radius-lg !important;
+  border: 1px solid $border !important;
+  box-shadow: $shadow-sm !important;
+}
+
+.ant-modal-content {
+  border-radius: $radius-xl !important;
+}
+
+.ant-table {
+  border-radius: $radius-lg !important;
+}
+
+.ant-tag {
+  border-radius: $radius !important;
+}
+
+.ant-badge-status-dot {
+  width: 8px !important;
+  height: 8px !important;
+}
+
+// Font sizes
+.ant-table {
+  font-size: $font-body-sm !important;
+}
+
+.ant-table-thead > tr > th {
+  font-size: $font-body-sm !important;
+  font-weight: $font-semibold !important;
+  color: $text-secondary !important;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.ant-table-tbody > tr > td {
+  font-size: $font-body-sm !important;
+}
+
+// Menu
+.ant-menu-item {
+  border-radius: $radius-md !important;
+}
+
+// Tabs
+.ant-tabs-tab {
+  font-size: $font-body-sm !important;
+  padding: 8px 16px !important;
+}
+
+// Steps
+.ant-steps-item-title {
+  font-size: $font-body-sm !important;
+}
+
+// Form
+.ant-form-item-label > label {
+  font-size: $font-body-sm !important;
+  font-weight: $font-medium !important;
+  color: $text-primary !important;
+}
+
+.ant-form-item-explain-error {
+  font-size: $font-caption !important;
+}
+
+// Pagination
+.ant-pagination-item {
+  border-radius: $radius-md !important;
+}
+
+// Dropdown
+.ant-dropdown-menu {
+  border-radius: $radius-lg !important;
+  box-shadow: $shadow-lg !important;
+  padding: $space-1 !important;
+}
+
+.ant-dropdown-menu-item {
+  border-radius: $radius-md !important;
+  padding: $space-2 $space-3 !important;
+}
+
+// Message & Notification
+.ant-message-notice-content {
+  border-radius: $radius-lg !important;
+  box-shadow: $shadow-lg !important;
+  padding: $space-3 $space-4 !important;
+}
+
+.ant-notification-notice {
+  border-radius: $radius-lg !important;
+  box-shadow: $shadow-lg !important;
+}
+
+// Empty state
+.ant-empty-description {
+  color: $text-muted !important;
+}
+
+// Spin
+.ant-spin-text {
+  color: $text-secondary !important;
+}
+
+// ── Status Badges ────────────────────────────────────
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  border-radius: $radius-full;
+  font-size: $font-caption;
+  font-weight: $font-medium;
+  white-space: nowrap;
+
+  &::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: $radius-full;
+    flex-shrink: 0;
+  }
+
+  &--scheduled {
+    color: $status-scheduled;
+    background: rgba($status-scheduled, 0.1);
+    &::before { background: $status-scheduled; }
+  }
+
+  &--checked-in,
+  &--checkedIn {
+    color: $status-checked-in;
+    background: rgba($status-checked-in, 0.1);
+    &::before { background: $status-checked-in; }
+  }
+
+  &--in-progress,
+  &--inProgress {
+    color: $status-in-progress;
+    background: rgba($status-in-progress, 0.1);
+    &::before { background: $status-in-progress; }
+  }
+
+  &--completed {
+    color: $status-completed;
+    background: rgba($status-completed, 0.1);
+    &::before { background: $status-completed; }
+  }
+
+  &--cancelled {
+    color: $status-cancelled;
+    background: rgba($status-cancelled, 0.1);
+    &::before { background: $status-cancelled; }
+  }
+
+  &--no-show,
+  &--noShow {
+    color: $status-no-show;
+    background: rgba($status-no-show, 0.1);
+    &::before { background: $status-no-show; }
+  }
+}
+
+// Payment status badges
+.payment-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  border-radius: $radius-full;
+  font-size: $font-caption;
+  font-weight: $font-medium;
+
+  &--paid {
+    color: $success;
+    background: $success-light;
+  }
+
+  &--unpaid {
+    color: $error;
+    background: $error-light;
+  }
+
+  &--partial {
+    color: $warning;
+    background: $warning-light;
+  }
+}
+
+// ── Card Hover Effects ──────────────────────────────
+.card-hover {
+  @include card-base;
+  @include hover-lift(-2px, $shadow-md);
+}
+
+.ant-card {
+  transition: box-shadow $transition-fast, transform $transition-fast;
+
+  &:hover {
+    box-shadow: $shadow-md;
+    transform: translateY(-1px);
+  }
+}
+
+// ── Sticky Bottom Action Bar (Mobile) ────────────────
+.mobile-bottom-bar {
+  @include mobile-bottom-action;
+
+  &__inner {
+    display: flex;
+    align-items: center;
+    gap: $space-3;
+    max-width: 100%;
+  }
+}
+
+// ═══════════════════════════════════════════════════════
+// Dark Mode (.ant-theme-dark, .dark)
+// ═══════════════════════════════════════════════════════
+.ant-theme-dark,
+.dark {
+  background-color: $dark-background;
+  color: $dark-text-primary;
+
+  body {
+    background-color: $dark-background;
+    color: $dark-text-primary;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    color: $dark-text-primary;
+  }
+
+  p {
+    color: $dark-text-secondary;
+  }
+
+  a {
+    color: color.adjust($primary, $lightness: 15%);
+    &:hover { color: color.adjust($primary, $lightness: 25%); }
+  }
+
+  .text-primary-color { color: $dark-text-primary; }
+  .text-secondary-color { color: $dark-text-secondary; }
+  .text-muted-color { color: $dark-text-muted; }
+
+  .shadow-sm { box-shadow: $dark-shadow-sm; }
+  .shadow-md { box-shadow: $dark-shadow-md; }
+  .shadow-lg { box-shadow: $dark-shadow-lg; }
+
+  // Ant Design dark overrides
+  .ant-card {
+    background-color: $dark-surface !important;
+    border-color: $dark-border !important;
+  }
+
+  .ant-table {
+    background-color: $dark-surface !important;
+
+    thead > tr > th {
+      background-color: $dark-surface-elevated !important;
+      color: $dark-text-secondary !important;
+      border-bottom-color: $dark-divider !important;
+    }
+
+    tbody > tr {
+      > td {
+        border-bottom-color: $dark-divider !important;
+        color: $dark-text-primary !important;
+      }
+
+      &:hover > td {
+        background-color: $dark-surface-elevated !important;
+      }
+    }
+  }
+
+  .ant-input,
+  .ant-input-affix-wrapper,
+  .ant-select-selector,
+  .ant-picker {
+    background-color: $dark-surface-elevated !important;
+    border-color: $dark-border !important;
+    color: $dark-text-primary !important;
+  }
+
+  .ant-modal-content {
+    background-color: $dark-surface !important;
+  }
+
+  .ant-dropdown-menu {
+    background-color: $dark-surface !important;
+  }
+
+  .ant-dropdown-menu-item {
+    color: $dark-text-primary !important;
+
+    &:hover {
+      background-color: $dark-surface-elevated !important;
+    }
+  }
+
+  .ant-form-item-label > label {
+    color: $dark-text-primary !important;
+  }
+
+  .ant-empty-description {
+    color: $dark-text-muted !important;
+  }
+
+  .ant-menu {
+    background-color: transparent !important;
+  }
+
+  .ant-menu-item {
+    color: $dark-text-secondary !important;
+
+    &:hover {
+      background-color: $dark-sidebar-hover !important;
+    }
+  }
+
+  // Status badges dark
+  .status-badge {
+    &--scheduled { background: $dark-primary-light; }
+    &--checked-in,
+    &--checkedIn { background: $dark-success-light; }
+    &--in-progress,
+    &--inProgress { background: rgba(124, 58, 237, 0.15); }
+    &--completed { background: $dark-success-light; }
+    &--cancelled { background: $dark-error-light; }
+    &--no-show,
+    &--noShow { background: rgba(249, 115, 22, 0.15); }
+  }
+
+  .payment-badge {
+    &--paid { background: $dark-success-light; }
+    &--unpaid { background: $dark-error-light; }
+    &--partial { background: $dark-warning-light; }
+  }
+
+  // Card hover dark
+  .card-hover {
+    background: $dark-surface;
+    border-color: $dark-border;
+
+    &:hover {
+      box-shadow: $dark-shadow-lg;
+    }
+  }
+
+  // Mobile bottom bar dark
+  .mobile-bottom-bar {
+    background: $dark-surface;
+    border-top-color: $dark-border;
+  }
+}
+
+// ═══════════════════════════════════════════════════════
+// RTL Support [dir=rtl]
+// ═══════════════════════════════════════════════════════
+[dir='rtl'] {
+  text-align: right;
+
+  // Ant input prefix/suffix
+  .ant-input-prefix {
+    margin-inline-end: 8px;
+    margin-inline-start: 0;
+  }
+
+  .ant-input-suffix {
+    margin-inline-start: 8px;
+    margin-inline-end: 0;
+  }
+
+  .ant-picker-suffix {
+    margin-inline-start: 8px;
+    margin-inline-end: 0;
+  }
+
+  // Ant table
+  .ant-table-thead > tr > th,
+  .ant-table-tbody > tr > td {
+    text-align: right;
+  }
+
+  // Ant pagination
+  .ant-pagination {
+    direction: rtl;
+  }
+
+  // Ant dropdown
+  .ant-dropdown-menu {
+    direction: rtl;
+    text-align: right;
+  }
+
+  // Ant tabs
+  .ant-tabs-nav {
+    direction: rtl;
+  }
+
+  // Ant form
+  .ant-form-item-label {
+    text-align: right;
+  }
+
+  // Ant menu
+  .ant-menu-item {
+    text-align: right;
+  }
+
+  // Ant steps
+  .ant-steps-item-description {
+    text-align: right;
+  }
+
+  // Fix margin utilities in RTL
+  .ml-auto {
+    margin-left: 0;
+    margin-right: auto;
+  }
+
+  .mr-auto {
+    margin-right: 0;
+    margin-left: auto;
+  }
+
+  // Fix padding utilities in RTL
+  .px-2,
+  .px-3,
+  .px-4,
+  .px-6 {
+    // CSS logical properties already handle this via padding-inline
+  }
+
+  // Text alignment
+  .text-left { text-align: right; }
+  .text-right { text-align: left; }
+
+  // Ant message
+  .ant-message {
+    direction: rtl;
+  }
+
+  // Ant notification
+  .ant-notification-notice-message {
+    text-align: right;
+  }
+
+  .ant-notification-notice-description {
+    text-align: right;
+  }
+
+  // Ant breadcrumb
+  .ant-breadcrumb {
+    direction: rtl;
+  }
+
+  // Ant modal
+  .ant-modal-close {
+    right: auto;
+    left: 16px;
+  }
+}
+
+// ── Mobile-First Responsive Utilities ───────────────
+@include responsive('sm') {
+  .hide-mobile { display: none !important; }
+}
+
+@include up('md') {
+  .hide-desktop { display: none !important; }
+}
+
+@include responsive('md') {
+  .mobile-stack {
+    flex-direction: column;
+  }
+}
+
+// ── App Layout ───────────────────────────────────────
+#root {
+  min-height: 100vh;
+}
+
+.app-layout {
+  display: flex;
+  min-height: 100vh;
+}
+
+.app-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  transition: margin $transition-base;
+}
+
+.app-main {
+  flex: 1;
+  padding: $space-6;
+  max-width: 1600px;
+  width: 100%;
+  margin: 0 auto;
+
+  @include responsive('md') {
+    padding: $space-4;
+  }
+}
+
+// ── Page Header ──────────────────────────────────────
+.page-header {
+  @include flex-between;
+  margin-bottom: $space-6;
+  flex-wrap: wrap;
+  gap: $space-3;
+
+  &__title-group {
+    display: flex;
+    flex-direction: column;
+    gap: $space-1;
+  }
+
+  &__title {
+    font-size: $font-h4;
+    font-weight: $font-bold;
+    color: $text-primary;
+    line-height: $line-height-tight;
+  }
+
+  &__subtitle {
+    font-size: $font-body-sm;
+    color: $text-muted;
+  }
+
+  &__actions {
+    display: flex;
+    align-items: center;
+    gap: $space-2;
+  }
+}
+
+// ── Stat Card ────────────────────────────────────────
+.stat-card {
+  @include card-base;
+  display: flex;
+  align-items: flex-start;
+  gap: $space-4;
+  padding: $space-5;
+  transition: box-shadow $transition-fast, transform $transition-fast;
+
+  &:hover {
+    box-shadow: $shadow-md;
+    transform: translateY(-1px);
+  }
+
+  &__icon {
+    @include flex-center;
+    width: 48px;
+    height: 48px;
+    border-radius: $radius-lg;
+    flex-shrink: 0;
+    font-size: 24px;
+  }
+
+  &__content {
+    display: flex;
+    flex-direction: column;
+    gap: $space-1;
+    min-width: 0;
+  }
+
+  &__label {
+    font-size: $font-body-sm;
+    color: $text-muted;
+    font-weight: $font-medium;
+  }
+
+  &__value {
+    font-size: $font-h5;
+    font-weight: $font-bold;
+    color: $text-primary;
+    line-height: 1;
+  }
+
+  &__trend {
+    font-size: $font-caption;
+    display: flex;
+    align-items: center;
+    gap: $space-1;
+
+    &--up { color: $success; }
+    &--down { color: $error; }
+  }
+}
+
+// ── Data Table Wrapper ───────────────────────────────
+.data-table-wrapper {
+  @include card-base;
+  padding: 0;
+  overflow: hidden;
+
+  .ant-table-wrapper {
+    .ant-table {
+      border-radius: 0 !important;
+    }
+  }
+
+  .ant-pagination {
+    padding: $space-4 $space-6;
+  }
+}
+
+// ── Empty State ──────────────────────────────────────
+.empty-state {
+  @include flex-center;
+  flex-direction: column;
+  gap: $space-4;
+  padding: $space-16 $space-6;
+  text-align: center;
+
+  &__icon {
+    font-size: 48px;
+    color: $text-disabled;
+  }
+
+  &__title {
+    font-size: $font-body-lg;
+    font-weight: $font-semibold;
+    color: $text-secondary;
+  }
+
+  &__description {
+    font-size: $font-body-sm;
+    color: $text-muted;
+    max-width: 400px;
+  }
+
+  &__action {
+    margin-top: $space-2;
+  }
+}
+
+// ── Filter Bar ───────────────────────────────────────
+.filter-bar {
+  display: flex;
+  align-items: center;
+  gap: $space-3;
+  flex-wrap: wrap;
+  margin-bottom: $space-4;
+
+  @include responsive('md') {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  &__search {
+    flex: 1;
+    min-width: 200px;
+
+    @include responsive('md') {
+      width: 100%;
+    }
+  }
+
+  &__filters {
+    display: flex;
+    align-items: center;
+    gap: $space-2;
+    flex-wrap: wrap;
+
+    @include responsive('md') {
+      width: 100%;
+    }
+  }
+}
+
+// ── Sidebar Styles ───────────────────────────────────
+.sidebar {
+  width: $sidebar-width;
+  height: 100vh;
+  position: sticky;
+  top: 0;
+  background: $sidebar-bg;
+  border-right: 1px solid $sidebar-border;
+  display: flex;
+  flex-direction: column;
+  transition: width $transition-base;
+  overflow: hidden;
+  flex-shrink: 0;
+  z-index: $z-fixed;
+
+  &--collapsed {
+    width: $sidebar-collapsed-width;
+  }
+
+  &__logo {
+    @include flex-center;
+    height: $header-height;
+    padding: 0 $space-4;
+    border-bottom: 1px solid $sidebar-border;
+    gap: $space-3;
+    flex-shrink: 0;
+  }
+
+  &__logo-text {
+    font-size: $font-h5;
+    font-weight: $font-bold;
+    color: $text-primary;
+    white-space: nowrap;
+    overflow: hidden;
+  }
+
+  &__nav {
+    flex: 1;
+    padding: $space-3;
+    overflow-y: auto;
+    @include custom-scrollbar(4px, $divider, transparent);
+  }
+
+  &__menu-item {
+    @include flex-center;
+    gap: $space-3;
+    padding: $space-2 $space-3;
+    border-radius: $radius-md;
+    color: $text-secondary;
+    font-size: $font-body-sm;
+    font-weight: $font-medium;
+    cursor: pointer;
+    transition: all $transition-fast;
+    white-space: nowrap;
+    text-decoration: none;
+    width: 100%;
+
+    &:hover {
+      background-color: $sidebar-hover;
+      color: $text-primary;
+    }
+
+    &--active {
+      background-color: $sidebar-active;
+      color: $sidebar-active-text;
+      font-weight: $font-semibold;
+    }
+
+    &-icon {
+      font-size: 20px;
+      flex-shrink: 0;
+      width: 24px;
+      @include flex-center;
+    }
+
+    &-text {
+      overflow: hidden;
+      transition: opacity $transition-fast;
+    }
+  }
+
+  &--collapsed &__menu-item-text {
+    opacity: 0;
+    width: 0;
+  }
+
+  &__footer {
+    padding: $space-3;
+    border-top: 1px solid $sidebar-border;
+    flex-shrink: 0;
+  }
+}
+
+// Sidebar dark mode
+.dark .sidebar {
+  background-color: $dark-sidebar-bg;
+  border-right-color: $dark-sidebar-border;
+
+  &__logo {
+    border-bottom-color: $dark-sidebar-border;
+  }
+
+  &__logo-text {
+    color: $dark-text-primary;
+  }
+
+  &__menu-item {
+    color: $dark-text-secondary;
+
+    &:hover {
+      background-color: $dark-sidebar-hover;
+      color: $dark-text-primary;
+    }
+
+    &--active {
+      background-color: $dark-sidebar-active;
+      color: color.adjust($primary, $lightness: 15%);
+    }
+  }
+
+  &__footer {
+    border-top-color: $dark-sidebar-border;
+  }
+}
+
+// ── Header ───────────────────────────────────────────
+.app-header {
+  @include flex-between;
+  height: $header-height;
+  padding: 0 $space-6;
+  background: $surface;
+  border-bottom: 1px solid $border;
+  position: sticky;
+  top: 0;
+  z-index: $z-sticky;
+  flex-shrink: 0;
+
+  @include responsive('md') {
+    padding: 0 $space-4;
+  }
+
+  &__left {
+    display: flex;
+    align-items: center;
+    gap: $space-3;
+  }
+
+  &__right {
+    display: flex;
+    align-items: center;
+    gap: $space-2;
+  }
+
+  &__trigger {
+    @include flex-center;
+    width: 36px;
+    height: 36px;
+    border-radius: $radius-md;
+    cursor: pointer;
+    transition: background $transition-fast;
+
+    &:hover {
+      background: $sidebar-hover;
+    }
+  }
+
+  &__search {
+    @include responsive('md') {
+      display: none;
+    }
+  }
+
+  &__user {
+    display: flex;
+    align-items: center;
+    gap: $space-2;
+    cursor: pointer;
+    padding: $space-1 $space-2;
+    border-radius: $radius-md;
+    transition: background $transition-fast;
+
+    &:hover {
+      background: $sidebar-hover;
+    }
+  }
+
+  &__avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: $radius-full;
+    @include flex-center;
+    background: $primary-light;
+    color: $primary;
+    font-weight: $font-semibold;
+    font-size: $font-body-sm;
+  }
+}
+
+.dark .app-header {
+  background-color: $dark-surface;
+  border-bottom-color: $dark-border;
+
+  &__trigger:hover {
+    background: $dark-sidebar-hover;
+  }
+
+  &__user:hover {
+    background: $dark-sidebar-hover;
+  }
+
+  &__avatar {
+    background: $dark-primary-light;
+    color: color.adjust($primary, $lightness: 15%);
+  }
+}

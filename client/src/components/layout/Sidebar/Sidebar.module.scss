@@ -1,0 +1,248 @@
+// ═══════════════════════════════════════════════════════
+// Sidebar SCSS Module
+// ═══════════════════════════════════════════════════════
+
+// ── Sidebar Container (shared between desktop & drawer) ──
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: $sidebar-bg;
+  overflow: hidden;
+
+  @include dark {
+    background: $dark-sidebar-bg;
+  }
+}
+
+// ─── Logo ────────────────────────────────────────────
+.logo {
+  display: flex;
+  align-items: center;
+  gap: $space-3;
+  padding: $space-5 $space-6;
+  height: $header-height;
+  border-bottom: 1px solid $sidebar-border;
+  flex-shrink: 0;
+
+  @include dark {
+    border-bottom-color: $dark-sidebar-border;
+  }
+}
+
+.logoIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  min-width: 36px;
+  border-radius: $radius-md;
+  background: $primary-50;
+  color: $primary;
+  font-size: 20px;
+
+  @include dark {
+    background: $dark-primary-light;
+    color: color.adjust($primary, $lightness: 15%);
+  }
+}
+
+.logoText {
+  font-size: 20px;
+  font-weight: $font-bold;
+  color: $text-primary;
+  letter-spacing: -0.3px;
+  white-space: nowrap;
+  overflow: hidden;
+
+  @include dark {
+    color: $dark-text-primary;
+  }
+}
+
+// ─── Navigation ──────────────────────────────────────
+.nav {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: $space-3 $space-3 0;
+
+  @include custom-scrollbar(4px, $divider);
+}
+
+// ─── Menu Item ───────────────────────────────────────
+.menuItem {
+  display: flex;
+  align-items: center;
+  gap: $space-3;
+  padding: 10px $space-4;
+  border-radius: $radius-md;
+  color: $text-secondary;
+  text-decoration: none;
+  font-size: $font-body-sm;
+  font-weight: $font-medium;
+  transition: all $transition-fast;
+  cursor: pointer;
+  border: none;
+  background: transparent;
+  width: 100%;
+  text-align: start;
+  white-space: nowrap;
+  margin-bottom: 2px;
+
+  &:hover {
+    background: $sidebar-hover;
+    color: $text-primary;
+
+    @include dark {
+      background: $dark-sidebar-hover;
+      color: $dark-text-primary;
+    }
+  }
+
+  @include dark {
+    color: $dark-text-secondary;
+  }
+}
+
+.menuItemActive {
+  background: $sidebar-active !important;
+  color: $sidebar-active-text !important;
+
+  .menuItemIcon {
+    color: $sidebar-active-text;
+  }
+
+  @include dark {
+    background: $dark-sidebar-active !important;
+    color: color.adjust($primary, $lightness: 15%) !important;
+
+    .menuItemIcon {
+      color: color.adjust($primary, $lightness: 15%);
+    }
+  }
+}
+
+.menuItemCollapsed {
+  justify-content: center;
+  padding: 10px;
+}
+
+.menuItemIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  min-width: 22px;
+  color: inherit;
+}
+
+.menuItemLabel {
+  @include truncate;
+  transition: opacity $transition-fast;
+}
+
+// ─── Bottom Actions ───────────────────────────────────
+.bottomActions {
+  padding: $space-3 $space-3 $space-4;
+  border-top: 1px solid $sidebar-border;
+  flex-shrink: 0;
+
+  @include dark {
+    border-top-color: $dark-sidebar-border;
+  }
+}
+
+.logoutBtn {
+  &:hover {
+    color: $error;
+    background: $error-light;
+
+    @include dark {
+      color: color.adjust($error, $lightness: 15%);
+    }
+  }
+}
+
+// ─── Desktop Sidebar ─────────────────────────────────
+.desktopSidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: $sidebar-width;
+  z-index: $z-fixed;
+  border-right: 1px solid $sidebar-border;
+  transition: width $transition-base;
+
+  @include dark {
+    border-right-color: $dark-sidebar-border;
+  }
+
+  @include rtl {
+    left: auto;
+    right: 0;
+    border-right: none;
+    border-left: 1px solid $sidebar-border;
+
+    @include dark {
+      border-left-color: $dark-sidebar-border;
+    }
+  }
+}
+
+.desktopSidebarCollapsed {
+  width: 80px;
+
+  .logo {
+    justify-content: center;
+    padding: $space-5 $space-4;
+  }
+
+  .nav {
+    padding: $space-3 $space-2 0;
+  }
+
+  .bottomActions {
+    padding: $space-3 $space-2 $space-4;
+  }
+
+  @include rtl {
+    width: 80px;
+  }
+}
+
+// ─── Mobile Drawer ───────────────────────────────────
+.mobileDrawer {
+  .ant-drawer-body {
+    padding: 0 !important;
+  }
+}
+
+.mobileOverlayContent {
+  .sidebar {
+    border-radius: 0;
+  }
+
+  .menuItemCollapsed {
+    justify-content: flex-start;
+    padding: 10px $space-4;
+  }
+}
+
+// ─── Responsive: Hide desktop sidebar on mobile ──────
+@include responsive('md') {
+  .desktopSidebar {
+    display: none;
+  }
+}
+
+// ─── Responsive: Show desktop sidebar on tablet+ ─────
+@include up('md') {
+  .mobileOverlayContent {
+    .menuItemCollapsed {
+      display: none;
+    }
+  }
+}

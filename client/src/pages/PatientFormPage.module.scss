@@ -1,0 +1,214 @@
+@use '../styles/variables' as *;
+@use '../styles/mixins' as *;
+
+// ═══════════════════════════════════════════════════════
+// Patient Form Page – SCSS Module
+// ═══════════════════════════════════════════════════════
+
+// ─── Page Wrapper ────────────────────────────────
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: $space-6;
+  animation: fadeIn 0.3s ease;
+  padding-bottom: 100px;
+
+  @include responsive('md') {
+    gap: $space-4;
+  }
+
+  @include up('md') {
+    padding-bottom: 0;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// ─── Loading ─────────────────────────────────────
+.loadingWrapper {
+  @include flex-center;
+  min-height: 400px;
+}
+
+// ─── Page Header ─────────────────────────────────
+.pageHeader {
+  @include flex-between;
+  flex-wrap: wrap;
+  gap: $space-3;
+
+  @include responsive('sm') {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: $space-1;
+  }
+}
+
+.headerLeft {
+  display: flex;
+  flex-direction: column;
+  gap: $space-2;
+}
+
+.backButton {
+  display: inline-flex;
+  align-items: center;
+  gap: $space-1;
+  width: fit-content;
+  color: $text-secondary;
+  font-size: $font-body-sm;
+  padding: 0;
+
+  @include dark {
+    color: $dark-text-secondary;
+  }
+
+  &:hover {
+    color: $primary;
+  }
+}
+
+.pageTitle {
+  font-size: $font-h3;
+  font-weight: $font-bold;
+  color: $text-primary;
+  line-height: $line-height-tight;
+
+  @include dark {
+    color: $dark-text-primary;
+  }
+
+  @include responsive('sm') {
+    font-size: $font-h4;
+  }
+}
+
+// ─── Form Card ───────────────────────────────────
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: $space-6;
+}
+
+.formCard {
+  @include card-base;
+  display: flex;
+  flex-direction: column;
+  gap: $space-5;
+
+  @include responsive('md') {
+    gap: $space-4;
+  }
+
+  @include dark {
+    background: $dark-surface-elevated;
+    border-color: $dark-border;
+  }
+}
+
+// ─── Form Row (Age + Gender side by side) ───────
+.formRow {
+  display: flex;
+  gap: $space-6;
+
+  @include responsive('sm') {
+    flex-direction: column;
+    gap: 0;
+  }
+}
+
+.formRow > .formGroup {
+  flex: 1;
+  min-width: 0;
+}
+
+// ─── Form Group ──────────────────────────────────
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: $space-2;
+}
+
+.formLabel {
+  font-size: $font-body-sm;
+  font-weight: $font-medium;
+  color: $text-secondary;
+
+  @include dark {
+    color: $dark-text-secondary;
+  }
+}
+
+.required {
+  color: $error;
+  margin-inline-start: 2px;
+}
+
+.errorText {
+  font-size: $font-caption;
+}
+
+// ─── Gender Radio ────────────────────────────────
+.genderRadio {
+  width: 100%;
+  display: flex;
+
+  .ant-radio-button-wrapper {
+    flex: 1;
+    text-align: center;
+    height: 40px;
+    line-height: 38px;
+  }
+}
+
+// ─── Form Actions (Desktop) ──────────────────────
+.formActionsDesktop {
+  display: flex;
+  justify-content: flex-end;
+  gap: $space-3;
+
+  @include responsive('md') {
+    display: none;
+  }
+}
+
+// ─── Form Actions (Mobile – Sticky Bottom) ───────
+.formActionsMobile {
+  display: none;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: $z-sticky;
+  padding: $space-4 $space-4 $space-6;
+  background: $surface;
+  border-top: 1px solid $border;
+  box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.06);
+  gap: $space-3;
+
+  @include responsive('md') {
+    display: flex;
+  }
+
+  @include dark {
+    background: $dark-surface;
+    border-top-color: $dark-border;
+  }
+}
+
+// ─── Buttons ─────────────────────────────────────
+.submitBtn {
+  min-width: 140px;
+}
+
+.cancelBtn {
+  min-width: 100px;
+}
