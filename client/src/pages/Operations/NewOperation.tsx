@@ -1,1 +1,1 @@
-export { default } from '../OperationFormPage';
+export { default } from './OperationForm/OperationFormPage';

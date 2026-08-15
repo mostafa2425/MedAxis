@@ -41,11 +41,7 @@ export const operationService = {
   },
 
   uploadFiles(id: string, formData: FormData) {
-    return api.post<ApiResponse<OperationFile>>(`/operations/${id}/files`, formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    });
+    return api.post<ApiResponse<OperationFile[]>>(`/operations/${id}/files`, formData);
   },
 
   deleteFile(id: string, fileId: string) {

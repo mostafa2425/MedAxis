@@ -7,12 +7,17 @@ import helmet from 'helmet';
 import morgan from 'morgan';
 import compression from 'compression';
 import path from 'path';
+import swaggerUi from 'swagger-ui-express';
 
 import routes from './routes';
 import { errorHandler } from './middlewares/errorHandler';
+import { swaggerSpec } from './docs/swagger';
 
 const app = express();
 const PORT = process.env.PORT || 4000;
+
+// Swagger UI (documentation only)
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // Security middleware
 app.use(helmet({ crossOriginResourcePolicy: false }));
@@ -53,6 +58,7 @@ app.use(errorHandler);
 app.listen(PORT, () => {
   console.log(`🩺 MedAxis API server running on port ${PORT}`);
   console.log(`📍 Environment: ${process.env.NODE_ENV || 'development'}`);
+  console.log(`📘 Swagger UI: http://localhost:${PORT}/api-docs`);
 });
 
 export default app;

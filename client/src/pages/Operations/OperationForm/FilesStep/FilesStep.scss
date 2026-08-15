@@ -1,0 +1,173 @@
+// Files step styles (extracted from OperationForm.scss)
+
+.fileSection {
+  display: flex;
+  flex-direction: column;
+  gap: $space-4;
+}
+
+.fileSectionHeader {
+  display: flex;
+  align-items: center;
+  gap: $space-2;
+}
+
+.fileSectionIcon {
+  font-size: 18px;
+  color: $primary;
+}
+
+.fileSectionTitle {
+  font-size: $font-h5;
+  font-weight: $font-semibold;
+  color: $text-primary;
+  margin: 0;
+
+  @include dark {
+    color: $dark-text-primary;
+  }
+}
+
+.fileGallery {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-3;
+}
+
+.fileThumb {
+  width: 120px;
+  display: flex;
+  flex-direction: column;
+  gap: $space-2;
+  border: 1px solid $border;
+  border-radius: $radius-md;
+  overflow: hidden;
+  background: $surface;
+  transition: box-shadow $transition-fast;
+
+  &:hover {
+    box-shadow: $shadow-md;
+
+    .fileThumbActions {
+      opacity: 1;
+    }
+  }
+
+  @include dark {
+    border-color: $dark-border;
+    background: $dark-surface-elevated;
+  }
+}
+
+.fileThumbPreview {
+  width: 100%;
+  height: 80px;
+  @include flex-center;
+  background: $background;
+  overflow: hidden;
+
+  @include dark {
+    background: $dark-surface;
+  }
+}
+
+.fileThumbImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.fileThumbName {
+  font-size: 10px;
+  color: $text-secondary;
+  padding: 0 $space-2;
+  @include truncate;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  @include dark {
+    color: $dark-text-secondary;
+  }
+}
+
+.fileThumbActions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: $space-1;
+  padding: $space-1 $space-2;
+  border-top: 1px solid $border;
+  opacity: 0;
+  transition: opacity $transition-fast;
+
+  @include dark {
+    border-top-color: $dark-border;
+  }
+}
+
+.emptyFiles {
+  @include flex-center;
+  flex-direction: column;
+  gap: $space-2;
+  padding: $space-8;
+  color: $text-muted;
+  font-size: $font-body-sm;
+  border: 2px dashed $border;
+  border-radius: $radius-md;
+
+  @include dark {
+    border-color: $dark-border;
+  }
+}
+
+.noOperationAlert {
+  margin-top: $space-2;
+}
+
+.uploadArea {
+  .ant-upload-drag {
+    border-radius: $radius-md;
+    border: 2px dashed $border !important;
+    background: $background;
+    transition: border-color $transition-fast, background $transition-fast;
+
+    &:hover {
+      border-color: $primary !important;
+      background: $primary-light;
+    }
+  }
+
+  @include dark {
+    .ant-upload-drag {
+      background: $dark-surface;
+      border-color: $dark-border !important;
+
+      &:hover {
+        background: $dark-primary-light;
+      }
+    }
+  }
+}
+
+.uploadIcon {
+  font-size: 36px !important;
+  color: $text-muted !important;
+  margin-bottom: $space-2 !important;
+}
+
+.uploadText {
+  font-size: $font-body-sm !important;
+  color: $text-secondary !important;
+  font-weight: $font-medium;
+
+  @include dark {
+    color: $dark-text-secondary !important;
+  }
+}
+
+.uploadHint {
+  font-size: $font-caption !important;
+  color: $text-muted !important;
+  margin-top: $space-1 !important;
+}

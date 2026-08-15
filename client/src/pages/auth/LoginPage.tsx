@@ -8,7 +8,11 @@ import { MailOutlined, LockOutlined, MedicineBoxOutlined } from '@ant-design/ico
 import { useTranslation } from 'react-i18next';
 import { authService } from '@/services/auth.service';
 import { useAuth } from '@/hooks/useAuth';
-import styles from './LoginPage.module.scss';
+import {
+  parseApiValidationErrors,
+  applyValidationErrorsToRHF,
+} from '@/utils/apiValidationErrors';
+import './LoginPage.scss';
 
 const { Text, Link: AntLink } = Typography;
 
@@ -32,6 +36,7 @@ export default function LoginPage() {
   const {
     control,
     handleSubmit,
+    setError,
     formState: { errors },
   } = useForm<LoginFormValues>({
     resolver: zodResolver(schema),
@@ -53,34 +58,38 @@ export default function LoginPage() {
       message.success(t('auth.loginSuccess'));
       navigate('/', { replace: true });
     } catch (err: unknown) {
-      const error = err as { response?: { data?: { message?: string } } };
-      message.error(error.response?.data?.message || t('auth.loginFailed'));
+      const issues = parseApiValidationErrors(err);
+      if (applyValidationErrorsToRHF(setError, issues, t)) {
+        message.error(t('validation.fixHighlightedFields'));
+      } else {
+        message.error(t('auth.loginFailed'));
+      }
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className={styles.page}>
-      <div className={styles.card}>
+    <div className="login-page page">
+      <div className="card">
         {/* ─── Logo & Header ──────────────────────── */}
-        <div className={styles.cardHeader}>
-          <div className={styles.logoWrap}>
-            <div className={styles.logoIcon}>
+        <div className="cardHeader">
+          <div className="logoWrap">
+            <div className="logoIcon">
               <MedicineBoxOutlined />
             </div>
           </div>
-          <h1 className={styles.title}>{t('auth.welcomeBack')}</h1>
-          <Text className={styles.subtitle} type="secondary">
+          <h1 className="title">{t('auth.welcomeBack')}</h1>
+          <Text className="subtitle" type="secondary">
             {t('auth.loginDescription')}
           </Text>
         </div>
 
         {/* ─── Form ───────────────────────────────── */}
-        <form className={styles.form} onSubmit={handleSubmit(onSubmit)} noValidate>
+        <form className="form" onSubmit={handleSubmit(onSubmit)} noValidate>
           {/* Email */}
-          <div className={styles.field}>
-            <label className={styles.label} htmlFor="login-email">
+          <div className="field">
+            <label className="label" htmlFor="login-email">
               {t('auth.email')}
             </label>
             <Controller
@@ -90,7 +99,7 @@ export default function LoginPage() {
                 <Input
                   id="login-email"
                   size="large"
-                  prefix={<MailOutlined className={styles.inputIcon} />}
+                  prefix={<MailOutlined className="inputIcon" />}
                   placeholder={t('auth.email')}
                   status={errors.email ? 'error' : undefined}
                   {...field}
@@ -98,13 +107,13 @@ export default function LoginPage() {
               )}
             />
             {errors.email && (
-              <span className={styles.error}>{errors.email.message}</span>
+              <span className="error">{errors.email.message}</span>
             )}
           </div>
 
           {/* Password */}
-          <div className={styles.field}>
-            <label className={styles.label} htmlFor="login-password">
+          <div className="field">
+            <label className="label" htmlFor="login-password">
               {t('auth.password')}
             </label>
             <Controller
@@ -114,7 +123,7 @@ export default function LoginPage() {
                 <Input.Password
                   id="login-password"
                   size="large"
-                  prefix={<LockOutlined className={styles.inputIcon} />}
+                  prefix={<LockOutlined className="inputIcon" />}
                   placeholder={t('auth.password')}
                   status={errors.password ? 'error' : undefined}
                   {...field}
@@ -122,12 +131,12 @@ export default function LoginPage() {
               )}
             />
             {errors.password && (
-              <span className={styles.error}>{errors.password.message}</span>
+              <span className="error">{errors.password.message}</span>
             )}
           </div>
 
           {/* Remember Me & Forgot Password */}
-          <div className={styles.row}>
+          <div className="row">
             <Controller
               name="rememberMe"
               control={control}
@@ -136,11 +145,11 @@ export default function LoginPage() {
                   checked={field.value}
                   onChange={field.onChange}
                 >
-                  <span className={styles.rememberText}>{t('auth.rememberMe')}</span>
+                  <span className="rememberText">{t('auth.rememberMe')}</span>
                 </Checkbox>
               )}
             />
-            <AntLink className={styles.forgotLink}>
+            <AntLink className="forgotLink">
               {t('auth.forgotPassword')}
             </AntLink>
           </div>
@@ -152,16 +161,16 @@ export default function LoginPage() {
             loading={loading}
             size="large"
             block
-            className={styles.submitBtn}
+            className="submitBtn"
           >
             {t('auth.loginButton')}
           </Button>
         </form>
 
         {/* ─── Footer Link ─────────────────────────── */}
-        <div className={styles.footer}>
+        <div className="footer">
           <Text type="secondary">{t('auth.noAccount')}</Text>
-          <Link to="/register" className={styles.footerLink}>
+          <Link to="/register" className="footerLink">
             {t('auth.signUp')}
           </Link>
         </div>

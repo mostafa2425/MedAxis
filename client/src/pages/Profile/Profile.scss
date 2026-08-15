@@ -1,0 +1,50 @@
+.profile-page {
+  &.page {
+    display: flex;
+    flex-direction: column;
+    gap: $space-4;
+  }
+}
+
+.loadingContainer {
+  display: flex;
+  justify-content: center;
+  padding: $space-16 0;
+}
+
+.profileCard {
+  max-width: 640px;
+  border-radius: $radius-lg;
+
+  @include dark {
+    background: $dark-surface;
+    border-color: $dark-border;
+  }
+}
+
+.profileSectionTitle {
+  margin: 0 0 $space-3;
+  font-size: $font-body-lg;
+  font-weight: $font-semibold;
+  color: $text-primary;
+
+  @include dark {
+    color: $dark-text-primary;
+  }
+}
+
+.profileTags {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: $space-1;
+  margin-bottom: $space-4;
+}
+
+.profileTagLabel {
+  width: 100%;
+  margin-bottom: 2px;
+  font-size: $font-caption;
+  font-weight: $font-medium;
+  color: $text-muted;
+}

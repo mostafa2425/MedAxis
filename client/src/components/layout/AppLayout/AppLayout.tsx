@@ -1,15 +1,26 @@
-import { useState, useCallback } from 'react';
-import { Outlet } from 'react-router-dom';
+import { useState, useCallback, useEffect } from 'react';
+import { Outlet, useLocation } from 'react-router-dom';
 import { useAppStore } from '@/stores/app.store';
 import Sidebar from '../Sidebar/Sidebar';
 import Header from '../Header/Header';
-import styles from './AppLayout.module.scss';
+import BottomNav from '../BottomNav/BottomNav';
+import './AppLayout.scss';
+
+/** Routes where sticky form actions replace bottom-nav-adjacent chrome padding. */
+function isWizardRoute(pathname: string): boolean {
+  return (
+    pathname === '/patients/new' ||
+    pathname === '/operations/new' ||
+    /^\/operations\/[^/]+\/edit$/.test(pathname)
+  );
+}
 
 export default function AppLayout() {
   const collapsed = useAppStore((s) => s.sidebarCollapsed);
   const darkMode = useAppStore((s) => s.darkMode);
   const direction = useAppStore((s) => s.direction);
   const toggleSidebar = useAppStore((s) => s.toggleSidebar);
+  const location = useLocation();
 
   const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -25,26 +36,44 @@ export default function AppLayout() {
     }
   }, [toggleSidebar]);
 
+  const handleMoreClick = useCallback(() => {
+    setMobileOpen(true);
+  }, []);
+
+  // Always keep the mobile drawer closed when the route changes
+  useEffect(() => {
+    setMobileOpen(false);
+  }, [location.pathname]);
+
+  // Close the drawer if the viewport grows past mobile
+  useEffect(() => {
+    const onResize = () => {
+      if (window.innerWidth >= 768) {
+        setMobileOpen((open) => (open ? false : open));
+      }
+    };
+    window.addEventListener('resize', onResize);
+    return () => window.removeEventListener('resize', onResize);
+  }, []);
+
+  const wizardMode = isWizardRoute(location.pathname);
+
   return (
     <div
-      className={`${styles.layout} ${darkMode ? styles.dark : ''}`}
+      className={`app-layout layout ${darkMode ? 'dark' : ''} ${wizardMode ? 'wizardMode' : ''}`}
       dir={direction}
     >
-      {/* ─── Sidebar ──────────────────────────────── */}
       <Sidebar mobileOpen={mobileOpen} onMobileClose={handleMobileClose} />
 
-      {/* ─── Main Area ────────────────────────────── */}
-      <div
-        className={`${styles.mainArea} ${collapsed ? styles.mainAreaCollapsed : ''}`}
-      >
-        {/* ─── Header ─────────────────────────────── */}
+      <div className={`mainArea ${collapsed ? 'mainAreaCollapsed' : ''}`}>
         <Header onMenuClick={handleMenuClick} />
 
-        {/* ─── Page Content ───────────────────────── */}
-        <main className={styles.content}>
+        <main className="content">
           <Outlet />
         </main>
       </div>
+
+      <BottomNav onMoreClick={handleMoreClick} />
     </div>
   );
 }

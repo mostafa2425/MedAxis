@@ -22,11 +22,12 @@ interface SearchResultOperation {
 interface SearchResultDoctor {
   id: string;
   name: string;
-  mobile: string;
-  specialty?: {
+  phone: string | null;
+  specialties?: {
     id: string;
     name: string;
-  };
+    nameAr?: string | null;
+  }[];
 }
 
 interface SearchResultHospital {

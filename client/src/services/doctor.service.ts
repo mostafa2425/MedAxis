@@ -29,8 +29,6 @@ export const doctorService = {
   },
 
   getActive() {
-    return api.get<ApiResponse<Doctor[]>>('/doctors', {
-      params: { isActive: true, limit: 100 },
-    });
+    return api.get<ApiResponse<Doctor[]>>('/doctors/active');
   },
 };

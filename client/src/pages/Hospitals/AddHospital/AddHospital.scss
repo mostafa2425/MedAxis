@@ -1,0 +1,25 @@
+.addHospitalModal {
+  .ant-modal-header {
+    margin-bottom: $space-2;
+  }
+}
+
+.addHospitalForm {
+  margin-top: $space-2;
+}
+
+.addHospitalFormActions {
+  margin-bottom: 0;
+  margin-top: $space-2;
+  text-align: right;
+  padding-top: $space-3;
+  border-top: 1px solid $border;
+
+  @include rtl {
+    text-align: left;
+  }
+
+  @include dark {
+    border-top-color: $dark-border;
+  }
+}

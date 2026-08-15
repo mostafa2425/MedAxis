@@ -1,11 +1,37 @@
 import dayjs from 'dayjs';
 import { OperationStatus, PaymentStatus } from '@/types';
 
-// ──────────────────────────────────────────────
-// Format currency (SAR)
-// ──────────────────────────────────────────────
-export function formatCurrency(amount: number): string {
-  return `${amount.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 2 })} SAR`;
+export function formatCurrency(amount: number, currency = 'EGP'): string {
+  const formatted = Number(amount || 0).toLocaleString('en-US', {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 2,
+  });
+  return `${formatted} ${currency}`;
+}
+
+export function resolveMediaUrl(url?: string | null, filePath?: string | null): string {
+  const raw = url || filePath || '';
+  if (!raw) return '';
+  if (/^https?:\/\//i.test(raw)) return raw;
+  const apiBase = import.meta.env.VITE_API_URL || '';
+  const origin = String(apiBase).replace(/\/api\/?$/, '');
+  const normalized = raw.replace(/\\/g, '/');
+  const path = normalized.startsWith('/') ? normalized : `/${normalized}`;
+  return `${origin}${path}`;
+}
+
+export function isBeforeFileType(fileType: string): boolean {
+  return fileType.startsWith('BEFORE_');
+}
+
+export function isAfterFileType(fileType: string): boolean {
+  return fileType.startsWith('AFTER_');
+}
+
+export function resolvePaidAmount(total: number, paid: number, status: PaymentStatus): number {
+  if (status === PaymentStatus.Paid) return Math.max(0, total);
+  if (status === PaymentStatus.Unpaid) return 0;
+  return Math.min(Math.max(0, paid), Math.max(0, total));
 }
 
 // ──────────────────────────────────────────────
@@ -61,6 +87,13 @@ export function getInitials(name: string): string {
     return parts[0].charAt(0).toUpperCase();
   }
   return (parts[0].charAt(0) + parts[parts.length - 1].charAt(0)).toUpperCase();
+}
+
+export function getSpecialtyLabel(
+  specialty: { name: string; nameAr?: string | null },
+  language: string,
+): string {
+  return language.startsWith('ar') && specialty.nameAr ? specialty.nameAr : specialty.name;
 }
 
 // ──────────────────────────────────────────────

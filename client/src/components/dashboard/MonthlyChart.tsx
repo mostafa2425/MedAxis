@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Spin, Tooltip } from 'antd';
 import { dashboardService } from '@/services/dashboard.service';
 import type { MonthlyTrend } from '@/types';
-import styles from './MonthlyChart.module.scss';
+import './MonthlyChart.scss';
 
 // ─── Format month string to short name ───────────────
 function formatMonth(monthStr: string): string {
@@ -32,7 +32,7 @@ function Bar({
   return (
     <Tooltip title={`${label}: ${value}`} placement="top">
       <div
-        className={`${styles.bar} ${colorClass}`}
+        className={`bar ${colorClass}`}
         style={{ height: `${heightPercent}%` }}
         data-value={value}
       />
@@ -49,9 +49,9 @@ function YAxis({ max }: { max: number }) {
   }
 
   return (
-    <div className={styles.yAxis}>
+    <div className="yAxis">
       {labels.map((val, idx) => (
-        <span key={idx} className={styles.yAxisLabel}>
+        <span key={idx} className="yAxisLabel">
           {val}
         </span>
       ))}
@@ -82,13 +82,13 @@ export default function MonthlyChart() {
 
   if (isLoading) {
     return (
-      <div className={styles.section}>
-        <div className={styles.sectionHeader}>
-          <h3 className={styles.sectionTitle}>
+      <div className="monthly-chart section">
+        <div className="sectionHeader">
+          <h3 className="sectionTitle">
             {t('dashboard.monthlyTrends')}
           </h3>
         </div>
-        <div className={styles.loadingWrapper}>
+        <div className="loadingWrapper">
           <Spin />
         </div>
       </div>
@@ -97,43 +97,43 @@ export default function MonthlyChart() {
 
   if (last6.length === 0) {
     return (
-      <div className={styles.section}>
-        <div className={styles.sectionHeader}>
-          <h3 className={styles.sectionTitle}>
+      <div className="monthly-chart section">
+        <div className="sectionHeader">
+          <h3 className="sectionTitle">
             {t('dashboard.monthlyTrends')}
           </h3>
         </div>
-        <div className={styles.emptyWrapper}>
-          <span className={styles.emptyText}>{t('common.noData')}</span>
+        <div className="emptyWrapper">
+          <span className="emptyText">{t('common.noData')}</span>
         </div>
       </div>
     );
   }
 
   return (
-    <div className={styles.section}>
-      <div className={styles.sectionHeader}>
-        <h3 className={styles.sectionTitle}>
+    <div className="monthly-chart section">
+      <div className="sectionHeader">
+        <h3 className="sectionTitle">
           {t('dashboard.monthlyTrends')}
         </h3>
-        <div className={styles.legend}>
-          <span className={styles.legendItem}>
+        <div className="legend">
+          <span className="legendItem">
             <span
-              className={styles.legendDot}
+              className="legendDot"
               style={{ background: '#2563EB' }}
             />
             {t('common.total')}
           </span>
-          <span className={styles.legendItem}>
+          <span className="legendItem">
             <span
-              className={styles.legendDot}
+              className="legendDot"
               style={{ background: '#16A34A' }}
             />
             {t('dashboard.completed')}
           </span>
-          <span className={styles.legendItem}>
+          <span className="legendItem">
             <span
-              className={styles.legendDot}
+              className="legendDot"
               style={{ background: '#DC2626' }}
             />
             {t('operations.cancelled')}
@@ -141,21 +141,21 @@ export default function MonthlyChart() {
         </div>
       </div>
 
-      <div className={styles.chartBody}>
-        <div className={styles.chartRow}>
+      <div className="chartBody">
+        <div className="chartRow">
           <YAxis max={niceMax} />
-          <div className={styles.chartContainer}>
+          <div className="chartContainer">
             {last6.map((month: MonthlyTrend) => (
-              <div key={month.month} className={styles.barGroup}>
-                <div className={styles.barsWrapper}>
+              <div key={month.month} className="barGroup">
+                <div className="barsWrapper">
                   <Bar
                     value={month.total}
                     max={niceMax}
-                    colorClass={styles.barTotal}
+                    colorClass={'barTotal'}
                     label={`${formatMonth(month.month)} ${t('common.total').toLowerCase()}`}
                   />
                 </div>
-                <span className={styles.monthLabel}>
+                <span className="monthLabel">
                   {formatMonth(month.month)}
                 </span>
               </div>

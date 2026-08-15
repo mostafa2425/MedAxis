@@ -4,14 +4,10 @@ import { Spin } from 'antd';
 import { dashboardService } from '@/services/dashboard.service';
 import { OPERATION_STATUSES } from '@/utils/constants';
 import { OperationStatus } from '@/types';
-import styles from './StatusOverview.module.scss';
+import './StatusOverview.scss';
 
-// ─── Simple CSS Donut ──────────────────────────────
-function DonutChart({ segments }: { segments: { color: string; percent: number }[] }) {
-  const total = segments.reduce((acc, s) => acc + s.percent, 0);
+function DonutChart({ segments, total }: { segments: { color: string; percent: number }[]; total: number }) {
   if (total === 0) return null;
-
-  // Build conic-gradient string
   let cumulative = 0;
   const gradientStops = segments.map((seg) => {
     const start = cumulative;
@@ -19,22 +15,18 @@ function DonutChart({ segments }: { segments: { color: string; percent: number }
     return `${seg.color} ${start}% ${cumulative}%`;
   });
 
-  const conicGradient = `conic-gradient(${gradientStops.join(', ')})`;
-  const totalCount = segments.reduce((acc) => acc, 0);
-
   return (
-    <div className={styles.donutWrapper}>
-      <div className={styles.donutChart}>
+    <div className="donutWrapper">
+      <div className="donutChart">
         <div
           style={{
             width: '100%',
             height: '100%',
             borderRadius: '50%',
-            background: conicGradient,
+            background: `conic-gradient(${gradientStops.join(', ')})`,
             position: 'relative',
           }}
         >
-          {/* Inner cutout */}
           <div
             style={{
               position: 'absolute',
@@ -48,16 +40,14 @@ function DonutChart({ segments }: { segments: { color: string; percent: number }
             }}
           />
         </div>
-        <div className={styles.donutCenter}>
-          <span className={styles.donutTotal}>{totalCount}</span>
-          <span className={styles.donutLabel}>Total</span>
+        <div className="donutCenter">
+          <span className="donutTotal">{total}</span>
         </div>
       </div>
     </div>
   );
 }
 
-// ─── Status Overview Component ────────────────────
 export default function StatusOverview() {
   const { t } = useTranslation();
 
@@ -67,26 +57,29 @@ export default function StatusOverview() {
     select: (res) => res.data.data,
   });
 
-  // Compute status breakdown from stats
-  // Since the API only returns aggregate stats, we derive a plausible
-  // distribution. In production the API would return per-status counts.
-  const statusBreakdown = getStatusBreakdown(stats);
-  const totalOps = statusBreakdown.reduce((acc, s) => acc + s.count, 0);
-
   if (isLoading) {
     return (
-      <div className={styles.section}>
-        <div className={styles.sectionHeader}>
-          <h3 className={styles.sectionTitle}>
-            {t('dashboard.operationsOverview')}
-          </h3>
+      <div className="status-overview section">
+        <div className="sectionHeader">
+          <h3 className="sectionTitle">{t('dashboard.operationsOverview')}</h3>
         </div>
-        <div className={styles.loadingWrapper}>
+        <div className="loadingWrapper">
           <Spin />
         </div>
       </div>
     );
   }
+
+  const breakdown = stats?.statusBreakdown ?? {};
+  const statusBreakdown = OPERATION_STATUSES.filter((item) =>
+    Object.values(OperationStatus).includes(item.value),
+  ).map((item) => ({
+    status: item.value,
+    label: item.label,
+    color: item.color,
+    count: breakdown[item.value] ?? 0,
+  }));
+  const totalOps = statusBreakdown.reduce((sum, item) => sum + item.count, 0);
 
   const donutSegments = statusBreakdown
     .filter((s) => s.count > 0)
@@ -96,36 +89,24 @@ export default function StatusOverview() {
     }));
 
   return (
-    <div className={styles.section}>
-      <div className={styles.sectionHeader}>
-        <h3 className={styles.sectionTitle}>
-          {t('dashboard.operationsOverview')}
-        </h3>
+    <div className="status-overview section">
+      <div className="sectionHeader">
+        <h3 className="sectionTitle">{t('dashboard.operationsOverview')}</h3>
       </div>
-
       {totalOps === 0 ? (
-        <div className={styles.emptyWrapper}>
-          <span className={styles.emptyText}>{t('common.noData')}</span>
+        <div className="emptyWrapper">
+          <span className="emptyText">{t('common.noData')}</span>
         </div>
       ) : (
         <>
-          <DonutChart segments={donutSegments} />
-          <div className={styles.statusGrid}>
+          <DonutChart segments={donutSegments} total={totalOps} />
+          <div className="statusGrid">
             {statusBreakdown.map((item) => (
-              <div
-                key={item.status}
-                className={styles.statusCard}
-                style={{
-                  backgroundColor: `${item.color}0A`,
-                }}
-              >
-                <span
-                  className={styles.statusDot}
-                  style={{ backgroundColor: item.color }}
-                />
-                <div className={styles.statusInfo}>
-                  <span className={styles.statusLabel}>{item.label}</span>
-                  <span className={styles.statusCount}>{item.count}</span>
+              <div key={item.status} className="statusCard" style={{ backgroundColor: `${item.color}0A` }}>
+                <span className="statusDot" style={{ backgroundColor: item.color }} />
+                <div className="statusInfo">
+                  <span className="statusLabel">{item.label}</span>
+                  <span className="statusCount">{item.count}</span>
                 </div>
               </div>
             ))}
@@ -134,64 +115,4 @@ export default function StatusOverview() {
       )}
     </div>
   );
-}
-
-// ─── Helpers ───────────────────────────────────────
-interface StatusBreakdownItem {
-  status: OperationStatus;
-  label: string;
-  color: string;
-  count: number;
-}
-
-function getStatusBreakdown(
-  stats?: {
-    totalOperations: number;
-    completedOperations: number;
-    upcomingOperations: number;
-    operationsThisMonth: number;
-  },
-): StatusBreakdownItem[] {
-  if (!stats || stats.totalOperations === 0) {
-    return OPERATION_STATUSES.map((s) => ({
-      status: s.value,
-      label: s.label,
-      color: s.color,
-      count: 0,
-    }));
-  }
-
-  const total = stats.totalOperations;
-  const completed = stats.completedOperations;
-  const upcoming = stats.upcomingOperations;
-
-  // Distribute remaining among other statuses proportionally
-  const remaining = total - completed - upcoming;
-  const otherStatuses = OPERATION_STATUSES.filter(
-    (s) =>
-      s.value !== OperationStatus.Completed &&
-      s.value !== OperationStatus.Scheduled,
-  );
-
-  const perOther =
-    remaining > 0 && otherStatuses.length > 0
-      ? Math.floor(remaining / otherStatuses.length)
-      : 0;
-
-  return OPERATION_STATUSES.map((s) => {
-    let count = 0;
-    if (s.value === OperationStatus.Completed) {
-      count = completed;
-    } else if (s.value === OperationStatus.Scheduled) {
-      count = upcoming;
-    } else {
-      count = perOther;
-    }
-    return {
-      status: s.value,
-      label: s.label,
-      color: s.color,
-      count: Math.max(0, count),
-    };
-  });
 }

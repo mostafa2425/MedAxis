@@ -1,0 +1,367 @@
+.patient-detail-page {
+// ═══════════════════════════════════════════════════════
+// Patient Detail Page – SCSS Module
+// ═══════════════════════════════════════════════════════
+
+// ─── Page Wrapper ────────────────────────────────
+&.page {
+  display: flex;
+  flex-direction: column;
+  gap: $space-4;
+  animation: fadeIn 0.3s ease;
+
+  @include responsive('md') {
+    gap: $space-3;
+  }
+}
+
+
+
+// ─── Page Header ─────────────────────────────────
+.pageHeader {
+  @include flex-between;
+  flex-wrap: wrap;
+  gap: $space-3;
+
+  @include responsive('sm') {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: $space-1;
+  }
+}
+
+.headerLeft {
+  display: flex;
+  flex-direction: column;
+  gap: $space-2;
+}
+
+.backButton {
+  display: inline-flex;
+  align-items: center;
+  gap: $space-1;
+  width: fit-content;
+  color: $text-secondary;
+  font-size: $font-body-sm;
+  padding: 0;
+
+  @include dark {
+    color: $dark-text-secondary;
+  }
+
+  &:hover {
+    color: $primary;
+  }
+}
+
+.pageTitle {
+  @include page-title;
+}
+
+// ─── Patient Info Card ───────────────────────────
+.patientInfoCard {
+  @include card-base;
+  padding: $space-3;
+
+  @include up('md') {
+    padding: $space-4;
+  }
+
+  @include dark {
+    background: $dark-surface-elevated;
+    border-color: $dark-border;
+  }
+}
+
+.infoCardHeader {
+  display: flex;
+  align-items: center;
+  gap: $space-5;
+
+  @include responsive('sm') {
+    flex-direction: column;
+    text-align: center;
+    gap: $space-3;
+  }
+}
+
+.patientAvatar {
+  flex-shrink: 0;
+  font-size: $font-h4;
+  font-weight: $font-bold;
+}
+
+.patientAvatarMale {
+  background: rgba(37, 99, 235, 0.1) !important;
+  color: $primary !important;
+}
+
+.patientAvatarFemale {
+  background: rgba(236, 72, 153, 0.1) !important;
+  color: #ec4899 !important;
+}
+
+.infoCardTitleSection {
+  display: flex;
+  flex-direction: column;
+  gap: $space-2;
+  min-width: 0;
+}
+
+.infoCardName {
+  font-size: $font-h4;
+  font-weight: $font-bold;
+  color: $text-primary;
+  @include truncate;
+
+  @include dark {
+    color: $dark-text-primary;
+  }
+
+  @include responsive('sm') {
+    font-size: $font-h5;
+    text-align: center;
+  }
+}
+
+.infoCardBadges {
+  display: flex;
+  align-items: center;
+  gap: $space-2;
+  flex-wrap: wrap;
+
+  @include responsive('sm') {
+    justify-content: center;
+  }
+}
+
+.genderBadge {
+ border-radius: $radius-full;
+  font-size: $font-caption;
+  font-weight: $font-medium;
+  border: 1px solid;
+  line-height: 1;
+}
+
+.ageBadge {
+  border-radius: $radius-full;
+  font-size: $font-caption;
+  font-weight: $font-medium;
+  color: $text-secondary;
+  background: rgba($text-muted, 0.1);
+  border-color: rgba($text-muted, 0.2);
+  line-height: 1;
+
+  @include dark {
+    color: $dark-text-secondary;
+    background: rgba($dark-text-muted, 0.15);
+    border-color: rgba($dark-text-muted, 0.25);
+  }
+}
+
+.infoCardDivider {
+  margin: $space-4 0;
+  border-color: $border;
+
+  @include dark {
+    border-color: $dark-border;
+  }
+}
+
+// ─── Info Grid ────────────────────────────────────
+.infoGrid {
+  display: flex;
+  flex-direction: column;
+  gap: $space-4;
+
+  @include responsive('sm') {
+    gap: $space-3;
+  }
+}
+
+.infoRow {
+  display: flex;
+  align-items: flex-start;
+  gap: $space-3;
+}
+
+.infoRowIcon {
+  @include flex-center;
+  width: 32px;
+  height: 32px;
+  border-radius: $radius-md;
+  background: $primary-light;
+  color: $primary;
+  font-size: 16px;
+  flex-shrink: 0;
+
+  @include dark {
+    background: $dark-primary-light;
+    color: color.adjust($primary, $lightness: 15%);
+  }
+}
+
+.infoRowContent {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.infoRowLabel {
+  font-size: $font-caption;
+  font-weight: $font-medium;
+  color: $text-muted;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+
+  @include dark {
+    color: $dark-text-muted;
+  }
+}
+
+.infoRowValue {
+  font-size: $font-body-sm;
+  color: $text-primary;
+  word-break: break-word;
+
+  @include dark {
+    color: $dark-text-primary;
+  }
+}
+
+.notesText {
+  white-space: pre-wrap;
+  line-height: $line-height-relaxed;
+}
+
+// ─── Operations Section ──────────────────────────
+.operationsSection {
+  display: flex;
+  flex-direction: column;
+  gap: $space-3;
+}
+
+.sectionTitle {
+  font-size: $font-h5;
+  font-weight: $font-bold;
+  color: $text-primary;
+
+  @include dark {
+    color: $dark-text-primary;
+  }
+}
+
+.operationsEmpty {
+  @include card-base;
+  @include flex-center;
+  flex-direction: column;
+  padding: $space-8 $space-4;
+
+  @include dark {
+    background: $dark-surface-elevated;
+    border-color: $dark-border;
+  }
+}
+
+// ─── Operations Grid ─────────────────────────────
+.operationsGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: $space-3;
+
+  @include up('lg') {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+// ─── Operation Card ─────────────────────────────
+.operationCard {
+  @include card-base;
+  padding: $space-3;
+  cursor: pointer;
+  transition: box-shadow $transition-fast, transform $transition-fast;
+
+  &:hover {
+    box-shadow: $shadow-md;
+    transform: translateY(-1px);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+
+  @include dark {
+    background: $dark-surface-elevated;
+    border-color: $dark-border;
+  }
+}
+
+.operationCardHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: $space-2;
+  margin-bottom: $space-3;
+}
+
+.operationName {
+  font-size: $font-body;
+  font-weight: $font-semibold;
+  color: $text-primary;
+  @include truncate;
+  flex: 1;
+
+  @include dark {
+    color: $dark-text-primary;
+  }
+}
+
+.statusTag {
+  border-radius: $radius-full;
+  font-size: $font-caption;
+  font-weight: $font-medium;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.operationCardBody {
+  display: flex;
+  align-items: center;
+  gap: $space-4;
+  flex-wrap: wrap;
+}
+
+.operationMetaItem {
+  display: inline-flex;
+  align-items: center;
+  gap: $space-1;
+  font-size: $font-caption;
+  color: $text-secondary;
+
+  @include dark {
+    color: $dark-text-secondary;
+  }
+}
+
+.operationMetaIcon {
+  font-size: $font-caption;
+  color: $text-muted;
+}
+
+// ─── Empty State ─────────────────────────────────
+.emptyState {
+  padding: $space-8 $space-4;
+}
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

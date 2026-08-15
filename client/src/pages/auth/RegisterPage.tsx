@@ -1,215 +1,191 @@
-import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { useForm, Controller } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import { Input, Button, Typography, message } from 'antd';
+import { Form, Input, Button, Typography, message } from 'antd';
 import { MailOutlined, LockOutlined, MedicineBoxOutlined, UserOutlined } from '@ant-design/icons';
+import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { authService } from '@/services/auth.service';
+import { specialtyService } from '@/services/specialty.service';
 import { useAuth } from '@/hooks/useAuth';
-import styles from './RegisterPage.module.scss';
+import {
+  parseApiValidationErrors,
+  applyValidationErrorsToAntdForm,
+} from '@/utils/apiValidationErrors';
+import SpecialtyFields from '@/components/SpecialtyFields/SpecialtyFields';
+import type { Specialty } from '@/types';
+import './RegisterPage.scss';
 
 const { Text } = Typography;
+
+interface RegisterFormValues {
+  fullName: string;
+  email: string;
+  password: string;
+  confirmPassword: string;
+  specialtyIds: string[];
+  subspecialtyIds?: string[];
+}
 
 export default function RegisterPage() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { login } = useAuth();
-  const [loading, setLoading] = useState(false);
+  const [form] = Form.useForm<RegisterFormValues>();
+  const [messageApi, contextHolder] = message.useMessage();
 
-  const schema = z
-    .object({
-      fullName: z
-        .string()
-        .min(1, t('validation.required'))
-        .min(3, t('validation.minLength', { min: 3 }))
-        .max(100, t('validation.maxLength', { max: 100 })),
-      email: z
-        .string()
-        .min(1, t('validation.required'))
-        .email(t('validation.invalidEmail')),
-      password: z
-        .string()
-        .min(1, t('validation.required'))
-        .min(8, t('validation.minLength', { min: 8 })),
-      confirmPassword: z.string().min(1, t('validation.required')),
-    })
-    .refine((data) => data.password === data.confirmPassword, {
-      message: t('validation.passwordMismatch'),
-      path: ['confirmPassword'],
-    });
-
-  type RegisterFormValues = z.infer<typeof schema>;
-
-  const {
-    control,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<RegisterFormValues>({
-    resolver: zodResolver(schema),
-    defaultValues: {
-      fullName: '',
-      email: '',
-      password: '',
-      confirmPassword: '',
-    },
+  const { data: specialtiesData, isLoading: specialtiesLoading } = useQuery({
+    queryKey: ['specialties-public'],
+    queryFn: () => specialtyService.getAll({ limit: 100 }),
+    staleTime: 5 * 60 * 1000,
   });
 
-  const onSubmit = async (values: RegisterFormValues) => {
-    setLoading(true);
+  const specialties: Specialty[] = Array.isArray(specialtiesData?.data?.data)
+    ? specialtiesData.data.data
+    : [];
+
+  const onFinish = async (values: RegisterFormValues) => {
     try {
       const res = await authService.register({
-        name: values.fullName,
-        email: values.email,
+        name: values.fullName.trim(),
+        email: values.email.trim(),
         password: values.password,
+        specialtyIds: values.specialtyIds,
+        subspecialtyIds: values.subspecialtyIds ?? [],
       });
       login(res.data.data.token, res.data.data.user);
-      message.success(t('auth.registerSuccess'));
+      messageApi.success(t('auth.registerSuccess'));
       navigate('/', { replace: true });
     } catch (err: unknown) {
-      const error = err as { response?: { data?: { message?: string } } };
-      message.error(error.response?.data?.message || t('auth.registerFailed'));
-    } finally {
-      setLoading(false);
+      const issues = parseApiValidationErrors(err);
+      const applied = applyValidationErrorsToAntdForm(form, issues, t, {
+        aliases: { name: 'fullName' },
+        labelKeys: {
+          specialtyIds: 'auth.specialties',
+          subspecialtyIds: 'auth.areasOfExpertise',
+          fullName: 'auth.fullName',
+          email: 'auth.email',
+          password: 'auth.password',
+        },
+      });
+      messageApi.error(applied ? t('validation.fixHighlightedFields') : t('auth.registerFailed'));
     }
   };
 
   return (
-    <div className={styles.page}>
-      <div className={styles.card}>
-        {/* ─── Logo & Header ──────────────────────── */}
-        <div className={styles.cardHeader}>
-          <div className={styles.logoWrap}>
-            <div className={styles.logoIcon}>
+    <div className="register-page page">
+      {contextHolder}
+      <div className="card">
+        <div className="cardHeader">
+          <div className="logoWrap">
+            <div className="logoIcon">
               <MedicineBoxOutlined />
             </div>
           </div>
-          <h1 className={styles.title}>{t('auth.register')}</h1>
-          <Text className={styles.subtitle} type="secondary">
+          <h1 className="title">{t('auth.register')}</h1>
+          <Text className="subtitle" type="secondary">
             {t('auth.registerDescription')}
           </Text>
         </div>
 
-        {/* ─── Form ───────────────────────────────── */}
-        <form className={styles.form} onSubmit={handleSubmit(onSubmit)} noValidate>
-          {/* Full Name */}
-          <div className={styles.field}>
-            <label className={styles.label} htmlFor="register-name">
-              {t('auth.fullName')}
-            </label>
-            <Controller
-              name="fullName"
-              control={control}
-              render={({ field }) => (
-                <Input
-                  id="register-name"
-                  size="large"
-                  prefix={<UserOutlined className={styles.inputIcon} />}
-                  placeholder={t('auth.fullName')}
-                  status={errors.fullName ? 'error' : undefined}
-                  {...field}
-                />
-              )}
-            />
-            {errors.fullName && (
-              <span className={styles.error}>{errors.fullName.message}</span>
-            )}
-          </div>
-
-          {/* Email */}
-          <div className={styles.field}>
-            <label className={styles.label} htmlFor="register-email">
-              {t('auth.email')}
-            </label>
-            <Controller
-              name="email"
-              control={control}
-              render={({ field }) => (
-                <Input
-                  id="register-email"
-                  size="large"
-                  prefix={<MailOutlined className={styles.inputIcon} />}
-                  placeholder={t('auth.email')}
-                  status={errors.email ? 'error' : undefined}
-                  {...field}
-                />
-              )}
-            />
-            {errors.email && (
-              <span className={styles.error}>{errors.email.message}</span>
-            )}
-          </div>
-
-          {/* Password */}
-          <div className={styles.field}>
-            <label className={styles.label} htmlFor="register-password">
-              {t('auth.password')}
-            </label>
-            <Controller
-              name="password"
-              control={control}
-              render={({ field }) => (
-                <Input.Password
-                  id="register-password"
-                  size="large"
-                  prefix={<LockOutlined className={styles.inputIcon} />}
-                  placeholder={t('auth.password')}
-                  status={errors.password ? 'error' : undefined}
-                  {...field}
-                />
-              )}
-            />
-            {errors.password && (
-              <span className={styles.error}>{errors.password.message}</span>
-            )}
-            <span className={styles.hint}>{t('auth.passwordRequirements')}</span>
-          </div>
-
-          {/* Confirm Password */}
-          <div className={styles.field}>
-            <label className={styles.label} htmlFor="register-confirm">
-              {t('auth.confirmPassword')}
-            </label>
-            <Controller
-              name="confirmPassword"
-              control={control}
-              render={({ field }) => (
-                <Input.Password
-                  id="register-confirm"
-                  size="large"
-                  prefix={<LockOutlined className={styles.inputIcon} />}
-                  placeholder={t('auth.confirmPassword')}
-                  status={errors.confirmPassword ? 'error' : undefined}
-                  {...field}
-                />
-              )}
-            />
-            {errors.confirmPassword && (
-              <span className={styles.error}>{errors.confirmPassword.message}</span>
-            )}
-          </div>
-
-          {/* Terms */}
-          <p className={styles.terms}>{t('auth.termsAgreement')}</p>
-
-          {/* Submit Button */}
-          <Button
-            type="primary"
-            htmlType="submit"
-            loading={loading}
-            size="large"
-            block
-            className={styles.submitBtn}
+        <Form
+          form={form}
+          layout="vertical"
+          className="form"
+          onFinish={onFinish}
+          requiredMark
+        >
+          <Form.Item
+            name="fullName"
+            label={t('auth.fullName')}
+            rules={[
+              { required: true, message: t('validation.required') },
+              { min: 3, message: t('validation.minLength', { min: 3 }) },
+              { max: 100, message: t('validation.maxLength', { max: 100 }) },
+            ]}
           >
-            {t('auth.registerButton')}
-          </Button>
-        </form>
+            <Input
+              size="large"
+              prefix={<UserOutlined className="inputIcon" />}
+              placeholder={t('auth.fullName')}
+            />
+          </Form.Item>
 
-        {/* ─── Footer Link ─────────────────────────── */}
-        <div className={styles.footer}>
+          <Form.Item
+            name="email"
+            label={t('auth.email')}
+            rules={[
+              { required: true, message: t('validation.required') },
+              { type: 'email', message: t('validation.invalidEmail') },
+            ]}
+          >
+            <Input
+              size="large"
+              prefix={<MailOutlined className="inputIcon" />}
+              placeholder={t('auth.email')}
+              inputMode="email"
+            />
+          </Form.Item>
+
+          <Form.Item
+            name="password"
+            label={t('auth.password')}
+            extra={t('auth.passwordRequirements')}
+            rules={[
+              { required: true, message: t('validation.required') },
+              { min: 8, message: t('validation.minLength', { min: 8 }) },
+            ]}
+          >
+            <Input.Password
+              size="large"
+              prefix={<LockOutlined className="inputIcon" />}
+              placeholder={t('auth.password')}
+            />
+          </Form.Item>
+
+          <Form.Item
+            name="confirmPassword"
+            label={t('auth.confirmPassword')}
+            dependencies={['password']}
+            rules={[
+              { required: true, message: t('validation.required') },
+              ({ getFieldValue }) => ({
+                validator(_, value) {
+                  if (!value || getFieldValue('password') === value) {
+                    return Promise.resolve();
+                  }
+                  return Promise.reject(new Error(t('validation.passwordMismatch')));
+                },
+              }),
+            ]}
+          >
+            <Input.Password
+              size="large"
+              prefix={<LockOutlined className="inputIcon" />}
+              placeholder={t('auth.confirmPassword')}
+            />
+          </Form.Item>
+
+          <div className="sectionHeading">{t('auth.professionalInformation')}</div>
+
+          <SpecialtyFields specialties={specialties} loading={specialtiesLoading} />
+
+          <p className="terms">{t('auth.termsAgreement')}</p>
+
+          <Form.Item className="submitItem">
+            <Button
+              type="primary"
+              htmlType="submit"
+              size="large"
+              block
+              className="submitBtn"
+            >
+              {t('auth.registerButton')}
+            </Button>
+          </Form.Item>
+        </Form>
+
+        <div className="footer">
           <Text type="secondary">{t('auth.hasAccount')}</Text>
-          <Link to="/login" className={styles.footerLink}>
+          <Link to="/login" className="footerLink">
             {t('auth.signIn')}
           </Link>
         </div>

@@ -41,7 +41,7 @@ npm install
 npm run dev
 ```
 
-Frontend runs on http://localhost:3000
+Frontend runs on http://localhost:3005
 
 ### Demo Credentials
 - **Email:** demo@medaxis.com

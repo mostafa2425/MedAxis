@@ -37,7 +37,7 @@ class ExportService {
 
     const rows = operations.map((op) => [
       this.escapeCsv(op.name),
-      this.escapeCsv(op.diagnosis),
+      this.escapeCsv(op.diagnosis ?? ''),
       op.operationDate?.toISOString().split('T')[0] || '',
       op.operationTime || '',
       op.duration?.toString() || '',

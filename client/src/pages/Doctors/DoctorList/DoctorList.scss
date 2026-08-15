@@ -1,0 +1,38 @@
+.doctorList {
+  display: flex;
+  flex-direction: column;
+  gap: $space-4;
+  min-width: 0;
+}
+
+.doctorListGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: $space-3;
+  min-width: 0;
+
+  @include up('md') {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  @include up('lg') {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: $space-4;
+  }
+}
+
+.doctorListSkeleton {
+  border-radius: $radius-lg;
+  min-height: 180px;
+
+  @include dark {
+    background: $dark-surface;
+    border-color: $dark-border;
+  }
+}
+
+.doctorListPagination {
+  display: flex;
+  justify-content: center;
+  padding-top: $space-1;
+}

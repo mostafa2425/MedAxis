@@ -1,0 +1,111 @@
+.wizardActions {
+  position: fixed;
+  bottom: $mobile-sticky-offset;
+  inset-inline: 0;
+  z-index: $z-sticky;
+  padding: $space-3;
+  background: rgba($surface, 0.92);
+  backdrop-filter: blur(10px);
+  border-top: 1px solid $border;
+  box-shadow: 0 -8px 24px rgba(15, 23, 42, 0.06);
+
+  @include dark {
+    background: rgba($dark-surface, 0.92);
+    border-top-color: $dark-border;
+    box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.28);
+  }
+
+  @include up('md') {
+    position: static;
+    border-top: none;
+    box-shadow: none;
+    padding: $space-3 0 0;
+    background: transparent;
+    backdrop-filter: none;
+  }
+
+  &--patient {
+    padding-bottom: calc(#{$space-3} + #{$safe-area-bottom});
+
+    @include up('md') {
+      padding-bottom: $space-3;
+    }
+  }
+}
+
+.wizardActionsInner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: $space-3;
+  max-width: 100%;
+}
+
+.wizardActionsStart,
+.wizardActionsEnd {
+  display: flex;
+  align-items: center;
+  gap: $space-2;
+  flex-wrap: wrap;
+}
+
+.wizardActionsEnd {
+  margin-inline-start: auto;
+
+  &--full {
+    width: 100%;
+    margin-inline-start: 0;
+  }
+}
+
+.wizardActionsHint {
+  margin: $space-2 0 0;
+  text-align: center;
+  font-size: $font-caption;
+  color: $text-muted;
+}
+
+.backBtn {
+  min-width: 100px;
+
+  @include responsive('sm') {
+    min-width: 0;
+  }
+}
+
+.quickSaveBtn {
+  min-width: 120px;
+  border-color: $primary;
+  color: $primary;
+
+  &:hover {
+    border-color: $primary-hover;
+    color: $primary-hover;
+  }
+
+  @include responsive('sm') {
+    min-width: 0;
+  }
+}
+
+.nextBtn,
+.submitBtn {
+  min-width: 120px;
+
+  @include responsive('sm') {
+    min-width: 0;
+  }
+
+  &--full {
+    width: 100%;
+    min-width: 0;
+    height: 52px;
+    font-weight: $font-semibold;
+  }
+}
+
+.submitBtn {
+  font-weight: $font-semibold;
+  height: 44px;
+  min-width: 160px;
+}

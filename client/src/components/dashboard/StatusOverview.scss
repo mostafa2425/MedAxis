@@ -1,0 +1,177 @@
+.status-overview {
+// ═══════════════════════════════════════════════════════
+// Status Overview – SCSS Module
+// ═══════════════════════════════════════════════════════
+
+&.section {
+  @include card-base;
+  padding: 0;
+  overflow: hidden;
+
+  @include dark {
+    background: $dark-surface;
+    border-color: $dark-border;
+  }
+}
+
+.sectionHeader {
+  padding: $space-4;
+  border-bottom: 1px solid $border;
+
+  @include dark {
+    border-bottom-color: $dark-border;
+  }
+
+  @include responsive('md') {
+    padding: $space-3;
+  }
+}
+
+.sectionTitle {
+  font-size: $font-body-lg;
+  font-weight: $font-semibold;
+  color: $text-primary;
+  margin: 0;
+
+  @include dark {
+    color: $dark-text-primary;
+  }
+}
+
+// ─── Status Grid ────────────────────────────────
+.statusGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: $space-2;
+  padding: $space-4;
+
+  @include responsive('md') {
+    padding: $space-3;
+    gap: $space-2;
+  }
+
+  @include responsive('xs') {
+    grid-template-columns: 1fr;
+  }
+}
+
+.statusCard {
+  display: flex;
+  align-items: center;
+  gap: $space-2;
+  padding: $space-2 $space-3;
+  border-radius: $radius-md;
+  transition: transform $transition-fast, box-shadow $transition-fast;
+
+  &:hover {
+    transform: translateY(-1px);
+    box-shadow: $shadow-sm;
+  }
+}
+
+.statusDot {
+  width: 10px;
+  height: 10px;
+  border-radius: $radius-full;
+  flex-shrink: 0;
+}
+
+.statusInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.statusLabel {
+  font-size: $font-caption;
+  color: $text-secondary;
+  font-weight: $font-medium;
+  @include truncate;
+
+  @include dark {
+    color: $dark-text-secondary;
+  }
+}
+
+.statusCount {
+  font-size: $font-body;
+  font-weight: $font-bold;
+  color: $text-primary;
+  line-height: 1.2;
+
+  @include dark {
+    color: $dark-text-primary;
+  }
+}
+
+// ─── Donut Chart ────────────────────────────────
+.donutWrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: $space-4;
+  padding-top: $space-2;
+
+  @include responsive('md') {
+    padding: $space-3;
+    padding-top: $space-2;
+  }
+}
+
+.donutChart {
+  position: relative;
+  width: 140px;
+  height: 140px;
+}
+
+.donutCenter {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+}
+
+.donutTotal {
+  display: block;
+  font-size: $font-h5;
+  font-weight: $font-bold;
+  color: $text-primary;
+  line-height: 1;
+
+  @include dark {
+    color: $dark-text-primary;
+  }
+}
+
+.donutLabel {
+  display: block;
+  font-size: $font-caption;
+  color: $text-muted;
+  margin-top: 2px;
+}
+
+// ─── Loading ────────────────────────────────────
+.loadingWrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: $space-8 $space-4;
+}
+
+.emptyWrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: $space-8 $space-4;
+  gap: $space-3;
+  text-align: center;
+}
+
+.emptyText {
+  font-size: $font-body-sm;
+  color: $text-muted;
+}
+}

@@ -19,7 +19,7 @@
 | Layer          | Technology                                                                                     |
 | -------------- | ---------------------------------------------------------------------------------------------- |
 | **Frontend**   | React 19, TypeScript 6, Vite 8, Ant Design 6, React Router 7, React Query 5, Zustand 5, SCSS Modules, i18next, dayjs |
-| **Backend**    | Express 5, TypeScript 7, Prisma 7, JWT (jsonwebtoken + bcryptjs), Multer 2 |
+| **Backend**    | Express 5, TypeScript 7, Prisma 7, JWT (jsonwebtoken + bcryptjs), Multer 2, swagger-ui-express (OpenAPI 3.0) |
 | **Database**   | PostgreSQL 16 (via Docker Compose) |
 | **Validation** | Zod 4 (server), Zod 3 (client via `@hookform/resolvers/zod`)                                     |
 | **Dev Tools**  | tsx (watch mode), oxlint, sass                                                     |
@@ -203,24 +203,51 @@ medaxis/
 │       │   ├── PatientDetailPage.tsx       # Patient profile + operation history
 │       │   ├── PatientDetailPage.module.scss
 │       │   ├── Operations/
-│       │   │   ├── index.tsx                # Re-exports OperationsPage
+│       │   │   ├── index.tsx                # Operations list
+│       │   │   ├── Operations.scss
 │       │   │   ├── NewOperation.tsx         # Re-exports OperationFormPage
-│       │   │   ├── EditOperation.tsx        # Re-exports OperationFormPage (edit mode)
-│       │   │   └── OperationDetail.tsx      # Re-exports OperationDetailPage
-│       │   ├── OperationsPage.tsx          # Operations list with filters
-│       │   ├── OperationsPage.module.scss
-│       │   ├── OperationFormPage.tsx       # 6-STEP OPERATION WIZARD (key feature)
-│       │   ├── OperationFormPage.module.scss
-│       │   ├── OperationDetailPage.tsx     # Operation detail: status, team, cost, files, timeline
-│       │   ├── OperationDetailPage.module.scss
+│       │   │   ├── EditOperation.tsx        # Re-exports OperationFormPage
+│       │   │   ├── OperationDetail.tsx      # Operation detail page
+│       │   │   ├── OperationDetail.scss
+│       │   │   ├── OperationFormPage.tsx    # Re-exports OperationForm/
+│       │   │   └── OperationForm/           # 6-step wizard (isolated)
+│       │   │       ├── OperationFormPage.tsx
+│       │   │       ├── OperationForm.scss
+│       │   │       ├── wizardTypes.ts
+│       │   │       ├── wizardConstants.ts
+│       │   │       ├── wizardHelpers.ts
+│       │   │       ├── WizardNav/
+│       │   │       ├── WizardActions/
+│       │   │       ├── PatientStep/
+│       │   │       ├── OperationDetailsStep/
+│       │   │       ├── TeamStep/
+│       │   │       ├── CostStep/
+│       │   │       ├── FilesStep/
+│       │   │       └── ReviewStep/
 │       │   ├── Doctors/
-│       │   │   └── index.tsx                # Re-exports DoctorsPage
-│       │   ├── DoctorsPage.tsx             # Doctor list with search/filter
-│       │   ├── DoctorsPage.module.scss
+│       │   │   ├── index.tsx                # Doctors list / main screen
+│       │   │   ├── Doctors.scss             # Page-level layout styles
+│       │   │   ├── AddDoctor/
+│       │   │   │   ├── AddDoctor.tsx        # Add/edit doctor modal + form
+│       │   │   │   └── AddDoctor.scss
+│       │   │   ├── DoctorCard/
+│       │   │   │   ├── DoctorCard.tsx       # Mobile card (+ skeleton export)
+│       │   │   │   └── DoctorCard.scss
+│       │   │   └── DoctorRow/
+│       │   │       ├── DoctorRow.tsx        # Desktop row (+ skeleton export)
+│       │   │       └── DoctorRow.scss
 │       │   ├── Hospitals/
-│       │   │   └── index.tsx                # Re-exports HospitalsPage
-│       │   ├── HospitalsPage.tsx           # Hospital list with search/filter
-│       │   ├── HospitalsPage.module.scss
+│       │   │   ├── index.tsx                # Hospitals list / main screen
+│       │   │   ├── Hospitals.scss           # Page-level layout styles
+│       │   │   ├── AddHospital/
+│       │   │   │   ├── AddHospital.tsx      # Add/edit hospital modal + form
+│       │   │   │   └── AddHospital.scss
+│       │   │   ├── HospitalCard/
+│       │   │   │   ├── HospitalCard.tsx     # Mobile card (+ skeleton export)
+│       │   │   │   └── HospitalCard.scss
+│       │   │   └── HospitalRow/
+│       │   │       ├── HospitalRow.tsx      # Desktop row (+ skeleton export)
+│       │   │       └── HospitalRow.scss
 │       │   ├── Specialties/
 │       │   │   └── index.tsx                # Re-exports SpecialtiesPage
 │       │   ├── SpecialtiesPage.tsx         # Specialty management (admin-only CRUD)
@@ -245,12 +272,14 @@ medaxis/
 │           └── constants.ts          # OPERATION_STATUSES, PAYMENT_METHODS, PAYMENT_STATUSES, FILE_TYPES, GENDERS, ORTHOPEDIC_CATEGORIES, DEFAULT_PAGINATION
 │
 ├── server/                          # ══ EXPRESS BACKEND (Node.js) ══
-│   ├── package.json                 # Express 5, Prisma 7, bcryptjs, jsonwebtoken, multer, zod, tsx
+│   ├── package.json                 # Express 5, Prisma 7, bcryptjs, jsonwebtoken, multer, zod, swagger-ui-express, tsx
 │   ├── tsconfig.json                # TypeScript config (CommonJS)
 │   ├── prisma.config.ts             # Prisma config: reads DATABASE_URL from .env via dotenv, schema path
 │   ├── .env                         # Environment variables (DATABASE_URL, JWT_SECRET, etc.)
 │   └── src/
-│       ├── index.ts                 # Express app setup: CORS, JSON parsing, compression, morgan, static files, SPA fallback, listen on :5000
+│       ├── index.ts                 # Express app setup: Swagger UI, CORS, JSON parsing, compression, morgan, static files, listen on :5000
+│       ├── docs/
+│       │   └── swagger.ts            # OpenAPI 3.0 specification (Swagger UI at /api-docs) — documentation only
 │       │
 │       ├── routes/
 │       │   ├── index.ts              # Route aggregator: mounts all route groups under /api
@@ -556,6 +585,26 @@ Relations: belongs to Patient, Hospital, User (creator), Specialty (optional). H
 
 ## 5. API DOCUMENTATION
 
+### Swagger / OpenAPI
+
+| Field | Value |
+| ----- | ----- |
+| **UI URL** | `http://localhost:5000/api-docs` |
+| **Spec file** | `server/src/docs/swagger.ts` |
+| **Mount** | `server/src/index.ts` → `app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec))` |
+| **Standard** | OpenAPI 3.0 |
+| **Auth in UI** | JWT Bearer (`Authorize` with token from login/register) |
+
+**Rules for agents/developers:**
+- Swagger is **documentation only** — never change API behavior, routes, controllers, services, repositories, Prisma schema, or auth to “fit” docs.
+- Spec must mirror **real route definitions** only. Do not invent endpoints.
+- Keep the OpenAPI spec in `server/src/docs/swagger.ts`; keep `index.ts` limited to mounting Swagger UI.
+- When adding/changing an endpoint, update `swagger.ts` (paths, request bodies, query params, responses, security) to match Zod validators and middleware.
+- Document `authMiddleware` as Bearer JWT; document `requireRole('admin')` where used (specialty write ops).
+- Document multipart uploads accurately (`files` field, optional `fileType`).
+
+Interactive docs: open `/api-docs`, click **Authorize**, paste the JWT from `POST /api/auth/login`.
+
 ### Standard Response Format
 
 ```json
@@ -609,8 +658,8 @@ Relations: belongs to Patient, Hospital, User (creator), Specialty (optional). H
 | GET    | `/`         | Yes  | Query: `page, limit, search, specialtyId`          | Paginated `Doctor[]`                        |
 | GET    | `/active`   | Yes  | —                                                 | `Doctor[]` (active only, limit 100)          |
 | GET    | `/:id`      | Yes  | —                                                 | `Doctor` with specialties                    |
-| POST   | `/`         | Yes  | `{ name, mobile?, email?, specialtyId? }`          | `Doctor` (status 201)                       |
-| PUT    | `/:id`      | Yes  | Partial doctor fields                             | Updated `Doctor`                            |
+| POST   | `/`         | Yes  | `{ name, phone?, email?, specialtyIds?: string[] }` | `Doctor` with `specialties[]` (status 201) |
+| PUT    | `/:id`      | Yes  | Partial doctor fields (`phone`, `specialtyIds`)   | Updated `Doctor` with `specialties[]`       |
 | DELETE | `/:id`      | Yes  | —                                                 | `{ data: null }`                             |
 
 ### 5.5 Hospitals (`/api/hospitals`)
@@ -658,9 +707,11 @@ Relations: belongs to Patient, Hospital, User (creator), Specialty (optional). H
 
 ### 5.10 Health Check
 
-| Method | Path          | Auth | Response                           |
-| ------ | ------------- | ---- | ---------------------------------- |
-| GET    | `/api/health` | No   | `{ status: "ok", timestamp: "..." }` |
+| Method | Path       | Auth | Response                           |
+| ------ | ---------- | ---- | ---------------------------------- |
+| GET    | `/health`  | No   | `{ status: "ok", timestamp: "..." }` |
+
+> Also documented in Swagger UI. Note: health is mounted at `/health` (not under `/api`).
 
 ---
 
@@ -901,37 +952,38 @@ Dark mode is activated by adding class `dark` to `<html>`. Ant Design dark theme
 
 ## 8. KEY FEATURES
 
-### 8.1 6-Step Operation Wizard (`OperationFormPage.tsx`)
+### 8.1 6-Step Operation Wizard (`pages/Operations/OperationForm/`)
 
-The core feature of MedAxis. A multi-step wizard for creating operations in under 60 seconds:
+The core feature of MedAxis. A multi-step wizard for creating operations in under 60 seconds. Orchestration lives in `OperationForm/OperationFormPage.tsx`; each step, nav, and sticky actions are isolated named folders with co-located `.scss` (same pattern as Doctors/Hospitals).
 
-1. **Step 1 — Patient Information** (`UserOutlined` icon)
+1. **Step 1 — Patient Information** (`PatientStep/`)
    - Search existing patients via debounced autocomplete
    - Toggle to create new patient inline (name, age, gender, mobile)
    - Smart default: Gender = Male
 
-2. **Step 2 — Operation Details** (`MedicineBoxOutlined` icon)
+2. **Step 2 — Operation Details** (`OperationDetailsStep/`)
    - Operation name, diagnosis, hospital (select), specialty (select)
    - Date (DatePicker, default: today), time (TimePicker, default: now), room, duration
    - Smart defaults: Status = Completed, Date = Today, Time = Now, Hospital = Last Used
 
-3. **Step 3 — Medical Team** (`TeamOutlined` icon)
+3. **Step 3 — Medical Team** (`TeamStep/`)
    - Primary Surgeon (default: logged-in doctor), Assistant Surgeon
-   - Anesthesiologist, Assistant Anesthesia, Nurse (free text), Notes
+   - Anesthesiologist, Assistant Anesthesia, Nurse, Notes
 
-4. **Step 4 — Cost & Payment** (`DollarOutlined` icon)
-   - Total Cost, Paid Amount (auto-calculates remaining)
+4. **Step 4 — Cost & Payment** (`CostStep/`)
+   - Live cost summary strip (total / paid / remaining)
    - Payment Method (default: Cash), Payment Status (default: Paid), Payment Notes
 
-5. **Step 5 — Files & Media** (`CloudUploadOutlined` icon)
+5. **Step 5 — Files & Media** (`FilesStep/`)
    - Upload before/after operation files (images, X-rays, MRI, CT, PDF, DICOM)
    - Accepted: `.jpg,.jpeg,.png,.gif,.bmp,.webp,.pdf,.dicom,.avi,.mp4,.mov`
-   - Camera-first upload on mobile devices
-   - File preview, download, delete
+   - File preview, download, delete (requires save first)
 
-6. **Step 6 — Review & Submit** (`CheckCircleOutlined` icon)
-   - Summary of all entered data in a `Descriptions` component
+6. **Step 6 — Review & Submit** (`ReviewStep/`)
+   - Editable summary sections with jump-back to each step
    - Final validation before submission
+
+Chrome: `WizardNav/` (desktop steps + mobile progress) and `WizardActions/` (sticky mobile footer).
 
 ### 8.2 Quick Save
 
@@ -1278,6 +1330,7 @@ volumes:
 - [x] Dark mode & i18n (English/Arabic, RTL)
 - [x] Export operations (CSV/JSON)
 - [x] Hospital & specialty management
+- [x] Swagger / OpenAPI 3.0 docs (`/api-docs`, `server/src/docs/swagger.ts`)
 
 ### Phase 2 — Multi-Doctor & Clinic Management
 - [ ] Multi-doctor support (shared clinic, per-doctor data isolation)
@@ -1356,12 +1409,43 @@ volumes:
 - Standardized response format: `{ success, message, data?, meta? }`.
 - Paginated responses include `meta: { page, limit, total, totalPages }`.
 - All data is scoped by `createdBy` (user ID) for data isolation.
+- **Swagger/OpenAPI**: keep `server/src/docs/swagger.ts` in sync with real routes and Zod validators. Docs-only — never invent endpoints or change API behavior for documentation.
 
 ### 15.9 File Organization
 - One file per component/page/service/repository.
 - Barrel exports for page directories (e.g., `pages/Dashboard/index.tsx` re-exports the page).
 - Services follow naming convention: `{domain}.service.ts` (client) and `{domain}.service.ts` (server).
-- SCSS modules co-located with their components: `ComponentName.module.scss`.
+- SCSS co-located with their components: `ComponentName.scss` (or `.module.scss` where modules are used).
+- OpenAPI spec lives in `server/src/docs/swagger.ts`; do not inline large specs in `index.ts`.
+
+#### Page feature isolation (CRUD list pages)
+For list/management pages under `client/src/pages/` (e.g. Doctors, Hospitals), keep components isolated — do **not** dump card, row, form, and list into one giant `index.tsx`.
+
+| Piece | Location | Naming |
+|-------|----------|--------|
+| List / main screen | `pages/{Feature}/index.tsx` | Keep as `index.tsx` (route entry) |
+| Page layout styles | `pages/{Feature}/{Feature}.scss` | Match folder name |
+| Add/Edit form (modal or page) | `pages/{Feature}/Add{Entity}/Add{Entity}.tsx` + `.scss` | Named file — **never** `index.tsx` inside the form folder (e.g. `AddDoctor`, `AddHospital`) |
+| Mobile card | `pages/{Feature}/{Entity}Card/{Entity}Card.tsx` + `.scss` | Named folder + matching file |
+| Desktop row/list item | `pages/{Feature}/{Entity}Row/{Entity}Row.tsx` + `.scss` | Named folder + matching file |
+
+**Rules:**
+- `index.tsx` = list, search, pagination, delete, and wiring open/close for the add form. Prefer thin page orchestration.
+- Put create/update form logic (Zod schema, `react-hook-form`, mutations, Modal) inside `Add{Entity}`.
+- Each isolated UI piece gets its **own folder** with a **named** `.tsx` and co-located `.scss` (same pattern as `components/layout/AppLayout/`).
+- Do not name child feature files `index.tsx` — use `AddDoctor.tsx`, `HospitalCard.tsx`, etc.
+- Export skeletons from the same card/row files when needed (e.g. `HospitalCardSkeleton`).
+- Prefer plain string class names with global/co-located SCSS unless the file already uses CSS modules (`styles[...]`). Never reference a `styles` object without a CSS-module import.
+
+**Example (Hospitals):**
+```
+pages/Hospitals/
+  index.tsx
+  Hospitals.scss
+  AddHospital/AddHospital.tsx|.scss
+  HospitalCard/HospitalCard.tsx|.scss
+  HospitalRow/HospitalRow.tsx|.scss
+```
 
 ---
 

@@ -1,0 +1,182 @@
+.wizardNav {
+  @include card-base;
+  position: relative;
+  padding: $space-4 $space-5 $space-3;
+  overflow: hidden;
+
+  @include responsive('sm') {
+    padding: $space-3 $space-3 $space-2;
+  }
+}
+
+.wizardNavTrack {
+  position: absolute;
+  left: $space-8;
+  right: $space-8;
+  top: calc(#{$space-4} + 20px);
+  height: 2px;
+  background: $border;
+  border-radius: $radius-full;
+  pointer-events: none;
+  z-index: 0;
+
+  @include dark {
+    background: $dark-divider;
+  }
+
+  @include responsive('sm') {
+    left: $space-5;
+    right: $space-5;
+    top: calc(#{$space-3} + 18px);
+  }
+}
+
+.wizardNavTrackFill {
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, $primary, color.adjust($primary, $lightness: 12%));
+  transition: width $transition-base;
+}
+
+.wizardNavList {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: $space-2;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+.wizardNavItem {
+  flex: 1;
+  min-width: 72px;
+  display: flex;
+  justify-content: center;
+}
+
+.wizardNavStep {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: $space-2;
+  width: 100%;
+  max-width: 104px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-family: inherit;
+  color: $text-muted;
+  transition: color $transition-fast, transform $transition-fast;
+
+  &:hover {
+    color: $text-secondary;
+
+    .wizardNavIcon {
+      transform: translateY(-1px);
+      box-shadow: $shadow-sm;
+    }
+  }
+
+  @include dark {
+    color: $dark-text-muted;
+
+    &:hover {
+      color: $dark-text-secondary;
+    }
+  }
+}
+
+.wizardNavIcon {
+  @include flex-center;
+  width: 40px;
+  height: 40px;
+  border-radius: $radius-full;
+  border: 1.5px solid $border;
+  background: $surface;
+  color: inherit;
+  font-size: 16px;
+  transition:
+    background $transition-fast,
+    border-color $transition-fast,
+    color $transition-fast,
+    box-shadow $transition-fast,
+    transform $transition-fast;
+
+  @include dark {
+    background: $dark-surface-elevated;
+    border-color: $dark-border;
+  }
+
+  @include responsive('sm') {
+    width: 36px;
+    height: 36px;
+    font-size: 14px;
+  }
+}
+
+.wizardNavLabel {
+  font-size: $font-caption;
+  font-weight: $font-medium;
+  line-height: 1.25;
+  text-align: center;
+  @include truncate(100%);
+
+  @include responsive('sm') {
+    font-size: 10px;
+  }
+}
+
+.wizardNavStep.isUpcoming {
+  .wizardNavIcon {
+    background: $background;
+
+    @include dark {
+      background: $dark-surface;
+    }
+  }
+}
+
+.wizardNavStep.isActive {
+  color: $primary;
+
+  .wizardNavIcon {
+    border-color: $primary;
+    background: $primary;
+    color: #fff;
+    box-shadow: 0 0 0 4px rgba($primary, 0.14);
+  }
+
+  .wizardNavLabel {
+    font-weight: $font-semibold;
+    color: $primary;
+  }
+}
+
+.wizardNavStep.isDone {
+  color: $primary;
+
+  .wizardNavIcon {
+    border-color: rgba($primary, 0.35);
+    background: $primary-light;
+    color: $primary;
+  }
+
+  .wizardNavLabel {
+    color: $text-secondary;
+
+    @include dark {
+      color: $dark-text-secondary;
+    }
+  }
+}

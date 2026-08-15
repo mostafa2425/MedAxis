@@ -1,0 +1,112 @@
+.dashboard-page {
+&.page {
+  display: flex;
+  flex-direction: column;
+  gap: $space-4;
+  animation: fadeIn 0.3s ease;
+
+  @include responsive('md') {
+    gap: $space-3;
+  }
+}
+
+
+
+.pageHeader {
+  @include flex-between;
+  margin-bottom: 0;
+  flex-wrap: wrap;
+  gap: $space-3;
+
+  @include responsive('md') {
+    flex-direction: column;
+    align-items: stretch;
+    gap: $space-3;
+  }
+}
+
+.headerLeft {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.pageTitle {
+  @include page-title;
+}
+
+.welcomeMessage {
+  font-size: $font-body-sm;
+  color: $text-secondary;
+
+  @include dark {
+    color: $dark-text-secondary;
+  }
+}
+
+.welcomeName {
+  font-weight: $font-semibold;
+  color: $text-primary;
+
+  @include dark {
+    color: $dark-text-primary;
+  }
+}
+
+.headerActions {
+  display: flex;
+  align-items: center;
+  gap: $space-2;
+
+  @include responsive('md') {
+    width: 100%;
+
+    .ant-btn {
+      flex: 1;
+    }
+  }
+}
+
+.middleRow {
+  display: flex;
+  gap: $space-4;
+
+  @include responsive('lg') {
+    flex-direction: column;
+    gap: $space-3;
+  }
+}
+
+.statusCol {
+  flex-shrink: 0;
+  width: 38%;
+
+  @include responsive('lg') {
+    width: 100%;
+  }
+}
+
+.chartCol {
+  flex: 1;
+  min-width: 0;
+
+  @include responsive('lg') {
+    width: 100%;
+  }
+}
+
+.recentSection {
+  width: 100%;
+}
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

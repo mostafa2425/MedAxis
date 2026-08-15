@@ -67,9 +67,14 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  operations        Operation[]
+  operations         Operation[]
   operationTimelines OperationTimeline[]
   uploadedFiles      OperationFile[]
+  doctor             Doctor?
+  catalogItems       OperationCatalog[]
+  createdDoctors     Doctor[]   @relation("CreatedDoctors")
+  createdHospitals   Hospital[] @relation("CreatedHospitals")
+  createdNurses      Nurse[]
 
   @@map("users")
 }
@@ -95,13 +100,21 @@ model Specialty {
   name      String   @unique
   nameAr    String?
   icon      String?
+  parentId  String?
   isActive  Boolean  @default(true)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  doctors  DoctorSpecialty[]
+  parent     Specialty?  @relation("SpecialtyHierarchy", fields: [parentId], references: [id], onDelete: SetNull)
+  children   Specialty[] @relation("SpecialtyHierarchy")
+  doctors    DoctorSpecialty[]
+  doctorSubspecialties DoctorSubspecialty[]
   operations Operation[]
+  catalogItems OperationCatalog[] @relation("CatalogSpecialty")
+  catalogSubItems OperationCatalog[] @relation("CatalogSubspecialty")
+  procedures   OperationProcedure[]
 
+  @@index([parentId])
   @@map("specialties")
 }
 
@@ -111,15 +124,22 @@ model Doctor {
   phone     String?
   email     String?
   isActive  Boolean  @default(true)
+  userId    String?  @unique
+  createdBy String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  specialties   DoctorSpecialty[]
-  primarySurgeon OperationMedicalTeam[]
-  assistant     OperationMedicalTeam[] @relation("AssistantSurgeon")
-  anesthesiologist OperationMedicalTeam[] @relation("Anesthesiologist")
-  assistantAnesthesia OperationMedicalTeam[] @relation("AssistantAnesthesia")
+  user                  User?                   @relation(fields: [userId], references: [id], onDelete: SetNull)
+  creator               User?                   @relation("CreatedDoctors", fields: [createdBy], references: [id], onDelete: SetNull)
+  specialties           DoctorSpecialty[]
+  subspecialties        DoctorSubspecialty[]
+  primarySurgeon        OperationMedicalTeam[]
+  assistant             OperationMedicalTeam[]  @relation("AssistantSurgeon")
+  anesthesiologist      OperationMedicalTeam[]  @relation("Anesthesiologist")
+  assistantAnesthesia   OperationMedicalTeam[]  @relation("AssistantAnesthesia")
+  teamMembers           OperationTeamMember[]
 
+  @@index([createdBy])
   @@map("doctors")
 }
 
@@ -136,24 +156,82 @@ model DoctorSpecialty {
   @@map("doctor_specialties")
 }
 
+model DoctorSubspecialty {
+  id          String   @id @default(uuid())
+  doctorId    String
+  specialtyId String
+  createdAt   DateTime @default(now())
+
+  doctor    Doctor    @relation(fields: [doctorId], references: [id], onDelete: Cascade)
+  specialty Specialty @relation(fields: [specialtyId], references: [id], onDelete: Cascade)
+
+  @@unique([doctorId, specialtyId])
+  @@map("doctor_subspecialties")
+}
+
+model OperationCatalog {
+  id             String   @id @default(uuid())
+  name           String
+  nameAr         String?
+  specialtyId    String?
+  subspecialtyId String?
+  isActive       Boolean  @default(true)
+  isCustom       Boolean  @default(false)
+  createdBy      String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  specialty     Specialty?  @relation("CatalogSpecialty", fields: [specialtyId], references: [id], onDelete: SetNull)
+  subspecialty  Specialty?  @relation("CatalogSubspecialty", fields: [subspecialtyId], references: [id], onDelete: SetNull)
+  creator       User?       @relation(fields: [createdBy], references: [id], onDelete: SetNull)
+  operations    Operation[]
+  procedures    OperationProcedure[]
+
+  @@index([specialtyId])
+  @@index([subspecialtyId])
+  @@index([createdBy])
+  @@index([name, specialtyId])
+  @@map("operation_catalog")
+}
+
 model Hospital {
   id        String   @id @default(uuid())
   name      String
   address   String?
   phone     String?
   isActive  Boolean  @default(true)
+  createdBy String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   operations Operation[]
+  creator    User?       @relation("CreatedHospitals", fields: [createdBy], references: [id], onDelete: SetNull)
 
+  @@index([createdBy])
   @@map("hospitals")
+}
+
+model Nurse {
+  id        String   @id @default(uuid())
+  name      String
+  phone     String?
+  email     String?
+  isActive  Boolean  @default(true)
+  createdBy String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  creator     User                  @relation(fields: [createdBy], references: [id])
+  teamMembers OperationTeamMember[]
+
+  @@index([createdBy])
+  @@map("nurses")
 }
 
 model Operation {
   id               String          @id @default(uuid())
   name             String
-  diagnosis        String
+  diagnosis        String?
   hospitalId       String
   operationDate    DateTime
   operationTime    String
@@ -164,6 +242,7 @@ model Operation {
   patientId        String
   createdBy        String
   specialtyId      String?
+  catalogId        String?
   createdAt        DateTime        @default(now())
   updatedAt        DateTime        @updatedAt
 
@@ -171,10 +250,13 @@ model Operation {
   hospital  Hospital              @relation(fields: [hospitalId], references: [id])
   creator   User                  @relation(fields: [createdBy], references: [id])
   specialty Specialty?            @relation(fields: [specialtyId], references: [id])
+  catalog   OperationCatalog?     @relation(fields: [catalogId], references: [id], onDelete: SetNull)
   medicalTeam OperationMedicalTeam[]
-  files      OperationFile[]
-  cost       OperationCost?
-  timeline   OperationTimeline[]
+  procedures  OperationProcedure[]
+  teamMembers OperationTeamMember[]
+  files       OperationFile[]
+  cost        OperationCost?
+  timeline    OperationTimeline[]
 
   @@map("operations")
 }
@@ -197,6 +279,43 @@ model OperationMedicalTeam {
   assistantAnesthesia Doctor?   @relation("AssistantAnesthesia", fields: [assistantAnesthesiaId], references: [id])
 
   @@map("operation_medical_team")
+}
+
+model OperationProcedure {
+  id            String   @id @default(uuid())
+  operationId   String
+  catalogId     String?
+  name          String
+  nameAr        String?
+  specialtyId   String?
+  sortOrder     Int      @default(0)
+  createdAt     DateTime @default(now())
+
+  operation Operation          @relation(fields: [operationId], references: [id], onDelete: Cascade)
+  catalog   OperationCatalog?  @relation(fields: [catalogId], references: [id], onDelete: SetNull)
+  specialty Specialty?         @relation(fields: [specialtyId], references: [id], onDelete: SetNull)
+
+  @@index([operationId])
+  @@index([catalogId])
+  @@map("operation_procedures")
+}
+
+model OperationTeamMember {
+  id          String   @id @default(uuid())
+  operationId String
+  doctorId    String?
+  nurseId     String?
+  sortOrder   Int      @default(0)
+  createdAt   DateTime @default(now())
+
+  operation Operation @relation(fields: [operationId], references: [id], onDelete: Cascade)
+  doctor    Doctor?   @relation(fields: [doctorId], references: [id], onDelete: SetNull)
+  nurse     Nurse?    @relation(fields: [nurseId], references: [id], onDelete: SetNull)
+
+  @@index([operationId])
+  @@index([doctorId])
+  @@index([nurseId])
+  @@map("operation_team_members")
 }
 
 model OperationCost {

@@ -1,6 +1,3 @@
-@use 'variables' as *;
-@use 'mixins' as *;
-
 // ═══════════════════════════════════════════════════════
 // MedAxis – Global Styles
 // ═══════════════════════════════════════════════════════
@@ -20,6 +17,7 @@ html {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   scroll-behavior: smooth;
+  overflow-x: hidden;
 }
 
 // ── Body ─────────────────────────────────────────────
@@ -32,6 +30,7 @@ body {
   color: $text-primary;
   background-color: $background;
   min-height: 100vh;
+  overflow-x: hidden;
   transition: background-color $transition-base, color $transition-base;
   @include custom-scrollbar(6px, $divider, transparent);
 }
@@ -309,8 +308,42 @@ ul, ol {
   box-shadow: $shadow-sm !important;
 }
 
+.ant-card .ant-card-body {
+  padding: $space-4 !important;
+
+  @media (max-width: #{$breakpoint-md - 1px}) {
+    padding: $space-3 !important;
+  }
+}
+
 .ant-modal-content {
   border-radius: $radius-xl !important;
+}
+
+@media (max-width: #{$breakpoint-md - 1px}) {
+  .ant-modal {
+    max-width: calc(100vw - 24px) !important;
+    margin: 12px auto !important;
+  }
+
+  .ant-modal-content {
+    border-radius: $radius-lg !important;
+  }
+
+  .ant-drawer-content-wrapper {
+    max-width: 100% !important;
+  }
+
+  // Compact form items on mobile
+  .ant-form-item {
+    margin-bottom: $space-3 !important;
+  }
+
+  // Prevent page-level table overflow
+  .ant-table-wrapper {
+    overflow-x: auto;
+    max-width: 100%;
+  }
 }
 
 .ant-table {
@@ -806,45 +839,50 @@ ul, ol {
 
 .app-main {
   flex: 1;
-  padding: $space-6;
+  padding: $space-5;
   max-width: 1600px;
   width: 100%;
   margin: 0 auto;
 
   @include responsive('md') {
-    padding: $space-4;
+    padding: $space-3;
   }
 }
 
 // ── Page Header ──────────────────────────────────────
 .page-header {
   @include flex-between;
-  margin-bottom: $space-6;
+  margin-bottom: $space-4;
   flex-wrap: wrap;
-  gap: $space-3;
+  gap: $space-2;
 
   &__title-group {
     display: flex;
     flex-direction: column;
-    gap: $space-1;
+    gap: 2px;
   }
 
   &__title {
-    font-size: $font-h4;
-    font-weight: $font-bold;
-    color: $text-primary;
-    line-height: $line-height-tight;
+    @include page-title;
   }
 
   &__subtitle {
-    font-size: $font-body-sm;
-    color: $text-muted;
+    @include page-subtitle;
   }
 
   &__actions {
     display: flex;
     align-items: center;
     gap: $space-2;
+    flex-wrap: wrap;
+
+    @include responsive('md') {
+      width: 100%;
+
+      .ant-btn {
+        flex: 1;
+      }
+    }
   }
 }
 
@@ -852,9 +890,9 @@ ul, ol {
 .stat-card {
   @include card-base;
   display: flex;
-  align-items: flex-start;
-  gap: $space-4;
-  padding: $space-5;
+  align-items: center;
+  gap: $space-3;
+  padding: $space-4;
   transition: box-shadow $transition-fast, transform $transition-fast;
 
   &:hover {
@@ -864,18 +902,19 @@ ul, ol {
 
   &__icon {
     @include flex-center;
-    width: 48px;
-    height: 48px;
-    border-radius: $radius-lg;
+    width: 40px;
+    height: 40px;
+    border-radius: $radius-md;
     flex-shrink: 0;
-    font-size: 24px;
+    font-size: 20px;
   }
 
   &__content {
     display: flex;
     flex-direction: column;
-    gap: $space-1;
+    gap: 2px;
     min-width: 0;
+    flex: 1;
   }
 
   &__label {
@@ -900,6 +939,21 @@ ul, ol {
     &--up { color: $success; }
     &--down { color: $error; }
   }
+
+  @include responsive('md') {
+    padding: $space-3 $space-4;
+    gap: $space-3;
+
+    &__icon {
+      width: 36px;
+      height: 36px;
+      font-size: 18px;
+    }
+
+    &__value {
+      font-size: $font-body-lg;
+    }
+  }
 }
 
 // ── Data Table Wrapper ───────────────────────────────
@@ -923,17 +977,17 @@ ul, ol {
 .empty-state {
   @include flex-center;
   flex-direction: column;
-  gap: $space-4;
-  padding: $space-16 $space-6;
+  gap: $space-3;
+  padding: $space-10 $space-4;
   text-align: center;
 
   &__icon {
-    font-size: 48px;
+    font-size: 40px;
     color: $text-disabled;
   }
 
   &__title {
-    font-size: $font-body-lg;
+    font-size: $font-body;
     font-weight: $font-semibold;
     color: $text-secondary;
   }
@@ -941,11 +995,15 @@ ul, ol {
   &__description {
     font-size: $font-body-sm;
     color: $text-muted;
-    max-width: 400px;
+    max-width: 360px;
   }
 
   &__action {
-    margin-top: $space-2;
+    margin-top: $space-1;
+  }
+
+  @include responsive('md') {
+    padding: $space-8 $space-3;
   }
 }
 
@@ -1198,3 +1256,66 @@ ul, ol {
     color: color.adjust($primary, $lightness: 15%);
   }
 }
+
+// ── Entity form dialogs (Add Doctor / Add Patient) ──
+.entityFormModal {
+  .ant-modal-header {
+    margin-bottom: $space-2;
+  }
+
+  .ant-modal-content {
+    border-radius: $radius-2xl;
+  }
+}
+
+.entityFormDrawer {
+  .ant-drawer-content {
+    border-radius: $radius-xl $radius-xl 0 0;
+  }
+
+  .ant-drawer-header {
+    padding-block: $space-4;
+  }
+
+  .ant-drawer-body {
+    padding-top: $space-4;
+    padding-bottom: $space-6;
+  }
+}
+
+.entityForm {
+  margin-top: $space-2;
+}
+
+.entityFormActions {
+  margin-bottom: 0;
+  margin-top: $space-2;
+  text-align: right;
+  padding-top: $space-3;
+  border-top: 1px solid $border;
+
+  [dir='rtl'] & {
+    text-align: left;
+  }
+}
+
+.dark .entityFormActions {
+  border-top-color: $dark-border;
+}
+
+.entityFormFullWidth {
+  width: 100% !important;
+}
+
+.entityFormGenderRadio {
+  width: 100%;
+  display: flex;
+
+  .ant-radio-button-wrapper {
+    flex: 1;
+    text-align: center;
+    height: 40px;
+    line-height: 38px;
+  }
+}
+

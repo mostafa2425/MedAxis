@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { operationController } from '../controllers/operation.controller';
 import { authMiddleware } from '../middlewares/auth.middleware';
-import { uploadMultiple } from '../middlewares/upload';
+import { uploadOperationFiles } from '../middlewares/upload';
 
 const router = Router();
 
@@ -12,7 +12,7 @@ router.post('/', authMiddleware, operationController.create.bind(operationContro
 router.put('/:id', authMiddleware, operationController.update.bind(operationController));
 router.patch('/:id/status', authMiddleware, operationController.updateStatus.bind(operationController));
 router.put('/:id/cost', authMiddleware, operationController.updateCost.bind(operationController));
-router.post('/:id/files', authMiddleware, uploadMultiple, operationController.uploadFiles.bind(operationController));
+router.post('/:id/files', authMiddleware, uploadOperationFiles, operationController.uploadFiles.bind(operationController));
 router.delete('/:operationId/files/:fileId', authMiddleware, operationController.deleteFile.bind(operationController));
 router.delete('/:id', authMiddleware, operationController.delete.bind(operationController));
 

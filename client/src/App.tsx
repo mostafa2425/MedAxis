@@ -1,4 +1,4 @@
-import React, { Suspense } from 'react';
+import React, { useMemo, Suspense } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { ConfigProvider, theme as antTheme, Spin } from 'antd';
 import { useAppStore } from '@/stores/app.store';
@@ -20,6 +20,7 @@ const DoctorsPage = React.lazy(() => import('@/pages/Doctors'));
 const HospitalsPage = React.lazy(() => import('@/pages/Hospitals'));
 const SpecialtiesPage = React.lazy(() => import('@/pages/Specialties'));
 const SearchPage = React.lazy(() => import('@/pages/Search'));
+const ProfilePage = React.lazy(() => import('@/pages/Profile'));
 
 // ── Loading Fallback ─────────────────────────────────
 function PageLoader() {
@@ -151,13 +152,17 @@ export default function App() {
   const darkMode = useAppStore((s) => s.darkMode);
   const direction = useAppStore((s) => s.direction);
 
+  const theme = useMemo(
+    () =>
+      darkMode
+        ? { ...MEDAXIS_DARK_THEME, algorithm: antTheme.darkAlgorithm }
+        : { ...MEDAXIS_THEME, algorithm: antTheme.defaultAlgorithm },
+    [darkMode],
+  );
+
   return (
     <ConfigProvider
-      theme={
-        darkMode
-          ? { ...MEDAXIS_DARK_THEME, algorithm: antTheme.darkAlgorithm }
-          : { ...MEDAXIS_THEME, algorithm: antTheme.defaultAlgorithm }
-      }
+      theme={theme}
       direction={direction === 'rtl' ? 'rtl' : 'ltr'}
     >
       <Suspense fallback={<PageLoader />}>
@@ -180,6 +185,7 @@ export default function App() {
             <Route path="/hospitals" element={<HospitalsPage />} />
             <Route path="/specialties" element={<SpecialtiesPage />} />
             <Route path="/search" element={<SearchPage />} />
+            <Route path="/profile" element={<ProfilePage />} />
           </Route>
 
           {/* ── Fallback ─────────────────────────── */}

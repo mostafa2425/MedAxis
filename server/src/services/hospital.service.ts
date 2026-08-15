@@ -1,32 +1,42 @@
 import { hospitalRepo } from '../repositories/hospital.repo';
-import { NotFoundError, ConflictError } from '../utils/errors';
+import { NotFoundError } from '../utils/errors';
 
 class HospitalService {
-  async getAll(params: { page: number; limit: number; search?: string }) {
+  async getAll(params: { page: number; limit: number; search?: string; userId: string }) {
     return hospitalRepo.findAll(params);
   }
 
-  async getActive() {
-    return hospitalRepo.findActive();
+  async getActive(userId: string) {
+    return hospitalRepo.findActive(userId);
   }
 
-  async getById(id: string) {
-    const hospital = await hospitalRepo.findById(id);
+  async getById(id: string, userId: string) {
+    const hospital = await hospitalRepo.findById(id, userId);
     if (!hospital) throw new NotFoundError('Hospital');
     return hospital;
   }
 
-  async create(data: { name: string; address?: string; phone?: string }) {
-    return hospitalRepo.create(data);
+  async assertAccessible(id: string, userId: string) {
+    await this.getById(id, userId);
   }
 
-  async update(id: string, data: { name?: string; address?: string; phone?: string }) {
-    await this.getById(id);
+  async create(data: { name: string; address?: string; phone?: string }, userId: string) {
+    return hospitalRepo.create({ ...data, createdBy: userId });
+  }
+
+  async update(
+    id: string,
+    userId: string,
+    data: { name?: string; address?: string; phone?: string },
+  ) {
+    const owned = await hospitalRepo.findOwned(id, userId);
+    if (!owned) throw new NotFoundError('Hospital');
     return hospitalRepo.update(id, data);
   }
 
-  async delete(id: string) {
-    await this.getById(id);
+  async delete(id: string, userId: string) {
+    const owned = await hospitalRepo.findOwned(id, userId);
+    if (!owned) throw new NotFoundError('Hospital');
     return hospitalRepo.delete(id);
   }
 }

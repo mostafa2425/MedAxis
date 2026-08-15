@@ -1,0 +1,29 @@
+---
+description: Swagger/OpenAPI docs rules for MedAxis backend
+globs: server/src/docs/**/*.ts,server/src/index.ts,server/src/routes/**/*.ts,server/src/validators/**/*.ts
+alwaysApply: false
+---
+
+# Swagger / OpenAPI (MedAxis)
+
+## Location
+- Spec: `server/src/docs/swagger.ts`
+- Mount only in `server/src/index.ts`:
+  `app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec))`
+- UI: `http://localhost:5000/api-docs`
+
+## Hard rules
+- Swagger is **documentation only**.
+- Do **not** change routes, controllers, services, repositories, Prisma schema, auth, or endpoint names to fit docs.
+- Do **not** invent endpoints — only document paths that exist in `server/src/routes/**`.
+- Keep `index.ts` free of large inline OpenAPI objects; import `swaggerSpec` from `./docs/swagger`.
+
+## Keep docs in sync
+When adding or changing an API endpoint:
+1. Inspect the real route + Zod validator first.
+2. Update `swagger.ts` paths, request bodies, query params, responses, and security.
+3. Mirror auth: `authMiddleware` → Bearer JWT; `requireRole('admin')` → note admin role.
+4. For file uploads, document `multipart/form-data` with field `files` and optional `fileType`.
+
+## Auth in Swagger UI
+Use `BearerAuth` with the JWT returned by `POST /api/auth/login` or `/api/auth/register`.

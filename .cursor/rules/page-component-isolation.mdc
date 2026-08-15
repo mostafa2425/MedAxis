@@ -1,0 +1,53 @@
+---
+description: Isolate page feature UI into named folders (AddX, List) — not one giant index
+globs: client/src/pages/**/*
+alwaysApply: false
+---
+
+# Page feature isolation
+
+For CRUD/list pages under `client/src/pages/`, keep UI pieces in **named folders** with co-located `.tsx` + `.scss`. Do not put table, add form, and page chrome in one large `index.tsx`.
+
+## Layout
+
+```
+pages/{Feature}/
+  index.tsx                 # list / main screen only (route entry)
+  {Feature}.scss            # page layout (header, search, chrome)
+  Add{Entity}/
+    Add{Entity}.tsx         # add/edit Modal + antd Form + mutations
+    Add{Entity}.scss
+  {Entity}List/
+    {Entity}List.tsx        # antd Table (+ empty/actions columns)
+    {Entity}List.scss
+```
+
+Examples: `AddDoctor`, `AddHospital`, `DoctorList`, `HospitalList`.
+
+## Rules
+
+- **Only** the page entry may be `index.tsx`. Child folders use named files (`AddDoctor.tsx`, not `index.tsx`).
+- `index.tsx` owns search, query params, pagination state, delete, and open/close of the add form — keep it thin.
+- Lists use **antd `Table` (desktop)** + **antd `Card` (mobile)** inside `{Entity}List`.
+- Forms use **antd `Form`** inside `Add{Entity}` — no `react-hook-form`.
+- Every list/form folder must include matching `.scss` next to the `.tsx`.
+- Prefer plain className strings with co-located SCSS. Do not use `styles['...']` unless the file imports a CSS module.
+
+## ❌ Bad
+
+```tsx
+// pages/Doctors/index.tsx — everything inline + custom rows
+function DoctorCard() { /* ... */ }
+function DoctorRow() { /* ... */ }
+function DoctorsPage() {
+  // form + fake table + list all here
+}
+```
+
+## ✅ Good
+
+```tsx
+// pages/Doctors/index.tsx
+import DoctorList from './DoctorList/DoctorList';
+import AddDoctor from './AddDoctor/AddDoctor';
+```

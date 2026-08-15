@@ -1,0 +1,63 @@
+.specialties-page {
+  &.page {
+    display: flex;
+    flex-direction: column;
+    gap: $space-4;
+    animation: fadeIn 0.3s ease;
+
+    @include responsive('md') {
+      gap: $space-3;
+    }
+  }
+
+  .pageHeader {
+    @include flex-between;
+    flex-wrap: wrap;
+    gap: $space-3;
+
+    @include responsive('sm') {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: $space-1;
+    }
+  }
+
+  .pageHeaderLeft {
+    display: flex;
+    flex-direction: column;
+    gap: $space-1;
+  }
+
+  .pageTitle {
+    @include page-title;
+  }
+
+  .pageSubtitle {
+    margin: 0;
+    color: $text-secondary;
+    font-size: $font-body-sm;
+  }
+
+  .searchSection {
+    max-width: 480px;
+
+    @include responsive('md') {
+      max-width: 100%;
+    }
+  }
+
+  .emptyState {
+    padding: $space-8 $space-4;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

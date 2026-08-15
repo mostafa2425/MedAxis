@@ -1,0 +1,118 @@
+.hospitals-page {
+  &.page {
+    display: flex;
+    flex-direction: column;
+    gap: $space-4;
+    animation: fadeIn 0.3s ease;
+
+    @include responsive('md') {
+      gap: $space-3;
+    }
+  }
+
+  .pageHeader {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: $space-3;
+    flex-wrap: wrap;
+  }
+
+  .pageHeaderLeft {
+    display: flex;
+    align-items: flex-start;
+    gap: $space-3;
+    min-width: 0;
+  }
+
+  .pageIcon {
+    @include flex-center;
+    flex-shrink: 0;
+    width: 44px;
+    height: 44px;
+    border-radius: $radius-lg;
+    background: rgba(14, 165, 233, 0.12);
+    color: #0EA5E9;
+    font-size: 20px;
+
+    @include dark {
+      background: rgba(14, 165, 233, 0.18);
+    }
+
+    @include responsive('sm') {
+      width: 40px;
+      height: 40px;
+      font-size: 18px;
+    }
+  }
+
+  .pageHeaderText {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+  }
+
+  .pageTitle {
+    @include page-title;
+    margin: 0;
+  }
+
+  .pageHint {
+    margin: 0;
+    font-size: $font-body-sm;
+    color: $text-muted;
+  }
+
+  .pageHeaderMeta {
+    display: flex;
+    align-items: center;
+    gap: $space-2;
+    flex-wrap: wrap;
+  }
+
+  .countPill {
+    display: inline-flex;
+    align-items: center;
+    padding: 6px 12px;
+    border-radius: $radius-full;
+    font-size: $font-caption;
+    font-weight: $font-semibold;
+    color: $primary;
+    background: $primary-light;
+    line-height: 1.2;
+  }
+
+  .toolbar {
+    @include card-base;
+    padding: $space-3 $space-4;
+
+    @include responsive('sm') {
+      padding: $space-3;
+    }
+  }
+
+  .toolbarSearch {
+    max-width: 520px;
+    width: 100%;
+
+    @include responsive('md') {
+      max-width: 100%;
+    }
+  }
+
+  .emptyState {
+    padding: $space-8 $space-4;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

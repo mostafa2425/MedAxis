@@ -1,4 +1,3 @@
-import { useMemo } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { Drawer } from 'antd';
 import {
@@ -16,7 +15,7 @@ import {
 import { useTranslation } from 'react-i18next';
 import { useAppStore } from '@/stores/app.store';
 import { useAuth } from '@/hooks/useAuth';
-import styles from './Sidebar.module.scss';
+import './Sidebar.scss';
 
 interface MenuItem {
   key: string;
@@ -45,77 +44,82 @@ export default function Sidebar({ mobileOpen, onMobileClose }: SidebarProps) {
   const { logout } = useAuth();
   const collapsed = useAppStore((s) => s.sidebarCollapsed);
   const darkMode = useAppStore((s) => s.darkMode);
+  const direction = useAppStore((s) => s.direction);
 
-  const sidebarContent = useMemo(
-    () => (
-      <div className={styles.sidebar}>
-        {/* ─── Logo Area ─────────────────────────────── */}
-        <div className={styles.logo}>
-          <div className={styles.logoIcon}>
-            <MedicineBoxOutlined />
-          </div>
-          {!collapsed && <span className={styles.logoText}>MedAxis</span>}
+  const renderSidebar = (isCollapsed: boolean) => (
+    <div className="sidebar">
+      <div className="logo">
+        <div className="logoIcon">
+          <MedicineBoxOutlined />
         </div>
+        {!isCollapsed && <span className="logoText">MedAxis</span>}
+      </div>
 
-        {/* ─── Main Navigation ───────────────────────── */}
-        <nav className={styles.nav}>
-          {mainMenuItems.map((item) => (
-            <NavLink
-              key={item.key}
-              to={item.key}
-              end={item.key === '/'}
-              className={({ isActive }) =>
-                `${styles.menuItem} ${isActive ? styles.menuItemActive : ''} ${collapsed ? styles.menuItemCollapsed : ''}`
-              }
-              onClick={() => onMobileClose()}
-            >
-              <span className={styles.menuItemIcon}>{item.icon}</span>
-              {!collapsed && <span className={styles.menuItemLabel}>{t(item.labelKey)}</span>}
-            </NavLink>
-          ))}
-        </nav>
-
-        {/* ─── Bottom Actions ─────────────────────────── */}
-        <div className={styles.bottomActions}>
+      <nav className="nav">
+        {mainMenuItems.map((item) => (
           <NavLink
-            to="/settings"
+            key={item.key}
+            to={item.key}
+            end={item.key === '/'}
             className={({ isActive }) =>
-              `${styles.menuItem} ${isActive ? styles.menuItemActive : ''} ${collapsed ? styles.menuItemCollapsed : ''}`
+              `menuItem ${isActive ? 'menuItemActive' : ''} ${isCollapsed ? 'menuItemCollapsed' : ''}`
             }
             onClick={() => onMobileClose()}
           >
-            <span className={styles.menuItemIcon}><SettingOutlined /></span>
-            {!collapsed && <span className={styles.menuItemLabel}>{t('sidebar.settings')}</span>}
+            <span className="menuItemIcon">{item.icon}</span>
+            {!isCollapsed && (
+              <span className="menuItemLabel">{t(item.labelKey)}</span>
+            )}
           </NavLink>
+        ))}
+      </nav>
 
-          <button
-            className={`${styles.menuItem} ${styles.logoutBtn} ${collapsed ? styles.menuItemCollapsed : ''}`}
-            onClick={() => {
-              logout();
-              navigate('/login', { replace: true });
-              onMobileClose();
-            }}
-            type="button"
-          >
-            <span className={styles.menuItemIcon}><LogoutOutlined /></span>
-            {!collapsed && <span className={styles.menuItemLabel}>{t('nav.logout')}</span>}
-          </button>
-        </div>
+      <div className="bottomActions">
+        <NavLink
+          to="/profile"
+          className={({ isActive }) =>
+            `menuItem ${isActive ? 'menuItemActive' : ''} ${isCollapsed ? 'menuItemCollapsed' : ''}`
+          }
+          onClick={() => onMobileClose()}
+        >
+          <span className="menuItemIcon">
+            <SettingOutlined />
+          </span>
+          {!isCollapsed && (
+            <span className="menuItemLabel">{t('layout.profile')}</span>
+          )}
+        </NavLink>
+
+        <button
+          className={`menuItem logoutBtn ${isCollapsed ? 'menuItemCollapsed' : ''}`}
+          onClick={() => {
+            logout();
+            navigate('/login', { replace: true });
+            onMobileClose();
+          }}
+          type="button"
+        >
+          <span className="menuItemIcon">
+            <LogoutOutlined />
+          </span>
+          {!isCollapsed && (
+            <span className="menuItemLabel">{t('nav.logout')}</span>
+          )}
+        </button>
       </div>
-    ),
-    [collapsed, darkMode, t, logout, navigate, onMobileClose]
+    </div>
   );
 
   return (
     <>
-      {/* ─── Desktop Sidebar ────────────────────────── */}
-      <aside className={`${styles.desktopSidebar} ${collapsed ? styles.desktopSidebarCollapsed : ''} ${darkMode ? styles.dark : ''}`}>
-        {sidebarContent}
+      <aside
+        className={`app-sidebar-root desktopSidebar ${collapsed ? 'desktopSidebarCollapsed' : ''} ${darkMode ? 'dark' : ''}`}
+      >
+        {renderSidebar(collapsed)}
       </aside>
 
-      {/* ─── Mobile Drawer ──────────────────────────── */}
       <Drawer
-        placement={useAppStore((s) => s.direction) === 'rtl' ? 'right' : 'left'}
+        placement={direction === 'rtl' ? 'right' : 'left'}
         open={mobileOpen}
         onClose={onMobileClose}
         width={280}
@@ -124,11 +128,9 @@ export default function Sidebar({ mobileOpen, onMobileClose }: SidebarProps) {
           body: { padding: 0 },
           header: { display: 'none' },
         }}
-        className={styles.mobileDrawer}
+        className="mobileDrawer"
       >
-        <div className={styles.mobileOverlayContent}>
-          {sidebarContent}
-        </div>
+        <div className="app-sidebar-root mobileOverlayContent">{renderSidebar(false)}</div>
       </Drawer>
     </>
   );

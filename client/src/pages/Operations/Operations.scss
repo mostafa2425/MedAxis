@@ -1,0 +1,57 @@
+.operations-page {
+  &.page {
+    display: flex;
+    flex-direction: column;
+    gap: $space-4;
+    animation: fadeIn 0.3s ease;
+
+    @include responsive('md') {
+      gap: $space-3;
+    }
+  }
+
+  .pageHeader {
+    @include flex-between;
+    flex-wrap: wrap;
+    gap: $space-3;
+  }
+
+  .pageHeaderLeft {
+    display: flex;
+    flex-direction: column;
+    gap: $space-1;
+  }
+
+  .pageTitle {
+    @include page-title;
+  }
+
+  .filtersSection {
+    @include card-base;
+    padding: $space-3 $space-4;
+  }
+
+  .resultsCount {
+    font-size: $font-body-sm;
+    color: $text-muted;
+  }
+
+  .resultsTotal {
+    color: $text-muted;
+  }
+
+  .emptyState {
+    padding: $space-8 $space-4;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

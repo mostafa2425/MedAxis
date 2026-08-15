@@ -10,6 +10,20 @@ import {
 } from '../validators/surgery.validator';
 import { AppError } from '../utils/errors';
 import { FileType } from '@prisma/client';
+import { resolveFileType } from '../utils/fileType';
+
+function collectUploadedFiles(req: Request): Express.Multer.File[] {
+  const files: Express.Multer.File[] = [];
+  if (req.file) files.push(req.file);
+  if (Array.isArray(req.files)) {
+    files.push(...req.files);
+  } else if (req.files && typeof req.files === 'object') {
+    for (const value of Object.values(req.files)) {
+      if (Array.isArray(value)) files.push(...value);
+    }
+  }
+  return files;
+}
 
 export class OperationController {
   async getAll(req: Request, res: Response, next: NextFunction) {
@@ -119,12 +133,23 @@ export class OperationController {
   async uploadFiles(req: Request, res: Response, next: NextFunction) {
     try {
       const userId = (req as any).user?.userId;
-      const fileType = (req.body.fileType as FileType) || 'BEFORE_IMAGE';
-      const files = req.files as Express.Multer.File[];
-      if (!files || files.length === 0) {
-        throw new AppError('No files uploaded', 400);
+      const fileType = resolveFileType(req.body?.fileType);
+      const files = collectUploadedFiles(req);
+      if (files.length === 0) {
+        throw new AppError('No files uploaded', 400, [
+          {
+            path: ['file'],
+            code: 'custom',
+            message: 'A file is required',
+          },
+        ]);
       }
-      const uploadedFiles = await operationService.uploadFiles(req.params.id as string, userId, files, fileType as FileType);
+      const uploadedFiles = await operationService.uploadFiles(
+        req.params.id as string,
+        userId,
+        files,
+        fileType as FileType,
+      );
       return sendSuccess(res, uploadedFiles, 'Files uploaded', 201);
     } catch (err) {
       next(err);

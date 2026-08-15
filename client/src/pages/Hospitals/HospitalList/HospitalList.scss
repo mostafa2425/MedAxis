@@ -1,0 +1,70 @@
+.hospitalListMobile {
+  display: flex;
+  flex-direction: column;
+  gap: $space-3;
+
+  @include up('md') {
+    display: none;
+  }
+}
+
+.hospitalListCards {
+  display: flex;
+  flex-direction: column;
+  gap: $space-3;
+}
+
+.hospitalListCard {
+  .ant-card-head {
+    min-height: 44px;
+  }
+}
+
+.hospitalListMeta {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: $font-body-sm;
+  color: $text-muted;
+}
+
+.hospitalListMobilePagination {
+  display: flex;
+  justify-content: center;
+  padding-top: $space-2;
+}
+
+.hospitalListDesktop {
+  display: none;
+
+  @include up('md') {
+    display: block;
+  }
+}
+
+.hospitalListTable {
+  @include card-base;
+  overflow: hidden;
+
+  .ant-table {
+    background: transparent;
+  }
+
+  .ant-table-thead > tr > th {
+    background: $background;
+    font-size: $font-caption;
+    font-weight: $font-semibold;
+    color: $text-muted;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+
+    @include dark {
+      background: $dark-surface-elevated;
+      color: $dark-text-muted;
+    }
+  }
+}
+
+.hospitalListNameIcon {
+  color: #0ea5e9;
+}

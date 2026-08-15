@@ -1,196 +1,183 @@
-import { Row, Col, Statistic, Card, Spin } from 'antd';
+import { Row, Col, Card, Skeleton, Tooltip, Typography } from 'antd';
 import {
   TeamOutlined,
   ScissorOutlined,
-  CalendarOutlined,
   CheckCircleOutlined,
+  ClockCircleOutlined,
+  UserOutlined,
+  MedicineBoxOutlined,
+  BankOutlined,
+  DollarOutlined,
 } from '@ant-design/icons';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { dashboardService } from '@/services/dashboard.service';
-import { useEffect, useRef, useState } from 'react';
+import { formatCurrency } from '@/utils/helpers';
+import type { DashboardStats } from '@/types';
+import './StatsCards.scss';
 
-// ─── Animated Number Counter ────────────────────────
-function AnimatedNumber({ value }: { value: number }) {
-  const [display, setDisplay] = useState(0);
-  const ref = useRef<HTMLSpanElement>(null);
-  const animationRef = useRef<number>();
+type MetricKey =
+  | 'totalOperations'
+  | 'completedOperations'
+  | 'pendingOperations'
+  | 'totalPatients'
+  | 'totalDoctors'
+  | 'totalNurses'
+  | 'totalHospitals'
+  | 'revenue';
 
-  useEffect(() => {
-    const duration = 800;
-    const startTime = performance.now();
-    const startValue = 0;
-
-    function animate(currentTime: number) {
-      const elapsed = currentTime - startTime;
-      const progress = Math.min(elapsed / duration, 1);
-
-      // Ease-out cubic
-      const eased = 1 - Math.pow(1 - progress, 3);
-      setDisplay(Math.round(startValue + (value - startValue) * eased));
-
-      if (progress < 1) {
-        animationRef.current = requestAnimationFrame(animate);
-      }
-    }
-
-    animationRef.current = requestAnimationFrame(animate);
-
-    return () => {
-      if (animationRef.current) {
-        cancelAnimationFrame(animationRef.current);
-      }
-    };
-  }, [value]);
-
-  return <span ref={ref}>{display.toLocaleString()}</span>;
-}
-
-// ─── Stat Card Config ───────────────────────────────
-interface StatCardConfig {
-  key: string;
+interface MetricConfig {
+  key: MetricKey;
   icon: React.ReactNode;
   labelKey: string;
-  valueKey: keyof {
-    totalPatients: number;
-    totalOperations: number;
-    operationsThisMonth: number;
-    completedOperations: number;
-  };
   iconBg: string;
   iconColor: string;
+  resolve: (stats: DashboardStats) => { available: boolean; display: string; reason?: string };
 }
 
-const STAT_CARDS: StatCardConfig[] = [
-  {
-    key: 'totalPatients',
-    icon: <TeamOutlined />,
-    labelKey: 'dashboard.totalPatients',
-    valueKey: 'totalPatients',
-    iconBg: '#EFF6FF',
-    iconColor: '#2563EB',
-  },
-  {
-    key: 'totalOperations',
-    icon: <ScissorOutlined />,
-    labelKey: 'dashboard.totalOperations',
-    valueKey: 'totalOperations',
-    iconBg: '#F0FDF4',
-    iconColor: '#16A34A',
-  },
-  {
-    key: 'operationsThisMonth',
-    icon: <CalendarOutlined />,
-    labelKey: 'dashboard.operationsThisMonth',
-    valueKey: 'operationsThisMonth',
-    iconBg: '#FAF5FF',
-    iconColor: '#7C3AED',
-  },
-  {
-    key: 'completedOperations',
-    icon: <CheckCircleOutlined />,
-    labelKey: 'dashboard.completedOperations',
-    valueKey: 'completedOperations',
-    iconBg: '#F0FDFA',
-    iconColor: '#14B8A6',
-  },
-];
-
-// ─── Single Stat Card ───────────────────────────────
-function StatCard({ config, value }: { config: StatCardConfig; value: number }) {
-  const { t } = useTranslation();
-
-  return (
-    <Card
-      className="stat-card"
-      bordered={false}
-      styles={{ body: { padding: 20 } }}
-    >
-      <div style={{ display: 'flex', alignItems: 'flex-start', gap: 16 }}>
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            width: 48,
-            height: 48,
-            borderRadius: 12,
-            backgroundColor: config.iconBg,
-            color: config.iconColor,
-            fontSize: 22,
-            flexShrink: 0,
-          }}
-        >
-          {config.icon}
-        </div>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 4, minWidth: 0 }}>
-          <span
-            style={{
-              fontSize: 14,
-              color: '#94A3B8',
-              fontWeight: 500,
-            }}
-          >
-            {t(config.labelKey)}
-          </span>
-          <Statistic
-            value={value}
-            formatter={() => <AnimatedNumber value={value} />}
-            valueStyle={{
-              fontSize: 24,
-              fontWeight: 700,
-              color: '#0F172A',
-              lineHeight: 1.1,
-            }}
-          />
-        </div>
-      </div>
-    </Card>
-  );
-}
-
-// ─── Stats Cards Grid ───────────────────────────────
 export default function StatsCards() {
-  const { data, isLoading } = useQuery({
+  const { t } = useTranslation();
+  const currency = t('common.currency');
+
+  const { data: stats, isLoading } = useQuery({
     queryKey: ['dashboard', 'stats'],
     queryFn: () => dashboardService.getStats(),
     select: (res) => res.data.data,
   });
 
-  const stats = data ?? {
-    totalPatients: 0,
-    totalOperations: 0,
-    operationsThisMonth: 0,
-    completedOperations: 0,
-  };
+  const metrics: MetricConfig[] = [
+    {
+      key: 'totalOperations',
+      icon: <ScissorOutlined />,
+      labelKey: 'dashboard.totalOperations',
+      iconBg: '#F0FDF4',
+      iconColor: '#16A34A',
+      resolve: (s) => ({ available: typeof s.totalOperations === 'number', display: String(s.totalOperations ?? '') }),
+    },
+    {
+      key: 'completedOperations',
+      icon: <CheckCircleOutlined />,
+      labelKey: 'dashboard.completedOperations',
+      iconBg: '#F0FDFA',
+      iconColor: '#14B8A6',
+      resolve: (s) => ({ available: typeof s.completedOperations === 'number', display: String(s.completedOperations ?? '') }),
+    },
+    {
+      key: 'pendingOperations',
+      icon: <ClockCircleOutlined />,
+      labelKey: 'dashboard.pendingOperations',
+      iconBg: '#FFFBEB',
+      iconColor: '#D97706',
+      resolve: (s) => ({ available: typeof s.pendingOperations === 'number', display: String(s.pendingOperations ?? '') }),
+    },
+    {
+      key: 'totalPatients',
+      icon: <TeamOutlined />,
+      labelKey: 'dashboard.totalPatients',
+      iconBg: '#EFF6FF',
+      iconColor: '#2563EB',
+      resolve: (s) => ({ available: typeof s.totalPatients === 'number', display: String(s.totalPatients ?? '') }),
+    },
+    {
+      key: 'totalDoctors',
+      icon: <UserOutlined />,
+      labelKey: 'dashboard.doctors',
+      iconBg: '#F5F3FF',
+      iconColor: '#7C3AED',
+      resolve: (s) => ({ available: typeof s.totalDoctors === 'number', display: String(s.totalDoctors ?? '') }),
+    },
+    {
+      key: 'totalNurses',
+      icon: <MedicineBoxOutlined />,
+      labelKey: 'dashboard.nurses',
+      iconBg: '#FDF2F8',
+      iconColor: '#DB2777',
+      resolve: (s) => ({ available: typeof s.totalNurses === 'number', display: String(s.totalNurses ?? '') }),
+    },
+    {
+      key: 'totalHospitals',
+      icon: <BankOutlined />,
+      labelKey: 'dashboard.hospitals',
+      iconBg: '#EEF2FF',
+      iconColor: '#4F46E5',
+      resolve: (s) => ({ available: typeof s.totalHospitals === 'number', display: String(s.totalHospitals ?? '') }),
+    },
+    {
+      key: 'revenue',
+      icon: <DollarOutlined />,
+      labelKey: 'dashboard.totalRevenue',
+      iconBg: '#ECFDF5',
+      iconColor: '#059669',
+      resolve: (s) => {
+        if (s.revenue && typeof s.revenue.totalCost === 'number') {
+          return { available: true, display: formatCurrency(s.revenue.totalCost, currency) };
+        }
+        return {
+          available: false,
+          display: t('dashboard.notAvailable'),
+          reason: t('dashboard.dataUnavailableTooltip'),
+        };
+      },
+    },
+  ];
 
   if (isLoading) {
     return (
-      <Row gutter={[16, 16]}>
-        {[1, 2, 3, 4].map((i) => (
-          <Col key={i} xs={24} sm={12} xl={6}>
-            <Card
-              bordered={false}
-              styles={{ body: { padding: 20, display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: 96 } }}
-            >
-              <Spin />
-            </Card>
-          </Col>
-        ))}
-      </Row>
+      <div className="stats-cards">
+        <Row gutter={[12, 12]}>
+          {metrics.map((metric) => (
+            <Col key={metric.key} xs={12} sm={12} xl={6}>
+              <Card bordered={false} className="loadingCard">
+                <Skeleton active paragraph={false} title={{ width: '70%' }} />
+              </Card>
+            </Col>
+          ))}
+        </Row>
+      </div>
     );
   }
 
   return (
-    <Row gutter={[16, 16]}>
-      {STAT_CARDS.map((card) => (
-        <Col key={card.key} xs={24} sm={12} xl={6}>
-          <StatCard
-            config={card}
-            value={stats[card.valueKey] as number}
-          />
-        </Col>
-      ))}
-    </Row>
+    <div className="stats-cards">
+      <Row gutter={[12, 12]}>
+        {metrics.map((metric) => {
+          const resolved = stats
+            ? metric.resolve(stats)
+            : { available: false, display: t('dashboard.notAvailable'), reason: t('dashboard.dataUnavailableTooltip') };
+          const valueNode = (
+            <Typography.Text strong style={{ fontSize: 22 }}>
+              {resolved.available ? resolved.display : t('dashboard.notAvailable')}
+            </Typography.Text>
+          );
+
+          return (
+            <Col key={metric.key} xs={12} sm={12} xl={6}>
+              <Card className="card" bordered={false} styles={{ body: { padding: 0 } }}>
+                <div className="inner">
+                  <div className="icon" style={{ backgroundColor: metric.iconBg, color: metric.iconColor }}>
+                    {metric.icon}
+                  </div>
+                  <div className="content">
+                    <span className="label">{t(metric.labelKey)}</span>
+                    {resolved.available ? (
+                      valueNode
+                    ) : (
+                      <Tooltip title={resolved.reason ?? t('dashboard.dataUnavailableTooltip')}>
+                        <span>
+                          {valueNode}
+                          <Typography.Text type="secondary" style={{ display: 'block', fontSize: 11 }}>
+                            {t('dashboard.dataNotAvailable')}
+                          </Typography.Text>
+                        </span>
+                      </Tooltip>
+                    )}
+                  </div>
+                </div>
+              </Card>
+            </Col>
+          );
+        })}
+      </Row>
+    </div>
   );
 }

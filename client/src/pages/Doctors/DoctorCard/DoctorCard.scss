@@ -1,0 +1,124 @@
+.doctorCard {
+  height: 100%;
+  border-radius: $radius-lg;
+  box-shadow: $shadow-sm;
+  overflow: hidden;
+
+  .ant-card-body {
+    display: flex;
+    flex-direction: column;
+    gap: $space-2;
+    padding: $space-4;
+    min-width: 0;
+  }
+
+  @include dark {
+    background: $dark-surface;
+    border-color: $dark-border;
+  }
+}
+
+.doctorCardTop {
+  @include flex-between;
+  align-items: flex-start;
+  gap: $space-2;
+}
+
+.doctorCardAvatar {
+  flex-shrink: 0;
+  background: $primary-light !important;
+  color: $primary !important;
+  font-weight: $font-semibold;
+  font-size: $font-body-sm;
+
+  @include dark {
+    background: $dark-primary-light !important;
+    color: $primary-200 !important;
+  }
+}
+
+.doctorCardStatus {
+  margin-inline-end: 0;
+}
+
+.doctorCardName {
+  margin: 0;
+  font-size: $font-body;
+  font-weight: $font-semibold;
+  color: $text-primary;
+  line-height: $line-height-tight;
+  word-break: break-word;
+
+  @include dark {
+    color: $dark-text-primary;
+  }
+}
+
+.doctorCardSubtitle {
+  margin: 0;
+  font-size: $font-body-sm;
+  color: $text-secondary;
+  @include truncate;
+
+  @include dark {
+    color: $dark-text-secondary;
+  }
+}
+
+.doctorCardContacts {
+  display: flex;
+  flex-direction: column;
+  gap: $space-1;
+  min-width: 0;
+}
+
+.doctorCardMeta {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  max-width: 100%;
+  font-size: $font-body-sm;
+  color: $text-muted;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  .anticon {
+    flex-shrink: 0;
+  }
+
+  @include dark {
+    color: $dark-text-muted;
+  }
+}
+
+.doctorCardTags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-1;
+  min-width: 0;
+}
+
+.doctorCardTag {
+  margin-inline-end: 0;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.doctorCardActions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: auto;
+  padding-top: $space-2;
+  border-top: 1px solid $border;
+
+  @include rtl {
+    justify-content: flex-start;
+  }
+
+  @include dark {
+    border-top-color: $dark-border;
+  }
+}

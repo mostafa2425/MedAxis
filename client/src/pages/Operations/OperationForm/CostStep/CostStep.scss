@@ -1,0 +1,79 @@
+.costSummary {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: $space-3;
+  margin-bottom: $space-5;
+  padding: $space-4;
+  border-radius: $radius-lg;
+  border: 1px solid $border;
+  background: $background;
+
+  @include dark {
+    background: $dark-surface-elevated;
+    border-color: $dark-border;
+  }
+
+  @include responsive('sm') {
+    grid-template-columns: 1fr;
+  }
+
+  &--due .costSummaryItem--remaining strong {
+    color: #D97706;
+  }
+
+  &--clear .costSummaryItem--remaining strong {
+    color: $success;
+  }
+}
+
+.costSummaryItem {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+
+  strong {
+    font-size: $font-h5;
+    font-weight: $font-bold;
+    color: $text-primary;
+
+    @include dark {
+      color: $dark-text-primary;
+    }
+  }
+}
+
+.costSummaryLabel {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: $font-caption;
+  font-weight: $font-medium;
+  color: $text-muted;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.autoCalculatedTag {
+  align-self: flex-start;
+  margin-top: 2px;
+  font-size: 10px !important;
+  border-radius: $radius-full;
+}
+
+.remainingField .remainingValue {
+  display: flex;
+  align-items: center;
+  min-height: 40px;
+  padding: 0 $space-3;
+  border: 1px solid $border;
+  border-radius: $radius-md;
+  background: $background;
+  font-weight: $font-semibold;
+  color: #D97706;
+
+  @include dark {
+    background: $dark-surface-elevated;
+    border-color: $dark-border;
+  }
+}

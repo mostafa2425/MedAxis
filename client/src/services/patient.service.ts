@@ -31,7 +31,7 @@ export const patientService = {
 
   search(query: string) {
     return api.get<PaginatedResponse<Patient>>('/patients', {
-      params: { search: query, limit: 10 },
+      params: { search: query, limit: 20 },
     });
   },
 };

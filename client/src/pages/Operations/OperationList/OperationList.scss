@@ -1,0 +1,89 @@
+.operationListMobile {
+  display: flex;
+  flex-direction: column;
+  gap: $space-3;
+
+  @include up('md') {
+    display: none;
+  }
+}
+
+.operationListCards {
+  display: flex;
+  flex-direction: column;
+  gap: $space-3;
+}
+
+.operationListCard {
+  cursor: pointer;
+}
+
+.operationListMeta {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: $font-body-sm;
+  color: $text-muted;
+}
+
+.operationListMobilePagination {
+  display: flex;
+  justify-content: center;
+  padding-top: $space-2;
+}
+
+.operationListDesktop {
+  display: none;
+
+  @include up('md') {
+    display: block;
+  }
+}
+
+.operationListTable {
+  @include card-base;
+  overflow: hidden;
+
+  .ant-table {
+    background: transparent;
+  }
+
+  .ant-table-thead > tr > th {
+    background: $background;
+    font-size: $font-caption;
+    font-weight: $font-semibold;
+    color: $text-muted;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+
+    @include dark {
+      background: $dark-surface-elevated;
+      color: $dark-text-muted;
+    }
+  }
+
+  .ant-table-tbody > tr:hover > td {
+    background: rgba(14, 165, 233, 0.04);
+  }
+}
+
+.operationListNameCell {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.operationListName {
+  font-weight: $font-semibold;
+  color: $text-primary;
+
+  @include dark {
+    color: $dark-text-primary;
+  }
+}
+
+.operationListPatient {
+  font-size: $font-caption;
+  color: $text-muted;
+}

@@ -1,0 +1,226 @@
+.operation-form-page {
+  &.page {
+    display: flex;
+    flex-direction: column;
+    gap: $space-4;
+    animation: fadeIn 0.3s ease;
+    padding-bottom: $space-4;
+
+    @include responsive('md') {
+      gap: $space-3;
+      padding-bottom: calc(72px + #{$bottom-nav-height} + #{$safe-area-bottom});
+    }
+  }
+
+  .pageHeader {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: $space-3;
+    flex-wrap: wrap;
+  }
+
+  .pageHeaderLeft {
+    display: flex;
+    align-items: flex-start;
+    gap: $space-3;
+    min-width: 0;
+    flex: 1;
+  }
+
+  .pageHeaderText {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+  }
+
+  .pageTitle {
+    font-size: $font-h4;
+    font-weight: $font-bold;
+    color: $text-primary;
+    margin: 0;
+
+    @include dark {
+      color: $dark-text-primary;
+    }
+
+    @include responsive('sm') {
+      font-size: $font-h5;
+    }
+  }
+
+  .pageHint {
+    margin: 0;
+    font-size: $font-body-sm;
+    color: $text-muted;
+  }
+
+  .pageHeaderMeta {
+    display: flex;
+    align-items: center;
+    gap: $space-2;
+    flex-wrap: wrap;
+  }
+
+  .stepPill,
+  .draftPill {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 10px;
+    border-radius: $radius-full;
+    font-size: $font-caption;
+    font-weight: $font-semibold;
+    line-height: 1.2;
+  }
+
+  .stepPill {
+    color: $primary;
+    background: $primary-light;
+  }
+
+  .draftPill {
+    color: $success;
+    background: $success-light;
+  }
+
+  .backButton {
+    @include responsive('md') {
+      display: none;
+    }
+  }
+
+  .loadingContainer {
+    @include flex-center;
+    flex-direction: column;
+    gap: $space-4;
+    padding: $space-16;
+    color: $text-muted;
+  }
+
+  .stepsContent {
+    @include card-base;
+    min-height: 320px;
+    padding: $space-5 $space-6;
+    animation: stepIn 0.28s ease;
+
+    @include responsive('sm') {
+      padding: $space-4;
+    }
+
+    &--patient {
+      background: transparent;
+      border: none;
+      box-shadow: none;
+      padding: 0;
+
+      @include dark {
+        background: transparent;
+        border: none;
+        box-shadow: none;
+      }
+
+      .stepPanelHeader {
+        padding: 0 $space-1 $space-3;
+        border-bottom: none;
+        margin-bottom: $space-3;
+      }
+
+      .stepPanelTitle {
+        color: $primary;
+        font-size: $font-h4;
+
+        @include dark {
+          color: $primary-200;
+        }
+      }
+    }
+  }
+
+  .stepPanelHeader {
+    margin-bottom: $space-4;
+    padding-bottom: $space-3;
+    border-bottom: 1px solid $border;
+
+    @include dark {
+      border-bottom-color: $dark-border;
+    }
+  }
+
+  .stepPanelTitle {
+    margin: 0;
+    font-size: $font-h5;
+    font-weight: $font-semibold;
+    color: $text-primary;
+
+    @include dark {
+      color: $dark-text-primary;
+    }
+  }
+
+  .stepPanelHint {
+    margin: $space-1 0 0;
+    font-size: $font-body-sm;
+    color: $text-muted;
+  }
+
+  // Shared field chrome used by all steps
+  .stepContent {
+    padding: 0;
+  }
+
+  .fieldGroup {
+    display: flex;
+    flex-direction: column;
+    gap: $space-1;
+    margin-bottom: $space-2;
+  }
+
+  .fieldLabel {
+    font-size: $font-body-sm;
+    font-weight: $font-semibold;
+    color: $text-secondary;
+
+    @include dark {
+      color: $dark-text-secondary;
+    }
+  }
+
+  .required {
+    color: $error;
+    margin-left: 2px;
+  }
+
+  .fieldError {
+    font-size: $font-caption;
+    color: $error;
+    margin-top: 2px;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes stepIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.stepContent .ant-select-selection-overflow {
+  flex-wrap: wrap;
+  max-width: 100%;
+}

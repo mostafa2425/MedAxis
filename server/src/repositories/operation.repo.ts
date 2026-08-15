@@ -1,5 +1,6 @@
 import { prisma } from '../utils/prisma';
 import { Prisma, OperationStatus } from '@prisma/client';
+import { operationDetailInclude, operationListInclude } from './operationInclude';
 
 export class OperationRepository {
   async findAll(params: {
@@ -50,23 +51,7 @@ export class OperationRepository {
         where,
         skip,
         take: limit,
-        include: {
-          patient: true,
-          hospital: true,
-          specialty: true,
-          medicalTeam: {
-            include: {
-              primarySurgeon: true,
-              assistantSurgeon: true,
-              anesthesiologist: true,
-              assistantAnesthesia: true,
-            },
-          },
-          cost: true,
-          files: {
-            select: { id: true, fileType: true, fileName: true, filePath: true, fileSize: true, createdAt: true },
-          },
-        },
+        include: operationListInclude,
         orderBy,
       }),
       prisma.operation.count({ where }),
@@ -78,41 +63,13 @@ export class OperationRepository {
   async findById(id: string, createdBy: string) {
     return prisma.operation.findFirst({
       where: { id, createdBy },
-      include: {
-        patient: true,
-        hospital: true,
-        specialty: true,
-        creator: {
-          select: { id: true, name: true, email: true },
-        },
-        medicalTeam: {
-          include: {
-            primarySurgeon: true,
-            assistantSurgeon: true,
-            anesthesiologist: true,
-            assistantAnesthesia: true,
-          },
-        },
-        cost: true,
-        files: {
-          include: {
-            uploader: { select: { id: true, name: true } },
-          },
-          orderBy: { createdAt: 'desc' },
-        },
-        timeline: {
-          include: {
-            user: { select: { id: true, name: true } },
-          },
-          orderBy: { createdAt: 'desc' },
-        },
-      },
+      include: operationDetailInclude,
     });
   }
 
   async create(data: {
     name: string;
-    diagnosis: string;
+    diagnosis?: string | null;
     hospitalId: string;
     operationDate: Date;
     operationTime: string;
@@ -122,7 +79,20 @@ export class OperationRepository {
     notes?: string;
     patientId: string;
     createdBy: string;
-    specialtyId?: string;
+    specialtyId?: string | null;
+    catalogId?: string | null;
+    procedures?: Array<{
+      catalogId?: string | null;
+      name: string;
+      nameAr?: string | null;
+      specialtyId?: string | null;
+      sortOrder: number;
+    }>;
+    teamMembers?: Array<{
+      doctorId?: string | null;
+      nurseId?: string | null;
+      sortOrder: number;
+    }>;
     medicalTeam?: {
       primarySurgeonId?: string;
       assistantSurgeonId?: string;
@@ -140,13 +110,36 @@ export class OperationRepository {
       paymentNotes?: string;
     };
   }) {
-    const {
-      medicalTeam, cost, ...operationData
-    } = data;
+    const { medicalTeam, cost, procedures, teamMembers, ...operationData } = data;
 
     return prisma.operation.create({
       data: {
         ...operationData,
+        diagnosis: operationData.diagnosis ?? null,
+        ...(procedures && procedures.length > 0
+          ? {
+              procedures: {
+                create: procedures.map((procedure) => ({
+                  catalogId: procedure.catalogId ?? null,
+                  name: procedure.name,
+                  nameAr: procedure.nameAr ?? null,
+                  specialtyId: procedure.specialtyId ?? null,
+                  sortOrder: procedure.sortOrder,
+                })),
+              },
+            }
+          : {}),
+        ...(teamMembers && teamMembers.length > 0
+          ? {
+              teamMembers: {
+                create: teamMembers.map((member) => ({
+                  doctorId: member.doctorId ?? null,
+                  nurseId: member.nurseId ?? null,
+                  sortOrder: member.sortOrder,
+                })),
+              },
+            }
+          : {}),
         ...(medicalTeam && {
           medicalTeam: { create: medicalTeam },
         }),
@@ -163,41 +156,65 @@ export class OperationRepository {
           },
         }),
       },
-      include: {
-        patient: true,
-        hospital: true,
-        specialty: true,
-        medicalTeam: {
-          include: {
-            primarySurgeon: true,
-            assistantSurgeon: true,
-            anesthesiologist: true,
-            assistantAnesthesia: true,
-          },
-        },
-        cost: true,
-      },
+      include: operationListInclude,
     });
+  }
+
+  async replaceProcedures(
+    operationId: string,
+    procedures: Array<{
+      catalogId?: string | null;
+      name: string;
+      nameAr?: string | null;
+      specialtyId?: string | null;
+      sortOrder: number;
+    }>,
+  ) {
+    await prisma.$transaction([
+      prisma.operationProcedure.deleteMany({ where: { operationId } }),
+      prisma.operationProcedure.createMany({
+        data: procedures.map((procedure) => ({
+          operationId,
+          catalogId: procedure.catalogId ?? null,
+          name: procedure.name,
+          nameAr: procedure.nameAr ?? null,
+          specialtyId: procedure.specialtyId ?? null,
+          sortOrder: procedure.sortOrder,
+        })),
+      }),
+    ]);
+  }
+
+  async replaceTeamMembers(
+    operationId: string,
+    members: Array<{
+      doctorId?: string | null;
+      nurseId?: string | null;
+      sortOrder: number;
+    }>,
+  ) {
+    await prisma.$transaction([
+      prisma.operationTeamMember.deleteMany({ where: { operationId } }),
+      ...(members.length > 0
+        ? [
+            prisma.operationTeamMember.createMany({
+              data: members.map((member) => ({
+                operationId,
+                doctorId: member.doctorId ?? null,
+                nurseId: member.nurseId ?? null,
+                sortOrder: member.sortOrder,
+              })),
+            }),
+          ]
+        : []),
+    ]);
   }
 
   async update(id: string, createdBy: string, data: Prisma.OperationUpdateInput) {
     return prisma.operation.update({
       where: { id, createdBy },
       data,
-      include: {
-        patient: true,
-        hospital: true,
-        specialty: true,
-        medicalTeam: {
-          include: {
-            primarySurgeon: true,
-            assistantSurgeon: true,
-            anesthesiologist: true,
-            assistantAnesthesia: true,
-          },
-        },
-        cost: true,
-      },
+      include: operationListInclude,
     });
   }
 
@@ -252,7 +269,10 @@ export class OperationRepository {
 
   async deleteFile(fileId: string, uploadedBy: string) {
     const file = await prisma.operationFile.findFirst({
-      where: { id: fileId, uploadedBy },
+      where: {
+        id: fileId,
+        operation: { createdBy: uploadedBy },
+      },
     });
     if (!file) return null;
     return prisma.operationFile.delete({ where: { id: fileId } });
@@ -289,6 +309,15 @@ export class OperationRepository {
         cost: true,
       },
       orderBy: { createdAt: 'desc' },
+    });
+  }
+
+  async countThisMonth(createdBy: string) {
+    const start = new Date();
+    start.setDate(1);
+    start.setHours(0, 0, 0, 0);
+    return prisma.operation.count({
+      where: { createdBy, operationDate: { gte: start } },
     });
   }
 

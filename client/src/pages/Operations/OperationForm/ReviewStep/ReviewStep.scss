@@ -1,0 +1,117 @@
+.reviewStep {
+  display: flex;
+  flex-direction: column;
+  gap: $space-4;
+}
+
+.reviewSection {
+  border: 1px solid $border;
+  border-radius: $radius-lg;
+  overflow: hidden;
+  background: $surface;
+  transition: box-shadow $transition-fast;
+
+  &:hover {
+    box-shadow: $shadow-sm;
+  }
+
+  @include dark {
+    background: $dark-surface-elevated;
+    border-color: $dark-border;
+  }
+}
+
+.reviewSectionHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: $space-2;
+  padding: $space-3 $space-4;
+  background: $background;
+  border-bottom: 1px solid $border;
+
+  @include dark {
+    background: $dark-surface;
+    border-bottom-color: $dark-border;
+  }
+}
+
+.reviewSectionTitle {
+  display: inline-flex;
+  align-items: center;
+  gap: $space-2;
+  margin: 0;
+  font-size: $font-body;
+  font-weight: $font-semibold;
+  color: $text-primary;
+
+  @include dark {
+    color: $dark-text-primary;
+  }
+}
+
+.reviewSectionBody {
+  padding: $space-4;
+}
+
+.reviewSelectedPatient {
+  display: flex;
+  align-items: center;
+  gap: $space-3;
+  flex-wrap: wrap;
+}
+
+.reviewMeta {
+  font-size: $font-body-sm;
+  color: $text-muted;
+}
+
+.reviewCostGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: $space-3;
+  margin-bottom: $space-4;
+
+  @include responsive('sm') {
+    grid-template-columns: 1fr;
+  }
+}
+
+.reviewCostItem {
+  display: flex;
+  flex-direction: column;
+  gap: $space-1;
+  padding: $space-3;
+  background: $background;
+  border-radius: $radius-md;
+  text-align: center;
+
+  @include dark {
+    background: $dark-surface;
+  }
+}
+
+.reviewCostLabel {
+  font-size: $font-caption;
+  color: $text-muted;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.reviewCostValue {
+  font-size: $font-h5;
+  font-weight: $font-bold;
+  color: $text-primary;
+
+  @include dark {
+    color: $dark-text-primary;
+  }
+
+  &.isDue {
+    color: #D97706;
+  }
+
+  &.isClear {
+    color: $success;
+  }
+}

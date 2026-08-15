@@ -17,11 +17,18 @@ export class SpecialtyRepository {
     });
   }
 
+  async findByIds(ids: string[]) {
+    if (ids.length === 0) return [];
+    return prisma.specialty.findMany({
+      where: { id: { in: ids }, isActive: true },
+    });
+  }
+
   async findByName(name: string) {
     return prisma.specialty.findUnique({ where: { name } });
   }
 
-  async create(data: { name: string; nameAr?: string; icon?: string }) {
+  async create(data: { name: string; nameAr?: string; icon?: string; parentId?: string }) {
     return prisma.specialty.create({ data });
   }
 

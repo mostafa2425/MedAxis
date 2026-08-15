@@ -3,22 +3,22 @@ import { AppError } from '../utils/errors';
 import { sendError } from '../utils/response';
 import { Prisma } from '@prisma/client';
 import { ZodError } from 'zod';
+import { MulterError } from 'multer';
+import { normalizeZodIssues } from '../utils/validationErrors';
 
-export function errorHandler(err: Error, req: Request, res: Response, next: NextFunction) {
-  if (err instanceof AppError) {
-    return sendError(res, err.message, err.statusCode, err.details);
+const VALIDATION_FAILED = 'Validation failed';
+
+export function errorHandler(err: Error, _req: Request, res: Response, _next: NextFunction) {
+  if (err instanceof ZodError) {
+    return sendError(res, VALIDATION_FAILED, 400, normalizeZodIssues(err.issues) ?? []);
   }
 
-  if (err instanceof ZodError) {
-    return sendError(
-      res,
-      err.issues[0]?.message || 'Validation error',
-      400,
-      err.issues.map((issue) => ({
-        field: issue.path.join('.'),
-        message: issue.message,
-      })),
-    );
+  if (err instanceof AppError) {
+    const normalized = normalizeZodIssues(err.details);
+    if (normalized) {
+      return sendError(res, VALIDATION_FAILED, err.statusCode, normalized);
+    }
+    return sendError(res, err.message, err.statusCode, err.details);
   }
 
   if (err instanceof Prisma.PrismaClientKnownRequestError) {
@@ -32,6 +32,19 @@ export function errorHandler(err: Error, req: Request, res: Response, next: Next
     if (err.code === 'P2003') {
       return sendError(res, 'Related record not found', 400);
     }
+  }
+
+  if (err instanceof Prisma.PrismaClientValidationError) {
+    console.error('Prisma validation error:', err.message);
+    return sendError(res, 'Invalid request data', 400, [
+      { path: [], code: 'custom', message: 'Invalid request data' },
+    ]);
+  }
+
+  if (err instanceof MulterError) {
+    return sendError(res, err.message, 400, [
+      { path: ['file'], code: 'custom', message: err.message },
+    ]);
   }
 
   if (err instanceof SyntaxError) {

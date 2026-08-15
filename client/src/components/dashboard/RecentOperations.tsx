@@ -12,7 +12,7 @@ import { dashboardService } from '@/services/dashboard.service';
 import { formatDate, getInitials, getStatusColor } from '@/utils/helpers';
 import { OPERATION_STATUSES } from '@/utils/constants';
 import type { Operation, OperationStatus } from '@/types';
-import styles from './RecentOperations.module.scss';
+import './RecentOperations.scss';
 
 // ─── Get status label from constants ───────────────
 function getStatusLabel(status: OperationStatus): string {
@@ -28,11 +28,11 @@ function getColumns(t: (key: string) => string) {
       dataIndex: ['patient', 'fullName'],
       key: 'patient',
       render: (_: unknown, record: Operation) => (
-        <div className={styles.patientCell}>
-          <div className={styles.patientAvatar}>
+        <div className="patientCell">
+          <div className="patientAvatar">
             {getInitials(record.patient?.fullName || '')}
           </div>
-          <span className={styles.patientName}>
+          <span className="patientName">
             {record.patient?.fullName || '—'}
           </span>
         </div>
@@ -43,7 +43,7 @@ function getColumns(t: (key: string) => string) {
       dataIndex: 'name',
       key: 'name',
       render: (name: string) => (
-        <span className={styles.operationName}>{name}</span>
+        <span className="operationName">{name}</span>
       ),
     },
     {
@@ -51,7 +51,7 @@ function getColumns(t: (key: string) => string) {
       dataIndex: ['hospital', 'name'],
       key: 'hospital',
       render: (name: string) => (
-        <span className={styles.hospitalName}>{name || '—'}</span>
+        <span className="hospitalName">{name || '—'}</span>
       ),
     },
     {
@@ -60,7 +60,7 @@ function getColumns(t: (key: string) => string) {
       key: 'date',
       width: 120,
       render: (date: string) => (
-        <span className={styles.dateCell}>{formatDate(date)}</span>
+        <span className="dateCell">{formatDate(date)}</span>
       ),
     },
     {
@@ -91,14 +91,14 @@ function MobileCard({ operation }: { operation: Operation }) {
   return (
     <Link
       to={`/operations/${operation.id}`}
-      className={styles.mobileCard}
+      className="mobileCard"
     >
-      <div className={styles.mobileCardAvatar}>
+      <div className="mobileCardAvatar">
         {getInitials(operation.patient?.fullName || '')}
       </div>
-      <div className={styles.mobileCardContent}>
-        <div className={styles.mobileCardTop}>
-          <span className={styles.mobilePatientName}>
+      <div className="mobileCardContent">
+        <div className="mobileCardTop">
+          <span className="mobilePatientName">
             {operation.patient?.fullName || '—'}
           </span>
           <Tag
@@ -115,15 +115,15 @@ function MobileCard({ operation }: { operation: Operation }) {
             {getStatusLabel(operation.status)}
           </Tag>
         </div>
-        <span className={styles.mobileOperationName}>
+        <span className="mobileOperationName">
           {operation.name}
         </span>
-        <div className={styles.mobileCardMeta}>
+        <div className="mobileCardMeta">
           <span>
             <BankOutlined style={{ marginRight: 4 }} />
             {operation.hospital?.name || '—'}
           </span>
-          <span className={styles.mobileCardDot} />
+          <span className="mobileCardDot" />
           <span>
             <CalendarOutlined style={{ marginRight: 4 }} />
             {formatDate(operation.operationDate)}
@@ -147,35 +147,35 @@ export default function RecentOperations() {
   const operations = data ?? [];
 
   return (
-    <div className={styles.section}>
-      <div className={styles.sectionHeader}>
-        <h3 className={styles.sectionTitle}>
+    <div className="recent-operations section">
+      <div className="sectionHeader">
+        <h3 className="sectionTitle">
           {t('dashboard.recentOperations')}
         </h3>
-        <Link to="/operations" className={styles.viewAllLink}>
+        <Link to="/operations" className="viewAllLink">
           {t('dashboard.viewAll')}
           <RightOutlined style={{ fontSize: 11 }} />
         </Link>
       </div>
 
       {isLoading ? (
-        <div className={styles.loadingWrapper}>
+        <div className="loadingWrapper">
           <Spin size="large" />
         </div>
       ) : operations.length === 0 ? (
-        <div className={styles.emptyWrapper}>
-          <FileSearchOutlined className={styles.emptyIcon} />
-          <p className={styles.emptyTitle}>
+        <div className="emptyWrapper">
+          <FileSearchOutlined className="emptyIcon" />
+          <p className="emptyTitle">
             {t('dashboard.noRecentOperations')}
           </p>
-          <p className={styles.emptyDescription}>
+          <p className="emptyDescription">
             {t('common.noData')}
           </p>
         </div>
       ) : (
         <>
           {/* Desktop Table */}
-          <div className={styles.tableWrapper}>
+          <div className="tableWrapper">
             <Table
               dataSource={operations}
               columns={getColumns(t)}
@@ -183,7 +183,7 @@ export default function RecentOperations() {
               pagination={false}
               size="middle"
               onRow={(record) => ({
-                className: styles.clickableRow,
+                className: 'clickableRow',
                 onClick: () => {
                   window.location.href = `/operations/${record.id}`;
                 },
@@ -192,7 +192,7 @@ export default function RecentOperations() {
           </div>
 
           {/* Mobile Cards */}
-          <div className={styles.mobileList}>
+          <div className="mobileList">
             {operations.map((op) => (
               <MobileCard key={op.id} operation={op} />
             ))}

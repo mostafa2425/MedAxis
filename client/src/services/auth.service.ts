@@ -1,5 +1,5 @@
 import api from './api';
-import type { ApiResponse, LoginPayload, RegisterPayload, User, LoginResponse } from '@/types';
+import type { ApiResponse, LoginPayload, RegisterPayload, UpdateProfilePayload, User, LoginResponse } from '@/types';
 
 export const authService = {
   login(data: LoginPayload) {
@@ -12,5 +12,9 @@ export const authService = {
 
   getMe() {
     return api.get<ApiResponse<User>>('/auth/me');
+  },
+
+  updateMe(data: UpdateProfilePayload) {
+    return api.put<ApiResponse<User>>('/auth/me', data);
   },
 };

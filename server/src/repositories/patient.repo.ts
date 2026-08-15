@@ -14,7 +14,12 @@ export class PatientRepository {
 
     const where: Prisma.PatientWhereInput = { createdBy };
     if (search) {
-      where.fullName = { contains: search, mode: 'insensitive' };
+      const term = search.trim();
+      where.OR = [
+        { fullName: { contains: term, mode: 'insensitive' } },
+        { mobile: { contains: term, mode: 'insensitive' } },
+        { id: { contains: term, mode: 'insensitive' } },
+      ];
     }
     if (gender) {
       where.gender = gender;
@@ -81,6 +86,10 @@ export class PatientRepository {
       take: limit,
       orderBy: { createdAt: 'desc' },
     });
+  }
+
+  async count(createdBy: string) {
+    return prisma.patient.count({ where: { createdBy } });
   }
 }
 

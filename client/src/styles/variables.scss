@@ -50,7 +50,7 @@ $sidebar-active-text: #2563EB;
 $sidebar-hover: #F8FAFC;
 $sidebar-border: #E2E8F0;
 $sidebar-width: 260px;
-$sidebar-collapsed-width: 72px;
+$sidebar-collapsed-width: 80px;
 
 // ── Status Colors ────────────────────────────────────
 $status-scheduled: #2563EB;
@@ -133,8 +133,12 @@ $z-tooltip: 1070;
 
 // ── Layout ───────────────────────────────────────────
 $header-height: 64px;
+$header-height-mobile: 52px;
 $sidebar-width: 260px;
-$sidebar-collapsed-width: 72px;
+$sidebar-collapsed-width: 80px;
+$bottom-nav-height: 56px;
+$safe-area-bottom: env(safe-area-inset-bottom, 0px);
+$mobile-sticky-offset: calc(#{$bottom-nav-height} + #{$safe-area-bottom});
 
 // ═══════════════════════════════════════════════════════
 // Dark Mode Color Overrides

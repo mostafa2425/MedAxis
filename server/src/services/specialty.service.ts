@@ -1,5 +1,5 @@
 import { specialtyRepo } from '../repositories/specialty.repo';
-import { NotFoundError, ConflictError } from '../utils/errors';
+import { NotFoundError, ConflictError, BadRequestError } from '../utils/errors';
 
 class SpecialtyService {
   async getAll() {
@@ -34,6 +34,64 @@ class SpecialtyService {
 
   async getWithOperationsCount() {
     return specialtyRepo.findWithOperationsCount();
+  }
+
+  async assertTopLevelSpecialtyIds(ids: string[]) {
+    const unique = [...new Set(ids)];
+    if (unique.length === 0) {
+      throw new BadRequestError('Please select at least one specialty', [
+        {
+          path: ['specialtyIds'],
+          code: 'too_small',
+          message: 'Please select at least one specialty',
+        },
+      ]);
+    }
+
+    const found = await specialtyRepo.findByIds(unique);
+    if (found.length !== unique.length) {
+      throw new BadRequestError('One or more specialty IDs are invalid', [
+        {
+          path: ['specialtyIds'],
+          code: 'custom',
+          message: 'One or more specialty IDs are invalid',
+        },
+      ]);
+    }
+
+    const nested = found.filter((specialty) => specialty.parentId);
+    if (nested.length > 0) {
+      throw new BadRequestError('Areas of expertise cannot be used as top-level specialties', [
+        {
+          path: ['specialtyIds'],
+          code: 'custom',
+          message: `${nested.map((item) => item.name).join(', ')} must be selected as areas of expertise`,
+        },
+      ]);
+    }
+
+    return unique;
+  }
+
+  async assertSubspecialtyIds(ids: string[] | undefined, parentIds: string[]) {
+    const unique = [...new Set(ids ?? [])];
+    if (unique.length === 0) return [];
+
+    const found = await specialtyRepo.findByIds(unique);
+    if (found.length !== unique.length) {
+      throw new BadRequestError('One or more area of expertise IDs are invalid', [
+        {
+          path: ['subspecialtyIds'],
+          code: 'custom',
+          message: 'One or more area of expertise IDs are invalid',
+        },
+      ]);
+    }
+
+    const parentSet = new Set(parentIds);
+    return found
+      .filter((specialty) => specialty.parentId && parentSet.has(specialty.parentId))
+      .map((specialty) => specialty.id);
   }
 }
 

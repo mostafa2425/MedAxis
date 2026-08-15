@@ -1,24 +1,114 @@
-import { Typography } from 'antd';
-import { UserOutlined } from '@ant-design/icons';
+import { useState, useEffect, type ChangeEvent } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
+import { Button, Input, Empty } from 'antd';
+import { PlusOutlined, SearchOutlined } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
-
-const { Title, Paragraph } = Typography;
+import { patientService } from '@/services/patient.service';
+import { useDebounce } from '@/hooks/useDebounce';
+import { DEFAULT_PAGINATION } from '@/utils/constants';
+import type { Patient } from '@/types';
+import PatientList from './PatientList/PatientList';
+import AddPatient from './AddPatient/AddPatient';
+import './Patients.scss';
 
 export default function PatientsPage() {
   const { t } = useTranslation();
+  const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const [search, setSearch] = useState('');
+  const [page, setPage] = useState<number>(DEFAULT_PAGINATION.page);
+  const [modalOpen, setModalOpen] = useState(searchParams.get('add') === '1');
+  const debouncedSearch = useDebounce(search, 300);
+
+  useEffect(() => {
+    if (searchParams.get('add') !== '1') return;
+    setModalOpen(true);
+    const next = new URLSearchParams(searchParams);
+    next.delete('add');
+    setSearchParams(next, { replace: true });
+  }, [searchParams, setSearchParams]);
+
+  const { data, isLoading, isError } = useQuery({
+    queryKey: ['patients', page, debouncedSearch],
+    queryFn: () =>
+      patientService.getAll({
+        page,
+        limit: DEFAULT_PAGINATION.limit,
+        search: debouncedSearch || undefined,
+      }),
+  });
+
+  const patients: Patient[] = data?.data?.data ?? [];
+  const pagination = data?.data?.meta ?? data?.data?.pagination;
+  const total = pagination?.total ?? patients.length;
+
+  const handleSearchChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setSearch(e.target.value);
+    setPage(1);
+  };
+
+  const handleOpenAdd = () => setModalOpen(true);
+  const handleCloseModal = () => setModalOpen(false);
+
+  if (isError) {
+    return (
+      <div className="patients-page page">
+        <div className="pageHeader">
+          <div className="pageHeaderLeft">
+            <h1 className="pageTitle">{t('patients.title')}</h1>
+            <p className="pageSubtitle">{t('patients.patientInfo')}</p>
+          </div>
+          <Button type="primary" icon={<PlusOutlined />} onClick={handleOpenAdd}>
+            {t('patients.addPatient')}
+          </Button>
+        </div>
+        <Empty
+          className="emptyState"
+          image={Empty.PRESENTED_IMAGE_SIMPLE}
+          description={t('common.operationFailed')}
+        />
+      </div>
+    );
+  }
 
   return (
-    <div>
-      <div className="page-header">
-        <div className="page-header__title-group">
-          <h1 className="page-header__title">{t('patients.title')}</h1>
+    <div className="patients-page page">
+      <div className="pageHeader">
+        <div className="pageHeaderLeft">
+          <h1 className="pageTitle">{t('patients.title')}</h1>
+          <p className="pageSubtitle">{t('patients.patientInfo')}</p>
         </div>
+        <Button type="primary" icon={<PlusOutlined />} onClick={handleOpenAdd}>
+          {t('patients.addPatient')}
+        </Button>
       </div>
-      <div className="empty-state">
-        <UserOutlined className="empty-state__icon" />
-        <Title level={4} className="empty-state__title">{t('patients.noPatients')}</Title>
-        <Paragraph className="empty-state__description">{t('common.noData')}</Paragraph>
+
+      <div className="searchSection">
+        <Input
+          prefix={<SearchOutlined />}
+          placeholder={t('patients.searchPlaceholder')}
+          value={search}
+          onChange={handleSearchChange}
+          allowClear
+          disabled={isLoading}
+        />
       </div>
+
+      <PatientList
+        patients={patients}
+        isLoading={isLoading}
+        hasSearch={Boolean(debouncedSearch)}
+        page={page}
+        pageSize={DEFAULT_PAGINATION.limit}
+        total={total}
+        onPageChange={setPage}
+        onRowClick={(id) => navigate(`/patients/${id}`)}
+        onAdd={handleOpenAdd}
+      />
+
+      <AddPatient open={modalOpen} onClose={handleCloseModal} />
     </div>
   );
 }

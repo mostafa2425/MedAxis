@@ -1,0 +1,107 @@
+.patientListMobile {
+  display: flex;
+  flex-direction: column;
+  gap: $space-3;
+
+  @include up('md') {
+    display: none;
+  }
+}
+
+.patientListCards {
+  display: flex;
+  flex-direction: column;
+  gap: $space-3;
+}
+
+.patientListCard {
+  cursor: pointer;
+}
+
+.patientListMeta {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: $font-body-sm;
+  color: $text-muted;
+}
+
+.patientListMobilePagination {
+  display: flex;
+  justify-content: center;
+  padding-top: $space-2;
+}
+
+.patientListDesktop {
+  display: none;
+
+  @include up('md') {
+    display: block;
+  }
+}
+
+.patientListTable {
+  @include card-base;
+  overflow: hidden;
+
+  .ant-table {
+    background: transparent;
+  }
+
+  .ant-table-thead > tr > th {
+    background: $background;
+    font-size: $font-caption;
+    font-weight: $font-semibold;
+    color: $text-muted;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+
+    @include dark {
+      background: $dark-surface-elevated;
+      color: $dark-text-muted;
+    }
+  }
+
+  .ant-table-tbody > tr:hover > td {
+    background: rgba(14, 165, 233, 0.04);
+  }
+}
+
+.patientListNameCell {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.patientListName {
+  font-weight: $font-semibold;
+}
+
+.patientListAvatar {
+  font-weight: $font-semibold;
+  font-size: $font-caption;
+}
+
+.patientListAvatarMale {
+  background: rgba(37, 99, 235, 0.1) !important;
+  color: $primary !important;
+}
+
+.patientListAvatarFemale {
+  background: rgba(236, 72, 153, 0.1) !important;
+  color: #ec4899 !important;
+}
+
+.patientListCardBody {
+  width: 100%;
+}
+
+.patientListRow {
+  cursor: pointer;
+}
+
+.patientListAge {
+  font-size: $font-caption;
+  color: $text-muted;
+}

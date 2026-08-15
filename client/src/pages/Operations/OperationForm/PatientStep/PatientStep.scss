@@ -1,0 +1,467 @@
+.patientStep {
+  display: flex;
+  flex-direction: column;
+  gap: $space-4;
+}
+
+.patientStepCard {
+  display: flex;
+  flex-direction: column;
+  gap: $space-3;
+  padding: $space-4;
+  background: $surface;
+  border: 1px solid $border;
+  border-radius: $radius-xl;
+  box-shadow: 0 4px 6px rgba(15, 23, 42, 0.04);
+
+  @include dark {
+    background: $dark-surface-elevated;
+    border-color: $dark-border;
+    box-shadow: none;
+  }
+
+  &--form {
+    gap: $space-4;
+  }
+}
+
+.patientCardHeader {
+  display: flex;
+  align-items: center;
+  gap: $space-2;
+}
+
+.patientCardIcon {
+  color: $primary;
+  font-size: 20px;
+}
+
+.patientCardTitle {
+  margin: 0;
+  font-size: $font-body;
+  font-weight: $font-semibold;
+  color: $text-primary;
+  line-height: 1.4;
+
+  @include dark {
+    color: $dark-text-primary;
+  }
+}
+
+.patientCardDesc {
+  margin: 0;
+  max-width: 280px;
+  font-size: $font-body-sm;
+  color: $text-muted;
+  line-height: 1.5;
+}
+
+.patientSearchSelect {
+  width: 100%;
+
+  .ant-select-selector {
+    min-height: 52px !important;
+    padding-block: 8px !important;
+  }
+
+  .ant-select-selection-search-input {
+    height: 34px !important;
+  }
+}
+
+.patientSelectLoading,
+.patientSelectEmpty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: $space-1;
+  padding: $space-3;
+  color: $text-muted;
+  font-size: $font-body-sm;
+  text-align: center;
+
+  p {
+    margin: 0;
+  }
+}
+
+.patientSelectOption {
+  display: flex;
+  align-items: center;
+  gap: $space-3;
+  padding: 4px 0;
+}
+
+.patientSelectOptionAvatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: $primary-light;
+  color: $primary;
+  flex-shrink: 0;
+
+  @include dark {
+    background: $dark-primary-light;
+  }
+}
+
+.patientSelectOptionBody {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.patientSelectOptionName {
+  font-size: $font-body-sm;
+  font-weight: $font-semibold;
+  color: $text-primary;
+  line-height: 1.3;
+
+  @include dark {
+    color: $dark-text-primary;
+  }
+}
+
+.patientSelectOptionMeta {
+  font-size: $font-caption;
+  color: $text-muted;
+  line-height: 1.3;
+}
+
+.patientSearchInput {
+  height: 52px;
+
+  .ant-input-prefix {
+    margin-inline-end: $space-2;
+  }
+}
+
+.patientSearchHint {
+  display: flex;
+  align-items: center;
+  gap: $space-1;
+  margin: 0;
+  font-size: $font-caption;
+  color: $text-muted;
+  line-height: 1.4;
+
+  .anticon {
+    font-size: 14px;
+    flex-shrink: 0;
+  }
+}
+
+.patientResults {
+  display: flex;
+  flex-direction: column;
+  gap: $space-2;
+  max-height: 260px;
+  overflow-y: auto;
+  margin-top: $space-1;
+  padding-top: $space-2;
+  border-top: 1px solid $border;
+
+  @include dark {
+    border-top-color: $dark-border;
+  }
+}
+
+.patientResultsLoading,
+.patientResultsEmpty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: $space-2;
+  padding: $space-4;
+  color: $text-muted;
+  font-size: $font-body-sm;
+  text-align: center;
+
+  p {
+    margin: 0;
+  }
+}
+
+.patientResultItem {
+  display: flex;
+  align-items: center;
+  gap: $space-3;
+  width: 100%;
+  padding: $space-3;
+  border: 1px solid $border;
+  border-radius: $radius-lg;
+  background: $background;
+  cursor: pointer;
+  text-align: start;
+  font-family: inherit;
+  min-height: 56px;
+  transition: border-color 0.15s ease, background 0.15s ease, box-shadow 0.15s ease;
+
+  &:hover {
+    border-color: $primary;
+    background: $primary-50;
+    box-shadow: 0 0 0 2px rgba($primary, 0.08);
+  }
+
+  @include dark {
+    background: $dark-surface;
+    border-color: $dark-border;
+
+    &:hover {
+      border-color: $primary;
+      background: $dark-primary-light;
+      box-shadow: none;
+    }
+  }
+}
+
+.patientResultAvatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: $primary-light;
+  color: $primary;
+  flex-shrink: 0;
+
+  @include dark {
+    background: $dark-primary-light;
+  }
+}
+
+.patientResultBody {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  flex: 1;
+}
+
+.patientResultName {
+  font-size: $font-body-sm;
+  font-weight: $font-semibold;
+  color: $text-primary;
+
+  @include dark {
+    color: $dark-text-primary;
+  }
+}
+
+.patientResultMeta {
+  font-size: $font-caption;
+  color: $text-muted;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.patientResultChevron {
+  color: $text-muted;
+  font-size: 12px;
+  flex-shrink: 0;
+}
+
+.patientOrSeparator {
+  display: flex;
+  align-items: center;
+  gap: $space-3;
+  padding: $space-1 0;
+}
+
+.patientOrLine {
+  flex: 1;
+  height: 1px;
+  background: $border;
+
+  @include dark {
+    background: $dark-border;
+  }
+}
+
+.patientOrLabel {
+  font-size: $font-caption;
+  font-weight: $font-semibold;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: $text-muted;
+}
+
+.patientCreateCard {
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: $space-6 $space-4;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  font-family: inherit;
+  color: inherit;
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: $primary-light;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    pointer-events: none;
+  }
+
+  &:hover {
+    border-color: $primary;
+
+    &::before {
+      opacity: 0.35;
+    }
+
+    .patientCreateCta {
+      gap: $space-2;
+    }
+  }
+
+  > * {
+    position: relative;
+    z-index: 1;
+  }
+}
+
+.patientCreateIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  margin-bottom: $space-1;
+  border-radius: 50%;
+  background: $primary;
+  color: #fff;
+  font-size: 22px;
+}
+
+.patientCreateCta {
+  display: inline-flex;
+  align-items: center;
+  gap: $space-1;
+  margin-top: $space-2;
+  color: $primary;
+  font-size: $font-body-sm;
+  font-weight: $font-semibold;
+  transition: gap 0.15s ease;
+}
+
+.selectedPatientCard {
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: $space-3;
+  padding: $space-4;
+  background: $primary-50;
+  border-color: $primary-200;
+
+  @include dark {
+    background: $dark-primary-light;
+    border-color: rgba($primary, 0.35);
+  }
+}
+
+.selectedPatientInfo {
+  display: flex;
+  align-items: center;
+  gap: $space-3;
+  min-width: 0;
+}
+
+.selectedPatientAvatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: $primary;
+  color: #fff;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.selectedPatientText {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+
+  strong {
+    font-size: $font-body-sm;
+    color: $text-primary;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+
+    @include dark {
+      color: $dark-text-primary;
+    }
+  }
+}
+
+.selectedPatientLabel {
+  font-size: $font-caption;
+  font-weight: $font-semibold;
+  color: $primary;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.selectedPatientMeta {
+  display: inline-flex;
+  align-items: center;
+  gap: $space-1;
+  font-size: $font-caption;
+  color: $text-muted;
+}
+
+.newPatientHeader {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: $space-2;
+}
+
+.backToSearchBtn {
+  padding-inline: 0;
+  height: auto;
+  color: $text-muted;
+
+  &:hover {
+    color: $primary;
+  }
+}
+
+.newPatientHeaderText {
+  display: flex;
+  flex-direction: column;
+  gap: $space-1;
+}
+
+.compactNewPatient {
+  display: flex;
+  flex-direction: column;
+}
+
+.compactPatientRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: $space-3;
+
+  @include responsive('sm') {
+    grid-template-columns: 1fr;
+  }
+}

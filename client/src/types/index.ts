@@ -59,9 +59,13 @@ export interface User {
   id: string;
   email: string;
   name: string;
-  role: 'ADMIN' | 'SURGEON' | 'ASSISTANT';
-  avatarUrl: string | null;
+  phone?: string | null;
+  role: string;
+  avatarUrl?: string | null;
   isActive: boolean;
+  doctorId?: string | null;
+  specialties?: DoctorSpecialtyRef[];
+  subspecialties?: DoctorSpecialtyRef[];
   createdAt: string;
   updatedAt: string;
 }
@@ -69,11 +73,9 @@ export interface User {
 export interface Patient {
   id: string;
   fullName: string;
-  mobile: string;
-  email: string | null;
+  age: number;
+  mobile: string | null;
   gender: Gender;
-  dateOfBirth: string | null;
-  nationalId: string | null;
   notes: string | null;
   createdBy: string;
   createdAt: string;
@@ -90,6 +92,7 @@ export interface Specialty {
   description: string | null;
   icon: string | null;
   color: string | null;
+  parentId?: string | null;
   createdAt: string;
   updatedAt: string;
   _count?: {
@@ -98,23 +101,59 @@ export interface Specialty {
   };
 }
 
+export interface DoctorSpecialtyRef {
+  id: string;
+  name: string;
+  nameAr: string | null;
+}
+
 export interface Doctor {
   id: string;
   name: string;
-  mobile: string;
+  phone: string | null;
   email: string | null;
-  specialtyId: string;
-  licenseNumber: string | null;
-  notes: string | null;
   isActive: boolean;
   createdAt: string;
   updatedAt: string;
-  specialty?: Specialty;
+  specialties: DoctorSpecialtyRef[];
+  subspecialties?: DoctorSpecialtyRef[];
   _count?: {
     operationsAsPrimary: number;
     operationsAsAssistant: number;
     operationsAsAnesthetist: number;
   };
+}
+
+export interface Nurse {
+  id: string;
+  name: string;
+  phone: string | null;
+  email: string | null;
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface OperationProcedure {
+  id: string;
+  operationId: string;
+  catalogId: string | null;
+  name: string;
+  nameAr?: string | null;
+  specialtyId: string | null;
+  sortOrder: number;
+  catalog?: OperationCatalogItem | null;
+  specialty?: DoctorSpecialtyRef | null;
+}
+
+export interface OperationTeamMember {
+  id: string;
+  operationId: string;
+  doctorId: string | null;
+  nurseId: string | null;
+  sortOrder: number;
+  doctor?: Doctor | null;
+  nurse?: Nurse | null;
 }
 
 export interface Hospital {
@@ -133,13 +172,23 @@ export interface Hospital {
   };
 }
 
+export interface OperationCatalogItem {
+  id: string;
+  name: string;
+  nameAr: string | null;
+  isCustom: boolean;
+  specialty: DoctorSpecialtyRef | null;
+  subspecialty?: DoctorSpecialtyRef | null;
+}
+
 export interface Operation {
   id: string;
   name: string;
   diagnosis: string | null;
   patientId: string;
   hospitalId: string;
-  specialtyId: string;
+  specialtyId: string | null;
+  catalogId?: string | null;
   operationDate: string;
   operationTime: string;
   operationRoom: string | null;
@@ -152,6 +201,9 @@ export interface Operation {
   patient?: Patient;
   hospital?: Hospital;
   specialty?: Specialty;
+  catalog?: OperationCatalogItem | null;
+  procedures?: OperationProcedure[];
+  teamMembers?: OperationTeamMember[];
   cost?: OperationCost;
   files?: OperationFile[];
   timeline?: OperationTimeline[];
@@ -163,6 +215,7 @@ export interface OperationCost {
   operationId: string;
   totalCost: number;
   paidAmount: number;
+  remainingAmount?: number;
   paymentMethod: PaymentMethod;
   paymentStatus: PaymentStatus;
   paymentNotes: string | null;
@@ -175,7 +228,9 @@ export interface OperationFile {
   operationId: string;
   fileName: string;
   fileUrl: string;
-  fileType: FileType;
+  url?: string;
+  filePath?: string;
+  fileType: string;
   fileSize: number | null;
   mimeType: string | null;
   uploadedBy: string;
@@ -205,14 +260,14 @@ export interface OperationMedicalTeam {
   assistantSurgeonId: string | null;
   anesthesiologistId: string | null;
   assistantAnesthesiaId: string | null;
-  nurseId: string | null;
+  nurse?: string | null;
+  notes?: string | null;
   createdAt: string;
-  updatedAt: string;
+  updatedAt?: string;
   primarySurgeon?: Doctor;
   assistantSurgeon?: Doctor;
   anesthesiologist?: Doctor;
   assistantAnesthesia?: Doctor;
-  nurse?: Doctor;
 }
 
 // ──────────────────────────────────────────────
@@ -225,15 +280,18 @@ export interface ApiResponse<T> {
   message?: string;
 }
 
+export interface PaginationMeta {
+  page: number;
+  limit: number;
+  total: number;
+  totalPages: number;
+}
+
 export interface PaginatedResponse<T> {
   success: boolean;
   data: T[];
-  pagination: {
-    page: number;
-    limit: number;
-    total: number;
-    totalPages: number;
-  };
+  pagination?: PaginationMeta;
+  meta?: PaginationMeta;
   message?: string;
 }
 
@@ -257,6 +315,16 @@ export interface RegisterPayload {
   name: string;
   email: string;
   password: string;
+  phone?: string;
+  specialtyIds: string[];
+  subspecialtyIds?: string[];
+}
+
+export interface UpdateProfilePayload {
+  name?: string;
+  phone?: string | null;
+  specialtyIds?: string[];
+  subspecialtyIds?: string[];
 }
 
 export interface LoginResponse {
@@ -270,11 +338,9 @@ export interface LoginResponse {
 
 export interface CreatePatientPayload {
   fullName: string;
-  mobile: string;
-  email?: string;
+  age: number;
   gender: Gender;
-  dateOfBirth?: string;
-  nationalId?: string;
+  mobile?: string;
   notes?: string;
 }
 
@@ -285,26 +351,37 @@ export interface UpdatePatientPayload extends Partial<CreatePatientPayload> {}
 // ──────────────────────────────────────────────
 
 export interface CreateOperationPayload {
-  name: string;
-  diagnosis?: string;
+  operationId?: string;
+  operationIds?: string[];
+  name?: string;
+  diagnosis?: string | null;
   patientId: string;
   hospitalId: string;
-  specialtyId: string;
+  specialtyId?: string;
   operationDate: string;
   operationTime: string;
   operationRoom?: string;
   duration?: number;
+  status?: OperationStatus;
   notes?: string;
-  primarySurgeonId?: string;
-  assistantSurgeonId?: string;
-  anesthesiologistId?: string;
-  assistantAnesthesiaId?: string;
-  nurseId?: string;
-  totalCost?: number;
-  paidAmount?: number;
-  paymentMethod?: PaymentMethod;
-  paymentStatus?: PaymentStatus;
-  paymentNotes?: string;
+  medicalTeam?: {
+    doctorIds?: string[];
+    nurseIds?: string[];
+    primarySurgeonId?: string;
+    assistantSurgeonId?: string;
+    anesthesiologistId?: string;
+    assistantAnesthesiaId?: string;
+    nurse?: string;
+    notes?: string;
+  };
+  cost?: {
+    totalCost: number;
+    paidAmount?: number;
+    remainingAmount?: number;
+    paymentMethod?: PaymentMethod;
+    paymentStatus?: PaymentStatus;
+    paymentNotes?: string;
+  };
 }
 
 export interface UpdateOperationPayload extends Partial<CreateOperationPayload> {
@@ -328,11 +405,10 @@ export interface OperationFilters extends PaginatedQuery {
 
 export interface CreateDoctorPayload {
   name: string;
-  mobile: string;
+  phone?: string;
   email?: string;
-  specialtyId: string;
-  licenseNumber?: string;
-  notes?: string;
+  specialtyIds: string[];
+  subspecialtyIds?: string[];
   isActive?: boolean;
 }
 
@@ -371,10 +447,21 @@ export interface DashboardStats {
   totalOperations: number;
   operationsThisMonth: number;
   completedOperations: number;
-  upcomingOperations: number;
-  totalRevenue: number;
-  paidAmount: number;
-  pendingAmount: number;
+  pendingOperations: number;
+  cancelledOperations: number;
+  totalDoctors: number;
+  totalNurses: number;
+  totalHospitals: number;
+  upcomingOperations?: number;
+  totalRevenue?: number;
+  paidAmount?: number;
+  pendingAmount?: number;
+  statusBreakdown?: Record<string, number>;
+  revenue?: {
+    totalCost: number;
+    totalPaid: number;
+    totalRemaining: number;
+  };
 }
 
 export interface MonthlyTrend {

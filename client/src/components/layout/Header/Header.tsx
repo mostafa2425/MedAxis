@@ -1,6 +1,6 @@
-import { useMemo } from 'react';
+import { useMemo, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Button, Dropdown, Avatar, Tooltip, Space } from 'antd';
+import { Button, Dropdown, Avatar, Tooltip } from 'antd';
 import type { MenuProps } from 'antd';
 import {
   MenuOutlined,
@@ -10,12 +10,16 @@ import {
   UserOutlined,
   SettingOutlined,
   LogoutOutlined,
+  MedicineBoxOutlined,
+  SearchOutlined,
+  PlusOutlined,
+  DownOutlined,
 } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
 import { useAppStore } from '@/stores/app.store';
 import { useAuth } from '@/hooks/useAuth';
 import { getInitials } from '@/utils/helpers';
-import styles from './Header.module.scss';
+import './Header.scss';
 
 interface HeaderProps {
   onMenuClick: () => void;
@@ -29,25 +33,44 @@ const PAGE_TITLES: Record<string, string> = {
   '/hospitals': 'hospitals.title',
   '/specialties': 'specialties.title',
   '/search': 'search.title',
+  '/profile': 'profile.title',
   '/settings': 'settings.title',
 };
 
-function getPageTitleKey(pathname: string): string {
-  if (pathname === '/') return PAGE_TITLES['/'];
-
-  // Match the first segment of the path
-  const segments = pathname.split('/').filter(Boolean);
-  const basePath = '/' + segments[0];
-
-  if (PAGE_TITLES[basePath]) {
-    return PAGE_TITLES[basePath];
+function getPageMeta(pathname: string): { titleKey: string; hintKey?: string } {
+  if (pathname === '/') {
+    return { titleKey: 'dashboard.title', hintKey: 'layout.subtitle' };
   }
 
-  // Handle sub-paths
-  if (basePath === '/patients' && segments[1] === 'new') return 'patients.newPatient';
-  if (basePath === '/operations' && segments[1] === 'new') return 'operations.addOperation';
+  const segments = pathname.split('/').filter(Boolean);
+  const basePath = '/' + (segments[0] ?? '');
 
-  return 'dashboard.title';
+  if (basePath === '/patients' && segments[1] === 'new') {
+    return { titleKey: 'patients.newPatient', hintKey: 'patients.title' };
+  }
+  if (basePath === '/operations' && segments[1] === 'new') {
+    return { titleKey: 'operations.addOperation', hintKey: 'operations.title' };
+  }
+  if (basePath === '/operations' && segments[2] === 'edit') {
+    return { titleKey: 'operations.editOperation', hintKey: 'operations.title' };
+  }
+  if (basePath === '/operations' && segments[1] && segments[1] !== 'new') {
+    return { titleKey: 'operations.operationDetails', hintKey: 'operations.title' };
+  }
+  if (basePath === '/patients' && segments[1] && segments[1] !== 'new') {
+    return { titleKey: 'patients.patientDetails', hintKey: 'patients.title' };
+  }
+
+  if (PAGE_TITLES[basePath]) {
+    return { titleKey: PAGE_TITLES[basePath] };
+  }
+
+  return { titleKey: 'dashboard.title' };
+}
+
+function roleLabel(role?: string): string {
+  if (!role) return '';
+  return role.charAt(0) + role.slice(1).toLowerCase();
 }
 
 export default function Header({ onMenuClick }: HeaderProps) {
@@ -61,10 +84,38 @@ export default function Header({ onMenuClick }: HeaderProps) {
   const toggleDarkMode = useAppStore((s) => s.toggleDarkMode);
   const toggleLanguage = useAppStore((s) => s.toggleLanguage);
 
-  const pageTitleKey = useMemo(() => getPageTitleKey(location.pathname), [location.pathname]);
+  const pageMeta = useMemo(() => getPageMeta(location.pathname), [location.pathname]);
+
+  useEffect(() => {
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key !== '/' || event.metaKey || event.ctrlKey || event.altKey) return;
+      const target = event.target as HTMLElement | null;
+      const tag = target?.tagName?.toLowerCase();
+      if (tag === 'input' || tag === 'textarea' || target?.isContentEditable) return;
+      event.preventDefault();
+      navigate('/search');
+    };
+
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [navigate]);
 
   const userMenuItems: MenuProps['items'] = useMemo(
     () => [
+      {
+        key: 'user-info',
+        disabled: true,
+        label: (
+          <div className="userMenuHeader">
+            <span className="userMenuName">{user?.name ?? '—'}</span>
+            <span className="userMenuMeta">
+              {user?.email}
+              {user?.role ? ` · ${roleLabel(user.role)}` : ''}
+            </span>
+          </div>
+        ),
+      },
+      { type: 'divider' },
       {
         key: 'profile',
         icon: <UserOutlined />,
@@ -83,83 +134,124 @@ export default function Header({ onMenuClick }: HeaderProps) {
         danger: true,
       },
     ],
-    [t]
+    [t, user],
   );
 
   const handleUserMenuClick: MenuProps['onClick'] = ({ key }) => {
     if (key === 'logout') {
       logout();
       navigate('/login', { replace: true });
+    } else if (key === 'profile') {
+      navigate('/profile');
     } else if (key === 'settings') {
-      navigate('/settings');
+      navigate('/profile');
     }
   };
 
   return (
-    <header className={`${styles.header} ${collapsed ? styles.headerCollapsed : ''}`}>
-      {/* ─── Left Section ──────────────────────────── */}
-      <div className={styles.headerLeft}>
+    <header
+      className={`app-header-root header ${collapsed ? 'headerCollapsed' : ''}`}
+    >
+      <div className="headerLeft">
         <button
-          className={styles.menuTrigger}
+          className="menuTrigger"
           onClick={onMenuClick}
           type="button"
-          aria-label="Toggle menu"
+          aria-label={t('layout.header')}
         >
           <MenuOutlined />
         </button>
 
-        <h1 className={styles.pageTitle}>{t(pageTitleKey)}</h1>
+        {/* <div className="brandMobile">
+          <span className="brandIcon">
+            <MedicineBoxOutlined />
+          </span>
+          <span className="brandText">MedAxis</span>
+        </div> */}
+
+        {/* <div className="pageHeading">
+          <h1 className="pageTitle">{t(pageMeta.titleKey)}</h1>
+          {pageMeta.hintKey && (
+            <p className="pageHint">{t(pageMeta.hintKey)}</p>
+          )}
+        </div> */}
       </div>
 
-      {/* ─── Right Section ─────────────────────────── */}
-      <div className={styles.headerRight}>
-        <Space size={4}>
-          {/* Language Toggle */}
+      {/* <div className="headerCenter">
+        <button
+          type="button"
+          className="searchTrigger"
+          onClick={() => navigate('/search')}
+          aria-label={t('search.title')}
+        >
+          <SearchOutlined className="searchTriggerIcon" />
+          <span className="searchTriggerText">{t('search.placeholder')}</span>
+          <kbd className="searchTriggerKbd">/</kbd>
+        </button>
+      </div> */}
+
+      <div className="headerRight">
+        <Tooltip title={t('operations.addOperation')}>
+          <Button
+            type="primary"
+            className="quickAddBtn"
+            icon={<PlusOutlined />}
+            onClick={() => navigate('/operations/new')}
+          >
+            <span className="quickAddLabel">{t('operations.addOperation')}</span>
+          </Button>
+        </Tooltip>
+
+        <div className="headerActions">
           <Tooltip title={language === 'en' ? t('layout.arabic') : t('layout.english')}>
-            <Button
-              type="text"
-              className={styles.iconBtn}
-              icon={<GlobalOutlined />}
+            <button
+              type="button"
+              className="langBtn"
               onClick={toggleLanguage}
               aria-label={t('layout.language')}
-            />
+            >
+              <GlobalOutlined />
+              <span className="langCode">{language.toUpperCase()}</span>
+            </button>
           </Tooltip>
 
-          {/* Dark Mode Toggle */}
           <Tooltip title={darkMode ? t('settings.lightMode') : t('settings.darkMode')}>
             <Button
               type="text"
-              className={styles.iconBtn}
+              className={`iconBtn ${darkMode ? 'iconBtnActive' : ''}`}
               icon={darkMode ? <SunOutlined /> : <MoonOutlined />}
               onClick={toggleDarkMode}
               aria-label={t('layout.darkMode')}
             />
           </Tooltip>
+        </div>
 
-          {/* User Avatar Dropdown */}
-          <Dropdown
-            menu={{ items: userMenuItems, onClick: handleUserMenuClick }}
-            trigger={['click']}
-            placement="bottomRight"
-          >
-            <button className={styles.avatarBtn} type="button">
-              <Avatar
-                size={36}
-                src={user?.avatarUrl || undefined}
-                style={{
-                  backgroundColor: user?.avatarUrl ? undefined : '#2563EB',
-                  fontSize: 14,
-                  fontWeight: 600,
-                }}
-              >
-                {user ? getInitials(user.name) : '?'}
-              </Avatar>
-              <span className={styles.userName}>
-                {user?.name}
-              </span>
-            </button>
-          </Dropdown>
-        </Space>
+        <Dropdown
+          menu={{ items: userMenuItems, onClick: handleUserMenuClick }}
+          trigger={['click']}
+          placement="bottomRight"
+          overlayClassName="headerUserDropdown"
+        >
+          <button className="avatarBtn" type="button">
+            <Avatar
+              size={34}
+              className="userAvatar"
+              src={user?.avatarUrl || undefined}
+              style={{
+                backgroundColor: user?.avatarUrl ? undefined : '#2563EB',
+              }}
+            >
+              {user ? getInitials(user.name) : '?'}
+            </Avatar>
+            <span className="userMeta">
+              <span className="userName">{user?.name}</span>
+              {user?.role && (
+                <span className="userRole">{roleLabel(user.role)}</span>
+              )}
+            </span>
+            <DownOutlined className="userCaret" />
+          </button>
+        </Dropdown>
       </div>
     </header>
   );

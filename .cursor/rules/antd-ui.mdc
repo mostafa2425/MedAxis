@@ -1,0 +1,53 @@
+---
+description: Use Ant Design for all client UI — Table, Form, Steps, no custom lists/forms
+globs: client/src/**/*.{tsx,ts,scss}
+alwaysApply: true
+---
+
+# Ant Design UI (required)
+
+All client UI must use **Ant Design (`antd`)** components. Do not invent custom list rows, table markup, form wrappers, or steppers when antd already provides them.
+
+## Required mappings
+
+| Need | Use |
+|------|-----|
+| Data lists (desktop) | `Table` |
+| Data lists (mobile) | `Card` stack + `Pagination` |
+| Forms | `Form` + `Form.useForm()` + `Form.Item` `name`/`rules` — **not** `react-hook-form` / `Controller` |
+| Multi-step flows | `Steps` (+ optional `Progress`) — **not** custom progress bars/dots |
+| Modals, buttons, inputs, selects, uploads, tags, empty, pagination | antd equivalents |
+| Icons | `@ant-design/icons` |
+
+## Lists
+
+- **Desktop (`md+`)**: antd `Table` with `columns`, `rowKey`, `loading`, `pagination`.
+- **Mobile (`< md`)**: antd `Card` list + `Pagination` / `Empty` / `Spin` — hide the table with CSS.
+- Put actions with `Button`, `Space`, `Tooltip`, `Popconfirm`.
+- Do **not** build HTML/CSS “fake tables” (header row + mapped row divs).
+
+## Forms
+
+```tsx
+// ❌ BAD — RHF wrapping antd
+const { control } = useForm();
+<Controller name="name" control={control} render={({ field }) => <Input {...field} />} />
+
+// ✅ GOOD — antd Form
+const [form] = Form.useForm();
+<Form form={form} layout="vertical" onFinish={onSubmit}>
+  <Form.Item name="name" label={t('…')} rules={[{ required: true, message: t('validation.required') }]}>
+    <Input />
+  </Form.Item>
+</Form>
+```
+
+## Steppers
+
+Use `Steps` for navigation. Optional `Progress` for percent complete. No custom `.mobileDot` / track markup.
+
+## Allowed outside antd
+
+- Page layout chrome (header title, page SCSS spacing)
+- React Query / routing / i18n / domain logic
+- Co-located SCSS that **styles** antd components (className on `Table`/`Card`/`Form`/`Modal`)

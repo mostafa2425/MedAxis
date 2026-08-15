@@ -1,0 +1,56 @@
+.app-layout {
+// ═══════════════════════════════════════════════════════
+// AppLayout SCSS Module
+// ═══════════════════════════════════════════════════════
+
+&.layout {
+  min-height: 100vh;
+  background: $background;
+  transition: background-color $transition-base;
+
+  @include dark {
+    background: $dark-background;
+  }
+}
+
+// ─── Main Area (beside sidebar) ───────────────────────
+.mainArea {
+  width: 100%;
+  margin-inline-start: $sidebar-width;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  transition: margin-inline-start $transition-base;
+}
+
+.mainAreaCollapsed {
+  margin-inline-start: $sidebar-collapsed-width;
+}
+
+// ─── Content Area ─────────────────────────────────────
+.content {
+  flex: 1;
+  padding: calc(#{$header-height} + #{$space-5}) $space-5 $space-5;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+// ─── Responsive: Mobile ───────────────────────────────
+@include responsive('md') {
+  .mainArea {
+    margin-inline-start: 0 !important;
+  }
+
+  .content {
+    padding: calc(#{$header-height-mobile} + #{$space-3}) $space-3;
+    padding-bottom: calc(#{$bottom-nav-height} + #{$safe-area-bottom} + #{$space-4});
+  }
+
+  // Wizard/forms: extra room for sticky action bar above bottom nav
+  .wizardMode .content {
+    padding-bottom: calc(
+      #{$bottom-nav-height} + #{$safe-area-bottom} + 72px + #{$space-4}
+    );
+  }
+}
+}

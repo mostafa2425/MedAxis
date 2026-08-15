@@ -1,0 +1,77 @@
+.stats-cards {
+.card {
+  height: 100%;
+  overflow: hidden;
+
+  @include dark {
+    background: $dark-surface !important;
+  }
+}
+
+.inner {
+  display: flex;
+  align-items: center;
+  gap: $space-3;
+  padding: $space-4;
+
+  @include responsive('md') {
+    padding: $space-3;
+    gap: $space-2;
+  }
+}
+
+.icon {
+  @include flex-center;
+  width: 40px;
+  height: 40px;
+  border-radius: $radius-md;
+  font-size: 18px;
+  flex-shrink: 0;
+
+  @include responsive('md') {
+    width: 36px;
+    height: 36px;
+    font-size: 16px;
+  }
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  flex: 1;
+}
+
+.label {
+  font-size: $font-caption;
+  color: $text-muted;
+  font-weight: $font-medium;
+  @include truncate;
+
+  @include dark {
+    color: $dark-text-muted;
+  }
+
+  @include up('md') {
+    font-size: $font-body-sm;
+  }
+}
+
+.value {
+  .ant-statistic-content {
+    @include dark {
+      color: $dark-text-primary !important;
+    }
+  }
+}
+
+.loadingCard {
+  min-height: 72px;
+  @include flex-center;
+
+  @include dark {
+    background: $dark-surface !important;
+  }
+}
+}

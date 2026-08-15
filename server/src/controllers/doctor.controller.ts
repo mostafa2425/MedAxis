@@ -4,12 +4,16 @@ import { sendSuccess, sendPaginated } from '../utils/response';
 import { createDoctorSchema, updateDoctorSchema, doctorQuerySchema } from '../validators/doctor.validator';
 import { AppError } from '../utils/errors';
 
+function userId(req: Request): string {
+  return (req as { user?: { userId: string } }).user?.userId as string;
+}
+
 export class DoctorController {
   async getAll(req: Request, res: Response, next: NextFunction) {
     try {
       const parsed = doctorQuerySchema.safeParse(req.query);
       const params = parsed.success ? parsed.data : { page: 1, limit: 20 };
-      const { data, total } = await doctorService.getAll(params);
+      const { data, total } = await doctorService.getAll({ ...params, userId: userId(req) });
       return sendPaginated(res, data, params.page, params.limit, total);
     } catch (err) {
       next(err);
@@ -18,7 +22,7 @@ export class DoctorController {
 
   async getActive(req: Request, res: Response, next: NextFunction) {
     try {
-      const doctors = await doctorService.getActive();
+      const doctors = await doctorService.getActive(userId(req));
       return sendSuccess(res, doctors);
     } catch (err) {
       next(err);
@@ -27,7 +31,7 @@ export class DoctorController {
 
   async getById(req: Request, res: Response, next: NextFunction) {
     try {
-      const doctor = await doctorService.getById(req.params.id as string);
+      const doctor = await doctorService.getById(req.params.id as string, userId(req));
       return sendSuccess(res, doctor);
     } catch (err) {
       next(err);
@@ -40,7 +44,7 @@ export class DoctorController {
       if (!parsed.success) {
         throw new AppError(parsed.error.issues[0]?.message || 'Validation error', 400, parsed.error.issues);
       }
-      const doctor = await doctorService.create(parsed.data, parsed.data.specialtyIds);
+      const doctor = await doctorService.create(parsed.data, userId(req));
       return sendSuccess(res, doctor, 'Doctor created', 201);
     } catch (err) {
       next(err);
@@ -53,7 +57,7 @@ export class DoctorController {
       if (!parsed.success) {
         throw new AppError(parsed.error.issues[0]?.message || 'Validation error', 400, parsed.error.issues);
       }
-      const doctor = await doctorService.update(req.params.id as string, parsed.data, parsed.data.specialtyIds);
+      const doctor = await doctorService.update(req.params.id as string, userId(req), parsed.data);
       return sendSuccess(res, doctor, 'Doctor updated');
     } catch (err) {
       next(err);
@@ -62,7 +66,7 @@ export class DoctorController {
 
   async delete(req: Request, res: Response, next: NextFunction) {
     try {
-      await doctorService.delete(req.params.id as string);
+      await doctorService.delete(req.params.id as string, userId(req));
       return sendSuccess(res, null, 'Doctor deleted');
     } catch (err) {
       next(err);
