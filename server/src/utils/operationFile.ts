@@ -1,13 +1,9 @@
-import path from 'path';
-
-export function toPublicFileUrl(filePath: string): string {
-  const normalized = String(filePath || '').replace(/\\/g, '/');
-  const fileName = path.posix.basename(normalized);
-  return `/uploads/${fileName}`;
+export function toPublicFileUrl(file: { id: string; operationId: string }) {
+  return `/api/operations/${file.operationId}/files/${file.id}/download`;
 }
 
-export function mapOperationFile<T extends { filePath: string }>(file: T) {
-  const url = toPublicFileUrl(file.filePath);
+export function mapOperationFile<T extends { id: string; operationId: string }>(file: T) {
+  const url = toPublicFileUrl(file);
   return {
     ...file,
     url,
