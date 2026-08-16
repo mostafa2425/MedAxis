@@ -1,6 +1,4 @@
-import { useEffect } from 'react';
 import { Outlet, useNavigate } from 'react-router-dom';
-import { useAuthStore } from '@/stores/auth.store';
 import { useAppStore } from '@/stores/app.store';
 import { getInitials } from '@/utils/helpers';
 import {
@@ -20,7 +18,7 @@ import {
   BellOutlined,
   SettingOutlined,
 } from '@ant-design/icons';
-import { Dropdown, Tooltip, Avatar, Button, Space } from 'antd';
+import { Dropdown, Tooltip, Button, Space } from 'antd';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '@/hooks/useAuth';
 
@@ -42,15 +40,10 @@ export default function AppLayout() {
   const language = useAppStore((s) => s.language);
   const toggleSidebar = useAppStore((s) => s.toggleSidebar);
   const toggleDarkMode = useAppStore((s) => s.toggleDarkMode);
-  const setLanguage = useAppStore((s) => s.setLanguage);
-  const initialize = useAuthStore((s) => s.initialize);
+  const toggleLanguage = useAppStore((s) => s.toggleLanguage);
 
-  useEffect(() => {
-    initialize();
-  }, [initialize]);
-
-  const toggleLanguage = () => {
-    setLanguage(language === 'en' ? 'ar' : 'en');
+  const toggleLanguageHandler = () => {
+    toggleLanguage();
   };
 
   const userMenuItems = [
@@ -75,7 +68,6 @@ export default function AppLayout() {
 
   return (
     <div className="app-layout">
-      {/* ─── Sidebar ─────────────────────────────────── */}
       <aside className={`sidebar${sidebarCollapsed ? ' sidebar--collapsed' : ''}`}>
         <div className="sidebar__logo">
           <MedicineBoxOutlined style={{ fontSize: 24, color: '#2563EB' }} />
@@ -116,9 +108,7 @@ export default function AppLayout() {
         </div>
       </aside>
 
-      {/* ─── Main Content ────────────────────────────── */}
       <div className="app-content">
-        {/* ─── Header ───────────────────────────────── */}
         <header className="app-header">
           <div className="app-header__left">
             <button
@@ -153,7 +143,7 @@ export default function AppLayout() {
                 <Button
                   type="text"
                   icon={<GlobalOutlined />}
-                  onClick={toggleLanguage}
+                  onClick={toggleLanguageHandler}
                   style={{ borderRadius: 8 }}
                 />
               </Tooltip>
@@ -180,7 +170,6 @@ export default function AppLayout() {
           </div>
         </header>
 
-        {/* ─── Page Content ─────────────────────────── */}
         <main className="app-main">
           <Outlet />
         </main>
