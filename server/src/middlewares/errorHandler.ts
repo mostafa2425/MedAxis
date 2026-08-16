@@ -1,14 +1,14 @@
 import { Request, Response, NextFunction } from 'express';
 import { AppError } from '../utils/errors';
 import { sendError } from '../utils/response';
-import { Prisma } from '@prisma/client';
+import { Prisma } from '../prisma';
 import { ZodError } from 'zod';
 import { MulterError } from 'multer';
 import { normalizeZodIssues } from '../utils/validationErrors';
 
 const VALIDATION_FAILED = 'Validation failed';
 
-export function errorHandler(err: Error, _req: Request, res: Response, _next: NextFunction) {
+export function errorHandler(err: unknown, _req: Request, res: Response, _next: NextFunction) {
   if (err instanceof ZodError) {
     return sendError(res, VALIDATION_FAILED, 400, normalizeZodIssues(err.issues) ?? []);
   }
