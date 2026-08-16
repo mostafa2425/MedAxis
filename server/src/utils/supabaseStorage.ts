@@ -29,19 +29,16 @@ function encodeStoragePath(value: string) {
     .join('/');
 }
 
-async function storageRequest<T>(
-  endpoint: string,
-  init: RequestInit = {},
-): Promise<T> {
+async function storageRequest<T>(endpoint: string, init: RequestInit = {}): Promise<T> {
   const { baseUrl, serviceRoleKey } = getConfig();
+  const headers = new Headers(init.headers);
+  headers.set('Authorization', `Bearer ${serviceRoleKey}`);
+  headers.set('apikey', serviceRoleKey);
+  if (!headers.has('Content-Type')) headers.set('Content-Type', 'application/json');
+
   const response = await fetch(`${baseUrl}/storage/v1${endpoint}`, {
     ...init,
-    headers: {
-      Authorization: `Bearer ${serviceRoleKey}`,
-      apikey: serviceRoleKey,
-      ...(init.body instanceof FormData ? {} : { 'Content-Type': 'application/json' }),
-      ...(init.headers || {}),
-    },
+    headers,
   });
 
   if (!response.ok) {
@@ -118,7 +115,7 @@ export async function uploadOperationFile(
       'x-upsert': 'false',
       'cache-control': '3600',
     },
-    body: file.buffer as unknown as BodyInit,
+    body: file.buffer as any,
   });
 
   return storagePath;
@@ -126,7 +123,7 @@ export async function uploadOperationFile(
 
 export async function createSignedUploadUrl(storagePath: string, mimeType: string, fileSize: number) {
   validateFileMetadata(storagePath, mimeType, fileSize);
-  const { bucket } = getConfig();
+  const { bucket, baseUrl } = getConfig();
   const encodedPath = encodeStoragePath(storagePath);
   const data = await storageRequest<{ url: string }>(
     `/object/upload/sign/${encodeURIComponent(bucket)}/${encodedPath}`,
@@ -136,7 +133,7 @@ export async function createSignedUploadUrl(storagePath: string, mimeType: strin
     },
   );
 
-  const signedUrl = new URL(data.url, getConfig().baseUrl + '/storage/v1').toString();
+  const signedUrl = new URL(data.url, `${baseUrl}/storage/v1`).toString();
   const token = new URL(signedUrl).searchParams.get('token');
   if (!token) throw new AppError('Storage did not return an upload token', 502);
 
