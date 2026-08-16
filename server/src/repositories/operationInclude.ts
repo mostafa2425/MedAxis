@@ -36,7 +36,16 @@ export const operationListInclude = {
   },
   cost: true,
   files: {
-    select: { id: true, fileType: true, fileName: true, filePath: true, fileSize: true, createdAt: true },
+    select: {
+      id: true,
+      operationId: true,
+      fileType: true,
+      fileName: true,
+      filePath: true,
+      fileSize: true,
+      mimeType: true,
+      createdAt: true,
+    },
   },
 } satisfies Prisma.OperationInclude;
 
