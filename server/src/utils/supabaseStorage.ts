@@ -148,6 +148,26 @@ export async function createSignedUploadUrl(storagePath: string, mimeType: strin
   };
 }
 
+export async function assertStoredFileExists(storagePath: string) {
+  const { baseUrl, serviceRoleKey, bucket } = getConfig();
+  const response = await fetch(
+    `${baseUrl}/storage/v1/object/info/${encodeURIComponent(bucket)}/${encodeStoragePath(storagePath)}`,
+    {
+      method: 'HEAD',
+      headers: {
+        Authorization: `Bearer ${serviceRoleKey}`,
+        apikey: serviceRoleKey,
+      },
+    },
+  );
+
+  if (!response.ok) {
+    throw new AppError('Uploaded file was not found in storage', 400, [
+      { path: ['filePath'], code: 'custom', message: 'Upload the file before completing the upload' },
+    ]);
+  }
+}
+
 export async function createSignedDownloadUrl(storagePath: string) {
   const { bucket, baseUrl } = getConfig();
   const encodedPath = encodeStoragePath(storagePath);
