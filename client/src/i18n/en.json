@@ -272,7 +272,7 @@
     "createNewPatient": "Create New Patient",
     "searchExistingPatient": "Search Existing Patient",
     "patientSearchPlaceholder": "Search by name, phone, or patient ID...",
-    "patientSearchHint": "Type at least {{count}} characters to search by name, phone, or ID.",
+    "patientSearchHint": "Showing the first 10 patients. Type to search by name, phone, or ID.",
     "patientStepHint": "Identify the patient for this procedure to proceed.",
     "createNewProfile": "Create New Profile",
     "createNewProfileHint": "Register a new patient into the MedAxis system.",

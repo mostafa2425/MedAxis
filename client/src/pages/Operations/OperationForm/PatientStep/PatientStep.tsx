@@ -19,7 +19,7 @@ import { Gender, type Patient } from '@/types';
 import type { WizardStepProps } from '../wizardTypes';
 import './PatientStep.scss';
 
-const MIN_SEARCH_CHARS = 2;
+const PATIENT_LIST_LIMIT = 10;
 
 function formatPatientOption(patient: Patient) {
   const meta = [patient.mobile, patient.age ? `${patient.age}` : null]
@@ -40,8 +40,7 @@ export default function PatientStep({
 
   const { data: patientsData, isFetching: patientsLoading } = useQuery({
     queryKey: ['patient-search', debouncedSearch],
-    queryFn: () => patientService.search(debouncedSearch),
-    enabled: debouncedSearch.length >= MIN_SEARCH_CHARS,
+    queryFn: () => patientService.search(debouncedSearch, PATIENT_LIST_LIMIT),
     staleTime: 10_000,
   });
 
@@ -282,10 +281,6 @@ export default function PatientStep({
                   <div className="patientSelectLoading">
                     <Spin size="small" />
                   </div>
-                ) : debouncedSearch.length < MIN_SEARCH_CHARS ? (
-                  <div className="patientSelectEmpty">
-                    {t('operations.patientSearchHint', { count: MIN_SEARCH_CHARS })}
-                  </div>
                 ) : (
                   <div className="patientSelectEmpty">
                     <p>{t('common.noResults')}</p>
@@ -325,7 +320,7 @@ export default function PatientStep({
 
             <p className="patientSearchHint">
               <InfoCircleOutlined />
-              {t('operations.patientSearchHint', { count: MIN_SEARCH_CHARS })}
+              {t('operations.patientSearchHint')}
             </p>
 
             {errors.patientId && <div className="fieldError">{errors.patientId}</div>}

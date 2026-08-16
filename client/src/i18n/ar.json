@@ -272,7 +272,7 @@
     "createNewPatient": "إنشاء مريض جديد",
     "searchExistingPatient": "البحث عن مريض موجود",
     "patientSearchPlaceholder": "ابحث بالاسم أو الهاتف أو رقم المريض...",
-    "patientSearchHint": "اكتب {{count}} أحرف على الأقل للبحث بالاسم أو الهاتف أو المعرّف.",
+    "patientSearchHint": "يتم عرض أول 10 مرضى. اكتب للبحث بالاسم أو الهاتف أو المعرّف.",
     "patientStepHint": "حدد المريض لهذه العملية للمتابعة.",
     "createNewProfile": "إنشاء ملف جديد",
     "createNewProfileHint": "تسجيل مريض جديد في نظام ميدأكسيس.",

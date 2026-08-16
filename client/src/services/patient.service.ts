@@ -29,9 +29,9 @@ export const patientService = {
     return api.delete<ApiResponse<null>>(`/patients/${id}`);
   },
 
-  search(query: string) {
+  search(query: string, limit = 10) {
     return api.get<PaginatedResponse<Patient>>('/patients', {
-      params: { search: query, limit: 20 },
+      params: { search: query || undefined, limit },
     });
   },
 };
