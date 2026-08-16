@@ -8,6 +8,7 @@ import {
   updateStatusSchema,
   operationQuerySchema,
 } from '../validators/surgery.validator';
+import { createUploadUrlSchema, completeUploadSchema } from '../validators/fileUpload.validator';
 import { AppError } from '../utils/errors';
 import { FileType } from '@prisma/client';
 import { resolveFileType } from '../utils/fileType';
@@ -137,11 +138,7 @@ export class OperationController {
       const files = collectUploadedFiles(req);
       if (files.length === 0) {
         throw new AppError('No files uploaded', 400, [
-          {
-            path: ['file'],
-            code: 'custom',
-            message: 'A file is required',
-          },
+          { path: ['file'], code: 'custom', message: 'A file is required' },
         ]);
       }
       const uploadedFiles = await operationService.uploadFiles(
@@ -151,6 +148,56 @@ export class OperationController {
         fileType as FileType,
       );
       return sendSuccess(res, uploadedFiles, 'Files uploaded', 201);
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  async createFileUploadUrl(req: Request, res: Response, next: NextFunction) {
+    try {
+      const parsed = createUploadUrlSchema.safeParse(req.body);
+      if (!parsed.success) {
+        throw new AppError(parsed.error.issues[0]?.message || 'Validation error', 400, parsed.error.issues);
+      }
+      const userId = (req as any).user?.userId;
+      const result = await operationService.createFileUploadUrl(
+        req.params.id as string,
+        userId,
+        parsed.data as any,
+      );
+      return sendSuccess(res, result, 'Signed upload URL created');
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  async completeFileUpload(req: Request, res: Response, next: NextFunction) {
+    try {
+      const parsed = completeUploadSchema.safeParse(req.body);
+      if (!parsed.success) {
+        throw new AppError(parsed.error.issues[0]?.message || 'Validation error', 400, parsed.error.issues);
+      }
+      const userId = (req as any).user?.userId;
+      const result = await operationService.completeFileUpload(
+        req.params.id as string,
+        userId,
+        parsed.data as any,
+      );
+      return sendSuccess(res, result, 'File upload completed', 201);
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  async downloadFile(req: Request, res: Response, next: NextFunction) {
+    try {
+      const userId = (req as any).user?.userId;
+      const result = await operationService.getFileDownloadUrl(
+        req.params.operationId as string,
+        req.params.fileId as string,
+        userId,
+      );
+      return res.redirect(result.url);
     } catch (err) {
       next(err);
     }
