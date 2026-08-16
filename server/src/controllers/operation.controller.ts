@@ -1,27 +1,18 @@
 import { Request, Response, NextFunction } from 'express';
 import { operationService } from '../services/operation.service';
 import { sendSuccess, sendPaginated } from '../utils/response';
-import {
-  createOperationSchema,
-  updateOperationSchema,
-  updateCostSchema,
-  updateStatusSchema,
-  operationQuerySchema,
-} from '../validators/surgery.validator';
+import { createOperationSchema, updateOperationSchema, updateCostSchema, updateStatusSchema, operationQuerySchema } from '../validators/surgery.validator';
 import { createUploadUrlSchema, completeUploadSchema } from '../validators/fileUpload.validator';
 import { AppError } from '../utils/errors';
-import { FileType } from '@prisma/client';
+import { FileType } from '../prisma';
 import { resolveFileType } from '../utils/fileType';
 
 function collectUploadedFiles(req: Request): Express.Multer.File[] {
   const files: Express.Multer.File[] = [];
   if (req.file) files.push(req.file);
-  if (Array.isArray(req.files)) {
-    files.push(...req.files);
-  } else if (req.files && typeof req.files === 'object') {
-    for (const value of Object.values(req.files)) {
-      if (Array.isArray(value)) files.push(...value);
-    }
+  if (Array.isArray(req.files)) files.push(...req.files);
+  else if (req.files && typeof req.files === 'object') {
+    for (const value of Object.values(req.files)) if (Array.isArray(value)) files.push(...value);
   }
   return files;
 }
@@ -32,196 +23,87 @@ export class OperationController {
       const parsed = operationQuerySchema.safeParse(req.query);
       const params = parsed.success ? parsed.data : { page: 1, limit: 20, sortBy: 'operationDate', sortOrder: 'desc' as const };
       const userId = (req as any).user?.userId;
-      const { data, total } = await operationService.getAll({
-        page: params.page,
-        limit: params.limit,
-        sortBy: params.sortBy,
-        sortOrder: params.sortOrder,
-        search: 'search' in params ? params.search : undefined,
-        status: 'status' in params ? params.status : undefined,
-        specialtyId: 'specialtyId' in params ? params.specialtyId : undefined,
-        hospitalId: 'hospitalId' in params ? params.hospitalId : undefined,
-        dateFrom: 'dateFrom' in params ? params.dateFrom : undefined,
-        dateTo: 'dateTo' in params ? params.dateTo : undefined,
-        createdBy: userId,
-      });
+      const { data, total } = await operationService.getAll({ page: params.page, limit: params.limit, sortBy: params.sortBy, sortOrder: params.sortOrder, search: 'search' in params ? params.search : undefined, status: 'status' in params ? params.status : undefined, specialtyId: 'specialtyId' in params ? params.specialtyId : undefined, hospitalId: 'hospitalId' in params ? params.hospitalId : undefined, dateFrom: 'dateFrom' in params ? params.dateFrom : undefined, dateTo: 'dateTo' in params ? params.dateTo : undefined, createdBy: userId });
       return sendPaginated(res, data, params.page, params.limit, total);
-    } catch (err) {
-      next(err);
-    }
+    } catch (err) { next(err); }
   }
-
   async getById(req: Request, res: Response, next: NextFunction) {
-    try {
-      const userId = (req as any).user?.userId;
-      const operation = await operationService.getById(req.params.id as string, userId);
-      return sendSuccess(res, operation);
-    } catch (err) {
-      next(err);
-    }
+    try { const operation = await operationService.getById(req.params.id as string, (req as any).user?.userId); return sendSuccess(res, operation); } catch (err) { next(err); }
   }
-
   async create(req: Request, res: Response, next: NextFunction) {
     try {
       const parsed = createOperationSchema.safeParse(req.body);
-      if (!parsed.success) {
-        throw new AppError(parsed.error.issues[0]?.message || 'Validation error', 400, parsed.error.issues);
-      }
-      const userId = (req as any).user?.userId;
-      const operation = await operationService.create(parsed.data as any, userId);
+      if (!parsed.success) throw new AppError(parsed.error.issues[0]?.message || 'Validation error', 400, parsed.error.issues);
+      const operation = await operationService.create(parsed.data as any, (req as any).user?.userId);
       return sendSuccess(res, operation, 'Operation created', 201);
-    } catch (err) {
-      next(err);
-    }
+    } catch (err) { next(err); }
   }
-
   async update(req: Request, res: Response, next: NextFunction) {
     try {
       const parsed = updateOperationSchema.safeParse(req.body);
-      if (!parsed.success) {
-        throw new AppError(parsed.error.issues[0]?.message || 'Validation error', 400, parsed.error.issues);
-      }
-      const userId = (req as any).user?.userId;
-      const operation = await operationService.update(req.params.id as string, userId, parsed.data as any);
+      if (!parsed.success) throw new AppError(parsed.error.issues[0]?.message || 'Validation error', 400, parsed.error.issues);
+      const operation = await operationService.update(req.params.id as string, (req as any).user?.userId, parsed.data as any);
       return sendSuccess(res, operation, 'Operation updated');
-    } catch (err) {
-      next(err);
-    }
+    } catch (err) { next(err); }
   }
-
   async updateStatus(req: Request, res: Response, next: NextFunction) {
     try {
       const parsed = updateStatusSchema.safeParse(req.body);
-      if (!parsed.success) {
-        throw new AppError(parsed.error.issues[0]?.message || 'Validation error', 400, parsed.error.issues);
-      }
-      const userId = (req as any).user?.userId;
-      const operation = await operationService.updateStatus(
-        req.params.id as string,
-        userId,
-        parsed.data.status as any,
-      );
+      if (!parsed.success) throw new AppError(parsed.error.issues[0]?.message || 'Validation error', 400, parsed.error.issues);
+      const operation = await operationService.updateStatus(req.params.id as string, (req as any).user?.userId, parsed.data.status as any);
       return sendSuccess(res, operation, 'Status updated');
-    } catch (err) {
-      next(err);
-    }
+    } catch (err) { next(err); }
   }
-
   async delete(req: Request, res: Response, next: NextFunction) {
-    try {
-      const userId = (req as any).user?.userId;
-      await operationService.delete(req.params.id as string, userId);
-      return sendSuccess(res, null, 'Operation deleted');
-    } catch (err) {
-      next(err);
-    }
+    try { await operationService.delete(req.params.id as string, (req as any).user?.userId); return sendSuccess(res, null, 'Operation deleted'); } catch (err) { next(err); }
   }
-
   async updateCost(req: Request, res: Response, next: NextFunction) {
     try {
       const parsed = updateCostSchema.safeParse(req.body);
-      if (!parsed.success) {
-        throw new AppError(parsed.error.issues[0]?.message || 'Validation error', 400, parsed.error.issues);
-      }
-      const userId = (req as any).user?.userId;
-      const cost = await operationService.updateCost(req.params.id as string, userId, parsed.data as any);
+      if (!parsed.success) throw new AppError(parsed.error.issues[0]?.message || 'Validation error', 400, parsed.error.issues);
+      const cost = await operationService.updateCost(req.params.id as string, (req as any).user?.userId, parsed.data as any);
       return sendSuccess(res, cost, 'Cost updated');
-    } catch (err) {
-      next(err);
-    }
+    } catch (err) { next(err); }
   }
-
   async uploadFiles(req: Request, res: Response, next: NextFunction) {
     try {
-      const userId = (req as any).user?.userId;
       const fileType = resolveFileType(req.body?.fileType);
       const files = collectUploadedFiles(req);
-      if (files.length === 0) {
-        throw new AppError('No files uploaded', 400, [
-          { path: ['file'], code: 'custom', message: 'A file is required' },
-        ]);
-      }
-      const uploadedFiles = await operationService.uploadFiles(
-        req.params.id as string,
-        userId,
-        files,
-        fileType as FileType,
-      );
+      if (!files.length) throw new AppError('No files uploaded', 400, [{ path: ['file'], code: 'custom', message: 'A file is required' }]);
+      const uploadedFiles = await operationService.uploadFiles(req.params.id as string, (req as any).user?.userId, files, fileType as FileType);
       return sendSuccess(res, uploadedFiles, 'Files uploaded', 201);
-    } catch (err) {
-      next(err);
-    }
+    } catch (err) { next(err); }
   }
-
   async createFileUploadUrl(req: Request, res: Response, next: NextFunction) {
     try {
       const parsed = createUploadUrlSchema.safeParse(req.body);
-      if (!parsed.success) {
-        throw new AppError(parsed.error.issues[0]?.message || 'Validation error', 400, parsed.error.issues);
-      }
-      const userId = (req as any).user?.userId;
-      const result = await operationService.createFileUploadUrl(
-        req.params.id as string,
-        userId,
-        parsed.data as any,
-      );
+      if (!parsed.success) throw new AppError(parsed.error.issues[0]?.message || 'Validation error', 400, parsed.error.issues);
+      const result = await operationService.createFileUploadUrl(req.params.id as string, (req as any).user?.userId, parsed.data as any);
       return sendSuccess(res, result, 'Signed upload URL created');
-    } catch (err) {
-      next(err);
-    }
+    } catch (err) { next(err); }
   }
-
   async completeFileUpload(req: Request, res: Response, next: NextFunction) {
     try {
       const parsed = completeUploadSchema.safeParse(req.body);
-      if (!parsed.success) {
-        throw new AppError(parsed.error.issues[0]?.message || 'Validation error', 400, parsed.error.issues);
-      }
-      const userId = (req as any).user?.userId;
-      const result = await operationService.completeFileUpload(
-        req.params.id as string,
-        userId,
-        parsed.data as any,
-      );
+      if (!parsed.success) throw new AppError(parsed.error.issues[0]?.message || 'Validation error', 400, parsed.error.issues);
+      const result = await operationService.completeFileUpload(req.params.id as string, (req as any).user?.userId, parsed.data as any);
       return sendSuccess(res, result, 'File upload completed', 201);
-    } catch (err) {
-      next(err);
-    }
+    } catch (err) { next(err); }
   }
-
   async downloadFile(req: Request, res: Response, next: NextFunction) {
     try {
-      const userId = (req as any).user?.userId;
-      const result = await operationService.getFileDownloadUrl(
-        req.params.operationId as string,
-        req.params.fileId as string,
-        userId,
-      );
+      const result = await operationService.getFileDownloadUrl(req.params.operationId as string, req.params.fileId as string, (req as any).user?.userId);
       return res.redirect(result.url);
-    } catch (err) {
-      next(err);
-    }
+    } catch (err) { next(err); }
   }
-
   async deleteFile(req: Request, res: Response, next: NextFunction) {
     try {
-      const userId = (req as any).user?.userId;
-      const result = await operationService.deleteFile(req.params.operationId as string, req.params.fileId as string, userId);
+      const result = await operationService.deleteFile(req.params.operationId as string, req.params.fileId as string, (req as any).user?.userId);
       return sendSuccess(res, result, 'File deleted');
-    } catch (err) {
-      next(err);
-    }
+    } catch (err) { next(err); }
   }
-
   async getTimeline(req: Request, res: Response, next: NextFunction) {
-    try {
-      const userId = (req as any).user?.userId;
-      const timeline = await operationService.getTimeline(req.params.id as string, userId);
-      return sendSuccess(res, timeline);
-    } catch (err) {
-      next(err);
-    }
+    try { const timeline = await operationService.getTimeline(req.params.id as string, (req as any).user?.userId); return sendSuccess(res, timeline); } catch (err) { next(err); }
   }
 }
-
 export const operationController = new OperationController();
