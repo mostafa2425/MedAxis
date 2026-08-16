@@ -78,7 +78,7 @@ export const ORTHOPEDIC_CATEGORIES = [
 // ──────────────────────────────────────────────
 // Default Pagination
 // ──────────────────────────────────────────────
-export const DEFAULT_PAGINATION = {
+export const DEFAULT_PAGINATION: { page: number; limit: number } = {
   page: 1,
   limit: 20,
-} as const;
+};
