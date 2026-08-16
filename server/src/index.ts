@@ -6,7 +6,6 @@ import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
 import compression from 'compression';
-import path from 'path';
 import swaggerUi from 'swagger-ui-express';
 
 import routes from './routes';
@@ -31,13 +30,16 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 app.use(compression());
 app.use(morgan('dev'));
 
-const uploadDir = process.env.UPLOAD_DIR || path.join(process.cwd(), 'uploads');
-app.use('/uploads', express.static(uploadDir));
-
+// Persistent files are stored in Supabase Storage. Do not serve or write
+// to the Vercel function filesystem in production.
 app.use('/api', routes);
 
 app.get('/health', (_req, res) => {
-  res.json({ status: 'ok', timestamp: new Date().toISOString() });
+  res.json({
+    success: true,
+    message: 'API is healthy',
+    timestamp: new Date().toISOString(),
+  });
 });
 
 app.use(errorHandler);
