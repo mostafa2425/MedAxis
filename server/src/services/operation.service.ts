@@ -5,7 +5,7 @@ import { doctorService } from './doctor.service';
 import { nurseService } from './nurse.service';
 import { nurseRepo } from '../repositories/nurse.repo';
 import { NotFoundError, BadRequestError } from '../utils/errors';
-import { OperationStatus, FileType } from '@prisma/client';
+import { OperationStatus, FileType } from '../prisma';
 import { normalizeOperationCost } from '../utils/operationCost';
 import { mapOperationFile } from '../utils/operationFile';
 import {
