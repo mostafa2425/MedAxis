@@ -1,5 +1,5 @@
 import { prisma } from '../utils/prisma';
-import { Prisma } from '@prisma/client';
+import { Prisma } from '../prisma';
 
 export class NurseRepository {
   async findAll(params: { page: number; limit: number; search?: string; userId: string }) {
