@@ -7,9 +7,16 @@ import { nurseRepo } from '../repositories/nurse.repo';
 import { NotFoundError, BadRequestError } from '../utils/errors';
 import { OperationStatus, FileType } from '@prisma/client';
 import { normalizeOperationCost } from '../utils/operationCost';
-import { mapOperationFile, toPublicFileUrl } from '../utils/operationFile';
-import fs from 'fs';
-import path from 'path';
+import { mapOperationFile } from '../utils/operationFile';
+import {
+  assertStoredFileExists,
+  createOperationStoragePath,
+  createSignedDownloadUrl,
+  createSignedUploadUrl,
+  deleteStoredFile,
+  uploadOperationFile,
+  validateFileMetadata,
+} from '../utils/supabaseStorage';
 
 type CatalogItem = {
   id: string;
@@ -29,7 +36,7 @@ type TeamInput = {
   notes?: string;
 };
 
-function mapOperation<T extends { files?: Array<{ filePath: string }> }>(operation: T) {
+function mapOperation<T extends { files?: Array<{ id: string; operationId: string; filePath: string }> }>(operation: T) {
   if (!operation.files) return operation;
   return {
     ...operation,
@@ -321,10 +328,7 @@ class OperationService {
 
     if (operation.files && operation.files.length > 0) {
       for (const file of operation.files) {
-        const filePath = path.join(process.cwd(), file.filePath);
-        if (fs.existsSync(filePath)) {
-          fs.unlinkSync(filePath);
-        }
+        await deleteStoredFile(file.filePath);
       }
     }
 
@@ -365,16 +369,23 @@ class OperationService {
 
     const uploadedFiles = [];
     for (const file of files) {
-      const relativePath = toPublicFileUrl(file.path);
-      const operationFile = await operationRepo.addFile(id, {
-        fileType,
-        fileName: file.originalname,
-        filePath: relativePath,
-        fileSize: file.size,
-        mimeType: file.mimetype,
-        uploadedBy: createdBy,
-      });
-      uploadedFiles.push(mapOperationFile(operationFile));
+      const storagePath = createOperationStoragePath(id, file.originalname);
+      await uploadOperationFile(storagePath, file);
+
+      try {
+        const operationFile = await operationRepo.addFile(id, {
+          fileType,
+          fileName: file.originalname,
+          filePath: storagePath,
+          fileSize: file.size,
+          mimeType: file.mimetype,
+          uploadedBy: createdBy,
+        });
+        uploadedFiles.push(mapOperationFile(operationFile));
+      } catch (error) {
+        await deleteStoredFile(storagePath).catch(() => undefined);
+        throw error;
+      }
     }
 
     await operationRepo.addTimeline(id, {
@@ -386,15 +397,82 @@ class OperationService {
     return uploadedFiles;
   }
 
+  async createFileUploadUrl(
+    id: string,
+    createdBy: string,
+    input: { fileName: string; mimeType: string; fileSize: number; fileType: FileType },
+  ) {
+    await this.getById(id, createdBy);
+    validateFileMetadata(input.fileName, input.mimeType, input.fileSize);
+    const storagePath = createOperationStoragePath(id, input.fileName);
+    const signedUpload = await createSignedUploadUrl(storagePath, input.mimeType, input.fileSize);
+
+    return {
+      ...signedUpload,
+      fileName: input.fileName,
+      mimeType: input.mimeType,
+      fileSize: input.fileSize,
+      fileType: input.fileType,
+    };
+  }
+
+  async completeFileUpload(
+    id: string,
+    createdBy: string,
+    input: {
+      filePath: string;
+      fileName: string;
+      mimeType: string;
+      fileSize: number;
+      fileType: FileType;
+    },
+  ) {
+    const operation = await this.getById(id, createdBy);
+    const expectedPrefix = `operations/${id}/`;
+    if (!input.filePath.startsWith(expectedPrefix)) {
+      throw new BadRequestError('Invalid file path for this operation');
+    }
+
+    validateFileMetadata(input.fileName, input.mimeType, input.fileSize);
+    await assertStoredFileExists(input.filePath);
+
+    const existingFile = operation.files?.find((file) => file.filePath === input.filePath);
+    if (existingFile) return existingFile;
+
+    const operationFile = await operationRepo.addFile(id, {
+      fileType: input.fileType,
+      fileName: input.fileName,
+      filePath: input.filePath,
+      fileSize: input.fileSize,
+      mimeType: input.mimeType,
+      uploadedBy: createdBy,
+    });
+
+    await operationRepo.addTimeline(id, {
+      action: 'FILES_UPLOADED',
+      description: `File uploaded as ${input.fileType}`,
+      userId: createdBy,
+    });
+
+    return mapOperationFile(operationFile);
+  }
+
+  async getFileDownloadUrl(operationId: string, fileId: string, createdBy: string) {
+    const operation = await operationRepo.findById(operationId, createdBy);
+    if (!operation) throw new NotFoundError('Operation');
+    const file = operation.files?.find((item) => item.id === fileId);
+    if (!file) throw new NotFoundError('File');
+    return createSignedDownloadUrl(file.filePath);
+  }
+
   async deleteFile(operationId: string, fileId: string, createdBy: string) {
-    await this.getById(operationId, createdBy);
-    const file = await operationRepo.deleteFile(fileId, createdBy);
+    const operation = await this.getById(operationId, createdBy);
+    const file = operation.files?.find((item) => item.id === fileId);
     if (!file) throw new NotFoundError('File');
 
-    const filePath = path.join(process.cwd(), file.filePath);
-    if (fs.existsSync(filePath)) {
-      fs.unlinkSync(filePath);
-    }
+    await deleteStoredFile(file.filePath);
+    const deleted = await operationRepo.deleteFile(fileId, createdBy);
+    if (!deleted) throw new NotFoundError('File');
 
     return { success: true, message: 'File deleted' };
   }
