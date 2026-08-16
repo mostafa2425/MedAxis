@@ -14,7 +14,7 @@ import { errorHandler } from './middlewares/errorHandler';
 import { swaggerSpec } from './docs/swagger';
 
 const app = express();
-const PORT = process.env.PORT || 4000;
+const PORT = process.env.PORT || 5000;
 
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 app.use(helmet({ crossOriginResourcePolicy: false }));
