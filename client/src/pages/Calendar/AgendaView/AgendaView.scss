@@ -1,0 +1,54 @@
+.agendaView {
+  display: flex;
+  flex-direction: column;
+  gap: $space-4;
+  padding: $space-2 0;
+}
+
+.agendaEmpty {
+  padding: $space-8 $space-4;
+}
+
+.agendaGroup {
+  display: flex;
+  flex-direction: column;
+  gap: $space-2;
+}
+
+.agendaDate {
+  margin: 0;
+  font-size: $font-body-sm;
+  font-weight: $font-semibold;
+  color: $text-primary;
+}
+
+.agendaItems {
+  display: flex;
+  flex-direction: column;
+  gap: $space-2;
+}
+
+.agendaRow {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.agendaMeta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-2;
+  padding-inline-start: $space-2;
+  font-size: $font-caption;
+  color: $text-muted;
+}
+
+@include dark {
+  .agendaDate {
+    color: $dark-text-primary;
+  }
+
+  .agendaMeta {
+    color: $dark-text-muted;
+  }
+}

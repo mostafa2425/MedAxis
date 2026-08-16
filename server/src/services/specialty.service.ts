@@ -2,8 +2,14 @@ import { specialtyRepo } from '../repositories/specialty.repo';
 import { NotFoundError, ConflictError, BadRequestError } from '../utils/errors';
 
 class SpecialtyService {
-  async getAll() {
-    return specialtyRepo.findAll();
+  async getAll(params?: {
+    parentIds?: string[];
+    rootsOnly?: boolean;
+    search?: string;
+    skip?: number;
+    take?: number;
+  }) {
+    return specialtyRepo.findAll(params);
   }
 
   async getById(id: string) {
@@ -88,6 +94,29 @@ class SpecialtyService {
       ]);
     }
 
+    const parentSet = new Set(parentIds);
+    const invalid = found.filter(
+      (specialty) => !specialty.parentId || !parentSet.has(specialty.parentId),
+    );
+    if (invalid.length > 0) {
+      const names = invalid.map((item) => item.name).join(', ');
+      const message = `${names} is not a subspecialty of the selected specialties.`;
+      throw new BadRequestError(message, [
+        {
+          path: ['subspecialtyIds'],
+          code: 'custom',
+          message,
+        },
+      ]);
+    }
+
+    return found.map((specialty) => specialty.id);
+  }
+
+  async filterSubspecialtyIds(ids: string[] | undefined, parentIds: string[]) {
+    const unique = [...new Set(ids ?? [])];
+    if (unique.length === 0) return [];
+    const found = await specialtyRepo.findByIds(unique);
     const parentSet = new Set(parentIds);
     return found
       .filter((specialty) => specialty.parentId && parentSet.has(specialty.parentId))

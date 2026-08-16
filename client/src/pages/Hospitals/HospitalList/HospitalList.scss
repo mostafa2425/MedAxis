@@ -1,3 +1,12 @@
+.hospitalList {
+  width: 100%;
+  min-width: 0;
+}
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
 .hospitalListMobile {
   display: flex;
   flex-direction: column;
@@ -15,24 +24,323 @@
 }
 
 .hospitalListCard {
-  .ant-card-head {
-    min-height: 44px;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+
+  border: 1px solid $border;
+  border-radius: $radius-lg;
+
+  background: $surface;
+
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    border-color 0.2s ease;
+
+  .ant-card-body {
+    padding: $space-4;
+  }
+
+  &:hover {
+    transform: translateY(-2px);
+    border-color: rgba(14, 165, 233, 0.28);
+    box-shadow: $shadow-md;
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+
+  @include dark {
+    background: $dark-surface;
+    border-color: $dark-border;
+
+    &:hover {
+      border-color: rgba(14, 165, 233, 0.4);
+    }
   }
 }
 
-.hospitalListMeta {
+.hospitalListCardHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: $space-3;
+}
+
+.hospitalListCardIdentity {
+  display: flex;
+  align-items: center;
+  gap: $space-3;
+  min-width: 0;
+}
+
+.hospitalListCardIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 44px;
+  height: 44px;
+  flex: 0 0 44px;
+
+  border-radius: $radius-md;
+
+  background: rgba(14, 165, 233, 0.1);
+  color: #0ea5e9;
+
+  font-size: 20px;
+
+  @include dark {
+    background: rgba(14, 165, 233, 0.14);
+    color: #38bdf8;
+  }
+}
+
+.hospitalListCardTitle {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+
+  h3 {
+    margin: 0;
+
+    font-size: $font-body;
+    line-height: 1.35;
+    font-weight: $font-semibold;
+    color: $text-primary;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+
+    @include dark {
+      color: $dark-text-primary;
+    }
+  }
+}
+
+.hospitalListCardSubtitle {
+  font-size: $font-caption;
+  color: $text-muted;
+
+  @include dark {
+    color: $dark-text-muted;
+  }
+}
+
+/* =========================================================
+   STATUS
+   ========================================================= */
+
+.hospitalListStatus {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  font-size: $font-body-sm;
+
+  flex-shrink: 0;
+
+  padding: 4px 9px;
+
+  border-radius: 999px;
+
+  font-size: $font-caption;
+  line-height: 1;
+  font-weight: $font-medium;
+  white-space: nowrap;
+}
+
+.hospitalListStatusDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+}
+
+.hospitalListStatusActive {
+  background: rgba(22, 163, 74, 0.1);
+  color: #16a34a;
+
+  .hospitalListStatusDot {
+    background: #16a34a;
+  }
+
+  @include dark {
+    background: rgba(34, 197, 94, 0.12);
+    color: #4ade80;
+
+    .hospitalListStatusDot {
+      background: #4ade80;
+    }
+  }
+}
+
+.hospitalListStatusInactive {
+  background: rgba(100, 116, 139, 0.1);
   color: $text-muted;
+
+  .hospitalListStatusDot {
+    background: #94a3b8;
+  }
+
+  @include dark {
+    background: rgba(148, 163, 184, 0.1);
+    color: $dark-text-muted;
+  }
+}
+
+/* =========================================================
+   CARD CONTENT
+   ========================================================= */
+
+.hospitalListCardDivider {
+  height: 1px;
+  margin: $space-4 0;
+
+  background: $border;
+
+  @include dark {
+    background: $dark-border;
+  }
+}
+
+.hospitalListCardDetails {
+  display: flex;
+  flex-direction: column;
+  gap: $space-3;
+}
+
+.hospitalListCardDetail {
+  display: flex;
+  align-items: flex-start;
+  gap: $space-2;
+
+  min-width: 0;
+}
+
+.hospitalListCardDetailIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 30px;
+  height: 30px;
+  flex: 0 0 30px;
+
+  border-radius: $radius-sm;
+
+  background: $background;
+  color: $text-muted;
+
+  font-size: 14px;
+
+  @include dark {
+    background: $dark-surface-elevated;
+    color: $dark-text-muted;
+  }
+}
+
+.hospitalListCardDetail > div:last-child {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+
+  min-width: 0;
+}
+
+.hospitalListCardDetailLabel {
+  font-size: $font-caption;
+  color: $text-muted;
+
+  @include dark {
+    color: $dark-text-muted;
+  }
+}
+
+.hospitalListCardDetailValue {
+  font-size: $font-body-sm;
+  color: $text-primary;
+
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  @include dark {
+    color: $dark-text-primary;
+  }
+}
+
+/* =========================================================
+   CARD FOOTER
+   ========================================================= */
+
+.hospitalListCardFooter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  margin-top: $space-4;
+  padding-top: $space-3;
+
+  border-top: 1px solid $border;
+
+  @include dark {
+    border-color: $dark-border;
+  }
+}
+
+.hospitalListCardActionHint {
+  font-size: $font-caption;
+  font-weight: $font-medium;
+  color: $primary;
+}
+
+.hospitalListCardArrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 28px;
+  height: 28px;
+
+  border-radius: 50%;
+
+  background: rgba(14, 165, 233, 0.08);
+  color: $primary;
+
+  font-size: 11px;
+
+  transition:
+    transform 0.2s ease,
+    background 0.2s ease;
+}
+
+.hospitalListCard:hover {
+  .hospitalListCardArrow {
+    transform: translateX(2px);
+    background: rgba(14, 165, 233, 0.14);
+  }
+}
+
+.hospitalListMobileActions {
+  display: none;
+}
+
+.hospitalListEmpty {
+  padding: $space-8 $space-4;
 }
 
 .hospitalListMobilePagination {
   display: flex;
   justify-content: center;
+
   padding-top: $space-2;
 }
+
+/* =========================================================
+   DESKTOP
+   ========================================================= */
 
 .hospitalListDesktop {
   display: none;
@@ -44,27 +352,288 @@
 
 .hospitalListTable {
   @include card-base;
+
   overflow: hidden;
 
   .ant-table {
     background: transparent;
   }
 
+  .ant-table-container {
+    border-radius: inherit;
+  }
+
   .ant-table-thead > tr > th {
+    height: 48px;
+
+    padding: 0 $space-4;
+
     background: $background;
+
+    border-bottom: 1px solid $border;
+
     font-size: $font-caption;
     font-weight: $font-semibold;
+
     color: $text-muted;
+
     text-transform: uppercase;
-    letter-spacing: 0.05em;
+    letter-spacing: 0.04em;
+
+    &::before {
+      display: none !important;
+    }
 
     @include dark {
       background: $dark-surface-elevated;
+      border-color: $dark-border;
       color: $dark-text-muted;
+    }
+  }
+
+  .ant-table-tbody > tr {
+    transition: background 0.15s ease;
+
+    > td {
+      height: 72px;
+
+      padding: $space-3 $space-4;
+
+      border-bottom: 1px solid $border;
+
+      color: $text-primary;
+
+      @include dark {
+        border-color: $dark-border;
+        color: $dark-text-primary;
+      }
+    }
+
+    &:last-child > td {
+      border-bottom: 0;
+    }
+
+    &:hover > td {
+      background: rgba(14, 165, 233, 0.035);
+    }
+  }
+
+  @include dark {
+    background: $dark-surface;
+    border-color: $dark-border;
+  }
+}
+
+.hospitalListRow {
+  cursor: pointer;
+}
+
+/* =========================================================
+   DESKTOP NAME
+   ========================================================= */
+
+.hospitalListNameCell {
+  display: flex;
+  align-items: center;
+  gap: $space-3;
+
+  min-width: 0;
+}
+
+.hospitalListIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 40px;
+  height: 40px;
+  flex: 0 0 40px;
+
+  border-radius: $radius-md;
+
+  background: rgba(14, 165, 233, 0.1);
+  color: #0ea5e9;
+
+  font-size: 18px;
+
+  @include dark {
+    background: rgba(14, 165, 233, 0.14);
+    color: #38bdf8;
+  }
+}
+
+.hospitalListNameContent {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+
+  min-width: 0;
+}
+
+.hospitalListNameRow {
+  display: flex;
+  align-items: center;
+  gap: $space-2;
+
+  min-width: 0;
+}
+
+.hospitalListName {
+  min-width: 0;
+
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  font-size: $font-body-sm;
+  font-weight: $font-semibold;
+
+  color: $text-primary;
+
+  @include dark {
+    color: $dark-text-primary;
+  }
+}
+
+.hospitalListNameHint {
+  font-size: $font-caption;
+  color: $text-muted;
+
+  @include dark {
+    color: $dark-text-muted;
+  }
+}
+
+/* =========================================================
+   TABLE META
+   ========================================================= */
+
+.hospitalListInfoCell {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  min-width: 0;
+
+  color: $text-muted;
+  font-size: $font-body-sm;
+
+  > .anticon {
+    flex: 0 0 auto;
+    color: #94a3b8;
+  }
+
+  > span {
+    min-width: 0;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  @include dark {
+    color: $dark-text-muted;
+
+    > .anticon {
+      color: #64748b;
     }
   }
 }
 
-.hospitalListNameIcon {
-  color: #0ea5e9;
+.hospitalListPhone {
+  white-space: nowrap;
+}
+
+.hospitalListDate {
+  font-size: $font-caption;
+}
+
+/* =========================================================
+   ACTIONS
+   ========================================================= */
+
+.hospitalListActions {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 2px;
+}
+
+.hospitalListActionButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 32px;
+  height: 32px;
+
+  border-radius: $radius-sm;
+
+  transition:
+    background 0.15s ease,
+    color 0.15s ease,
+    transform 0.15s ease;
+
+  &:hover {
+    transform: translateY(-1px);
+  }
+}
+
+.hospitalListEditButton {
+  color: $text-muted;
+
+  &:hover {
+    background: rgba(14, 165, 233, 0.08) !important;
+    color: $primary !important;
+  }
+}
+
+.hospitalListDeleteButton {
+  &:hover {
+    background: rgba(239, 68, 68, 0.08) !important;
+  }
+}
+
+/* =========================================================
+   EMPTY / LOADING
+   ========================================================= */
+
+.hospitalListTable {
+  .ant-empty {
+    margin: $space-8 0;
+  }
+}
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@include responsive('sm') {
+  .hospitalListCard {
+    .ant-card-body {
+      padding: $space-3;
+    }
+  }
+
+  .hospitalListCardHeader {
+    gap: $space-2;
+  }
+
+  .hospitalListCardIcon {
+    width: 40px;
+    height: 40px;
+    flex-basis: 40px;
+    font-size: 18px;
+  }
+
+  .hospitalListCardTitle {
+    h3 {
+      font-size: $font-body-sm;
+    }
+  }
+
+  .hospitalListStatus {
+    padding: 4px 7px;
+    font-size: 10px;
+  }
 }

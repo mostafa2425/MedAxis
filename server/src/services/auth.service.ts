@@ -30,7 +30,7 @@ function toAuthUser(
     id: user.id,
     email: user.email,
     name: user.name,
-    phone: user.phone,
+    phone: user.phone ?? doctor?.phone ?? null,
     role: user.role,
     isActive: user.isActive,
     doctorId: doctor?.id ?? null,
@@ -147,7 +147,8 @@ class AuthService {
 
     let doctor = await doctorRepo.findByUserId(userId);
     const nextName = userUpdate.name ?? user.name;
-    const nextPhone = userUpdate.phone !== undefined ? userUpdate.phone : user.phone;
+    const nextPhone =
+      userUpdate.phone !== undefined ? userUpdate.phone : (user.phone ?? doctor?.phone ?? null);
 
     if (!doctor && input.specialtyIds) {
       const { validSpecialtyIds, validSubspecialtyIds } = await resolveSpecialtyLinks(
@@ -172,10 +173,14 @@ class AuthService {
         await doctorRepo.update(doctor.id, doctorUpdate);
       }
       if (input.specialtyIds) {
-        const { validSpecialtyIds, validSubspecialtyIds } = await resolveSpecialtyLinks(
-          input.specialtyIds,
-          input.subspecialtyIds ?? doctor.subspecialties.map((link) => link.specialtyId),
-        );
+        const validSpecialtyIds = await specialtyService.assertTopLevelSpecialtyIds(input.specialtyIds);
+        const validSubspecialtyIds =
+          input.subspecialtyIds !== undefined
+            ? await specialtyService.assertSubspecialtyIds(input.subspecialtyIds, validSpecialtyIds)
+            : await specialtyService.filterSubspecialtyIds(
+                doctor.subspecialties.map((link) => link.specialtyId),
+                validSpecialtyIds,
+              );
         doctor = await doctorRepo.setSpecialtyLinks(
           doctor.id,
           validSpecialtyIds,

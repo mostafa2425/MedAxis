@@ -1,0 +1,42 @@
+.calendarPopover {
+  min-width: 240px;
+  max-width: 320px;
+  display: flex;
+  flex-direction: column;
+  gap: $space-2;
+}
+
+.calendarPopoverRow {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.calendarPopoverLabel {
+  font-size: $font-caption;
+  color: $text-muted;
+  font-weight: $font-medium;
+}
+
+.calendarPopoverValue {
+  font-size: $font-body-sm;
+  color: $text-primary;
+  font-weight: $font-medium;
+  line-height: $line-height-tight;
+  word-break: break-word;
+}
+
+.calendarPopoverActions {
+  margin-top: $space-2;
+}
+
+@include dark {
+  .calendarPopoverLabel {
+    color: $dark-text-muted;
+  }
+
+  .calendarPopoverValue {
+    color: $dark-text-primary;
+  }
+}

@@ -1,60 +1,507 @@
-.patientListMobile {
-  display: flex;
-  flex-direction: column;
-  gap: $space-3;
+.patientList {
+  width: 100%;
 
-  @include up('md') {
-    display: none;
-  }
-}
+  // ============================================================
+  // Shared
+  // ============================================================
 
-.patientListCards {
-  display: flex;
-  flex-direction: column;
-  gap: $space-3;
-}
+  .patientListAvatar {
+    flex-shrink: 0;
 
-.patientListCard {
-  cursor: pointer;
-}
+    border: 0 !important;
 
-.patientListMeta {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-size: $font-body-sm;
-  color: $text-muted;
-}
+    font-weight: $font-semibold;
+    font-size: $font-caption;
 
-.patientListMobilePagination {
-  display: flex;
-  justify-content: center;
-  padding-top: $space-2;
-}
-
-.patientListDesktop {
-  display: none;
-
-  @include up('md') {
-    display: block;
-  }
-}
-
-.patientListTable {
-  @include card-base;
-  overflow: hidden;
-
-  .ant-table {
-    background: transparent;
+    transition:
+      transform $transition-base,
+      box-shadow $transition-base;
   }
 
-  .ant-table-thead > tr > th {
-    background: $background;
+  .patientListAvatarMale {
+    background: rgba(37, 99, 235, 0.1) !important;
+    color: #2563eb !important;
+
+    @include dark {
+      background: rgba(59, 130, 246, 0.13) !important;
+      color: #60a5fa !important;
+    }
+  }
+
+  .patientListAvatarFemale {
+    background: rgba(236, 72, 153, 0.1) !important;
+    color: #db2777 !important;
+
+    @include dark {
+      background: rgba(236, 72, 153, 0.13) !important;
+      color: #f472b6 !important;
+    }
+  }
+
+  .patientListGender {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+
+    min-height: 28px;
+    padding: 4px 10px;
+
+    border-radius: $radius-full;
+
     font-size: $font-caption;
     font-weight: $font-semibold;
+    line-height: 1.2;
+    white-space: nowrap;
+  }
+
+  .patientListGenderDot {
+    width: 6px;
+    height: 6px;
+    flex-shrink: 0;
+
+    border-radius: $radius-full;
+  }
+
+  .patientListGender--male {
+    background: rgba(37, 99, 235, 0.09);
+    color: #2563eb;
+
+    .patientListGenderDot {
+      background: #2563eb;
+    }
+
+    @include dark {
+      background: rgba(59, 130, 246, 0.12);
+      color: #60a5fa;
+
+      .patientListGenderDot {
+        background: #60a5fa;
+      }
+    }
+  }
+
+  .patientListGender--female {
+    background: rgba(236, 72, 153, 0.09);
+    color: #db2777;
+
+    .patientListGenderDot {
+      background: #db2777;
+    }
+
+    @include dark {
+      background: rgba(236, 72, 153, 0.12);
+      color: #f472b6;
+
+      .patientListGenderDot {
+        background: #f472b6;
+      }
+    }
+  }
+
+  // ============================================================
+  // Patient identity
+  // ============================================================
+
+  .patientListIdentity {
+    display: flex;
+    align-items: center;
+    gap: $space-3;
+
+    min-width: 0;
+  }
+
+  .patientListIdentityContent {
+    display: flex;
+    flex-direction: column;
+
+    min-width: 0;
+    gap: 4px;
+  }
+
+  .patientListName {
+    display: block;
+
+    overflow: hidden;
+
+    color: $text-primary;
+
+    font-size: $font-body-sm;
+    font-weight: $font-semibold;
+    line-height: 1.3;
+
+    white-space: nowrap;
+    text-overflow: ellipsis;
+
+    @include dark {
+      color: $dark-text-primary;
+    }
+  }
+
+  .patientListAge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+
     color: $text-muted;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
+
+    font-size: $font-caption;
+    line-height: 1.3;
+
+    svg {
+      font-size: 10px;
+    }
+
+    @include dark {
+      color: $dark-text-muted;
+    }
+  }
+
+  // ============================================================
+  // Mobile
+  // ============================================================
+
+  .patientListMobile {
+    display: flex;
+    flex-direction: column;
+    gap: $space-3;
+
+    @include up('md') {
+      display: none;
+    }
+  }
+
+  .patientListCards {
+    display: flex;
+    flex-direction: column;
+    gap: $space-3;
+  }
+
+  .patientListCard {
+    position: relative;
+
+    overflow: hidden;
+
+    cursor: pointer;
+
+    border: 1px solid $border;
+    border-radius: $radius-xl;
+
+    background: $surface;
+
+    box-shadow:
+      0 1px 2px rgba(15, 23, 42, 0.03),
+      0 4px 14px rgba(15, 23, 42, 0.04);
+
+    transition:
+      transform $transition-base,
+      box-shadow $transition-base,
+      border-color $transition-base;
+
+    &:hover {
+      transform: translateY(-2px);
+
+      border-color: rgba(14, 165, 233, 0.25);
+
+      box-shadow:
+        0 8px 22px rgba(15, 23, 42, 0.07),
+        0 2px 6px rgba(15, 23, 42, 0.04);
+
+      .patientListAvatar {
+        transform: scale(1.04);
+      }
+
+      .patientListCardFooter {
+        color: $primary;
+      }
+    }
+
+    &:active {
+      transform: scale(0.99);
+    }
+
+    @include dark {
+      background: $dark-surface !important;
+      border-color: $dark-border;
+
+      box-shadow:
+        0 2px 8px rgba(0, 0, 0, 0.16),
+        0 8px 20px rgba(0, 0, 0, 0.08);
+
+      &:hover {
+        border-color: rgba(56, 189, 248, 0.25);
+      }
+    }
+  }
+
+  .patientListCardInner {
+    padding: $space-4;
+  }
+
+  .patientListCardHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: $space-3;
+
+    .patientListIdentity {
+      flex: 1;
+    }
+  }
+
+  .patientListCardMeta {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+
+    gap: $space-2;
+
+    margin-top: $space-4;
+    padding-top: $space-4;
+
+    border-top: 1px solid $border;
+
+    @include dark {
+      border-color: $dark-border;
+    }
+  }
+
+  .patientListCardMetaItem {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+
+    min-width: 0;
+  }
+
+  .patientListCardMetaIcon {
+    @include flex-center;
+
+    width: 32px;
+    height: 32px;
+    flex-shrink: 0;
+
+    border-radius: $radius-md;
+
+    background: $background;
+
+    color: $primary;
+
+    font-size: 13px;
+
+    @include dark {
+      background: $dark-surface-elevated;
+      color: #38bdf8;
+    }
+  }
+
+  .patientListCardMetaContent {
+    display: flex;
+    flex-direction: column;
+
+    min-width: 0;
+    gap: 2px;
+  }
+
+  .patientListCardMetaLabel {
+    color: $text-muted;
+
+    font-size: 10px;
+    font-weight: $font-medium;
+    line-height: 1.2;
+
+    @include dark {
+      color: $dark-text-muted;
+    }
+  }
+
+  .patientListCardMetaValue {
+    display: block;
+
+    overflow: hidden;
+
+    color: $text-primary;
+
+    font-size: $font-caption;
+    font-weight: $font-semibold;
+    line-height: 1.3;
+
+    white-space: nowrap;
+    text-overflow: ellipsis;
+
+    @include dark {
+      color: $dark-text-primary;
+    }
+  }
+
+  .patientListCardFooter {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    margin-top: $space-4;
+    padding-top: $space-3;
+
+    border-top: 1px solid $border;
+
+    color: $text-muted;
+
+    font-size: $font-caption;
+    font-weight: $font-medium;
+
+    transition: color $transition-fast;
+
+    svg {
+      font-size: 10px;
+    }
+
+    @include dark {
+      border-color: $dark-border;
+      color: $dark-text-muted;
+    }
+  }
+
+  .patientListMobilePagination {
+    display: flex;
+    justify-content: center;
+
+    padding-top: $space-2;
+  }
+
+  // ============================================================
+  // Desktop
+  // ============================================================
+
+  .patientListDesktop {
+    display: none;
+
+    @include up('md') {
+      display: block;
+    }
+  }
+
+  .patientListTable {
+    @include card-base;
+
+    overflow: hidden;
+
+    border: 1px solid $border;
+    border-radius: $radius-xl;
+
+    background: $surface;
+
+    @include dark {
+      background: $dark-surface;
+      border-color: $dark-border;
+    }
+
+    .ant-table {
+      background: transparent;
+    }
+
+    // Header
+    .ant-table-thead > tr > th {
+      height: 48px;
+
+      padding: 0 $space-4;
+
+      border-bottom: 1px solid $border;
+
+      background: $background;
+
+      color: $text-muted;
+
+      font-size: $font-caption;
+      font-weight: $font-semibold;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+
+      &::before {
+        display: none !important;
+      }
+
+      @include dark {
+        background: $dark-surface-elevated;
+        border-color: $dark-border;
+        color: $dark-text-muted;
+      }
+    }
+
+    // Rows
+    .ant-table-tbody > tr {
+      cursor: pointer;
+
+      transition: background $transition-fast;
+
+      > td {
+        height: 70px;
+
+        padding: $space-3 $space-4;
+
+        border-bottom: 1px solid $border;
+
+        background: transparent;
+
+        transition:
+          background $transition-fast,
+          border-color $transition-fast;
+
+        @include dark {
+          border-color: $dark-border;
+        }
+      }
+
+      &:last-child > td {
+        border-bottom: 0;
+      }
+
+      &:hover > td {
+        background: rgba(14, 165, 233, 0.035);
+      }
+
+      @include dark {
+        &:hover > td {
+          background: rgba(56, 189, 248, 0.045);
+        }
+      }
+    }
+
+    // Pagination
+    .ant-table-pagination {
+      margin: $space-4;
+
+      .ant-pagination-item,
+      .ant-pagination-prev,
+      .ant-pagination-next {
+        border-radius: $radius-md;
+      }
+    }
+  }
+
+  // ============================================================
+  // Desktop info
+  // ============================================================
+
+  .patientListInfo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    min-width: 0;
+  }
+
+  .patientListInfoIcon {
+    @include flex-center;
+
+    width: 28px;
+    height: 28px;
+    flex-shrink: 0;
+
+    border-radius: $radius-md;
+
+    background: $background;
+
+    color: $text-muted;
+
+    font-size: 12px;
 
     @include dark {
       background: $dark-surface-elevated;
@@ -62,46 +509,195 @@
     }
   }
 
-  .ant-table-tbody > tr:hover > td {
-    background: rgba(14, 165, 233, 0.04);
+  .patientListInfoText {
+    overflow: hidden;
+
+    color: $text-secondary;
+
+    font-size: $font-body-sm;
+
+    white-space: nowrap;
+    text-overflow: ellipsis;
+
+    @include dark {
+      color: $dark-text-secondary;
+    }
   }
-}
 
-.patientListNameCell {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  min-width: 0;
-}
+  // ============================================================
+  // Operations count
+  // ============================================================
 
-.patientListName {
-  font-weight: $font-semibold;
-}
+  .patientListOperations {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+  }
 
-.patientListAvatar {
-  font-weight: $font-semibold;
-  font-size: $font-caption;
-}
+  .patientListOperationsIcon {
+    @include flex-center;
 
-.patientListAvatarMale {
-  background: rgba(37, 99, 235, 0.1) !important;
-  color: $primary !important;
-}
+    width: 30px;
+    height: 30px;
 
-.patientListAvatarFemale {
-  background: rgba(236, 72, 153, 0.1) !important;
-  color: #ec4899 !important;
-}
+    border-radius: $radius-md;
 
-.patientListCardBody {
-  width: 100%;
-}
+    background: rgba(14, 165, 233, 0.08);
 
-.patientListRow {
-  cursor: pointer;
-}
+    color: $primary;
 
-.patientListAge {
-  font-size: $font-caption;
-  color: $text-muted;
+    font-size: 12px;
+
+    @include dark {
+      background: rgba(56, 189, 248, 0.1);
+      color: #38bdf8;
+    }
+  }
+
+  .patientListOperationsContent {
+    display: flex;
+    align-items: baseline;
+    gap: 5px;
+  }
+
+  .patientListOperationsCount {
+    color: $text-primary;
+
+    font-size: $font-body;
+    font-weight: $font-bold;
+
+    @include dark {
+      color: $dark-text-primary;
+    }
+  }
+
+  .patientListOperationsLabel {
+    color: $text-muted;
+
+    font-size: 10px;
+
+    @include dark {
+      color: $dark-text-muted;
+    }
+  }
+
+  // ============================================================
+  // Row action
+  // ============================================================
+
+  .patientListAction {
+    @include flex-center;
+
+    width: 30px;
+    height: 30px;
+
+    border-radius: $radius-md;
+
+    color: $text-muted;
+
+    font-size: 10px;
+
+    transition:
+      background $transition-fast,
+      color $transition-fast,
+      transform $transition-fast;
+
+    .patientListRow:hover & {
+      background: rgba(14, 165, 233, 0.08);
+      color: $primary;
+      transform: translateX(2px);
+    }
+
+    @include dark {
+      color: $dark-text-muted;
+
+      .patientListRow:hover & {
+        background: rgba(56, 189, 248, 0.1);
+        color: #38bdf8;
+      }
+    }
+  }
+
+  // ============================================================
+  // Empty
+  // ============================================================
+
+  .patientListEmpty {
+    padding: $space-8 $space-4;
+
+    .ant-empty {
+      margin: 0;
+    }
+
+    .ant-empty-description {
+      color: $text-muted;
+
+      @include dark {
+        color: $dark-text-muted;
+      }
+    }
+  }
+
+  // ============================================================
+  // RTL
+  // ============================================================
+
+  [dir='rtl'] & {
+    .patientListAction {
+      .patientListRow:hover & {
+        transform: translateX(-2px);
+      }
+    }
+  }
+
+  // ============================================================
+  // Small mobile
+  // ============================================================
+
+  @media (max-width: 420px) {
+    .patientListCardInner {
+      padding: $space-3;
+    }
+
+    .patientListCardHeader {
+      gap: $space-2;
+    }
+
+    .patientListCardHeader {
+      .patientListIdentity {
+        gap: $space-2;
+      }
+
+      .patientListAvatar {
+        width: 42px !important;
+        height: 42px !important;
+      }
+    }
+
+    .patientListName {
+      font-size: $font-body-sm;
+    }
+
+    .patientListGender {
+      min-height: 25px;
+      padding: 3px 8px;
+
+      font-size: 10px;
+    }
+
+    .patientListGenderDot {
+      width: 5px;
+      height: 5px;
+    }
+
+    .patientListCardMeta {
+      gap: 6px;
+    }
+
+    .patientListCardMetaIcon {
+      width: 28px;
+      height: 28px;
+    }
+  }
 }

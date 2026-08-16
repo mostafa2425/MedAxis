@@ -11,6 +11,7 @@ import {
   SettingOutlined,
   LogoutOutlined,
   MedicineBoxOutlined,
+  CalendarOutlined,
 } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
 import { useAppStore } from '@/stores/app.store';
@@ -25,6 +26,7 @@ interface MenuItem {
 
 const mainMenuItems: MenuItem[] = [
   { key: '/', icon: <DashboardOutlined />, labelKey: 'sidebar.dashboard' },
+  { key: '/calendar', icon: <CalendarOutlined />, labelKey: 'sidebar.calendar' },
   { key: '/patients', icon: <TeamOutlined />, labelKey: 'sidebar.patients' },
   { key: '/operations', icon: <ScissorOutlined />, labelKey: 'sidebar.operations' },
   { key: '/doctors', icon: <UserOutlined />, labelKey: 'sidebar.doctors' },

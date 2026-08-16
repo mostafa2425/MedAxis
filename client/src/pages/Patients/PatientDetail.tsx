@@ -23,6 +23,7 @@ import { useTranslation } from 'react-i18next';
 import { patientService } from '@/services/patient.service';
 import { operationService } from '@/services/operation.service';
 import { formatDate, getInitials, formatCurrency, getStatusColor } from '@/utils/helpers';
+import OperationSchedule from '@/components/OperationSchedule/OperationSchedule';
 import { Gender, OperationStatus, type Patient, type Operation } from '@/types';
 import './PatientDetail.scss';
 
@@ -91,7 +92,11 @@ function OperationCard({ operation }: { operation: Operation }) {
         )}
         <span className="operationMetaItem">
           <CalendarOutlined className="operationMetaIcon" />
-          {formatDate(operation.operationDate)}
+          <OperationSchedule
+            date={operation.operationDate}
+            time={operation.operationTime}
+            stacked={false}
+          />
         </span>
         {operation.cost && (
           <span className="operationMetaItem">

@@ -1,0 +1,61 @@
+.calendarToolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: $space-3;
+  flex-wrap: wrap;
+}
+
+.calendarToolbarNav {
+  display: flex;
+  align-items: center;
+  gap: $space-2;
+  min-width: 0;
+  flex-wrap: wrap;
+}
+
+.calendarToolbarPeriod {
+  margin: 0;
+  font-size: $font-body;
+  font-weight: $font-semibold;
+  color: $text-primary;
+  line-height: $line-height-tight;
+}
+
+.calendarToolbarViews {
+  display: flex;
+  align-items: center;
+  gap: $space-2;
+  flex-wrap: wrap;
+}
+
+@include dark {
+  .calendarToolbarPeriod {
+    color: $dark-text-primary;
+  }
+}
+
+@include responsive('md') {
+  .calendarToolbar {
+    gap: $space-2;
+  }
+
+  .calendarToolbarNav :global(.ant-btn) {
+    min-width: 44px;
+    min-height: 44px;
+  }
+
+  .calendarToolbarPeriod {
+    width: 100%;
+    font-size: $font-body-sm;
+  }
+
+  .calendarToolbarViews {
+    width: 100%;
+
+    :global(.ant-segmented) {
+      width: 100%;
+      overflow-x: auto;
+    }
+  }
+}

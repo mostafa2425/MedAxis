@@ -33,6 +33,7 @@ const PAGE_TITLES: Record<string, string> = {
   '/hospitals': 'hospitals.title',
   '/specialties': 'specialties.title',
   '/search': 'search.title',
+  '/calendar': 'calendar.title',
   '/profile': 'profile.title',
   '/settings': 'settings.title',
 };

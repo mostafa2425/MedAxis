@@ -1,0 +1,39 @@
+.mySpecialtyGroups {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: $space-4;
+}
+
+.mySpecialtyCard {
+  border-radius: $radius-lg;
+
+  @include dark {
+    background: $dark-surface;
+    border-color: $dark-border;
+  }
+}
+
+.mySpecialtyAreasLabel {
+  margin: 0 0 $space-2;
+  font-size: $font-caption;
+  font-weight: $font-semibold;
+  color: $text-muted;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.mySpecialtyTags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-4;
+  .ant-tag{
+    font-size: 16px;
+    padding: $space-2;
+  }
+}
+
+.mySpecialtyEmptyAreas {
+  margin: 0;
+  color: $text-muted;
+  font-size: $font-body-sm;
+}

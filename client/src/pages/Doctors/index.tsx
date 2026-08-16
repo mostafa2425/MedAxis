@@ -1,18 +1,39 @@
 import { useState, type ChangeEvent } from 'react';
-import { Button, Input, Empty, message, Space, Typography } from 'antd';
-import { PlusOutlined, SearchOutlined } from '@ant-design/icons';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import {
+  Button,
+  Card,
+  Empty,
+  Input,
+  message,
+  Pagination,
+  Spin,
+  Typography,
+} from 'antd';
+import {
+  PlusOutlined,
+  SearchOutlined,
+  TeamOutlined,
+  UserOutlined,
+  ClearOutlined,
+} from '@ant-design/icons';
+import {
+  useQuery,
+  useMutation,
+  useQueryClient,
+} from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
+
 import { doctorService } from '@/services/doctor.service';
 import { nurseService } from '@/services/nurse.service';
 import { useDebounce } from '@/hooks/useDebounce';
 import { DEFAULT_PAGINATION } from '@/utils/constants';
 import type { Doctor, Nurse } from '@/types';
+
 import DoctorList from './DoctorList/DoctorList';
 import AddDoctor from './AddDoctor/AddDoctor';
 import AddNurse from './AddNurse';
 import NurseCard from './NurseCard';
-import { Card, Pagination, Spin } from 'antd';
+
 import './Doctors.scss';
 
 export default function DoctorsPage() {
@@ -21,15 +42,29 @@ export default function DoctorsPage() {
   const [messageApi, contextHolder] = message.useMessage();
 
   const [search, setSearch] = useState('');
-  const [page, setPage] = useState<number>(DEFAULT_PAGINATION.page);
+  const [page, setPage] = useState(DEFAULT_PAGINATION.page);
   const [nursePage, setNursePage] = useState(1);
+
   const [doctorModalOpen, setDoctorModalOpen] = useState(false);
   const [nurseModalOpen, setNurseModalOpen] = useState(false);
-  const [editingDoctor, setEditingDoctor] = useState<Doctor | null>(null);
-  const [editingNurse, setEditingNurse] = useState<Nurse | null>(null);
+
+  const [editingDoctor, setEditingDoctor] =
+    useState<Doctor | null>(null);
+
+  const [editingNurse, setEditingNurse] =
+    useState<Nurse | null>(null);
+
   const debouncedSearch = useDebounce(search, 300);
 
-  const { data, isLoading, isError } = useQuery({
+  // ============================================================
+  // Doctors
+  // ============================================================
+
+  const {
+    data,
+    isLoading,
+    isError,
+  } = useQuery({
     queryKey: ['doctors', page, debouncedSearch],
     queryFn: () =>
       doctorService.getAll({
@@ -39,7 +74,14 @@ export default function DoctorsPage() {
       }),
   });
 
-  const { data: nursesData, isLoading: nursesLoading } = useQuery({
+  // ============================================================
+  // Nurses
+  // ============================================================
+
+  const {
+    data: nursesData,
+    isLoading: nursesLoading,
+  } = useQuery({
     queryKey: ['nurses', nursePage, debouncedSearch],
     queryFn: () =>
       nurseService.getAll({
@@ -50,136 +92,438 @@ export default function DoctorsPage() {
   });
 
   const doctors: Doctor[] = data?.data?.data ?? [];
-  const pagination = data?.data?.meta ?? data?.data?.pagination;
+
+  const pagination =
+    data?.data?.meta ?? data?.data?.pagination;
+
   const total = pagination?.total ?? doctors.length;
-  const nurses: Nurse[] = nursesData?.data?.data ?? [];
-  const nursePagination = nursesData?.data?.meta ?? nursesData?.data?.pagination;
-  const nurseTotal = nursePagination?.total ?? nurses.length;
+
+  const nurses: Nurse[] =
+    nursesData?.data?.data ?? [];
+
+  const nursePagination =
+    nursesData?.data?.meta ??
+    nursesData?.data?.pagination;
+
+  const nurseTotal =
+    nursePagination?.total ?? nurses.length;
+
+  // ============================================================
+  // Delete Doctor
+  // ============================================================
 
   const deleteDoctorMutation = useMutation({
     mutationFn: doctorService.delete,
+
     onSuccess: () => {
-      messageApi.success(t('doctors.doctorDeleted'));
-      queryClient.invalidateQueries({ queryKey: ['doctors'] });
+      messageApi.success(
+        t('doctors.doctorDeleted'),
+      );
+
+      queryClient.invalidateQueries({
+        queryKey: ['doctors'],
+      });
     },
-    onError: () => messageApi.error(t('common.operationFailed')),
+
+    onError: () => {
+      messageApi.error(
+        t('common.operationFailed'),
+      );
+    },
   });
+
+  // ============================================================
+  // Delete Nurse
+  // ============================================================
 
   const deleteNurseMutation = useMutation({
     mutationFn: nurseService.delete,
+
     onSuccess: () => {
-      messageApi.success(t('nurses.nurseDeleted'));
-      queryClient.invalidateQueries({ queryKey: ['nurses'] });
+      messageApi.success(
+        t('nurses.nurseDeleted'),
+      );
+
+      queryClient.invalidateQueries({
+        queryKey: ['nurses'],
+      });
     },
-    onError: () => messageApi.error(t('common.operationFailed')),
+
+    onError: () => {
+      messageApi.error(
+        t('common.operationFailed'),
+      );
+    },
   });
 
-  const handleSearchChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setSearch(e.target.value);
+  // ============================================================
+  // Handlers
+  // ============================================================
+
+  const openAddDoctor = () => {
+    setEditingDoctor(null);
+    setDoctorModalOpen(true);
+  };
+
+  const openAddNurse = () => {
+    setEditingNurse(null);
+    setNurseModalOpen(true);
+  };
+
+  const openEditDoctor = (doctor: Doctor) => {
+    setEditingDoctor(doctor);
+    setDoctorModalOpen(true);
+  };
+
+  const openEditNurse = (nurse: Nurse) => {
+    setEditingNurse(nurse);
+    setNurseModalOpen(true);
+  };
+
+  const closeDoctorModal = () => {
+    setDoctorModalOpen(false);
+    setEditingDoctor(null);
+  };
+
+  const closeNurseModal = () => {
+    setNurseModalOpen(false);
+    setEditingNurse(null);
+  };
+
+  const handleSearchChange = (
+    e: ChangeEvent<HTMLInputElement>,
+  ) => {
+    const value = e.target.value;
+
+    setSearch(value);
+
     setPage(1);
     setNursePage(1);
   };
+
+  const handleClearSearch = () => {
+    setSearch('');
+    setPage(1);
+    setNursePage(1);
+  };
+
+  // ============================================================
+  // Error
+  // ============================================================
 
   if (isError) {
     return (
       <div className="doctors-page page">
         {contextHolder}
-        <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description={t('common.operationFailed')} />
+
+        <div className="teamErrorState">
+          <Empty
+            image={Empty.PRESENTED_IMAGE_SIMPLE}
+            description={
+              <div className="teamEmptyContent">
+                <span className="teamEmptyTitle">
+                  {t('common.operationFailed')}
+                </span>
+
+                <span className="teamEmptyDescription">
+                  {t(
+                    'common.tryAgain',
+                    'Something went wrong. Please try again.',
+                  )}
+                </span>
+              </div>
+            }
+          >
+            <Button
+              type="primary"
+              onClick={() =>
+                queryClient.invalidateQueries({
+                  queryKey: ['doctors'],
+                })
+              }
+            >
+              {t('common.retry', 'Try again')}
+            </Button>
+          </Empty>
+        </div>
       </div>
     );
   }
+
+  const hasSearch = Boolean(debouncedSearch);
 
   return (
     <div className="doctors-page page">
       {contextHolder}
 
-      <div className="pageHeader">
-        <div className="pageHeaderLeft">
-          <h1 className="pageTitle">{t('team.title')}</h1>
-          <Typography.Paragraph type="secondary" style={{ marginBottom: 0 }}>
-            {t('team.subtitle')}
-          </Typography.Paragraph>
+      {/* ======================================================
+          Page Header
+          ====================================================== */}
+
+      <header className="teamPageHeader">
+        <div className="teamPageHeaderContent">
+          <div className="teamPageTitleWrapper">
+            <div className="teamPageTitleIcon">
+              <TeamOutlined />
+            </div>
+
+            <div className="teamPageTitleContent">
+              <h1 className="pageTitle">
+                {t('team.title')}
+              </h1>
+
+              <Typography.Text className="teamPageSubtitle">
+                {t('team.subtitle')}
+              </Typography.Text>
+            </div>
+          </div>
         </div>
-        <Space wrap>
-          <Button icon={<PlusOutlined />} onClick={() => { setEditingNurse(null); setNurseModalOpen(true); }}>
+
+        <div className="teamPageActions">
+          <Button
+            className="teamSecondaryAction"
+            icon={<PlusOutlined />}
+            onClick={openAddNurse}
+          >
             {t('nurses.addNurse')}
           </Button>
-          <Button type="primary" icon={<PlusOutlined />} onClick={() => { setEditingDoctor(null); setDoctorModalOpen(true); }}>
+
+          <Button
+            type="primary"
+            className="teamPrimaryAction"
+            icon={<PlusOutlined />}
+            onClick={openAddDoctor}
+          >
             {t('doctors.addDoctor')}
           </Button>
-        </Space>
+        </div>
+      </header>
+
+      {/* ======================================================
+          Search
+          ====================================================== */}
+
+      <div className="teamSearchWrapper">
+        <div className="teamSearch">
+          <SearchOutlined className="teamSearchIcon" />
+
+          <Input
+            bordered={false}
+            value={search}
+            onChange={handleSearchChange}
+            placeholder={t(
+              'team.searchPlaceholder',
+            )}
+            className="teamSearchInput"
+            allowClear
+          />
+        </div>
+
+        {hasSearch && (
+          <Button
+            type="text"
+            icon={<ClearOutlined />}
+            className="teamClearSearch"
+            onClick={handleClearSearch}
+          >
+            {t('common.clear')}
+          </Button>
+        )}
       </div>
 
-      <div className="searchSection">
-        <Input
-          prefix={<SearchOutlined />}
-          placeholder={t('team.searchPlaceholder')}
-          size="large"
-          value={search}
-          onChange={handleSearchChange}
-          allowClear
-        />
-      </div>
+      {/* ======================================================
+          Doctors Section
+          ====================================================== */}
 
-      <section>
-        <h2 className="pageTitle" style={{ fontSize: 18 }}>{t('team.doctors')}</h2>
+      <section className="teamSection">
+        <div className="teamSectionHeader">
+          <div className="teamSectionTitleWrapper">
+            <div className="teamSectionIcon teamSectionIcon--doctor">
+              <UserOutlined />
+            </div>
+
+            <div>
+              <h2 className="teamSectionTitle">
+                {t('team.doctors')}
+              </h2>
+
+              <span className="teamSectionCount">
+                {total}{' '}
+                {total === 1
+                  ? t('team.doctor', 'doctor')
+                  : t('team.doctors', 'doctors')}
+              </span>
+            </div>
+          </div>
+
+          <Button
+            type="link"
+            icon={<PlusOutlined />}
+            onClick={openAddDoctor}
+            className="teamSectionAdd"
+          >
+            {t('doctors.addDoctor')}
+          </Button>
+        </div>
+
         <DoctorList
           doctors={doctors}
           isLoading={isLoading}
-          hasSearch={Boolean(debouncedSearch)}
+          hasSearch={hasSearch}
           page={page}
           pageSize={DEFAULT_PAGINATION.limit}
           total={total}
           onPageChange={setPage}
-          onAdd={() => { setEditingDoctor(null); setDoctorModalOpen(true); }}
-          onEdit={(doctor) => { setEditingDoctor(doctor); setDoctorModalOpen(true); }}
-          onDelete={(id) => deleteDoctorMutation.mutate(id)}
+          onAdd={openAddDoctor}
+          onEdit={openEditDoctor}
+          onDelete={(id) =>
+            deleteDoctorMutation.mutate(id)
+          }
         />
       </section>
 
-      <section>
-        <h2 className="pageTitle" style={{ fontSize: 18 }}>{t('team.nurses')}</h2>
-        <Spin spinning={nursesLoading && nurses.length > 0}>
+      {/* ======================================================
+          Nurses Section
+          ====================================================== */}
+
+      <section className="teamSection">
+        <div className="teamSectionHeader">
+          <div className="teamSectionTitleWrapper">
+            <div className="teamSectionIcon teamSectionIcon--nurse">
+              <TeamOutlined />
+            </div>
+
+            <div>
+              <h2 className="teamSectionTitle">
+                {t('team.nurses')}
+              </h2>
+
+              <span className="teamSectionCount">
+                {nurseTotal}{' '}
+                {nurseTotal === 1
+                  ? t('team.nurse', 'nurse')
+                  : t('team.nurses', 'nurses')}
+              </span>
+            </div>
+          </div>
+
+          <Button
+            type="link"
+            icon={<PlusOutlined />}
+            onClick={openAddNurse}
+            className="teamSectionAdd"
+          >
+            {t('nurses.addNurse')}
+          </Button>
+        </div>
+
+        <Spin
+          spinning={
+            nursesLoading && nurses.length > 0
+          }
+        >
           {nurses.length === 0 && !nursesLoading ? (
-            <Empty
-              image={Empty.PRESENTED_IMAGE_SIMPLE}
-              description={debouncedSearch ? t('common.noResults') : t('nurses.noNurses')}
-            >
-              {!debouncedSearch && (
-                <Button type="primary" icon={<PlusOutlined />} onClick={() => setNurseModalOpen(true)}>
-                  {t('nurses.addNurse')}
-                </Button>
-              )}
-            </Empty>
+            <div className="teamEmptyState">
+              <div className="teamEmptyIcon">
+                <TeamOutlined />
+              </div>
+
+              <Empty
+                image={Empty.PRESENTED_IMAGE_SIMPLE}
+                description={
+                  <div className="teamEmptyContent">
+                    <span className="teamEmptyTitle">
+                      {hasSearch
+                        ? t('common.noResults')
+                        : t('nurses.noNurses')}
+                    </span>
+
+                    <span className="teamEmptyDescription">
+                      {hasSearch
+                        ? t(
+                            'common.tryDifferentSearch',
+                            'Try adjusting your search.',
+                          )
+                        : t(
+                            'nurses.noNursesDescription',
+                            'Add your first nurse to your medical team.',
+                          )}
+                    </span>
+                  </div>
+                }
+              >
+                {!hasSearch && (
+                  <Button
+                    type="primary"
+                    icon={<PlusOutlined />}
+                    onClick={openAddNurse}
+                  >
+                    {t('nurses.addNurse')}
+                  </Button>
+                )}
+              </Empty>
+            </div>
           ) : (
-            <div className="doctorListGrid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: 16 }}>
-              {nursesLoading && nurses.length === 0
-                ? Array.from({ length: 3 }).map((_, index) => <Card key={index} loading />)
-                : nurses.map((nurse) => (
-                    <NurseCard
-                      key={nurse.id}
-                      nurse={nurse}
-                      onEdit={(item) => { setEditingNurse(item); setNurseModalOpen(true); }}
-                      onDelete={(id) => deleteNurseMutation.mutate(id)}
+            <div className="nurseListGrid">
+              {nursesLoading &&
+              nurses.length === 0 ? (
+                Array.from({ length: 3 }).map(
+                  (_, index) => (
+                    <Card
+                      key={`nurse-skeleton-${index}`}
+                      className="nurseListSkeleton"
+                      loading
                     />
-                  ))}
+                  ),
+                )
+              ) : (
+                nurses.map((nurse) => (
+                  <NurseCard
+                    key={nurse.id}
+                    nurse={nurse}
+                    onEdit={openEditNurse}
+                    onDelete={(id) =>
+                      deleteNurseMutation.mutate(id)
+                    }
+                  />
+                ))
+              )}
             </div>
           )}
         </Spin>
-        {nurseTotal > DEFAULT_PAGINATION.limit && (
-          <Pagination
-            style={{ marginTop: 16, textAlign: 'center' }}
-            current={nursePage}
-            pageSize={DEFAULT_PAGINATION.limit}
-            total={nurseTotal}
-            onChange={setNursePage}
-            showSizeChanger={false}
-          />
+
+        {nurseTotal >
+          DEFAULT_PAGINATION.limit && (
+          <div className="nurseListPagination">
+            <Pagination
+              current={nursePage}
+              pageSize={DEFAULT_PAGINATION.limit}
+              total={nurseTotal}
+              onChange={setNursePage}
+              showSizeChanger={false}
+              showLessItems
+              hideOnSinglePage
+              responsive
+            />
+          </div>
         )}
       </section>
 
-      <AddDoctor open={doctorModalOpen} doctor={editingDoctor} onClose={() => { setDoctorModalOpen(false); setEditingDoctor(null); }} />
-      <AddNurse open={nurseModalOpen} nurse={editingNurse} onClose={() => { setNurseModalOpen(false); setEditingNurse(null); }} />
+      {/* ======================================================
+          Modals
+          ====================================================== */}
+
+      <AddDoctor
+        open={doctorModalOpen}
+        doctor={editingDoctor}
+        onClose={closeDoctorModal}
+      />
+
+      <AddNurse
+        open={nurseModalOpen}
+        nurse={editingNurse}
+        onClose={closeNurseModal}
+      />
     </div>
   );
 }

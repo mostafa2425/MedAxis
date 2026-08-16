@@ -1,5 +1,20 @@
 import dayjs from 'dayjs';
+import customParseFormat from 'dayjs/plugin/customParseFormat';
+import 'dayjs/locale/ar';
+import 'dayjs/locale/en';
+import i18n from '@/i18n';
 import { OperationStatus, PaymentStatus } from '@/types';
+
+dayjs.extend(customParseFormat);
+
+function currentLocale(): 'ar' | 'en' {
+  return i18n.language?.startsWith('ar') ? 'ar' : 'en';
+}
+
+function parseClockTime(time: string) {
+  const clock = String(time).slice(0, 5);
+  return dayjs(clock, 'HH:mm', true);
+}
 
 export function formatCurrency(amount: number, currency = 'EGP'): string {
   const formatted = Number(amount || 0).toLocaleString('en-US', {
@@ -39,15 +54,24 @@ export function resolvePaidAmount(total: number, paid: number, status: PaymentSt
 // ──────────────────────────────────────────────
 export function formatDate(date: string | Date, format = 'DD/MM/YYYY'): string {
   if (!date) return '—';
-  return dayjs(date).format(format);
+  const parsed = dayjs(date);
+  if (!parsed.isValid()) return '—';
+  return parsed.locale(currentLocale()).format(format);
 }
 
-// ──────────────────────────────────────────────
-// Format time
-// ──────────────────────────────────────────────
-export function formatTime(time: string, format = 'HH:mm'): string {
+export function formatOperationDate(date: string | Date, format = 'DD/MM/YYYY'): string {
+  if (!date) return '—';
+  const raw = typeof date === 'string' ? String(date).slice(0, 10) : date;
+  const parsed = dayjs(raw);
+  if (!parsed.isValid()) return '—';
+  return parsed.locale(currentLocale()).format(format);
+}
+
+export function formatTime(time: string, format?: string): string {
   if (!time) return '—';
-  return dayjs(time, 'HH:mm').format(format);
+  const parsed = parseClockTime(time);
+  if (!parsed.isValid()) return '—';
+  return parsed.locale(currentLocale()).format(format ?? 'h:mm A');
 }
 
 // ──────────────────────────────────────────────

@@ -1,0 +1,126 @@
+.upcomingOperations {
+  height: 100%;
+
+  :global(.ant-card-head) {
+    min-height: 48px;
+    padding: 0 $space-4;
+  }
+
+  :global(.ant-card-body) {
+    padding: $space-3 $space-4 $space-4;
+  }
+}
+
+.upcomingList {
+  display: flex;
+  flex-direction: column;
+  gap: $space-4;
+  max-height: 640px;
+  overflow-y: auto;
+  @include custom-scrollbar;
+}
+
+.upcomingGroup {
+  display: flex;
+  flex-direction: column;
+  gap: $space-2;
+}
+
+.upcomingGroupTitle {
+  margin: 0;
+  font-size: $font-caption;
+  font-weight: $font-semibold;
+  color: $text-muted;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.upcomingItem {
+  display: flex;
+  align-items: flex-start;
+  gap: $space-3;
+  width: 100%;
+  padding: $space-3;
+  border: 1px solid $border;
+  border-radius: $radius-md;
+  background: $surface;
+  cursor: pointer;
+  text-align: start;
+  min-height: 44px;
+  transition: border-color $transition-fast, background $transition-fast;
+
+  &:hover,
+  &:focus-visible {
+    border-color: $primary-200;
+    background: $primary-50;
+    outline: none;
+  }
+}
+
+.upcomingTime {
+  display: flex;
+  flex-direction: column;
+  min-width: 52px;
+  font-size: $font-body-sm;
+  font-weight: $font-semibold;
+  color: $primary;
+  font-variant-numeric: tabular-nums;
+}
+
+.upcomingDate {
+  font-size: 11px;
+  font-weight: $font-medium;
+  color: $text-muted;
+}
+
+.upcomingBody {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  flex: 1;
+}
+
+.upcomingName {
+  font-size: $font-body-sm;
+  font-weight: $font-semibold;
+  color: $text-primary;
+}
+
+.upcomingMeta {
+  font-size: $font-caption;
+  color: $text-secondary;
+  @include truncate;
+}
+
+@include dark {
+  .upcomingGroupTitle,
+  .upcomingDate {
+    color: $dark-text-muted;
+  }
+
+  .upcomingItem {
+    background: $dark-surface;
+    border-color: $dark-border;
+
+    &:hover,
+    &:focus-visible {
+      background: $dark-surface-elevated;
+      border-color: $dark-divider;
+    }
+  }
+
+  .upcomingName {
+    color: $dark-text-primary;
+  }
+
+  .upcomingMeta {
+    color: $dark-text-secondary;
+  }
+}
+
+@include responsive('md') {
+  .upcomingList {
+    max-height: none;
+  }
+}

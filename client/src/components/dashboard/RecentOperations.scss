@@ -120,7 +120,7 @@
 .dateCell {
   color: $text-secondary;
   font-size: $font-body-sm;
-  white-space: nowrap;
+  white-space: normal;
 
   @include dark {
     color: $dark-text-secondary;

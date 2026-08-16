@@ -20,6 +20,7 @@ const DoctorsPage = React.lazy(() => import('@/pages/Doctors'));
 const HospitalsPage = React.lazy(() => import('@/pages/Hospitals'));
 const SpecialtiesPage = React.lazy(() => import('@/pages/Specialties'));
 const SearchPage = React.lazy(() => import('@/pages/Search'));
+const CalendarPage = React.lazy(() => import('@/pages/Calendar'));
 const ProfilePage = React.lazy(() => import('@/pages/Profile'));
 
 // ── Loading Fallback ─────────────────────────────────
@@ -185,6 +186,7 @@ export default function App() {
             <Route path="/hospitals" element={<HospitalsPage />} />
             <Route path="/specialties" element={<SpecialtiesPage />} />
             <Route path="/search" element={<SearchPage />} />
+            <Route path="/calendar" element={<CalendarPage />} />
             <Route path="/profile" element={<ProfilePage />} />
           </Route>
 

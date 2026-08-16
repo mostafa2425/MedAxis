@@ -1,10 +1,27 @@
-import { Card, Avatar, Tag, Button, Space, Dropdown, Modal } from 'antd';
+import {
+  Card,
+  Avatar,
+  Button,
+  Dropdown,
+  Modal,
+  Tooltip,
+} from 'antd';
 import type { MenuProps } from 'antd';
-import { PhoneOutlined, MailOutlined, EditOutlined, DeleteOutlined, MoreOutlined } from '@ant-design/icons';
+import {
+  PhoneOutlined,
+  MailOutlined,
+  EditOutlined,
+  DeleteOutlined,
+  MoreOutlined,
+  SafetyCertificateOutlined,
+  RightOutlined,
+} from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
+
 import { getInitials } from '@/utils/helpers';
 import type { Nurse } from '@/types';
-import './DoctorCard/DoctorCard.scss';
+
+import './NurseCard.scss';
 
 interface NurseCardProps {
   nurse: Nurse;
@@ -12,8 +29,25 @@ interface NurseCardProps {
   onDelete: (id: string) => void;
 }
 
-export default function NurseCard({ nurse, onEdit, onDelete }: NurseCardProps) {
+export default function NurseCard({
+  nurse,
+  onEdit,
+  onDelete,
+}: NurseCardProps) {
   const { t } = useTranslation();
+
+  const handleDelete = () => {
+    Modal.confirm({
+      title: t('nurses.deleteConfirm'),
+      okText: t('common.yes'),
+      cancelText: t('common.no'),
+      okButtonProps: {
+        danger: true,
+      },
+      centered: true,
+      onOk: () => onDelete(nurse.id),
+    });
+  };
 
   const menuItems: MenuProps['items'] = [
     {
@@ -21,51 +55,159 @@ export default function NurseCard({ nurse, onEdit, onDelete }: NurseCardProps) {
       danger: true,
       icon: <DeleteOutlined />,
       label: t('common.delete'),
-      onClick: () => {
-        Modal.confirm({
-          title: t('nurses.deleteConfirm'),
-          okText: t('common.yes'),
-          cancelText: t('common.no'),
-          okButtonProps: { danger: true },
-          onOk: () => onDelete(nurse.id),
-        });
-      },
+      onClick: handleDelete,
     },
   ];
 
   return (
-    <Card className="doctorCard" size="small">
-      <div className="doctorCardTop">
-        <Avatar className="doctorCardAvatar" size={48}>
-          {getInitials(nurse.name)}
-        </Avatar>
-        <Tag className="doctorCardStatus" color={nurse.isActive ? 'success' : 'default'}>
-          {nurse.isActive ? t('common.active') : t('common.inactive')}
-        </Tag>
-      </div>
-      <h3 className="doctorCardName">{nurse.name}</h3>
-      <p className="doctorCardSubtitle">{t('nurses.role')}</p>
-      <div className="doctorCardContacts">
-        {nurse.phone && (
-          <span className="doctorCardMeta">
-            <PhoneOutlined /> {nurse.phone}
+    <Card
+      className="nurseCard"
+      bordered={false}
+      styles={{
+        body: {
+          padding: 0,
+        },
+      }}
+    >
+      <div className="nurseCardInner">
+        {/* =====================================================
+            Header
+            ===================================================== */}
+        <div className="nurseCardHeader">
+          <div className="nurseCardIdentity">
+            <div className="nurseCardAvatarWrapper">
+              <Avatar
+                size={52}
+                className="nurseCardAvatar"
+              >
+                {getInitials(nurse.name)}
+              </Avatar>
+
+              <span
+                className={`nurseCardOnlineIndicator ${
+                  nurse.isActive
+                    ? 'nurseCardOnlineIndicator--active'
+                    : 'nurseCardOnlineIndicator--inactive'
+                }`}
+              />
+            </div>
+
+            <div className="nurseCardIdentityContent">
+              <h3 className="nurseCardName">
+                {nurse.name}
+              </h3>
+
+              <span className="nurseCardRole">
+                <SafetyCertificateOutlined />
+                {t('nurses.role')}
+              </span>
+            </div>
+          </div>
+
+          <Dropdown
+            menu={{ items: menuItems }}
+            trigger={['click']}
+            placement="bottomRight"
+          >
+            <Button
+              type="text"
+              className="nurseCardMoreButton"
+              icon={<MoreOutlined />}
+              aria-label={t('nav.more')}
+            />
+          </Dropdown>
+        </div>
+
+        {/* =====================================================
+            Status
+            ===================================================== */}
+        <div
+          className={`nurseCardStatus ${
+            nurse.isActive
+              ? 'nurseCardStatus--active'
+              : 'nurseCardStatus--inactive'
+          }`}
+        >
+          <span className="nurseCardStatusDot" />
+
+          <span>
+            {nurse.isActive
+              ? t('common.active')
+              : t('common.inactive')}
           </span>
-        )}
-        {nurse.email && (
-          <span className="doctorCardMeta">
-            <MailOutlined /> {nurse.email}
-          </span>
-        )}
-      </div>
-      <div className="doctorCardActions">
-        <Space size={4}>
-          <Button type="link" size="small" icon={<EditOutlined />} onClick={() => onEdit(nurse)}>
+        </div>
+
+        {/* =====================================================
+            Contact information
+            ===================================================== */}
+        <div className="nurseCardContacts">
+          {nurse.phone && (
+            <div className="nurseCardContact">
+              <span className="nurseCardContactIcon">
+                <PhoneOutlined />
+              </span>
+
+              <div className="nurseCardContactContent">
+                <span className="nurseCardContactLabel">
+                  {t('patients.mobile', 'Phone')}
+                </span>
+
+                <Tooltip title={nurse.phone}>
+                  <span className="nurseCardContactValue">
+                    {nurse.phone}
+                  </span>
+                </Tooltip>
+              </div>
+            </div>
+          )}
+
+          {nurse.email && (
+            <div className="nurseCardContact">
+              <span className="nurseCardContactIcon">
+                <MailOutlined />
+              </span>
+
+              <div className="nurseCardContactContent">
+                <span className="nurseCardContactLabel">
+                  {t('common.email', 'Email')}
+                </span>
+
+                <Tooltip title={nurse.email}>
+                  <span className="nurseCardContactValue">
+                    {nurse.email}
+                  </span>
+                </Tooltip>
+              </div>
+            </div>
+          )}
+
+          {!nurse.phone && !nurse.email && (
+            <div className="nurseCardNoContact">
+              {t(
+                'common.noContactInformation',
+                'No contact information available',
+              )}
+            </div>
+          )}
+        </div>
+
+        {/* =====================================================
+            Footer actions
+            ===================================================== */}
+        <div className="nurseCardFooter">
+          <Button
+            type="text"
+            className="nurseCardEditButton"
+            icon={<EditOutlined />}
+            onClick={() => onEdit(nurse)}
+          >
             {t('common.edit')}
           </Button>
-          <Dropdown menu={{ items: menuItems }} trigger={['click']} placement="bottomRight">
-            <Button type="text" size="small" icon={<MoreOutlined />} aria-label={t('nav.more')} />
-          </Dropdown>
-        </Space>
+
+          <span className="nurseCardFooterArrow">
+            <RightOutlined />
+          </span>
+        </div>
       </div>
     </Card>
   );

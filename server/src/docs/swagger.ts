@@ -839,8 +839,53 @@ export const swaggerSpec = {
     '/api/specialties': {
       get: {
         tags: ['Specialties'],
-        summary: 'List all specialties',
+        summary: 'List specialties',
+        description:
+          'Global specialty catalog. Omit filters to return all active specialties (top-level and areas). Use `parentId`/`parentIds` to return children of selected specialties. Use `mine=true` (authenticated) to return only areas belonging to the current doctor\'s selected specialties.',
         security: [],
+        parameters: [
+          {
+            name: 'parentId',
+            in: 'query',
+            schema: { type: 'string', format: 'uuid' },
+            description: 'Return areas of expertise whose parent is this specialty',
+          },
+          {
+            name: 'parentIds',
+            in: 'query',
+            schema: { type: 'string' },
+            description: 'Comma-separated parent specialty IDs. Combined with parentId when both are sent.',
+          },
+          {
+            name: 'mine',
+            in: 'query',
+            schema: { type: 'boolean' },
+            description:
+              'When true, requires a Bearer token and restricts parent IDs to the current doctor\'s selected specialties.',
+          },
+          {
+            name: 'rootsOnly',
+            in: 'query',
+            schema: { type: 'boolean' },
+            description: 'When true and no parent filter is applied, return only top-level specialties.',
+          },
+          {
+            name: 'search',
+            in: 'query',
+            schema: { type: 'string' },
+          },
+          {
+            name: 'page',
+            in: 'query',
+            schema: { type: 'integer', minimum: 1 },
+            description: 'When sent with limit, results are paginated (`meta`).',
+          },
+          {
+            name: 'limit',
+            in: 'query',
+            schema: { type: 'integer', minimum: 1, maximum: 200 },
+          },
+        ],
         responses: {
           '200': {
             description: 'Specialty list',

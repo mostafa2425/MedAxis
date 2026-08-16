@@ -176,7 +176,9 @@ export default function OperationsPage() {
               allowClear
               showSearch
               optionFilterProp="label"
-              options={specialties.map((s) => ({
+              options={specialties
+                .filter((s) => !s.parentId)
+                .map((s) => ({
                 value: s.id,
                 label: s.name,
               }))}

@@ -1,60 +1,590 @@
-.operationListMobile {
-  display: flex;
-  flex-direction: column;
-  gap: $space-3;
+.operationList {
+  width: 100%;
 
-  @include up('md') {
-    display: none;
-  }
-}
+  // ============================================================
+  // Shared
+  // ============================================================
 
-.operationListCards {
-  display: flex;
-  flex-direction: column;
-  gap: $space-3;
-}
+  .operationListStatus {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
 
-.operationListCard {
-  cursor: pointer;
-}
+    min-height: 28px;
+    padding: 4px 10px;
 
-.operationListMeta {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-size: $font-body-sm;
-  color: $text-muted;
-}
+    border-radius: $radius-full;
 
-.operationListMobilePagination {
-  display: flex;
-  justify-content: center;
-  padding-top: $space-2;
-}
+    background: var(--status-bg);
+    color: var(--status-color);
 
-.operationListDesktop {
-  display: none;
-
-  @include up('md') {
-    display: block;
-  }
-}
-
-.operationListTable {
-  @include card-base;
-  overflow: hidden;
-
-  .ant-table {
-    background: transparent;
-  }
-
-  .ant-table-thead > tr > th {
-    background: $background;
     font-size: $font-caption;
     font-weight: $font-semibold;
+    line-height: 1.2;
+
+    white-space: nowrap;
+  }
+
+  .operationListStatusDot {
+    width: 6px;
+    height: 6px;
+    flex-shrink: 0;
+
+    border-radius: $radius-full;
+
+    background: var(--status-color);
+    box-shadow: 0 0 0 3px color-mix(
+      in srgb,
+      var(--status-color) 12%,
+      transparent
+    );
+  }
+
+  .operationListOperationIcon {
+    @include flex-center;
+
+    width: 42px;
+    height: 42px;
+    flex-shrink: 0;
+
+    border-radius: $radius-lg;
+
+    background: rgba(14, 165, 233, 0.09);
+    color: $primary;
+
+    font-size: 18px;
+
+    transition:
+      transform $transition-base,
+      background $transition-base;
+
+    @include dark {
+      background: rgba(14, 165, 233, 0.12);
+      color: #38bdf8;
+    }
+  }
+
+  // ============================================================
+  // Mobile
+  // ============================================================
+
+  .operationListMobile {
+    display: flex;
+    flex-direction: column;
+    gap: $space-3;
+
+    @include up('md') {
+      display: none;
+    }
+  }
+
+  .operationListCards {
+    display: flex;
+    flex-direction: column;
+    gap: $space-3;
+  }
+
+  .operationListCard {
+    position: relative;
+
+    overflow: hidden;
+
+    cursor: pointer;
+
+    border: 1px solid $border;
+    border-radius: $radius-xl;
+
+    background: $surface;
+
+    box-shadow:
+      0 1px 2px rgba(15, 23, 42, 0.03),
+      0 4px 14px rgba(15, 23, 42, 0.04);
+
+    transition:
+      transform $transition-base,
+      box-shadow $transition-base,
+      border-color $transition-base;
+
+    &:active {
+      transform: scale(0.99);
+    }
+
+    &:hover {
+      transform: translateY(-2px);
+
+      border-color: rgba(14, 165, 233, 0.25);
+
+      box-shadow:
+        0 8px 22px rgba(15, 23, 42, 0.07),
+        0 2px 6px rgba(15, 23, 42, 0.04);
+
+      .operationListOperationIcon {
+        transform: scale(1.05);
+        background: rgba(14, 165, 233, 0.13);
+      }
+
+      .operationListCardFooter {
+        color: $primary;
+      }
+    }
+
+    @include dark {
+      background: $dark-surface !important;
+      border-color: $dark-border;
+
+      box-shadow:
+        0 2px 8px rgba(0, 0, 0, 0.16),
+        0 8px 20px rgba(0, 0, 0, 0.08);
+
+      &:hover {
+        border-color: rgba(56, 189, 248, 0.25);
+      }
+    }
+  }
+
+  .operationListCardInner {
+    padding: $space-4;
+  }
+
+  .operationListCardHeader {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: $space-3;
+  }
+
+  .operationListCardTitle {
+    display: flex;
+    align-items: center;
+    gap: $space-3;
+    min-width: 0;
+    flex: 1;
+
+    .operationListOperationIcon {
+      width: 44px;
+      height: 44px;
+      border-radius: $radius-lg;
+      font-size: 18px;
+    }
+  }
+
+  .operationListCardIdentity {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    gap: 3px;
+  }
+
+  .operationListCardName {
+    display: block;
+
+    overflow: hidden;
+
+    color: $text-primary;
+
+    font-size: $font-body;
+    font-weight: $font-semibold;
+    line-height: 1.3;
+
+    white-space: nowrap;
+    text-overflow: ellipsis;
+
+    @include dark {
+      color: $dark-text-primary;
+    }
+  }
+
+  .operationListCardPatient {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+
+    overflow: hidden;
+
     color: $text-muted;
+
+    font-size: $font-caption;
+    line-height: 1.3;
+
+    white-space: nowrap;
+    text-overflow: ellipsis;
+
+    svg {
+      flex-shrink: 0;
+      font-size: 11px;
+    }
+
+    @include dark {
+      color: $dark-text-muted;
+    }
+  }
+
+  .operationListCardDiagnosis {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+
+    margin-top: $space-4;
+    padding: $space-3;
+
+    border-radius: $radius-md;
+
+    background: $background;
+
+    @include dark {
+      background: $dark-surface-elevated;
+    }
+  }
+
+  .operationListCardDiagnosisLabel {
+    color: $text-muted;
+
+    font-size: 10px;
+    font-weight: $font-semibold;
+    letter-spacing: 0.04em;
     text-transform: uppercase;
-    letter-spacing: 0.05em;
+
+    @include dark {
+      color: $dark-text-muted;
+    }
+  }
+
+  .operationListCardDiagnosisValue {
+    display: block;
+
+    overflow: hidden;
+
+    color: $text-primary;
+
+    font-size: $font-body-sm;
+    line-height: 1.45;
+
+    white-space: nowrap;
+    text-overflow: ellipsis;
+
+    @include dark {
+      color: $dark-text-primary;
+    }
+  }
+
+  .operationListCardMeta {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: $space-2;
+
+    margin-top: $space-4;
+  }
+
+  .operationListCardMetaItem {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+
+    min-width: 0;
+
+    color: $text-muted;
+
+    font-size: $font-caption;
+    line-height: 1.4;
+
+    &:last-child {
+      grid-column: 1 / -1;
+    }
+
+    span:last-child {
+      overflow: hidden;
+
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+
+    @include dark {
+      color: $dark-text-muted;
+    }
+  }
+
+  .operationListCardMetaIcon {
+    @include flex-center;
+
+    width: 26px;
+    height: 26px;
+    flex-shrink: 0;
+
+    border-radius: $radius-md;
+
+    background: $background;
+
+    color: $primary;
+
+    font-size: 12px;
+
+    @include dark {
+      background: $dark-surface-elevated;
+      color: #38bdf8;
+    }
+  }
+
+  .operationListCardMetaItem--cost {
+    color: $text-primary;
+    font-weight: $font-semibold;
+
+    .operationListCardMetaIcon {
+      background: rgba(16, 185, 129, 0.1);
+      color: $success;
+    }
+
+    @include dark {
+      color: $dark-text-primary;
+
+      .operationListCardMetaIcon {
+        background: rgba(16, 185, 129, 0.12);
+        color: #34d399;
+      }
+    }
+  }
+
+  .operationListCardFooter {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    margin-top: $space-4;
+    padding-top: $space-3;
+
+    border-top: 1px solid $border;
+
+    color: $text-muted;
+
+    font-size: $font-caption;
+    font-weight: $font-medium;
+
+    transition: color $transition-fast;
+
+    svg {
+      font-size: 10px;
+    }
+
+    @include dark {
+      border-color: $dark-border;
+      color: $dark-text-muted;
+    }
+  }
+
+  .operationListMobilePagination {
+    display: flex;
+    justify-content: center;
+
+    padding-top: $space-2;
+  }
+
+  // ============================================================
+  // Desktop Table
+  // ============================================================
+
+  .operationListDesktop {
+    display: none;
+
+    @include up('md') {
+      display: block;
+    }
+  }
+
+  .operationListTable {
+    @include card-base;
+
+    overflow: hidden;
+
+    border: 1px solid $border;
+    border-radius: $radius-xl;
+
+    background: $surface;
+
+    @include dark {
+      background: $dark-surface;
+      border-color: $dark-border;
+    }
+
+    .ant-table {
+      background: transparent;
+    }
+
+    // Header
+    .ant-table-thead > tr > th {
+      height: 48px;
+
+      padding: 0 $space-4;
+
+      border-bottom: 1px solid $border;
+
+      background: $background;
+
+      color: $text-muted;
+
+      font-size: $font-caption;
+      font-weight: $font-semibold;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+
+      &::before {
+        display: none !important;
+      }
+
+      @include dark {
+        background: $dark-surface-elevated;
+        border-color: $dark-border;
+        color: $dark-text-muted;
+      }
+    }
+
+    // Rows
+    .ant-table-tbody > tr {
+      cursor: pointer;
+
+      transition: background $transition-fast;
+
+      > td {
+        height: 68px;
+
+        padding: $space-3 $space-4;
+
+        border-bottom: 1px solid $border;
+
+        background: transparent;
+
+        transition:
+          background $transition-fast,
+          border-color $transition-fast;
+
+        @include dark {
+          border-color: $dark-border;
+        }
+      }
+
+      &:last-child > td {
+        border-bottom: 0;
+      }
+
+      &:hover > td {
+        background: rgba(14, 165, 233, 0.035);
+      }
+
+      @include dark {
+        &:hover > td {
+          background: rgba(56, 189, 248, 0.045);
+        }
+      }
+    }
+
+    // Pagination
+    .ant-table-pagination {
+      margin: $space-4;
+
+      .ant-pagination-item,
+      .ant-pagination-prev,
+      .ant-pagination-next {
+        border-radius: $radius-md;
+      }
+    }
+  }
+
+  // ============================================================
+  // Desktop cells
+  // ============================================================
+
+  .operationListNameCell {
+    display: flex;
+    align-items: center;
+    gap: $space-3;
+
+    min-width: 0;
+  }
+
+  .operationListIdentity {
+    display: flex;
+    flex-direction: column;
+
+    min-width: 0;
+    gap: 4px;
+  }
+
+  .operationListName {
+    display: block;
+
+    overflow: hidden;
+
+    color: $text-primary;
+
+    font-size: $font-body-sm;
+    font-weight: $font-semibold;
+    line-height: 1.3;
+
+    white-space: nowrap;
+    text-overflow: ellipsis;
+
+    @include dark {
+      color: $dark-text-primary;
+    }
+  }
+
+  .operationListPatient {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+
+    color: $text-muted;
+
+    font-size: $font-caption;
+    line-height: 1.3;
+
+    svg {
+      font-size: 10px;
+    }
+
+    @include dark {
+      color: $dark-text-muted;
+    }
+  }
+
+  .operationListDiagnosis {
+    display: block;
+
+    overflow: hidden;
+
+    color: $text-secondary;
+
+    font-size: $font-body-sm;
+    line-height: 1.4;
+
+    white-space: nowrap;
+    text-overflow: ellipsis;
+
+    @include dark {
+      color: $dark-text-secondary;
+    }
+  }
+
+  .operationListInfo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    min-width: 0;
+  }
+
+  .operationListInfoIcon {
+    @include flex-center;
+
+    width: 28px;
+    height: 28px;
+    flex-shrink: 0;
+
+    border-radius: $radius-md;
+
+    background: $background;
+
+    color: $text-muted;
+
+    font-size: 12px;
 
     @include dark {
       background: $dark-surface-elevated;
@@ -62,28 +592,152 @@
     }
   }
 
-  .ant-table-tbody > tr:hover > td {
-    background: rgba(14, 165, 233, 0.04);
+  .operationListInfoText {
+    overflow: hidden;
+
+    color: $text-secondary;
+
+    font-size: $font-body-sm;
+
+    white-space: nowrap;
+    text-overflow: ellipsis;
+
+    @include dark {
+      color: $dark-text-secondary;
+    }
   }
-}
 
-.operationListNameCell {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  min-width: 0;
-}
-
-.operationListName {
-  font-weight: $font-semibold;
-  color: $text-primary;
-
-  @include dark {
-    color: $dark-text-primary;
+  .operationListSchedule {
+    white-space: normal;
+    text-overflow: unset;
   }
-}
 
-.operationListPatient {
-  font-size: $font-caption;
-  color: $text-muted;
+  .operationListCost {
+    display: inline-flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 7px;
+
+    color: $text-primary;
+
+    font-size: $font-body-sm;
+    font-weight: $font-semibold;
+
+    svg {
+      color: $success;
+      font-size: 13px;
+    }
+
+    @include dark {
+      color: $dark-text-primary;
+
+      svg {
+        color: #34d399;
+      }
+    }
+  }
+
+  .operationListAction {
+    @include flex-center;
+
+    width: 30px;
+    height: 30px;
+
+    border-radius: $radius-md;
+
+    color: $text-muted;
+
+    font-size: 10px;
+
+    transition:
+      background $transition-fast,
+      color $transition-fast,
+      transform $transition-fast;
+
+    .ant-table-row:hover & {
+      background: rgba(14, 165, 233, 0.08);
+      color: $primary;
+      transform: translateX(2px);
+    }
+
+    @include dark {
+      color: $dark-text-muted;
+
+      .ant-table-row:hover & {
+        background: rgba(56, 189, 248, 0.1);
+        color: #38bdf8;
+      }
+    }
+  }
+
+  // ============================================================
+  // Empty state
+  // ============================================================
+
+  .operationListEmpty {
+    padding: $space-8 $space-4;
+
+    .ant-empty {
+      margin: 0;
+    }
+
+    .ant-empty-description {
+      color: $text-muted;
+
+      @include dark {
+        color: $dark-text-muted;
+      }
+    }
+  }
+
+  // ============================================================
+  // RTL
+  // ============================================================
+
+  [dir='rtl'] & {
+    .operationListAction {
+      .ant-table-row:hover & {
+        transform: translateX(-2px);
+      }
+    }
+  }
+
+  // ============================================================
+  // Small mobile
+  // ============================================================
+
+  @media (max-width: 420px) {
+    .operationListCardInner {
+      padding: $space-3;
+    }
+
+    .operationListCardTitle {
+      gap: $space-2;
+
+      .operationListOperationIcon {
+        width: 38px;
+        height: 38px;
+        font-size: 16px;
+      }
+    }
+
+    .operationListCardName {
+      font-size: $font-body-sm;
+    }
+
+    .operationListStatus {
+      min-height: 25px;
+      padding: 3px 8px;
+      font-size: 10px;
+    }
+
+    .operationListStatusDot {
+      width: 5px;
+      height: 5px;
+    }
+
+    .operationListCardMeta {
+      gap: 6px;
+    }
+  }
 }

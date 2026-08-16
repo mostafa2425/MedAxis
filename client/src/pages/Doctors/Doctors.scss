@@ -1,59 +1,750 @@
 .doctors-page {
+  width: 100%;
+  min-width: 0;
+
   overflow-x: hidden;
 
   &.page {
     display: flex;
     flex-direction: column;
-    gap: $space-4;
-    animation: fadeIn 0.3s ease;
+
+    gap: $space-5;
+
+    animation: teamPageFadeIn 0.3s ease;
 
     @include responsive('md') {
-      gap: $space-3;
+      gap: $space-4;
     }
-  }
-
-  .pageHeader {
-    @include flex-between;
-    flex-wrap: wrap;
-    gap: $space-3;
-
-    @include responsive('sm') {
-      flex-direction: column;
-      align-items: flex-start;
-      gap: $space-1;
-    }
-  }
-
-  .pageHeaderLeft {
-    display: flex;
-    flex-direction: column;
-    gap: $space-1;
-  }
-
-  .pageTitle {
-    @include page-title;
-  }
-
-  .searchSection {
-    max-width: 480px;
-
-    @include responsive('md') {
-      max-width: 100%;
-    }
-  }
-
-  .emptyState {
-    padding: $space-8 $space-4;
   }
 }
 
-@keyframes fadeIn {
+// ============================================================
+// Page Header
+// ============================================================
+
+.teamPageHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: $space-4;
+
+  width: 100%;
+}
+
+.teamPageHeaderContent {
+  min-width: 0;
+}
+
+.teamPageTitleWrapper {
+  display: flex;
+  align-items: center;
+
+  gap: $space-3;
+}
+
+.teamPageTitleIcon {
+  @include flex-center;
+
+  width: 46px;
+  height: 46px;
+  flex-shrink: 0;
+
+  border-radius: $radius-lg;
+
+  background: rgba(14, 165, 233, 0.09);
+
+  color: $primary;
+
+  font-size: 20px;
+
+  @include dark {
+    background: rgba(56, 189, 248, 0.1);
+    color: #38bdf8;
+  }
+}
+
+.teamPageTitleContent {
+  display: flex;
+  flex-direction: column;
+
+  min-width: 0;
+
+  gap: 3px;
+}
+
+.pageTitle {
+  @include page-title;
+
+  margin: 0;
+}
+
+.teamPageSubtitle {
+  color: $text-muted;
+
+  font-size: $font-body-sm;
+
+  line-height: 1.5;
+
+  @include dark {
+    color: $dark-text-muted;
+  }
+}
+
+// ============================================================
+// Page Actions
+// ============================================================
+
+.teamPageActions {
+  display: flex;
+  align-items: center;
+
+  gap: $space-2;
+
+  flex-shrink: 0;
+
+  .ant-btn {
+    min-height: 38px;
+
+    border-radius: $radius-md;
+
+    font-weight: $font-medium;
+  }
+}
+
+.teamPrimaryAction {
+  box-shadow:
+    0 2px 6px rgba(14, 165, 233, 0.18);
+
+  &:hover {
+    box-shadow:
+      0 4px 12px rgba(14, 165, 233, 0.22);
+  }
+}
+
+.teamSecondaryAction {
+  background: $surface;
+
+  border-color: $border;
+
+  color: $text-secondary;
+
+  &:hover {
+    background: $background !important;
+
+    border-color: rgba(14, 165, 233, 0.3) !important;
+
+    color: $primary !important;
+  }
+
+  @include dark {
+    background: $dark-surface;
+
+    border-color: $dark-border;
+
+    color: $dark-text-secondary;
+
+    &:hover {
+      background: $dark-surface-elevated !important;
+
+      border-color: rgba(56, 189, 248, 0.3) !important;
+
+      color: #38bdf8 !important;
+    }
+  }
+}
+
+// ============================================================
+// Search
+// ============================================================
+
+.teamSearchWrapper {
+  display: flex;
+  align-items: center;
+
+  gap: $space-2;
+
+  width: 100%;
+}
+
+.teamSearch {
+  display: flex;
+  align-items: center;
+
+  width: min(100%, 520px);
+  height: 44px;
+
+  padding: 0 $space-3;
+
+  border: 1px solid $border;
+  border-radius: $radius-lg;
+
+  background: $surface;
+
+  box-shadow:
+    0 1px 2px rgba(15, 23, 42, 0.02);
+
+  transition:
+    border-color $transition-fast,
+    box-shadow $transition-fast,
+    background $transition-fast;
+
+  &:focus-within {
+    border-color: rgba(14, 165, 233, 0.5);
+
+    box-shadow:
+      0 0 0 3px rgba(14, 165, 233, 0.08);
+  }
+
+  @include dark {
+    background: $dark-surface;
+    border-color: $dark-border;
+
+    &:focus-within {
+      border-color: rgba(56, 189, 248, 0.45);
+
+      box-shadow:
+        0 0 0 3px rgba(56, 189, 248, 0.08);
+    }
+  }
+}
+
+.teamSearchIcon {
+  flex-shrink: 0;
+
+  color: $text-muted;
+
+  font-size: 16px;
+
+  @include dark {
+    color: $dark-text-muted;
+  }
+}
+
+.teamSearchInput {
+  flex: 1;
+
+  min-width: 0;
+
+  height: 100%;
+
+  padding: 0 8px;
+
+  color: $text-primary;
+
+  font-size: $font-body-sm;
+
+  box-shadow: none !important;
+
+  &:focus {
+    box-shadow: none !important;
+  }
+
+  &::placeholder {
+    color: $text-muted;
+  }
+
+  @include dark {
+    color: $dark-text-primary;
+
+    background: transparent;
+
+    &::placeholder {
+      color: $dark-text-muted;
+    }
+  }
+}
+
+.teamClearSearch {
+  height: 38px;
+
+  border-radius: $radius-md;
+
+  color: $text-muted;
+
+  &:hover {
+    background: rgba(14, 165, 233, 0.06) !important;
+
+    color: $primary !important;
+  }
+}
+
+// ============================================================
+// Sections
+// ============================================================
+
+.teamSection {
+  display: flex;
+  flex-direction: column;
+
+  gap: $space-3;
+
+  width: 100%;
+  min-width: 0;
+}
+
+.teamSectionHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: $space-3;
+
+  min-height: 42px;
+}
+
+.teamSectionTitleWrapper {
+  display: flex;
+  align-items: center;
+
+  gap: $space-3;
+
+  min-width: 0;
+}
+
+.teamSectionIcon {
+  @include flex-center;
+
+  width: 38px;
+  height: 38px;
+  flex-shrink: 0;
+
+  border-radius: $radius-md;
+
+  font-size: 16px;
+}
+
+.teamSectionIcon--doctor {
+  background: rgba(37, 99, 235, 0.08);
+
+  color: #2563eb;
+
+  @include dark {
+    background: rgba(96, 165, 250, 0.1);
+
+    color: #60a5fa;
+  }
+}
+
+.teamSectionIcon--nurse {
+  background: rgba(219, 39, 119, 0.08);
+
+  color: #db2777;
+
+  @include dark {
+    background: rgba(244, 114, 182, 0.1);
+
+    color: #f472b6;
+  }
+}
+
+.teamSectionTitle {
+  margin: 0;
+
+  color: $text-primary;
+
+  font-size: 17px;
+  font-weight: $font-semibold;
+  line-height: 1.3;
+
+  @include dark {
+    color: $dark-text-primary;
+  }
+}
+
+.teamSectionCount {
+  display: block;
+
+  margin-top: 2px;
+
+  color: $text-muted;
+
+  font-size: $font-caption;
+
+  @include dark {
+    color: $dark-text-muted;
+  }
+}
+
+.teamSectionAdd {
+  flex-shrink: 0;
+
+  padding-inline: 8px;
+
+  color: $text-muted;
+
+  font-size: $font-caption;
+  font-weight: $font-medium;
+
+  &:hover {
+    color: $primary !important;
+
+    background: rgba(14, 165, 233, 0.05) !important;
+  }
+
+  @include dark {
+    color: $dark-text-muted;
+
+    &:hover {
+      color: #38bdf8 !important;
+
+      background: rgba(56, 189, 248, 0.06) !important;
+    }
+  }
+}
+
+// ============================================================
+// Nurse Grid
+// ============================================================
+
+.nurseListGrid {
+  display: grid;
+
+  grid-template-columns: minmax(0, 1fr);
+
+  gap: $space-3;
+
+  width: 100%;
+  min-width: 0;
+
+  @include up('sm') {
+    grid-template-columns: repeat(
+      2,
+      minmax(0, 1fr)
+    );
+  }
+
+  @include up('lg') {
+    grid-template-columns: repeat(
+      3,
+      minmax(0, 1fr)
+    );
+
+    gap: $space-4;
+  }
+
+  @include up('xl') {
+    grid-template-columns: repeat(
+      3,
+      minmax(0, 1fr)
+    );
+  }
+}
+
+// ============================================================
+// Nurse Skeleton
+// ============================================================
+
+.nurseListSkeleton {
+  width: 100%;
+  min-height: 220px;
+
+  border: 1px solid $border;
+
+  border-radius: $radius-xl;
+
+  background: $surface;
+
+  overflow: hidden;
+
+  @include dark {
+    background: $dark-surface;
+
+    border-color: $dark-border;
+  }
+}
+
+// ============================================================
+// Nurse Pagination
+// ============================================================
+
+.nurseListPagination {
+  display: flex;
+  justify-content: center;
+
+  width: 100%;
+
+  padding-top: $space-1;
+}
+
+// ============================================================
+// Empty State
+// ============================================================
+
+.teamEmptyState,
+.teamErrorState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  width: 100%;
+
+  min-height: 270px;
+
+  padding: $space-8 $space-4;
+
+  border: 1px dashed $border;
+
+  border-radius: $radius-xl;
+
+  background: $surface;
+
+  @include dark {
+    background: $dark-surface;
+
+    border-color: $dark-border;
+  }
+}
+
+.teamErrorState {
+  min-height: 320px;
+
+  justify-content: center;
+}
+
+.teamEmptyIcon {
+  @include flex-center;
+
+  width: 48px;
+  height: 48px;
+
+  margin-bottom: $space-3;
+
+  border-radius: $radius-lg;
+
+  background: rgba(14, 165, 233, 0.08);
+
+  color: $primary;
+
+  font-size: 20px;
+
+  @include dark {
+    background: rgba(56, 189, 248, 0.1);
+
+    color: #38bdf8;
+  }
+}
+
+.teamEmptyState {
+  .ant-empty,
+  .teamErrorState .ant-empty {
+    margin: 0;
+  }
+
+  .ant-empty-image {
+    display: none;
+  }
+
+  .ant-empty-footer {
+    margin-top: $space-4;
+  }
+}
+
+.teamEmptyContent {
+  display: flex;
+  flex-direction: column;
+
+  gap: 5px;
+
+  max-width: 360px;
+
+  text-align: center;
+}
+
+.teamEmptyTitle {
+  color: $text-primary;
+
+  font-size: $font-body-sm;
+  font-weight: $font-semibold;
+
+  @include dark {
+    color: $dark-text-primary;
+  }
+}
+
+.teamEmptyDescription {
+  color: $text-muted;
+
+  font-size: $font-caption;
+  line-height: 1.5;
+
+  @include dark {
+    color: $dark-text-muted;
+  }
+}
+
+// ============================================================
+// Animation
+// ============================================================
+
+@keyframes teamPageFadeIn {
   from {
     opacity: 0;
+
     transform: translateY(8px);
   }
+
   to {
     opacity: 1;
+
     transform: translateY(0);
+  }
+}
+
+// ============================================================
+// Tablet
+// ============================================================
+
+@include responsive('md') {
+  .teamPageHeader {
+    align-items: flex-start;
+  }
+}
+
+// ============================================================
+// Mobile
+// ============================================================
+
+@media (max-width: 767px) {
+  .doctors-page.page {
+    gap: $space-4;
+  }
+
+  .teamPageHeader {
+    flex-direction: column;
+    align-items: stretch;
+
+    gap: $space-3;
+  }
+
+  .teamPageTitleWrapper {
+    align-items: flex-start;
+  }
+
+  .teamPageTitleIcon {
+    width: 40px;
+    height: 40px;
+
+    font-size: 17px;
+  }
+
+  .pageTitle {
+    font-size: 22px;
+  }
+
+  .teamPageSubtitle {
+    font-size: $font-caption;
+  }
+
+  .teamPageActions {
+    display: grid;
+
+    grid-template-columns: 1fr 1fr;
+
+    width: 100%;
+
+    .ant-btn {
+      width: 100%;
+    }
+  }
+
+  .teamSearchWrapper {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .teamSearch {
+    width: 100%;
+  }
+
+  .teamClearSearch {
+    align-self: flex-end;
+  }
+
+  .teamSection {
+    gap: $space-3;
+  }
+
+  .teamSectionHeader {
+    min-height: 38px;
+  }
+
+  .teamSectionIcon {
+    width: 34px;
+    height: 34px;
+
+    font-size: 14px;
+  }
+
+  .teamSectionTitle {
+    font-size: 16px;
+  }
+
+  .teamSectionAdd {
+    padding-inline: 6px;
+
+    span:last-child {
+      display: none;
+    }
+  }
+
+  .nurseListGrid {
+    grid-template-columns: minmax(0, 1fr);
+
+    gap: $space-3;
+  }
+
+  .teamEmptyState,
+  .teamErrorState {
+    min-height: 250px;
+
+    padding: $space-6 $space-3;
+
+    border-radius: $radius-lg;
+  }
+}
+
+// ============================================================
+// Very small screens
+// ============================================================
+
+@media (max-width: 420px) {
+  .teamPageActions {
+    grid-template-columns: 1fr 1fr;
+
+    .ant-btn {
+      min-height: 40px;
+    }
+  }
+
+  .teamPageTitleIcon {
+    width: 38px;
+    height: 38px;
+  }
+
+  .pageTitle {
+    font-size: 20px;
+  }
+
+  .teamSectionHeader {
+    gap: $space-2;
+  }
+
+  .teamSectionTitleWrapper {
+    gap: $space-2;
+  }
+
+  .teamSectionCount {
+    font-size: 10px;
+  }
+}
+
+// ============================================================
+// Reduced motion
+// ============================================================
+
+@media (prefers-reduced-motion: reduce) {
+  .doctors-page.page {
+    animation: none;
   }
 }

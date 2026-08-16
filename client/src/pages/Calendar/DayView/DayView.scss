@@ -1,0 +1,54 @@
+.dayEmpty {
+  padding: $space-8 $space-4;
+}
+
+.dayView {
+  display: flex;
+  flex-direction: column;
+}
+
+.dayRow {
+  display: grid;
+  grid-template-columns: 64px minmax(0, 1fr);
+  min-height: 64px;
+  border-bottom: 1px solid $border;
+}
+
+.dayHour {
+  padding: $space-2;
+  font-size: 12px;
+  color: $text-muted;
+  font-variant-numeric: tabular-nums;
+}
+
+.daySlot {
+  display: flex;
+  flex-direction: column;
+  gap: $space-2;
+  padding: $space-2;
+}
+
+.dayEvent {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.dayMeta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-2;
+  font-size: $font-caption;
+  color: $text-muted;
+}
+
+@include dark {
+  .dayRow {
+    border-color: $dark-border;
+  }
+
+  .dayHour,
+  .dayMeta {
+    color: $dark-text-muted;
+  }
+}

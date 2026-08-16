@@ -60,6 +60,7 @@ export default function BottomNav({ onMoreClick }: BottomNavProps) {
   const moreActive = useMemo(() => {
     const path = location.pathname;
     return (
+      path.startsWith('/calendar') ||
       path.startsWith('/doctors') ||
       path.startsWith('/hospitals') ||
       path.startsWith('/specialties') ||

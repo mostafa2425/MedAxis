@@ -13,6 +13,7 @@ interface SearchResultOperation {
   name: string;
   status: string;
   operationDate: string;
+  operationTime?: string;
   patient?: {
     id: string;
     fullName: string;

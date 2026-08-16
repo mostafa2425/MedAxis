@@ -59,7 +59,7 @@ export interface User {
   id: string;
   email: string;
   name: string;
-  phone?: string | null;
+  phone: string | null;
   role: string;
   avatarUrl?: string | null;
   isActive: boolean;
@@ -300,6 +300,11 @@ export interface PaginatedQuery {
   limit?: number;
   sortBy?: string;
   sortOrder?: 'asc' | 'desc';
+  search?: string;
+  parentId?: string;
+  parentIds?: string;
+  mine?: boolean;
+  rootsOnly?: boolean;
 }
 
 // ──────────────────────────────────────────────

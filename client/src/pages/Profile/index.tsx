@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { Card, Form, Input, Button, Tag, Space, Spin, message, Empty } from 'antd';
-import { UserOutlined, PhoneOutlined } from '@ant-design/icons';
+import { UserOutlined, PhoneOutlined, MailOutlined, IdcardOutlined } from '@ant-design/icons';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { authService } from '@/services/auth.service';
@@ -61,7 +61,9 @@ export default function ProfilePage() {
     onSuccess: (response) => {
       const updated = response.data.data;
       setUser(updated);
+      queryClient.setQueryData(['auth-me'], response);
       queryClient.invalidateQueries({ queryKey: ['auth-me'] });
+      queryClient.invalidateQueries({ queryKey: ['specialties-mine'] });
       queryClient.invalidateQueries({ queryKey: ['operation-catalog'] });
       queryClient.invalidateQueries({ queryKey: ['doctors'] });
       queryClient.invalidateQueries({ queryKey: ['doctors-active'] });
@@ -73,7 +75,7 @@ export default function ProfilePage() {
         labelKeys: {
           name: 'auth.fullName',
           phone: 'common.phone',
-          specialtyIds: 'profile.specialties',
+          specialtyIds: 'profile.professionalSpecialties',
           subspecialtyIds: 'profile.areasOfExpertise',
         },
       });
@@ -121,29 +123,50 @@ export default function ProfilePage() {
       </div>
 
       <Card className="profileCard">
+        <h2 className="profileSectionTitle">{t('profile.accountInformation')}</h2>
+
+        <div className="profileReadonly">
+          <div className="profileReadonlyItem">
+            <span className="profileTagLabel">{t('common.email')}</span>
+            <span className="profileReadonlyValue">
+              <MailOutlined /> {user.email}
+            </span>
+          </div>
+          <div className="profileReadonlyItem">
+            <span className="profileTagLabel">{t('profile.doctorId')}</span>
+            <span className="profileReadonlyValue">
+              <IdcardOutlined /> {user.doctorId || '—'}
+            </span>
+          </div>
+        </div>
+
         <h2 className="profileSectionTitle">{t('profile.professionalInformation')}</h2>
 
-        {currentSpecialties.length > 0 && (
-          <div className="profileTags">
-            <span className="profileTagLabel">{t('profile.specialties')}</span>
-            {currentSpecialties.map((specialty) => (
+        <div className="profileTags">
+          <span className="profileTagLabel">{t('profile.professionalSpecialties')}</span>
+          {currentSpecialties.length > 0 ? (
+            currentSpecialties.map((specialty) => (
               <Tag key={specialty.id}>
                 {getSpecialtyLabel(specialty, i18n.language)}
               </Tag>
-            ))}
-          </div>
-        )}
+            ))
+          ) : (
+            <span className="profileReadonlyValue">{t('profile.noSpecialties')}</span>
+          )}
+        </div>
 
-        {currentAreas.length > 0 && (
-          <div className="profileTags">
-            <span className="profileTagLabel">{t('profile.areasOfExpertise')}</span>
-            {currentAreas.map((specialty) => (
+        <div className="profileTags">
+          <span className="profileTagLabel">{t('profile.areasOfExpertise')}</span>
+          {currentAreas.length > 0 ? (
+            currentAreas.map((specialty) => (
               <Tag key={specialty.id} color="blue">
                 {getSpecialtyLabel(specialty, i18n.language)}
               </Tag>
-            ))}
-          </div>
-        )}
+            ))
+          ) : (
+            <span className="profileReadonlyValue">{t('specialties.noAreasForSpecialty')}</span>
+          )}
+        </div>
 
         <Form
           form={form}
@@ -172,7 +195,7 @@ export default function ProfilePage() {
           <SpecialtyFields
             specialties={specialties}
             loading={specialtiesLoading}
-            specialtyLabel={t('profile.specialties')}
+            specialtyLabel={t('profile.professionalSpecialties')}
             specialtyPlaceholder={t('profile.selectSpecialties')}
             subspecialtyLabel={t('profile.areasOfExpertise')}
             subspecialtyPlaceholder={t('profile.selectAreas')}

@@ -1,0 +1,89 @@
+.weekEmpty {
+  padding: $space-8 $space-4;
+}
+
+.weekView {
+  overflow-x: auto;
+  @include custom-scrollbar;
+}
+
+.weekGrid {
+  min-width: 720px;
+}
+
+.weekCorner,
+.weekHead,
+.weekHourLabel,
+.weekCell {
+  border-bottom: 1px solid $border;
+  border-inline-end: 1px solid $border;
+}
+
+.weekHead {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: $space-2;
+  font-size: $font-caption;
+  color: $text-muted;
+  background: $background;
+
+  strong {
+    font-size: $font-body;
+    color: $text-primary;
+  }
+}
+
+.weekHourRow {
+  display: grid;
+  grid-template-columns: 64px repeat(7, minmax(0, 1fr));
+}
+
+.weekGrid {
+  display: grid;
+  grid-template-columns: 64px repeat(7, minmax(0, 1fr));
+}
+
+.weekHourRow {
+  display: contents;
+}
+
+.weekHourLabel {
+  padding: $space-2;
+  font-size: 11px;
+  color: $text-muted;
+  font-variant-numeric: tabular-nums;
+}
+
+.weekCell {
+  min-height: 56px;
+  padding: 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+@include dark {
+  .weekCorner,
+  .weekHead,
+  .weekHourLabel,
+  .weekCell {
+    border-color: $dark-border;
+  }
+
+  .weekHead {
+    background: $dark-surface;
+    color: $dark-text-muted;
+
+    strong {
+      color: $dark-text-primary;
+    }
+  }
+}
+
+@include responsive('md') {
+  .weekGrid {
+    min-width: 640px;
+  }
+}

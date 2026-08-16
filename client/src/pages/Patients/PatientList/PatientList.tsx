@@ -3,7 +3,6 @@ import {
   Table,
   Button,
   Empty,
-  Space,
   Tag,
   Avatar,
   Card,
@@ -11,10 +10,19 @@ import {
   Pagination,
 } from 'antd';
 import type { ColumnsType, TablePaginationConfig } from 'antd/es/table';
-import { PlusOutlined, PhoneOutlined, TeamOutlined } from '@ant-design/icons';
+import {
+  PlusOutlined,
+  PhoneOutlined,
+  TeamOutlined,
+  UserOutlined,
+  RightOutlined,
+  CalendarOutlined,
+} from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
+
 import { getInitials } from '@/utils/helpers';
 import { Gender, type Patient } from '@/types';
+
 import './PatientList.scss';
 
 export interface PatientListProps {
@@ -42,17 +50,76 @@ export default function PatientList({
 }: PatientListProps) {
   const { t } = useTranslation();
 
+  const getGenderLabel = (gender: Gender) =>
+    gender === Gender.Male
+      ? t('patients.male')
+      : t('patients.female');
+
+  const getGenderClass = (gender: Gender) =>
+    gender === Gender.Male
+      ? 'patientListGender--male'
+      : 'patientListGender--female';
+
   const emptyNode = (
-    <Empty
-      image={Empty.PRESENTED_IMAGE_SIMPLE}
-      description={hasSearch ? t('common.noResults') : t('patients.noPatients')}
+    <div className="patientListEmpty">
+      <Empty
+        image={Empty.PRESENTED_IMAGE_SIMPLE}
+        description={
+          hasSearch
+            ? t('common.noResults')
+            : t('patients.noPatients')
+        }
+      >
+        {!hasSearch && (
+          <Button
+            type="primary"
+            icon={<PlusOutlined />}
+            onClick={onAdd}
+          >
+            {t('patients.addPatient')}
+          </Button>
+        )}
+      </Empty>
+    </div>
+  );
+
+  const renderPatientIdentity = (
+    fullName: string,
+    patient: Patient,
+    size: number = 42,
+  ) => (
+    <div className="patientListIdentity">
+      <Avatar
+        size={size}
+        className={
+          patient.gender === Gender.Male
+            ? 'patientListAvatar patientListAvatarMale'
+            : 'patientListAvatar patientListAvatarFemale'
+        }
+      >
+        {getInitials(fullName)}
+      </Avatar>
+
+      <div className="patientListIdentityContent">
+        <span className="patientListName">
+          {fullName || '—'}
+        </span>
+
+        <span className="patientListAge">
+          <CalendarOutlined />
+          {patient.age} {t('common.age')}
+        </span>
+      </div>
+    </div>
+  );
+
+  const renderGender = (gender: Gender) => (
+    <span
+      className={`patientListGender ${getGenderClass(gender)}`}
     >
-      {!hasSearch && (
-        <Button type="primary" icon={<PlusOutlined />} onClick={onAdd}>
-          {t('patients.addPatient')}
-        </Button>
-      )}
-    </Empty>
+      <span className="patientListGenderDot" />
+      {getGenderLabel(gender)}
+    </span>
   );
 
   const columns: ColumnsType<Patient> = useMemo(
@@ -61,51 +128,76 @@ export default function PatientList({
         title: t('patients.fullName'),
         dataIndex: 'fullName',
         key: 'fullName',
+        width: 280,
         ellipsis: true,
-        render: (fullName: string, record) => (
-          <Space>
-            <Avatar
-              size={36}
-              className={
-                record.gender === Gender.Male
-                  ? 'patientListAvatar patientListAvatarMale'
-                  : 'patientListAvatar patientListAvatarFemale'
-              }
-            >
-              {getInitials(fullName)}
-            </Avatar>
-            <div className="patientListNameCell">
-              <span className="patientListName">{fullName}</span>
-              <span className="patientListAge">
-                {record.age} {t('common.age')}
-              </span>
-            </div>
-          </Space>
-        ),
+        render: (fullName: string, record) =>
+          renderPatientIdentity(fullName, record, 44),
       },
+
       {
         title: t('patients.gender'),
         dataIndex: 'gender',
         key: 'gender',
-        width: 110,
-        render: (gender: Gender) => (
-          <Tag color={gender === Gender.Male ? 'blue' : 'magenta'}>
-            {gender === Gender.Male ? t('patients.male') : t('patients.female')}
-          </Tag>
-        ),
+        width: 130,
+        render: (gender: Gender) => renderGender(gender),
       },
+
       {
         title: t('patients.mobile'),
         dataIndex: 'mobile',
         key: 'mobile',
-        render: (mobile: string | null) => mobile || '—',
+        width: 190,
+        render: (mobile: string | null) => (
+          <div className="patientListInfo">
+            <span className="patientListInfoIcon">
+              <PhoneOutlined />
+            </span>
+
+            <span className="patientListInfoText">
+              {mobile || '—'}
+            </span>
+          </div>
+        ),
       },
+
       {
         title: t('patients.totalOperations'),
         key: 'operations',
-        width: 120,
+        width: 170,
         align: 'center',
-        render: (_, record) => record._count?.operations ?? 0,
+        render: (_, record) => {
+          const count = record._count?.operations ?? 0;
+
+          return (
+            <div className="patientListOperations">
+              <span className="patientListOperationsIcon">
+                <TeamOutlined />
+              </span>
+
+              <div className="patientListOperationsContent">
+                <span className="patientListOperationsCount">
+                  {count}
+                </span>
+
+                <span className="patientListOperationsLabel">
+                  {t('patients.totalOperations')}
+                </span>
+              </div>
+            </div>
+          );
+        },
+      },
+
+      {
+        title: '',
+        key: 'action',
+        width: 52,
+        align: 'center',
+        render: () => (
+          <span className="patientListAction">
+            <RightOutlined />
+          </span>
+        ),
       },
     ],
     [t],
@@ -122,62 +214,94 @@ export default function PatientList({
   };
 
   return (
-    <>
+    <div className="patientList">
+      {/* =====================================================
+          Mobile
+          ===================================================== */}
       <div className="patientListMobile">
         <Spin spinning={isLoading}>
           {patients.length === 0 && !isLoading ? (
             emptyNode
           ) : (
             <div className="patientListCards">
-              {patients.map((patient) => (
-                <Card
-                  key={patient.id}
-                  className="patientListCard"
-                  size="small"
-                  hoverable
-                  onClick={() => onRowClick(patient.id)}
-                  title={
-                    <Space>
-                      <Avatar
-                        size={28}
-                        className={
-                          patient.gender === Gender.Male
-                            ? 'patientListAvatar patientListAvatarMale'
-                            : 'patientListAvatar patientListAvatarFemale'
-                        }
-                      >
-                        {getInitials(patient.fullName)}
-                      </Avatar>
-                      <span>{patient.fullName}</span>
-                    </Space>
-                  }
-                  extra={
-                    <Tag color={patient.gender === Gender.Male ? 'blue' : 'magenta'}>
-                      {patient.gender === Gender.Male
-                        ? t('patients.male')
-                        : t('patients.female')}
-                    </Tag>
-                  }
-                >
-                  <Space direction="vertical" size={6} className="patientListCardBody">
-                    <span className="patientListAge">
-                      {patient.age} {t('common.age')}
-                    </span>
-                    <span className="patientListMeta">
-                      <PhoneOutlined /> {patient.mobile || '—'}
-                    </span>
-                    <span className="patientListMeta">
-                      <TeamOutlined />{' '}
-                      {t('patients.operationsCount', {
-                        count: patient._count?.operations ?? 0,
-                      })}
-                    </span>
-                  </Space>
-                </Card>
-              ))}
+              {patients.map((patient) => {
+                const operationsCount =
+                  patient._count?.operations ?? 0;
+
+                return (
+                  <Card
+                    key={patient.id}
+                    className="patientListCard"
+                    bordered={false}
+                    onClick={() => onRowClick(patient.id)}
+                    styles={{
+                      body: {
+                        padding: 0,
+                      },
+                    }}
+                  >
+                    <div className="patientListCardInner">
+                      <div className="patientListCardHeader">
+                        {renderPatientIdentity(
+                          patient.fullName,
+                          patient,
+                          48,
+                        )}
+
+                        {renderGender(patient.gender)}
+                      </div>
+
+                      <div className="patientListCardMeta">
+                        <div className="patientListCardMetaItem">
+                          <span className="patientListCardMetaIcon">
+                            <PhoneOutlined />
+                          </span>
+
+                          <div className="patientListCardMetaContent">
+                            <span className="patientListCardMetaLabel">
+                              {t('patients.mobile')}
+                            </span>
+
+                            <span className="patientListCardMetaValue">
+                              {patient.mobile || '—'}
+                            </span>
+                          </div>
+                        </div>
+
+                        <div className="patientListCardMetaItem">
+                          <span className="patientListCardMetaIcon">
+                            <TeamOutlined />
+                          </span>
+
+                          <div className="patientListCardMetaContent">
+                            <span className="patientListCardMetaLabel">
+                              {t('patients.totalOperations')}
+                            </span>
+
+                            <span className="patientListCardMetaValue">
+                              {t('patients.operationsCount', {
+                                count: operationsCount,
+                              })}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="patientListCardFooter">
+                        <span>
+                          {t('common.viewDetails', 'View details')}
+                        </span>
+
+                        <RightOutlined />
+                      </div>
+                    </div>
+                  </Card>
+                );
+              })}
             </div>
           )}
         </Spin>
+
         {total > pageSize && (
           <div className="patientListMobilePagination">
             <Pagination
@@ -193,6 +317,9 @@ export default function PatientList({
         )}
       </div>
 
+      {/* =====================================================
+          Desktop
+          ===================================================== */}
       <div className="patientListDesktop">
         <Table<Patient>
           className="patientListTable"
@@ -201,14 +328,16 @@ export default function PatientList({
           dataSource={patients}
           loading={isLoading}
           pagination={pagination}
-          scroll={{ x: 640 }}
+          scroll={{ x: 760 }}
           onRow={(record) => ({
             onClick: () => onRowClick(record.id),
             className: 'patientListRow',
           })}
-          locale={{ emptyText: emptyNode }}
+          locale={{
+            emptyText: emptyNode,
+          }}
         />
       </div>
-    </>
+    </div>
   );
 }

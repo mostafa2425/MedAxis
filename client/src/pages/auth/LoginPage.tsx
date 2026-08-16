@@ -56,7 +56,7 @@ export default function LoginPage() {
       });
       login(res.data.data.token, res.data.data.user);
       message.success(t('auth.loginSuccess'));
-      navigate('/', { replace: true });
+      navigate('/calendar', { replace: true });
     } catch (err: unknown) {
       const issues = parseApiValidationErrors(err);
       if (applyValidationErrorsToRHF(setError, issues, t)) {

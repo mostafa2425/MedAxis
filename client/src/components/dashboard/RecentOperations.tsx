@@ -9,7 +9,8 @@ import {
   BankOutlined,
 } from '@ant-design/icons';
 import { dashboardService } from '@/services/dashboard.service';
-import { formatDate, getInitials, getStatusColor } from '@/utils/helpers';
+import { getInitials, getStatusColor } from '@/utils/helpers';
+import OperationSchedule from '@/components/OperationSchedule/OperationSchedule';
 import { OPERATION_STATUSES } from '@/utils/constants';
 import type { Operation, OperationStatus } from '@/types';
 import './RecentOperations.scss';
@@ -59,8 +60,10 @@ function getColumns(t: (key: string) => string) {
       dataIndex: 'operationDate',
       key: 'date',
       width: 120,
-      render: (date: string) => (
-        <span className="dateCell">{formatDate(date)}</span>
+      render: (date: string, record: Operation) => (
+        <span className="dateCell">
+          <OperationSchedule date={date} time={record.operationTime} />
+        </span>
       ),
     },
     {
@@ -126,7 +129,11 @@ function MobileCard({ operation }: { operation: Operation }) {
           <span className="mobileCardDot" />
           <span>
             <CalendarOutlined style={{ marginRight: 4 }} />
-            {formatDate(operation.operationDate)}
+            <OperationSchedule
+              date={operation.operationDate}
+              time={operation.operationTime}
+              stacked={false}
+            />
           </span>
         </div>
       </div>

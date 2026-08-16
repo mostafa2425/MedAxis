@@ -24,7 +24,8 @@ import type { SearchResult } from '@/services/search.service';
 import type { SearchFilters } from '@/types';
 import { useDebounce } from '@/hooks/useDebounce';
 import { OPERATION_STATUSES } from '@/utils/constants';
-import { formatDate, getInitials } from '@/utils/helpers';
+import { getInitials } from '@/utils/helpers';
+import OperationSchedule from '@/components/OperationSchedule/OperationSchedule';
 import { type Dayjs } from 'dayjs';
 import './Search.scss';
 
@@ -190,7 +191,7 @@ export default function SearchPage() {
         <div className="resultMeta">
           <span className="resultMetaItem">
             <CalendarOutlined />
-            {formatDate(op.operationDate)}
+            <OperationSchedule date={op.operationDate} time={op.operationTime} stacked={false} />
           </span>
           <span
             className="statusBadge"

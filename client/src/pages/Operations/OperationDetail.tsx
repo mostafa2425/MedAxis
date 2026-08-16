@@ -31,6 +31,7 @@ import { operationService } from '@/services/operation.service';
 import {
   formatCurrency,
   formatDate,
+  formatOperationDate,
   formatTime,
   getStatusColor,
   getInitials,
@@ -175,7 +176,7 @@ export default function OperationDetailPage() {
             <div className="headerMeta">
               <Tag color={statusColor}>{OPERATION_STATUSES.find((s) => s.value === operation.status)?.label}</Tag>
               {operation.hospital?.name && <span><BankOutlined /> {operation.hospital.name}</span>}
-              <span><CalendarOutlined /> {formatDate(operation.operationDate)}</span>
+              <span><CalendarOutlined /> {formatOperationDate(operation.operationDate)}</span>
               <span><ClockCircleOutlined /> {formatTime(operation.operationTime)}</span>
               {operation.duration ? <span>{operation.duration} {t('common.minutes')}</span> : null}
             </div>
@@ -290,7 +291,7 @@ export default function OperationDetailPage() {
             <Descriptions column={1} size="small">
               <Descriptions.Item label={t('operations.hospital')}>{operation.hospital?.name ?? '—'}</Descriptions.Item>
               <Descriptions.Item label={t('operations.operationRoom')}>{operation.operationRoom ?? '—'}</Descriptions.Item>
-              <Descriptions.Item label={t('operations.operationDate')}>{formatDate(operation.operationDate)}</Descriptions.Item>
+              <Descriptions.Item label={t('operations.operationDate')}>{formatOperationDate(operation.operationDate)}</Descriptions.Item>
               <Descriptions.Item label={t('operations.operationTime')}>{formatTime(operation.operationTime)}</Descriptions.Item>
             </Descriptions>
           </Card>

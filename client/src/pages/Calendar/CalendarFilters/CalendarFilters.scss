@@ -1,0 +1,17 @@
+.calendarFilters {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: $space-2;
+  align-items: center;
+
+  :global(.ant-select) {
+    width: 100%;
+    min-width: 0;
+  }
+}
+
+@include responsive('md') {
+  .calendarFilters {
+    grid-template-columns: 1fr;
+  }
+}

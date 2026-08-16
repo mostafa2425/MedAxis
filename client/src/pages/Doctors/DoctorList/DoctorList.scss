@@ -1,29 +1,203 @@
 .doctorList {
   display: flex;
   flex-direction: column;
-  gap: $space-4;
+
+  width: 100%;
   min-width: 0;
+
+  gap: $space-4;
 }
+
+// ============================================================
+// Loading wrapper
+// ============================================================
+
+.doctorListSpin {
+  width: 100%;
+  min-width: 0;
+
+  .ant-spin-container {
+    width: 100%;
+  }
+}
+
+// ============================================================
+// Grid
+// ============================================================
 
 .doctorListGrid {
   display: grid;
-  grid-template-columns: 1fr;
+
+  grid-template-columns: minmax(0, 1fr);
+
   gap: $space-3;
+
+  width: 100%;
   min-width: 0;
 
-  @include up('md') {
+  @include up('sm') {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: $space-3;
   }
 
   @include up('lg') {
     grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: $space-4;
   }
+
+  @include up('xl') {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: $space-4;
+  }
+}
+
+// ============================================================
+// Doctor item
+// ============================================================
+
+.doctorListItem {
+  min-width: 0;
+
+  height: 100%;
+
+  animation: doctorListItemEnter 0.25s ease both;
+
+  // Make the actual DoctorCard stretch with the grid.
+  > * {
+    height: 100%;
+  }
+}
+
+@keyframes doctorListItemEnter {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// ============================================================
+// Skeleton
+// ============================================================
+
+.doctorListSkeleton {
+  display: flex;
+  flex-direction: column;
+
+  min-height: 220px;
+  height: 100%;
+
+  padding: $space-4;
+
+  border: 1px solid $border;
+  border-radius: $radius-xl;
+
+  background: $surface;
+
+  box-shadow:
+    0 1px 2px rgba(15, 23, 42, 0.03),
+    0 4px 14px rgba(15, 23, 42, 0.035);
+
+  @include dark {
+    background: $dark-surface;
+    border-color: $dark-border;
+
+    box-shadow:
+      0 2px 8px rgba(0, 0, 0, 0.16),
+      0 8px 20px rgba(0, 0, 0, 0.06);
+  }
+}
+
+.doctorListSkeletonHeader {
+  display: flex;
+  align-items: center;
+
+  gap: $space-3;
+
+  padding-bottom: $space-4;
+
+  border-bottom: 1px solid $border;
+
+  @include dark {
+    border-color: $dark-border;
+  }
+}
+
+.doctorListSkeletonInfo {
+  display: flex;
+  flex-direction: column;
+
+  flex: 1;
+  min-width: 0;
+
+  gap: 7px;
+}
+
+.doctorListSkeletonBody {
+  display: flex;
+  flex-direction: column;
+
+  gap: 9px;
+
+  flex: 1;
+
+  padding: $space-4 0;
+}
+
+.doctorListSkeletonFooter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: $space-2;
+
+  padding-top: $space-3;
+
+  border-top: 1px solid $border;
+
+  @include dark {
+    border-color: $dark-border;
+  }
 }
 
 .doctorListSkeleton {
-  border-radius: $radius-lg;
-  min-height: 180px;
+  .ant-skeleton {
+    width: 100%;
+  }
+
+  .ant-skeleton-input {
+    max-width: 100%;
+    border-radius: $radius-md;
+  }
+
+  .ant-skeleton-button {
+    border-radius: $radius-md;
+  }
+}
+
+// ============================================================
+// Empty state
+// ============================================================
+
+.doctorListEmpty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  width: 100%;
+
+  min-height: 300px;
+
+  padding: $space-8 $space-4;
+
+  border: 1px dashed $border;
+  border-radius: $radius-xl;
+
+  background: $surface;
 
   @include dark {
     background: $dark-surface;
@@ -31,8 +205,245 @@
   }
 }
 
+.doctorListEmptyIcon {
+  @include flex-center;
+
+  width: 52px;
+  height: 52px;
+
+  margin-bottom: $space-3;
+
+  border-radius: $radius-lg;
+
+  background: rgba(14, 165, 233, 0.08);
+
+  color: $primary;
+
+  font-size: 21px;
+
+  @include dark {
+    background: rgba(56, 189, 248, 0.1);
+    color: #38bdf8;
+  }
+}
+
+.doctorListEmpty {
+  .ant-empty {
+    margin: 0;
+  }
+
+  .ant-empty-image {
+    display: none;
+  }
+
+  .ant-empty-footer {
+    margin-top: $space-4;
+  }
+}
+
+.doctorListEmptyContent {
+  display: flex;
+  flex-direction: column;
+
+  gap: 5px;
+
+  max-width: 360px;
+
+  text-align: center;
+}
+
+.doctorListEmptyTitle {
+  color: $text-primary;
+
+  font-size: $font-body;
+  font-weight: $font-semibold;
+
+  @include dark {
+    color: $dark-text-primary;
+  }
+}
+
+.doctorListEmptyDescription {
+  color: $text-muted;
+
+  font-size: $font-body-sm;
+  line-height: 1.5;
+
+  @include dark {
+    color: $dark-text-muted;
+  }
+}
+
+// ============================================================
+// Pagination
+// ============================================================
+
 .doctorListPagination {
   display: flex;
+  align-items: center;
   justify-content: center;
+
+  width: 100%;
+
   padding-top: $space-1;
+
+  .ant-pagination {
+    display: flex;
+    align-items: center;
+
+    margin: 0;
+
+    gap: 4px;
+  }
+
+  .ant-pagination-item,
+  .ant-pagination-prev,
+  .ant-pagination-next {
+    border-radius: $radius-md;
+
+    transition:
+      background $transition-fast,
+      border-color $transition-fast,
+      color $transition-fast;
+  }
+
+  .ant-pagination-item {
+    border-color: transparent;
+
+    background: transparent;
+
+    a {
+      color: $text-secondary;
+    }
+
+    &:hover {
+      border-color: rgba(14, 165, 233, 0.12);
+
+      background: rgba(14, 165, 233, 0.06);
+
+      a {
+        color: $primary;
+      }
+    }
+
+    &-active {
+      border-color: $primary;
+
+      background: $primary;
+
+      a {
+        color: #fff;
+      }
+
+      &:hover {
+        background: $primary;
+
+        a {
+          color: #fff;
+        }
+      }
+    }
+  }
+
+  .ant-pagination-prev,
+  .ant-pagination-next {
+    &:hover {
+      border-color: rgba(14, 165, 233, 0.12);
+
+      background: rgba(14, 165, 233, 0.06);
+    }
+  }
+
+  @include dark {
+    .ant-pagination-item {
+      a {
+        color: $dark-text-secondary;
+      }
+
+      &:hover {
+        background: rgba(56, 189, 248, 0.08);
+
+        a {
+          color: #38bdf8;
+        }
+      }
+
+      &-active {
+        border-color: $primary;
+        background: $primary;
+
+        a {
+          color: #fff;
+        }
+      }
+    }
+
+    .ant-pagination-prev,
+    .ant-pagination-next {
+      &:hover {
+        background: rgba(56, 189, 248, 0.08);
+      }
+    }
+  }
+}
+
+// ============================================================
+// Mobile
+// ============================================================
+
+@media (max-width: 767px) {
+  .doctorList {
+    gap: $space-3;
+  }
+
+  .doctorListGrid {
+    grid-template-columns: minmax(0, 1fr);
+
+    gap: $space-3;
+  }
+
+  .doctorListSkeleton {
+    min-height: 205px;
+
+    padding: $space-3;
+
+    border-radius: $radius-lg;
+  }
+
+  .doctorListEmpty {
+    min-height: 260px;
+
+    padding: $space-6 $space-3;
+
+    border-radius: $radius-lg;
+  }
+
+  .doctorListEmptyIcon {
+    width: 46px;
+    height: 46px;
+
+    font-size: 19px;
+  }
+
+  .doctorListEmptyDescription {
+    font-size: $font-caption;
+  }
+
+  .doctorListPagination {
+    padding-top: 0;
+
+    .ant-pagination {
+      max-width: 100%;
+    }
+  }
+}
+
+// ============================================================
+// Reduced motion
+// ============================================================
+
+@media (prefers-reduced-motion: reduce) {
+  .doctorListItem {
+    animation: none;
+  }
 }

@@ -74,7 +74,6 @@ export default function HospitalsPage() {
         <header className="pageHeader">
           <div className="pageHeaderText">
             <h1 className="pageTitle">{t('hospitals.title')}</h1>
-            <p className="pageHint">{t('hospitals.searchHospitals')}</p>
           </div>
           <Button type="primary" icon={<PlusOutlined />} onClick={handleOpenAdd}>
             {t('hospitals.addHospital')}
@@ -100,15 +99,14 @@ export default function HospitalsPage() {
           </div>
           <div className="pageHeaderText">
             <h1 className="pageTitle">{t('hospitals.title')}</h1>
-            <p className="pageHint">{t('hospitals.searchHospitals')}</p>
           </div>
         </div>
         <div className="pageHeaderMeta">
-          {!isLoading && (
+          {/* {!isLoading && (
             <span className="countPill">
               {t('common.total')}: {total}
             </span>
-          )}
+          )} */}
           <Button type="primary" icon={<PlusOutlined />} onClick={handleOpenAdd} size="large">
             {t('hospitals.addHospital')}
           </Button>

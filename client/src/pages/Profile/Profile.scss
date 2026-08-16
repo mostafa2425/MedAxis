@@ -48,3 +48,24 @@
   font-weight: $font-medium;
   color: $text-muted;
 }
+
+.profileReadonly {
+  display: grid;
+  gap: $space-3;
+  margin-bottom: $space-5;
+}
+
+.profileReadonlyItem {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.profileReadonlyValue {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: $text-primary;
+  font-size: $font-body-sm;
+  word-break: break-all;
+}

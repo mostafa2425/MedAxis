@@ -1,0 +1,262 @@
+.calendarSummary {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: $space-3;
+  width: 100%;
+}
+
+.calendarSummaryCard {
+  position: relative;
+  height: 100%;
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid var(--summary-accent);
+  border-radius: $radius-lg;
+  background: $surface;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    border-color 0.2s ease;
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset-inline-start: 0;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    background: var(--summary-accent);
+  }
+
+  .ant-card-body {
+    height: 100%;
+    padding: $space-4;
+  }
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+    border-color: rgba(148, 163, 184, 0.35);
+  }
+
+  @include dark {
+    background: $dark-surface !important;
+    border-color: $dark-border;
+    box-shadow: none;
+
+    &:hover {
+      border-color: rgba(148, 163, 184, 0.3);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
+    }
+  }
+}
+
+.calendarSummaryContent {
+  display: flex;
+  align-items: center;
+  gap: $space-3;
+  min-width: 0;
+  height: 100%;
+}
+
+.calendarSummaryIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  flex: 0 0 44px;
+  border-radius: $radius-md;
+  background: var(--summary-icon-bg);
+  color: var(--summary-accent);
+  font-size: 19px;
+  transition:
+    transform 0.2s ease,
+    background 0.2s ease;
+
+  .calendarSummaryCard:hover & {
+    transform: scale(1.05);
+  }
+}
+
+.calendarSummaryInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+  flex: 1;
+}
+
+.calendarSummaryLabel {
+  overflow: hidden;
+  color: $text-muted;
+  font-size: $font-caption;
+  font-weight: $font-medium;
+  line-height: $line-height-normal;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  @include dark {
+    color: $dark-text-muted;
+  }
+}
+
+.calendarSummaryValue {
+  display: block;
+  overflow: hidden;
+  color: $text-primary;
+  font-size: 24px;
+  font-weight: $font-bold;
+  line-height: $line-height-tight;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  @include dark {
+    color: $dark-text-primary;
+  }
+}
+
+.calendarSummaryValueNext {
+  color: var(--summary-accent);
+  font-size: $font-body-lg;
+  font-weight: $font-semibold;
+}
+
+.calendarSummaryArrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  flex: 0 0 28px;
+  border-radius: 50%;
+  background: var(--summary-icon-bg);
+  color: var(--summary-accent);
+  font-size: 11px;
+  opacity: 0.8;
+  transition:
+    transform 0.2s ease,
+    opacity 0.2s ease;
+
+  .calendarSummaryCard:hover & {
+    transform: translateX(2px);
+    opacity: 1;
+  }
+}
+
+/* Card themes */
+
+.calendarSummaryCard.isToday {
+  --summary-accent: #2563eb;
+  --summary-icon-bg: #eff6ff;
+}
+
+.calendarSummaryCard.isTomorrow {
+  --summary-accent: #7c3aed;
+  --summary-icon-bg: #f5f3ff;
+}
+
+.calendarSummaryCard.isWeek {
+  --summary-accent: #0f766e;
+  --summary-icon-bg: #f0fdfa;
+}
+
+.calendarSummaryCard.isNext {
+  --summary-accent: #ea580c;
+  --summary-icon-bg: #fff7ed;
+}
+
+/* Loading */
+
+.calendarSummaryLoading {
+  display: flex;
+  align-items: center;
+  gap: $space-3;
+  min-height: 44px;
+}
+
+.calendarSummaryLoadingContent {
+  display: flex;
+  flex-direction: column;
+  gap: $space-2;
+  flex: 1;
+  min-width: 0;
+
+  .ant-skeleton-input {
+    max-width: 100%;
+  }
+}
+
+/* Large tablets */
+
+@include responsive('lg') {
+  .calendarSummary {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* Mobile */
+
+@include responsive('md') {
+  .calendarSummary {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: $space-2;
+  }
+
+  .calendarSummaryCard {
+    .ant-card-body {
+      padding: $space-3;
+    }
+  }
+
+  .calendarSummaryContent {
+    gap: $space-2;
+  }
+
+  .calendarSummaryIcon {
+    width: 38px;
+    height: 38px;
+    flex-basis: 38px;
+    font-size: 16px;
+  }
+
+  .calendarSummaryValue {
+    font-size: 21px;
+  }
+
+  .calendarSummaryValueNext {
+    font-size: $font-body;
+  }
+
+  .calendarSummaryArrow {
+    display: none;
+  }
+}
+
+/* Small mobile */
+
+@include responsive('sm') {
+
+  .calendarSummaryCard {
+    min-height: 74px;
+
+    .ant-card-body {
+      padding: $space-3;
+    }
+  }
+
+  .calendarSummaryIcon {
+    width: 40px;
+    height: 40px;
+    flex-basis: 40px;
+  }
+
+  .calendarSummaryValue {
+    font-size: 22px;
+  }
+
+  .calendarSummaryValueNext {
+    font-size: $font-body-lg;
+  }
+}
