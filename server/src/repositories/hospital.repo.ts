@@ -1,5 +1,5 @@
 import { prisma } from '../utils/prisma';
-import { Prisma } from '@prisma/client';
+import { Prisma } from '../prisma';
 
 function accessibleWhere(userId: string): Prisma.HospitalWhereInput {
   return {

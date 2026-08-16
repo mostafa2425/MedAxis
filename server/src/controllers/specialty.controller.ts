@@ -31,16 +31,22 @@ export class SpecialtyController {
       }
 
       const query = parsed.data;
+      const userId = resolveUserId(req);
+      const authenticatedDoctorRequest = Boolean(userId);
       let parentIds = query.parentIds;
 
-      if (query.mine) {
-        const userId = resolveUserId(req);
+      // Once a doctor is authenticated, the endpoint is intentionally scoped to
+      // that doctor's top-level specialties. This keeps the existing public
+      // catalog behavior available for unauthenticated onboarding screens.
+      const mine = authenticatedDoctorRequest || query.mine;
+      if (mine) {
         if (!userId) throw new UnauthorizedError('Authentication required');
         const doctor = await doctorRepo.findByUserId(userId);
         const doctorSpecialtyIds = doctor
           ? doctor.specialties.map((link) => link.specialtyId)
           : [];
         const allowed = new Set(doctorSpecialtyIds);
+
         if (parentIds.length > 0) {
           const invalid = parentIds.filter((id) => !allowed.has(id));
           if (invalid.length > 0) {
@@ -58,6 +64,7 @@ export class SpecialtyController {
         } else {
           parentIds = doctorSpecialtyIds;
         }
+
         if (parentIds.length === 0) {
           if (query.page != null && query.limit != null) {
             return sendPaginated(res, [], query.page, query.limit, 0);

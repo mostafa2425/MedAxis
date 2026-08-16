@@ -11,8 +11,9 @@
     "db:push": "prisma db push",
     "db:generate": "prisma generate",
     "prisma:studio": "prisma studio",
-    "postinstall": "prisma generate",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "typecheck": "tsc --noEmit",
+    "postinstall": "prisma generate"
   },
   "keywords": [],
   "author": "",
@@ -47,6 +48,6 @@
     "prisma": "^7.9.1",
     "ts-node": "^10.9.2",
     "tsx": "^4.23.11",
-    "typescript": "^7.0.2"
+    "typescript": "5.9.3"
   }
 }

@@ -1,4 +1,4 @@
-import { Prisma } from '@prisma/client';
+import { Prisma } from '../prisma';
 
 export const operationListInclude = {
   patient: true,
@@ -20,41 +20,36 @@ export const operationListInclude = {
     orderBy: { sortOrder: 'asc' as const },
   },
   teamMembers: {
-    include: {
-      doctor: true,
-      nurse: true,
-    },
+    include: { doctor: true, nurse: true },
     orderBy: { sortOrder: 'asc' as const },
   },
   medicalTeam: {
-    include: {
-      primarySurgeon: true,
-      assistantSurgeon: true,
-      anesthesiologist: true,
-      assistantAnesthesia: true,
-    },
+    include: { primarySurgeon: true, assistantSurgeon: true, anesthesiologist: true, assistantAnesthesia: true },
   },
   cost: true,
   files: {
-    select: { id: true, fileType: true, fileName: true, filePath: true, fileSize: true, createdAt: true },
+    select: {
+      id: true,
+      operationId: true,
+      fileType: true,
+      fileName: true,
+      filePath: true,
+      fileSize: true,
+      mimeType: true,
+      createdAt: true,
+    },
   },
 } satisfies Prisma.OperationInclude;
 
 export const operationDetailInclude = {
   ...operationListInclude,
-  creator: {
-    select: { id: true, name: true, email: true },
-  },
+  creator: { select: { id: true, name: true, email: true } },
   files: {
-    include: {
-      uploader: { select: { id: true, name: true } },
-    },
+    include: { uploader: { select: { id: true, name: true } } },
     orderBy: { createdAt: 'desc' as const },
   },
   timeline: {
-    include: {
-      user: { select: { id: true, name: true } },
-    },
+    include: { user: { select: { id: true, name: true } } },
     orderBy: { createdAt: 'desc' as const },
   },
 } satisfies Prisma.OperationInclude;

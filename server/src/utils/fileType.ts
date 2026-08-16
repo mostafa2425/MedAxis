@@ -1,4 +1,4 @@
-import { FileType } from '@prisma/client';
+import { FileType } from '../prisma';
 import { BadRequestError } from './errors';
 
 const ALIASES: Record<string, FileType> = {
@@ -14,11 +14,7 @@ export function resolveFileType(input?: string): FileType {
 
   if (!ALLOWED.has(mapped)) {
     throw new BadRequestError('Invalid file type', [
-      {
-        path: ['fileType'],
-        code: 'custom',
-        message: `Invalid file type. Allowed: ${[...ALLOWED].join(', ')} (aliases: BEFORE_OPERATION, AFTER_OPERATION)`,
-      },
+      { path: ['fileType'], code: 'custom', message: `Invalid file type. Allowed: ${[...ALLOWED].join(', ')} (aliases: BEFORE_OPERATION, AFTER_OPERATION)` },
     ]);
   }
 
