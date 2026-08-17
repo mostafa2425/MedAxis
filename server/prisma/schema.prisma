@@ -67,8 +67,8 @@ model User {
   phone     String?
   role      String   @default("doctor")
   isActive  Boolean  @default(true)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @db.Timestamptz(6)
 
   operations         Operation[]
   operationTimelines OperationTimeline[]
@@ -90,8 +90,8 @@ model Patient {
   mobile    String?
   notes     String?
   createdBy String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @db.Timestamptz(6)
 
   operations Operation[]
 
@@ -105,8 +105,8 @@ model Specialty {
   icon      String?
   parentId  String?
   isActive  Boolean  @default(true)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @db.Timestamptz(6)
 
   parent     Specialty?  @relation("SpecialtyHierarchy", fields: [parentId], references: [id], onDelete: SetNull)
   children   Specialty[] @relation("SpecialtyHierarchy")
@@ -129,8 +129,8 @@ model Doctor {
   isActive  Boolean  @default(true)
   userId    String?  @unique
   createdBy String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @db.Timestamptz(6)
 
   user                  User?                   @relation(fields: [userId], references: [id], onDelete: SetNull)
   creator               User?                   @relation("CreatedDoctors", fields: [createdBy], references: [id], onDelete: SetNull)
@@ -150,7 +150,7 @@ model DoctorSpecialty {
   id          String    @id @default(uuid())
   doctorId    String
   specialtyId String
-  createdAt   DateTime  @default(now())
+  createdAt   DateTime  @default(now()) @db.Timestamptz(6)
 
   doctor    Doctor    @relation(fields: [doctorId], references: [id], onDelete: Cascade)
   specialty Specialty @relation(fields: [specialtyId], references: [id], onDelete: Cascade)
@@ -163,7 +163,7 @@ model DoctorSubspecialty {
   id          String   @id @default(uuid())
   doctorId    String
   specialtyId String
-  createdAt   DateTime @default(now())
+  createdAt   DateTime @default(now()) @db.Timestamptz(6)
 
   doctor    Doctor    @relation(fields: [doctorId], references: [id], onDelete: Cascade)
   specialty Specialty @relation(fields: [specialtyId], references: [id], onDelete: Cascade)
@@ -181,8 +181,8 @@ model OperationCatalog {
   isActive       Boolean  @default(true)
   isCustom       Boolean  @default(false)
   createdBy      String?
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  createdAt      DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt      DateTime @updatedAt @db.Timestamptz(6)
 
   specialty     Specialty?  @relation("CatalogSpecialty", fields: [specialtyId], references: [id], onDelete: SetNull)
   subspecialty  Specialty?  @relation("CatalogSubspecialty", fields: [subspecialtyId], references: [id], onDelete: SetNull)
@@ -204,8 +204,8 @@ model Hospital {
   phone     String?
   isActive  Boolean  @default(true)
   createdBy String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @db.Timestamptz(6)
 
   operations Operation[]
   creator    User?       @relation("CreatedHospitals", fields: [createdBy], references: [id], onDelete: SetNull)
@@ -221,8 +221,8 @@ model Nurse {
   email     String?
   isActive  Boolean  @default(true)
   createdBy String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @db.Timestamptz(6)
 
   creator     User                  @relation(fields: [createdBy], references: [id])
   teamMembers OperationTeamMember[]
@@ -236,7 +236,7 @@ model Operation {
   name             String
   diagnosis        String?
   hospitalId       String
-  operationDate    DateTime
+  operationDate    DateTime        @db.Timestamptz(6)
   operationTime    String
   operationRoom    String?
   duration         Int?
@@ -246,8 +246,8 @@ model Operation {
   createdBy        String
   specialtyId      String?
   catalogId        String?
-  createdAt        DateTime        @default(now())
-  updatedAt        DateTime        @updatedAt
+  createdAt        DateTime        @default(now()) @db.Timestamptz(6)
+  updatedAt        DateTime        @updatedAt @db.Timestamptz(6)
 
   patient   Patient               @relation(fields: [patientId], references: [id], onDelete: Cascade)
   hospital  Hospital              @relation(fields: [hospitalId], references: [id])
@@ -273,7 +273,7 @@ model OperationMedicalTeam {
   assistantAnesthesiaId String?
   nurse               String?
   notes               String?
-  createdAt           DateTime @default(now())
+  createdAt           DateTime @default(now()) @db.Timestamptz(6)
 
   operation         Operation  @relation(fields: [operationId], references: [id], onDelete: Cascade)
   primarySurgeon    Doctor?    @relation(fields: [primarySurgeonId], references: [id])
@@ -292,7 +292,7 @@ model OperationProcedure {
   nameAr        String?
   specialtyId   String?
   sortOrder     Int      @default(0)
-  createdAt     DateTime @default(now())
+  createdAt     DateTime @default(now()) @db.Timestamptz(6)
 
   operation Operation          @relation(fields: [operationId], references: [id], onDelete: Cascade)
   catalog   OperationCatalog?  @relation(fields: [catalogId], references: [id], onDelete: SetNull)
@@ -309,7 +309,7 @@ model OperationTeamMember {
   doctorId    String?
   nurseId     String?
   sortOrder   Int      @default(0)
-  createdAt   DateTime @default(now())
+  createdAt   DateTime @default(now()) @db.Timestamptz(6)
 
   operation Operation @relation(fields: [operationId], references: [id], onDelete: Cascade)
   doctor    Doctor?   @relation(fields: [doctorId], references: [id], onDelete: SetNull)
@@ -330,8 +330,8 @@ model OperationCost {
   paymentMethod   PaymentMethod  @default(CASH)
   paymentStatus   PaymentStatus  @default(PAID)
   paymentNotes    String?
-  createdAt       DateTime      @default(now())
-  updatedAt       DateTime      @updatedAt
+  createdAt       DateTime      @default(now()) @db.Timestamptz(6)
+  updatedAt       DateTime      @updatedAt @db.Timestamptz(6)
 
   operation Operation @relation(fields: [operationId], references: [id], onDelete: Cascade)
 
@@ -347,7 +347,7 @@ model OperationFile {
   fileSize    Int?
   mimeType    String?
   uploadedBy  String
-  createdAt   DateTime @default(now())
+  createdAt   DateTime @default(now()) @db.Timestamptz(6)
 
   operation Operation @relation(fields: [operationId], references: [id], onDelete: Cascade)
   uploader  User      @relation(fields: [uploadedBy], references: [id])
@@ -361,7 +361,7 @@ model OperationTimeline {
   action      TimelineAction
   description String?
   userId      String
-  createdAt   DateTime       @default(now())
+  createdAt   DateTime       @default(now()) @db.Timestamptz(6)
 
   operation Operation @relation(fields: [operationId], references: [id], onDelete: Cascade)
   user      User      @relation(fields: [userId], references: [id])
