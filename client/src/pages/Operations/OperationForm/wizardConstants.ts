@@ -16,6 +16,6 @@ export function getDefaultFormData(): WizardFormData {
     patientSearchQuery: '', patientId: '', selectedPatientName: '', selectedPatientMobile: '', isNewPatient: false, newPatientName: '', newPatientAge: null, newPatientGender: Gender.Male, newPatientMobile: '',
     operationIds: [], operationId: '', name: '', diagnosis: '', hospitalId: lastHospital || '', specialtyId: '', operationDate: dayjs().format('YYYY-MM-DD'), operationTime: dayjs().format('HH:mm'), operationRoom: '', duration: null, status: OperationStatus.Completed,
     doctorIds: [], nurseIds: [], primarySurgeonId: '', assistantSurgeonId: '', anesthesiologistId: '', assistantAnesthesiaId: '', nurseId: '', teamNotes: '',
-    totalCost: 0, paidAmount: 0, hospitalCost: 0, nursingCost: 0, assistantDoctorsCost: 0, equipmentCost: 0, otherCost: 0, paymentMethod: PaymentMethod.Cash, paymentStatus: PaymentStatus.Paid, paymentNotes: '', notes: '',
+    totalCost: 0, paidAmount: 0, paymentMethod: PaymentMethod.Cash, paymentStatus: PaymentStatus.Paid, paymentNotes: '', notes: '',
   };
 }
