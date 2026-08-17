@@ -1,82 +1,36 @@
 import { useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import {
-  Button,
-  Tag,
-  Card,
-  Descriptions,
-  Empty,
-  Spin,
-  Popconfirm,
-  message,
-  Select,
-  Avatar,
-  Space,
-  Typography,
-  Upload,
-} from 'antd';
-import {
-  ArrowLeftOutlined,
-  EditOutlined,
-  DeleteOutlined,
-  DownloadOutlined,
-  BankOutlined,
-  CalendarOutlined,
-  ClockCircleOutlined,
-  UploadOutlined,
-} from '@ant-design/icons';
+import { Avatar, Button, Card, Descriptions, Empty, Flex, Popconfirm, Select, Space, Spin, Tabs, Tag, Timeline, Typography, Upload, message } from 'antd';
+import { ArrowLeftOutlined, BankOutlined, CalendarOutlined, ClockCircleOutlined, DeleteOutlined, DownloadOutlined, EditOutlined, FileImageOutlined, TeamOutlined, UploadOutlined, DollarOutlined, HistoryOutlined } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
 import { operationService } from '@/services/operation.service';
-import {
-  formatCurrency,
-  formatDate,
-  formatOperationDate,
-  formatTime,
-  getStatusColor,
-  getInitials,
-  getSpecialtyLabel,
-  resolveMediaUrl,
-  isBeforeFileType,
-  isAfterFileType,
-} from '@/utils/helpers';
+import { formatCurrency, formatOperationDate, formatTime, getInitials, getSpecialtyLabel, getStatusColor, resolveMediaUrl } from '@/utils/helpers';
 import { OPERATION_STATUSES } from '@/utils/constants';
 import { OperationStatus, type Operation, type OperationFile, type Doctor, type Nurse } from '@/types';
 import { getApiErrorMessage } from '@/utils/apiValidationErrors';
+import CostBreakdownCard from './CostBreakdownCard';
 import './OperationDetail.scss';
 
 function StaffChip({ name, subtitle }: { name: string; subtitle?: string }) {
-  return (
-    <div className="staffChip">
-      <Avatar size={40}>{getInitials(name)}</Avatar>
-      <div>
-        <div className="staffChipName">{name}</div>
-        {subtitle && <div className="staffChipMeta">{subtitle}</div>}
-      </div>
-    </div>
-  );
+  return <Flex className="staffChip" align="center" gap={12}><Avatar size={40}>{getInitials(name)}</Avatar><div><Typography.Text strong>{name}</Typography.Text>{subtitle && <div className="staffChipMeta">{subtitle}</div>}</div></Flex>;
 }
 
 function FileCard({ file, onDelete }: { file: OperationFile; onDelete: (id: string) => void }) {
-  const { t } = useTranslation();
   const url = resolveMediaUrl(file.fileUrl || file.url || file.filePath || '');
-  return (
-    <Card size="small" className="fileCard">
-      <div className="fileCardName">{file.fileName}</div>
-      <div className="fileCardMeta">{file.fileType}</div>
-      <div className="fileCardMeta">{formatDate(file.createdAt)}</div>
+  const image = file.mimeType?.startsWith('image/');
+  return <Card size="small" className="fileCard" hoverable>
+    <Flex vertical gap={8}>
+      <Flex align="center" gap={8}><FileImageOutlined /><Typography.Text ellipsis>{file.fileName}</Typography.Text></Flex>
+      <Tag>{file.fileType}</Tag>
+      <Typography.Text type="secondary">{file.createdAt ? new Date(file.createdAt).toLocaleDateString() : '—'}</Typography.Text>
       <Space>
-        {url && (
-          <Button size="small" icon={<DownloadOutlined />} href={url} target="_blank">
-            {t('common.download') || 'Download'}
-          </Button>
-        )}
-        <Popconfirm title={t('common.delete')} onConfirm={() => onDelete(file.id)}>
-          <Button size="small" danger icon={<DeleteOutlined />} />
-        </Popconfirm>
+        {url && <Button size="small" icon={<DownloadOutlined />} href={url} target="_blank">Download</Button>}
+        {image && url && <Button size="small" href={url} target="_blank">Preview</Button>}
+        <Popconfirm title="Delete this file?" onConfirm={() => onDelete(file.id)}><Button size="small" danger icon={<DeleteOutlined />} /></Popconfirm>
       </Space>
-    </Card>
-  );
+    </Flex>
+  </Card>;
 }
 
 export default function OperationDetailPage() {
@@ -85,233 +39,69 @@ export default function OperationDetailPage() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [messageApi, contextHolder] = message.useMessage();
-  const currency = t('common.currency');
 
-  const { data, isLoading } = useQuery({
-    queryKey: ['operation-detail', id],
-    queryFn: () => operationService.getById(id!),
-    enabled: Boolean(id),
-  });
-
+  const { data, isLoading } = useQuery({ queryKey: ['operation-detail', id], queryFn: () => operationService.getById(id!), enabled: Boolean(id) });
   const operation: Operation | undefined = data?.data?.data;
 
-  const changeStatusMutation = useMutation({
-    mutationFn: (status: OperationStatus) => operationService.changeStatus(id!, status),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['operation-detail', id] });
-      messageApi.success(t('operations.statusUpdated'));
-    },
-    onError: (error) => messageApi.error(getApiErrorMessage(error, t('common.operationFailed'))),
-  });
+  const changeStatusMutation = useMutation({ mutationFn: (status: OperationStatus) => operationService.changeStatus(id!, status), onSuccess: () => { queryClient.invalidateQueries({ queryKey: ['operation-detail', id] }); messageApi.success(t('operations.statusUpdated')); }, onError: (e) => messageApi.error(getApiErrorMessage(e, t('common.operationFailed'))) });
+  const deleteMutation = useMutation({ mutationFn: () => operationService.delete(id!), onSuccess: () => { messageApi.success(t('operations.operationDeleted')); navigate('/operations'); } });
+  const uploadMutation = useMutation({ mutationFn: (fd: FormData) => operationService.uploadFiles(id!, fd), onSuccess: () => queryClient.invalidateQueries({ queryKey: ['operation-detail', id] }) });
+  const deleteFileMutation = useMutation({ mutationFn: (fileId: string) => operationService.deleteFile(id!, fileId), onSuccess: () => queryClient.invalidateQueries({ queryKey: ['operation-detail', id] }) });
 
-  const deleteMutation = useMutation({
-    mutationFn: () => operationService.delete(id!),
-    onSuccess: () => {
-      messageApi.success(t('operations.operationDeleted'));
-      navigate('/operations');
-    },
-  });
+  const doctors = useMemo(() => ((operation?.teamMembers ?? []).map((m) => m.doctor).filter(Boolean) as Doctor[]).length
+    ? ((operation?.teamMembers ?? []).map((m) => m.doctor).filter(Boolean) as Doctor[])
+    : [operation?.medicalTeam?.primarySurgeon, operation?.medicalTeam?.assistantSurgeon, operation?.medicalTeam?.anesthesiologist, operation?.medicalTeam?.assistantAnesthesia].filter(Boolean) as Doctor[], [operation]);
+  const nurses = useMemo(() => (operation?.teamMembers ?? []).map((m) => m.nurse).filter(Boolean) as Nurse[], [operation]);
 
-  const uploadMutation = useMutation({
-    mutationFn: (fd: FormData) => operationService.uploadFiles(id!, fd),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['operation-detail', id] }),
-  });
+  if (isLoading) return <div className="operation-detail-page page"><Spin /></div>;
+  if (!operation) return <div className="operation-detail-page page"><Empty description={t('common.noData')} /></div>;
 
-  const deleteFileMutation = useMutation({
-    mutationFn: (fileId: string) => operationService.deleteFile(id!, fileId),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['operation-detail', id] }),
-  });
-
-  const doctors = useMemo(() => {
-    const fromMembers = (operation?.teamMembers ?? [])
-      .map((member) => member.doctor)
-      .filter((doctor): doctor is Doctor => Boolean(doctor));
-    if (fromMembers.length) return fromMembers;
-    return [
-      operation?.medicalTeam?.primarySurgeon,
-      operation?.medicalTeam?.assistantSurgeon,
-      operation?.medicalTeam?.anesthesiologist,
-      operation?.medicalTeam?.assistantAnesthesia,
-    ].filter((doctor): doctor is Doctor => Boolean(doctor));
-  }, [operation]);
-
-  const nurses = useMemo(() => {
-    return (operation?.teamMembers ?? [])
-      .map((member) => member.nurse)
-      .filter((nurse): nurse is Nurse => Boolean(nurse));
-  }, [operation]);
-
-  if (isLoading) {
-    return (
-      <div className="operation-detail-page page">
-        <Spin />
-      </div>
-    );
-  }
-
-  if (!operation) {
-    return (
-      <div className="operation-detail-page page">
-        <Empty description={t('common.noData')} />
-      </div>
-    );
-  }
-
+  const procedures = operation.procedures?.length ? operation.procedures : [{ id: 'legacy', name: operation.name, catalog: operation.catalog, specialty: operation.specialty, sortOrder: 0 }];
+  const files = operation.files ?? [];
   const statusColor = getStatusColor(operation.status);
-  const procedures = operation.procedures?.length
-    ? operation.procedures
-    : [{ id: 'legacy', name: operation.name, catalog: operation.catalog, specialty: operation.specialty, sortOrder: 0 }];
-  const beforeFiles = (operation.files ?? []).filter((file) => isBeforeFileType(file.fileType));
-  const afterFiles = (operation.files ?? []).filter((file) => isAfterFileType(file.fileType));
   const cost = operation.cost;
+  const currency = t('common.currency', { defaultValue: 'EGP' });
 
-  return (
-    <div className="operation-detail-page page">
-      {contextHolder}
-      <div className="pageHeader">
-        <div className="headerLeft">
-          <Button icon={<ArrowLeftOutlined />} onClick={() => navigate('/operations')} />
-          <div className="headerInfo">
-            <h1 className="pageTitle">{operation.name}</h1>
-            <div className="headerMeta">
-              <Tag color={statusColor}>{OPERATION_STATUSES.find((s) => s.value === operation.status)?.label}</Tag>
-              {operation.hospital?.name && <span><BankOutlined /> {operation.hospital.name}</span>}
-              <span><CalendarOutlined /> {formatOperationDate(operation.operationDate)}</span>
-              <span><ClockCircleOutlined /> {formatTime(operation.operationTime)}</span>
-              {operation.duration ? <span>{operation.duration} {t('common.minutes')}</span> : null}
-            </div>
-          </div>
-        </div>
-        <Space wrap>
-          <Select
-            value={operation.status}
-            onChange={(status) => changeStatusMutation.mutate(status)}
-            options={OPERATION_STATUSES.map((s) => ({ value: s.value, label: s.label }))}
-            style={{ minWidth: 140 }}
-          />
-          <Button icon={<EditOutlined />} onClick={() => navigate(`/operations/${operation.id}/edit`)}>
-            {t('common.edit')}
-          </Button>
-          <Popconfirm title={t('common.delete')} onConfirm={() => deleteMutation.mutate()}>
-            <Button danger icon={<DeleteOutlined />}>{t('common.delete')}</Button>
-          </Popconfirm>
-        </Space>
-      </div>
+  const clinicalFiles = <Flex vertical gap={16}>
+    <Flex justify="space-between" align="center"><div><Typography.Title level={4} style={{ margin: 0 }}>Clinical Files</Typography.Title><Typography.Text type="secondary">Keep the case documentation close to the operation.</Typography.Text></div><Upload showUploadList={false} beforeUpload={(file) => { const fd = new FormData(); fd.append('file', file); fd.append('fileType', 'BEFORE_IMAGE'); uploadMutation.mutate(fd); return false; }}><Button type="primary" icon={<UploadOutlined />} loading={uploadMutation.isPending}>Upload File</Button></Upload></Flex>
+    {files.length ? <div className="fileGrid">{files.map((file) => <FileCard key={file.id} file={file} onDelete={(fileId) => deleteFileMutation.mutate(fileId)} />)}</div> : <Card><Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="No clinical files yet" /></Card>}
+  </Flex>;
 
-      <div className="detailLayout">
-        <div className="detailMain">
-          <Card title={t('operations.procedures')}>
-            {procedures.map((procedure, index) => (
-              <div key={procedure.id} className="procedureRow">
-                <Typography.Text strong>
-                  {index + 1}. {procedure.name}
-                </Typography.Text>
-                <div className="procedureMeta">
-                  {[procedure.catalog?.specialty, procedure.catalog?.subspecialty, procedure.specialty]
-                    .filter(Boolean)
-                    .map((item) => getSpecialtyLabel(item as { name: string; nameAr?: string | null }, i18n.language))
-                    .filter((value, idx, arr) => arr.indexOf(value) === idx)
-                    .join(' → ')}
-                </div>
-              </div>
-            ))}
-          </Card>
+  const overview = <Flex vertical gap={16}>
+    <Card className="case-hero-card">
+      <Flex justify="space-between" align="flex-start" gap={16} wrap>
+        <div><Typography.Text type="secondary">Surgical Case</Typography.Text><Typography.Title level={2} style={{ margin: '4px 0 8px' }}>{operation.name}</Typography.Title><Space wrap><Tag color={statusColor}>{OPERATION_STATUSES.find((s) => s.value === operation.status)?.label ?? operation.status}</Tag>{operation.specialty && <Tag>{getSpecialtyLabel(operation.specialty, i18n.language)}</Tag>}</Space></div>
+        <Select value={operation.status} onChange={(status) => changeStatusMutation.mutate(status)} loading={changeStatusMutation.isPending} options={OPERATION_STATUSES.map((s) => ({ value: s.value, label: s.label }))} style={{ minWidth: 150 }} />
+      </Flex>
+      <Flex className="case-meta-grid" gap={12} wrap style={{ marginTop: 24 }}>
+        <Card size="small"><Typography.Text type="secondary">Patient</Typography.Text><Typography.Text strong>{operation.patient?.fullName ?? '—'}</Typography.Text></Card>
+        <Card size="small"><Typography.Text type="secondary">Hospital</Typography.Text><Typography.Text strong>{operation.hospital?.name ?? '—'}</Typography.Text></Card>
+        <Card size="small"><Typography.Text type="secondary">Date & Time</Typography.Text><Typography.Text strong>{formatOperationDate(operation.operationDate)} · {formatTime(operation.operationTime)}</Typography.Text></Card>
+        <Card size="small"><Typography.Text type="secondary">Room</Typography.Text><Typography.Text strong>{operation.operationRoom ?? '—'}</Typography.Text></Card>
+      </Flex>
+    </Card>
+    <Flex gap={16} wrap>
+      <Card title="Patient" style={{ flex: '1 1 420px' }}><Descriptions column={1} size="small"><Descriptions.Item label="Name">{operation.patient?.fullName ?? '—'}</Descriptions.Item><Descriptions.Item label="Age">{operation.patient?.age ?? '—'}</Descriptions.Item><Descriptions.Item label="Gender">{operation.patient?.gender ?? '—'}</Descriptions.Item><Descriptions.Item label="Mobile">{operation.patient?.mobile ?? '—'}</Descriptions.Item></Descriptions></Card>
+      <Card title="Procedure" style={{ flex: '1 1 420px' }}>{procedures.map((procedure, index) => <div key={procedure.id} style={{ marginBottom: 12 }}><Typography.Text strong>{index + 1}. {procedure.name}</Typography.Text></div>)}{operation.diagnosis && <><Typography.Text type="secondary">Diagnosis</Typography.Text><Typography.Paragraph style={{ marginTop: 4 }}>{operation.diagnosis}</Typography.Paragraph></>}</Card>
+    </Flex>
+  </Flex>;
 
-          {operation.diagnosis && (
-            <Card title={t('operations.diagnosis')}>{operation.diagnosis}</Card>
-          )}
+  const team = <Flex vertical gap={16}><Card title="Doctors" extra={<TeamOutlined />}>{doctors.length ? <div className="staffGrid">{doctors.map((doctor) => <StaffChip key={doctor.id} name={doctor.name} subtitle={(doctor.specialties ?? []).map((s) => s.name).join(', ')} />)}</div> : <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />}</Card><Card title="Nursing" >{nurses.length ? <div className="staffGrid">{nurses.map((nurse) => <StaffChip key={nurse.id} name={nurse.name} subtitle={t('nurses.role', { defaultValue: 'Nurse' })} />)}</div> : <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />}</Card></Flex>;
 
-          <Card title={t('operations.medicalTeam')}>
-            <Typography.Text type="secondary">{t('operations.teamDoctors')}</Typography.Text>
-            <div className="staffGrid">
-              {doctors.length ? doctors.map((doctor) => (
-                <StaffChip
-                  key={doctor.id}
-                  name={doctor.name}
-                  subtitle={(doctor.specialties ?? []).map((s) => s.name).join(', ')}
-                />
-              )) : <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />}
-            </div>
-            <Typography.Text type="secondary">{t('operations.teamNurses')}</Typography.Text>
-            <div className="staffGrid">
-              {nurses.length ? nurses.map((nurse) => (
-                <StaffChip key={nurse.id} name={nurse.name} subtitle={t('nurses.role')} />
-              )) : <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />}
-            </div>
-          </Card>
+  const timeline = <Card title="Case Timeline" extra={<HistoryOutlined />}>{operation.timeline?.length ? <Timeline items={operation.timeline.map((item) => ({ children: <div><Typography.Text strong>{item.action}</Typography.Text><div><Typography.Text type="secondary">{item.description ?? ''}</Typography.Text></div><Typography.Text type="secondary">{new Date(item.createdAt).toLocaleString()}</Typography.Text></div> }))} /> : <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="No timeline events yet" />}</Card>;
 
-          <Card
-            title={t('operations.files')}
-            extra={
-              <Upload
-                showUploadList={false}
-                beforeUpload={(file) => {
-                  const fd = new FormData();
-                  fd.append('file', file);
-                  fd.append('fileType', 'BEFORE_IMAGE');
-                  uploadMutation.mutate(fd);
-                  return false;
-                }}
-              >
-                <Button icon={<UploadOutlined />} size="small">{t('common.upload')}</Button>
-              </Upload>
-            }
-          >
-            <Typography.Text type="secondary">{t('operations.beforeOperation')}</Typography.Text>
-            <div className="fileGrid">
-              {beforeFiles.map((file) => (
-                <FileCard key={file.id} file={file} onDelete={(fileId) => deleteFileMutation.mutate(fileId)} />
-              ))}
-            </div>
-            <Typography.Text type="secondary">{t('operations.afterOperation')}</Typography.Text>
-            <div className="fileGrid">
-              {afterFiles.map((file) => (
-                <FileCard key={file.id} file={file} onDelete={(fileId) => deleteFileMutation.mutate(fileId)} />
-              ))}
-            </div>
-          </Card>
-
-          {operation.notes && (
-            <Card title={t('operations.notes')}>{operation.notes}</Card>
-          )}
-        </div>
-
-        <div className="detailSide">
-          <Card title={t('operations.patient')}>
-            <Descriptions column={1} size="small">
-              <Descriptions.Item label={t('patients.fullName')}>{operation.patient?.fullName ?? '—'}</Descriptions.Item>
-              <Descriptions.Item label={t('common.age')}>{operation.patient?.age ?? '—'}</Descriptions.Item>
-              <Descriptions.Item label={t('common.gender')}>{operation.patient?.gender ?? '—'}</Descriptions.Item>
-              <Descriptions.Item label={t('patients.mobile')}>{operation.patient?.mobile ?? '—'}</Descriptions.Item>
-              <Descriptions.Item label="ID">{operation.patient?.id ?? '—'}</Descriptions.Item>
-            </Descriptions>
-          </Card>
-
-          <Card title={t('operations.hospital')}>
-            <Descriptions column={1} size="small">
-              <Descriptions.Item label={t('operations.hospital')}>{operation.hospital?.name ?? '—'}</Descriptions.Item>
-              <Descriptions.Item label={t('operations.operationRoom')}>{operation.operationRoom ?? '—'}</Descriptions.Item>
-              <Descriptions.Item label={t('operations.operationDate')}>{formatOperationDate(operation.operationDate)}</Descriptions.Item>
-              <Descriptions.Item label={t('operations.operationTime')}>{formatTime(operation.operationTime)}</Descriptions.Item>
-            </Descriptions>
-          </Card>
-
-          <Card title={t('operations.payment')}>
-            {cost ? (
-              <Descriptions column={1} size="small">
-                <Descriptions.Item label={t('operations.totalCost')}>{formatCurrency(Number(cost.totalCost), currency)}</Descriptions.Item>
-                <Descriptions.Item label={t('operations.paidAmount')}>{formatCurrency(Number(cost.paidAmount), currency)}</Descriptions.Item>
-                <Descriptions.Item label={t('operations.remaining')}>
-                  {formatCurrency(Number(cost.remainingAmount ?? Number(cost.totalCost) - Number(cost.paidAmount)), currency)}
-                </Descriptions.Item>
-                <Descriptions.Item label={t('operations.paymentStatus')}>{cost.paymentStatus}</Descriptions.Item>
-              </Descriptions>
-            ) : (
-              <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description={t('operations.noCost')} />
-            )}
-          </Card>
-        </div>
-      </div>
+  return <div className="operation-detail-page page">
+    {contextHolder}
+    <div className="pageHeader">
+      <Flex align="center" gap={12}><Button icon={<ArrowLeftOutlined />} onClick={() => navigate('/operations')} /><div><Typography.Title level={3} style={{ margin: 0 }}>{operation.name}</Typography.Title><Typography.Text type="secondary"><BankOutlined /> {operation.hospital?.name ?? '—'} · <CalendarOutlined /> {formatOperationDate(operation.operationDate)} · <ClockCircleOutlined /> {formatTime(operation.operationTime)}</Typography.Text></div></Flex>
+      <Space wrap><Button icon={<EditOutlined />} onClick={() => navigate(`/operations/${operation.id}/edit`)}>{t('common.edit')}</Button><Popconfirm title={t('common.delete')} onConfirm={() => deleteMutation.mutate()}><Button danger icon={<DeleteOutlined />}>{t('common.delete')}</Button></Popconfirm></Space>
     </div>
-  );
+    <Tabs size="large" className="operation-tabs" items={[
+      { key: 'overview', label: 'Overview', children: overview },
+      { key: 'clinical', label: 'Clinical Files', icon: <FileImageOutlined />, children: clinicalFiles },
+      { key: 'team', label: 'Medical Team', icon: <TeamOutlined />, children: team },
+      { key: 'financials', label: 'Financials', icon: <DollarOutlined />, children: <CostBreakdownCard operationId={operation.id} cost={cost} currency={currency} /> },
+      { key: 'timeline', label: 'Timeline', icon: <HistoryOutlined />, children: timeline },
+    ]} />
+  </div>;
 }
