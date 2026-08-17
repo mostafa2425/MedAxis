@@ -1,8 +1,18 @@
 import { hospitalRepo } from '../repositories/hospital.repo';
 import { NotFoundError } from '../utils/errors';
 
+export type HospitalInput = {
+  name: string;
+  nameAr?: string;
+  address?: string;
+  city?: string;
+  governorateId?: string;
+  phone?: string;
+  notes?: string;
+};
+
 class HospitalService {
-  async getAll(params: { page: number; limit: number; search?: string; userId: string }) {
+  async getAll(params: { page: number; limit: number; search?: string; governorateId?: string; userId: string }) {
     return hospitalRepo.findAll(params);
   }
 
@@ -20,15 +30,11 @@ class HospitalService {
     await this.getById(id, userId);
   }
 
-  async create(data: { name: string; address?: string; phone?: string }, userId: string) {
+  async create(data: HospitalInput, userId: string) {
     return hospitalRepo.create({ ...data, createdBy: userId });
   }
 
-  async update(
-    id: string,
-    userId: string,
-    data: { name?: string; address?: string; phone?: string },
-  ) {
+  async update(id: string, userId: string, data: Partial<HospitalInput>) {
     const owned = await hospitalRepo.findOwned(id, userId);
     if (!owned) throw new NotFoundError('Hospital');
     return hospitalRepo.update(id, data);
