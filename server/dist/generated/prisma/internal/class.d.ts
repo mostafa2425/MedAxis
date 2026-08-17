@@ -195,6 +195,17 @@ export interface PrismaClient<in LogOpts extends Prisma.LogLevel = never, in out
         omit: OmitOpts;
     }>;
     /**
+     * `prisma.governorate`: Exposes CRUD operations for the **Governorate** model.
+      * Example usage:
+      * ```ts
+      * // Fetch zero or more Governorates
+      * const governorates = await prisma.governorate.findMany()
+      * ```
+      */
+    get governorate(): Prisma.GovernorateDelegate<ExtArgs, {
+        omit: OmitOpts;
+    }>;
+    /**
      * `prisma.hospital`: Exposes CRUD operations for the **Hospital** model.
       * Example usage:
       * ```ts

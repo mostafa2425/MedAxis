@@ -22,8 +22,7 @@ class HospitalController {
     }
     async getActive(req, res, next) {
         try {
-            const hospitals = await hospital_service_1.hospitalService.getActive(userId(req));
-            return (0, response_1.sendSuccess)(res, hospitals);
+            return (0, response_1.sendSuccess)(res, await hospital_service_1.hospitalService.getActive(userId(req)));
         }
         catch (err) {
             next(err);
@@ -31,8 +30,7 @@ class HospitalController {
     }
     async getById(req, res, next) {
         try {
-            const hospital = await hospital_service_1.hospitalService.getById(req.params.id, userId(req));
-            return (0, response_1.sendSuccess)(res, hospital);
+            return (0, response_1.sendSuccess)(res, await hospital_service_1.hospitalService.getById(req.params.id, userId(req)));
         }
         catch (err) {
             next(err);
@@ -41,11 +39,9 @@ class HospitalController {
     async create(req, res, next) {
         try {
             const parsed = hospital_validator_1.createHospitalSchema.safeParse(req.body);
-            if (!parsed.success) {
+            if (!parsed.success)
                 throw new errors_1.AppError(parsed.error.issues[0]?.message || 'Validation error', 400, parsed.error.issues);
-            }
-            const hospital = await hospital_service_1.hospitalService.create(parsed.data, userId(req));
-            return (0, response_1.sendSuccess)(res, hospital, 'Hospital created', 201);
+            return (0, response_1.sendSuccess)(res, await hospital_service_1.hospitalService.create(parsed.data, userId(req)), 'Hospital created', 201);
         }
         catch (err) {
             next(err);
@@ -54,11 +50,9 @@ class HospitalController {
     async update(req, res, next) {
         try {
             const parsed = hospital_validator_1.updateHospitalSchema.safeParse(req.body);
-            if (!parsed.success) {
+            if (!parsed.success)
                 throw new errors_1.AppError(parsed.error.issues[0]?.message || 'Validation error', 400, parsed.error.issues);
-            }
-            const hospital = await hospital_service_1.hospitalService.update(req.params.id, userId(req), parsed.data);
-            return (0, response_1.sendSuccess)(res, hospital, 'Hospital updated');
+            return (0, response_1.sendSuccess)(res, await hospital_service_1.hospitalService.update(req.params.id, userId(req), parsed.data), 'Hospital updated');
         }
         catch (err) {
             next(err);
@@ -66,8 +60,7 @@ class HospitalController {
     }
     async delete(req, res, next) {
         try {
-            await hospital_service_1.hospitalService.delete(req.params.id, userId(req));
-            return (0, response_1.sendSuccess)(res, null, 'Hospital deleted');
+            return (0, response_1.sendSuccess)(res, await hospital_service_1.hospitalService.delete(req.params.id, userId(req)), 'Hospital deleted');
         }
         catch (err) {
             next(err);

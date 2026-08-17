@@ -17,6 +17,11 @@ declare class ExportService {
                 totalCost: import("@prisma/client-runtime-utils").Decimal;
                 paidAmount: import("@prisma/client-runtime-utils").Decimal;
                 remainingAmount: import("@prisma/client-runtime-utils").Decimal;
+                hospitalCost: import("@prisma/client-runtime-utils").Decimal;
+                nursingCost: import("@prisma/client-runtime-utils").Decimal;
+                assistantDoctorsCost: import("@prisma/client-runtime-utils").Decimal;
+                equipmentCost: import("@prisma/client-runtime-utils").Decimal;
+                otherCost: import("@prisma/client-runtime-utils").Decimal;
                 paymentMethod: import("../prisma").PaymentMethod;
                 paymentStatus: import("../prisma").PaymentStatus;
                 paymentNotes: string | null;

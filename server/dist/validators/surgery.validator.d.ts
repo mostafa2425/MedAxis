@@ -32,6 +32,11 @@ export declare const createOperationSchema: z.ZodObject<{
         totalCost: z.ZodCoercedNumber<unknown>;
         paidAmount: z.ZodOptional<z.ZodCoercedNumber<unknown>>;
         remainingAmount: z.ZodOptional<z.ZodCoercedNumber<unknown>>;
+        hospitalCost: z.ZodDefault<z.ZodCoercedNumber<unknown>>;
+        nursingCost: z.ZodDefault<z.ZodCoercedNumber<unknown>>;
+        assistantDoctorsCost: z.ZodDefault<z.ZodCoercedNumber<unknown>>;
+        equipmentCost: z.ZodDefault<z.ZodCoercedNumber<unknown>>;
+        otherCost: z.ZodDefault<z.ZodCoercedNumber<unknown>>;
         paymentMethod: z.ZodOptional<z.ZodEnum<{
             BANK_TRANSFER: "BANK_TRANSFER";
             CARD: "CARD";
@@ -80,6 +85,11 @@ export declare const updateOperationSchema: z.ZodObject<{
         totalCost: z.ZodCoercedNumber<unknown>;
         paidAmount: z.ZodOptional<z.ZodCoercedNumber<unknown>>;
         remainingAmount: z.ZodOptional<z.ZodCoercedNumber<unknown>>;
+        hospitalCost: z.ZodDefault<z.ZodCoercedNumber<unknown>>;
+        nursingCost: z.ZodDefault<z.ZodCoercedNumber<unknown>>;
+        assistantDoctorsCost: z.ZodDefault<z.ZodCoercedNumber<unknown>>;
+        equipmentCost: z.ZodDefault<z.ZodCoercedNumber<unknown>>;
+        otherCost: z.ZodDefault<z.ZodCoercedNumber<unknown>>;
         paymentMethod: z.ZodOptional<z.ZodEnum<{
             BANK_TRANSFER: "BANK_TRANSFER";
             CARD: "CARD";
@@ -99,6 +109,11 @@ export declare const updateCostSchema: z.ZodObject<{
     totalCost: z.ZodCoercedNumber<unknown>;
     paidAmount: z.ZodOptional<z.ZodCoercedNumber<unknown>>;
     remainingAmount: z.ZodOptional<z.ZodCoercedNumber<unknown>>;
+    hospitalCost: z.ZodDefault<z.ZodCoercedNumber<unknown>>;
+    nursingCost: z.ZodDefault<z.ZodCoercedNumber<unknown>>;
+    assistantDoctorsCost: z.ZodDefault<z.ZodCoercedNumber<unknown>>;
+    equipmentCost: z.ZodDefault<z.ZodCoercedNumber<unknown>>;
+    otherCost: z.ZodDefault<z.ZodCoercedNumber<unknown>>;
     paymentMethod: z.ZodOptional<z.ZodEnum<{
         BANK_TRANSFER: "BANK_TRANSFER";
         CARD: "CARD";

@@ -404,6 +404,7 @@ export const ModelName = {
   DoctorSpecialty: 'DoctorSpecialty',
   DoctorSubspecialty: 'DoctorSubspecialty',
   OperationCatalog: 'OperationCatalog',
+  Governorate: 'Governorate',
   Hospital: 'Hospital',
   Nurse: 'Nurse',
   Operation: 'Operation',
@@ -428,7 +429,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "patient" | "specialty" | "doctor" | "doctorSpecialty" | "doctorSubspecialty" | "operationCatalog" | "hospital" | "nurse" | "operation" | "operationMedicalTeam" | "operationProcedure" | "operationTeamMember" | "operationCost" | "operationFile" | "operationTimeline"
+    modelProps: "user" | "patient" | "specialty" | "doctor" | "doctorSpecialty" | "doctorSubspecialty" | "operationCatalog" | "governorate" | "hospital" | "nurse" | "operation" | "operationMedicalTeam" | "operationProcedure" | "operationTeamMember" | "operationCost" | "operationFile" | "operationTimeline"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -947,6 +948,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.OperationCatalogCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.OperationCatalogCountAggregateOutputType> | number
+        }
+      }
+    }
+    Governorate: {
+      payload: Prisma.$GovernoratePayload<ExtArgs>
+      fields: Prisma.GovernorateFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.GovernorateFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$GovernoratePayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.GovernorateFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$GovernoratePayload>
+        }
+        findFirst: {
+          args: Prisma.GovernorateFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$GovernoratePayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.GovernorateFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$GovernoratePayload>
+        }
+        findMany: {
+          args: Prisma.GovernorateFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$GovernoratePayload>[]
+        }
+        create: {
+          args: Prisma.GovernorateCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$GovernoratePayload>
+        }
+        createMany: {
+          args: Prisma.GovernorateCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.GovernorateCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$GovernoratePayload>[]
+        }
+        delete: {
+          args: Prisma.GovernorateDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$GovernoratePayload>
+        }
+        update: {
+          args: Prisma.GovernorateUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$GovernoratePayload>
+        }
+        deleteMany: {
+          args: Prisma.GovernorateDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.GovernorateUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.GovernorateUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$GovernoratePayload>[]
+        }
+        upsert: {
+          args: Prisma.GovernorateUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$GovernoratePayload>
+        }
+        aggregate: {
+          args: Prisma.GovernorateAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateGovernorate>
+        }
+        groupBy: {
+          args: Prisma.GovernorateGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.GovernorateGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.GovernorateCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.GovernorateCountAggregateOutputType> | number
         }
       }
     }
@@ -1750,11 +1825,26 @@ export const OperationCatalogScalarFieldEnum = {
 export type OperationCatalogScalarFieldEnum = (typeof OperationCatalogScalarFieldEnum)[keyof typeof OperationCatalogScalarFieldEnum]
 
 
+export const GovernorateScalarFieldEnum = {
+  id: 'id',
+  nameEn: 'nameEn',
+  nameAr: 'nameAr',
+  code: 'code',
+  isActive: 'isActive'
+} as const
+
+export type GovernorateScalarFieldEnum = (typeof GovernorateScalarFieldEnum)[keyof typeof GovernorateScalarFieldEnum]
+
+
 export const HospitalScalarFieldEnum = {
   id: 'id',
   name: 'name',
+  nameAr: 'nameAr',
   address: 'address',
+  city: 'city',
+  governorateId: 'governorateId',
   phone: 'phone',
+  notes: 'notes',
   isActive: 'isActive',
   createdBy: 'createdBy',
   createdAt: 'createdAt',
@@ -1847,6 +1937,11 @@ export const OperationCostScalarFieldEnum = {
   totalCost: 'totalCost',
   paidAmount: 'paidAmount',
   remainingAmount: 'remainingAmount',
+  hospitalCost: 'hospitalCost',
+  nursingCost: 'nursingCost',
+  assistantDoctorsCost: 'assistantDoctorsCost',
+  equipmentCost: 'equipmentCost',
+  otherCost: 'otherCost',
   paymentMethod: 'paymentMethod',
   paymentStatus: 'paymentStatus',
   paymentNotes: 'paymentNotes',
@@ -2232,6 +2327,7 @@ export type GlobalOmitConfig = {
   doctorSpecialty?: Prisma.DoctorSpecialtyOmit
   doctorSubspecialty?: Prisma.DoctorSubspecialtyOmit
   operationCatalog?: Prisma.OperationCatalogOmit
+  governorate?: Prisma.GovernorateOmit
   hospital?: Prisma.HospitalOmit
   nurse?: Prisma.NurseOmit
   operation?: Prisma.OperationOmit

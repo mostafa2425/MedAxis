@@ -30,12 +30,22 @@ export type OperationCostAvgAggregateOutputType = {
   totalCost: runtime.Decimal | null
   paidAmount: runtime.Decimal | null
   remainingAmount: runtime.Decimal | null
+  hospitalCost: runtime.Decimal | null
+  nursingCost: runtime.Decimal | null
+  assistantDoctorsCost: runtime.Decimal | null
+  equipmentCost: runtime.Decimal | null
+  otherCost: runtime.Decimal | null
 }
 
 export type OperationCostSumAggregateOutputType = {
   totalCost: runtime.Decimal | null
   paidAmount: runtime.Decimal | null
   remainingAmount: runtime.Decimal | null
+  hospitalCost: runtime.Decimal | null
+  nursingCost: runtime.Decimal | null
+  assistantDoctorsCost: runtime.Decimal | null
+  equipmentCost: runtime.Decimal | null
+  otherCost: runtime.Decimal | null
 }
 
 export type OperationCostMinAggregateOutputType = {
@@ -44,6 +54,11 @@ export type OperationCostMinAggregateOutputType = {
   totalCost: runtime.Decimal | null
   paidAmount: runtime.Decimal | null
   remainingAmount: runtime.Decimal | null
+  hospitalCost: runtime.Decimal | null
+  nursingCost: runtime.Decimal | null
+  assistantDoctorsCost: runtime.Decimal | null
+  equipmentCost: runtime.Decimal | null
+  otherCost: runtime.Decimal | null
   paymentMethod: $Enums.PaymentMethod | null
   paymentStatus: $Enums.PaymentStatus | null
   paymentNotes: string | null
@@ -57,6 +72,11 @@ export type OperationCostMaxAggregateOutputType = {
   totalCost: runtime.Decimal | null
   paidAmount: runtime.Decimal | null
   remainingAmount: runtime.Decimal | null
+  hospitalCost: runtime.Decimal | null
+  nursingCost: runtime.Decimal | null
+  assistantDoctorsCost: runtime.Decimal | null
+  equipmentCost: runtime.Decimal | null
+  otherCost: runtime.Decimal | null
   paymentMethod: $Enums.PaymentMethod | null
   paymentStatus: $Enums.PaymentStatus | null
   paymentNotes: string | null
@@ -70,6 +90,11 @@ export type OperationCostCountAggregateOutputType = {
   totalCost: number
   paidAmount: number
   remainingAmount: number
+  hospitalCost: number
+  nursingCost: number
+  assistantDoctorsCost: number
+  equipmentCost: number
+  otherCost: number
   paymentMethod: number
   paymentStatus: number
   paymentNotes: number
@@ -83,12 +108,22 @@ export type OperationCostAvgAggregateInputType = {
   totalCost?: true
   paidAmount?: true
   remainingAmount?: true
+  hospitalCost?: true
+  nursingCost?: true
+  assistantDoctorsCost?: true
+  equipmentCost?: true
+  otherCost?: true
 }
 
 export type OperationCostSumAggregateInputType = {
   totalCost?: true
   paidAmount?: true
   remainingAmount?: true
+  hospitalCost?: true
+  nursingCost?: true
+  assistantDoctorsCost?: true
+  equipmentCost?: true
+  otherCost?: true
 }
 
 export type OperationCostMinAggregateInputType = {
@@ -97,6 +132,11 @@ export type OperationCostMinAggregateInputType = {
   totalCost?: true
   paidAmount?: true
   remainingAmount?: true
+  hospitalCost?: true
+  nursingCost?: true
+  assistantDoctorsCost?: true
+  equipmentCost?: true
+  otherCost?: true
   paymentMethod?: true
   paymentStatus?: true
   paymentNotes?: true
@@ -110,6 +150,11 @@ export type OperationCostMaxAggregateInputType = {
   totalCost?: true
   paidAmount?: true
   remainingAmount?: true
+  hospitalCost?: true
+  nursingCost?: true
+  assistantDoctorsCost?: true
+  equipmentCost?: true
+  otherCost?: true
   paymentMethod?: true
   paymentStatus?: true
   paymentNotes?: true
@@ -123,6 +168,11 @@ export type OperationCostCountAggregateInputType = {
   totalCost?: true
   paidAmount?: true
   remainingAmount?: true
+  hospitalCost?: true
+  nursingCost?: true
+  assistantDoctorsCost?: true
+  equipmentCost?: true
+  otherCost?: true
   paymentMethod?: true
   paymentStatus?: true
   paymentNotes?: true
@@ -223,6 +273,11 @@ export type OperationCostGroupByOutputType = {
   totalCost: runtime.Decimal
   paidAmount: runtime.Decimal
   remainingAmount: runtime.Decimal
+  hospitalCost: runtime.Decimal
+  nursingCost: runtime.Decimal
+  assistantDoctorsCost: runtime.Decimal
+  equipmentCost: runtime.Decimal
+  otherCost: runtime.Decimal
   paymentMethod: $Enums.PaymentMethod
   paymentStatus: $Enums.PaymentStatus
   paymentNotes: string | null
@@ -259,6 +314,11 @@ export type OperationCostWhereInput = {
   totalCost?: Prisma.DecimalFilter<"OperationCost"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   paidAmount?: Prisma.DecimalFilter<"OperationCost"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   remainingAmount?: Prisma.DecimalFilter<"OperationCost"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  hospitalCost?: Prisma.DecimalFilter<"OperationCost"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  nursingCost?: Prisma.DecimalFilter<"OperationCost"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  assistantDoctorsCost?: Prisma.DecimalFilter<"OperationCost"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  equipmentCost?: Prisma.DecimalFilter<"OperationCost"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  otherCost?: Prisma.DecimalFilter<"OperationCost"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   paymentMethod?: Prisma.EnumPaymentMethodFilter<"OperationCost"> | $Enums.PaymentMethod
   paymentStatus?: Prisma.EnumPaymentStatusFilter<"OperationCost"> | $Enums.PaymentStatus
   paymentNotes?: Prisma.StringNullableFilter<"OperationCost"> | string | null
@@ -273,6 +333,11 @@ export type OperationCostOrderByWithRelationInput = {
   totalCost?: Prisma.SortOrder
   paidAmount?: Prisma.SortOrder
   remainingAmount?: Prisma.SortOrder
+  hospitalCost?: Prisma.SortOrder
+  nursingCost?: Prisma.SortOrder
+  assistantDoctorsCost?: Prisma.SortOrder
+  equipmentCost?: Prisma.SortOrder
+  otherCost?: Prisma.SortOrder
   paymentMethod?: Prisma.SortOrder
   paymentStatus?: Prisma.SortOrder
   paymentNotes?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -290,6 +355,11 @@ export type OperationCostWhereUniqueInput = Prisma.AtLeast<{
   totalCost?: Prisma.DecimalFilter<"OperationCost"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   paidAmount?: Prisma.DecimalFilter<"OperationCost"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   remainingAmount?: Prisma.DecimalFilter<"OperationCost"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  hospitalCost?: Prisma.DecimalFilter<"OperationCost"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  nursingCost?: Prisma.DecimalFilter<"OperationCost"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  assistantDoctorsCost?: Prisma.DecimalFilter<"OperationCost"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  equipmentCost?: Prisma.DecimalFilter<"OperationCost"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  otherCost?: Prisma.DecimalFilter<"OperationCost"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   paymentMethod?: Prisma.EnumPaymentMethodFilter<"OperationCost"> | $Enums.PaymentMethod
   paymentStatus?: Prisma.EnumPaymentStatusFilter<"OperationCost"> | $Enums.PaymentStatus
   paymentNotes?: Prisma.StringNullableFilter<"OperationCost"> | string | null
@@ -304,6 +374,11 @@ export type OperationCostOrderByWithAggregationInput = {
   totalCost?: Prisma.SortOrder
   paidAmount?: Prisma.SortOrder
   remainingAmount?: Prisma.SortOrder
+  hospitalCost?: Prisma.SortOrder
+  nursingCost?: Prisma.SortOrder
+  assistantDoctorsCost?: Prisma.SortOrder
+  equipmentCost?: Prisma.SortOrder
+  otherCost?: Prisma.SortOrder
   paymentMethod?: Prisma.SortOrder
   paymentStatus?: Prisma.SortOrder
   paymentNotes?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -325,6 +400,11 @@ export type OperationCostScalarWhereWithAggregatesInput = {
   totalCost?: Prisma.DecimalWithAggregatesFilter<"OperationCost"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   paidAmount?: Prisma.DecimalWithAggregatesFilter<"OperationCost"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   remainingAmount?: Prisma.DecimalWithAggregatesFilter<"OperationCost"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  hospitalCost?: Prisma.DecimalWithAggregatesFilter<"OperationCost"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  nursingCost?: Prisma.DecimalWithAggregatesFilter<"OperationCost"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  assistantDoctorsCost?: Prisma.DecimalWithAggregatesFilter<"OperationCost"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  equipmentCost?: Prisma.DecimalWithAggregatesFilter<"OperationCost"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  otherCost?: Prisma.DecimalWithAggregatesFilter<"OperationCost"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   paymentMethod?: Prisma.EnumPaymentMethodWithAggregatesFilter<"OperationCost"> | $Enums.PaymentMethod
   paymentStatus?: Prisma.EnumPaymentStatusWithAggregatesFilter<"OperationCost"> | $Enums.PaymentStatus
   paymentNotes?: Prisma.StringNullableWithAggregatesFilter<"OperationCost"> | string | null
@@ -337,6 +417,11 @@ export type OperationCostCreateInput = {
   totalCost?: runtime.Decimal | runtime.DecimalJsLike | number | string
   paidAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   remainingAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  hospitalCost?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  nursingCost?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  assistantDoctorsCost?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  equipmentCost?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  otherCost?: runtime.Decimal | runtime.DecimalJsLike | number | string
   paymentMethod?: $Enums.PaymentMethod
   paymentStatus?: $Enums.PaymentStatus
   paymentNotes?: string | null
@@ -351,6 +436,11 @@ export type OperationCostUncheckedCreateInput = {
   totalCost?: runtime.Decimal | runtime.DecimalJsLike | number | string
   paidAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   remainingAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  hospitalCost?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  nursingCost?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  assistantDoctorsCost?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  equipmentCost?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  otherCost?: runtime.Decimal | runtime.DecimalJsLike | number | string
   paymentMethod?: $Enums.PaymentMethod
   paymentStatus?: $Enums.PaymentStatus
   paymentNotes?: string | null
@@ -363,6 +453,11 @@ export type OperationCostUpdateInput = {
   totalCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   paidAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   remainingAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  hospitalCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  nursingCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  assistantDoctorsCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  equipmentCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  otherCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   paymentMethod?: Prisma.EnumPaymentMethodFieldUpdateOperationsInput | $Enums.PaymentMethod
   paymentStatus?: Prisma.EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
   paymentNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -377,6 +472,11 @@ export type OperationCostUncheckedUpdateInput = {
   totalCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   paidAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   remainingAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  hospitalCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  nursingCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  assistantDoctorsCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  equipmentCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  otherCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   paymentMethod?: Prisma.EnumPaymentMethodFieldUpdateOperationsInput | $Enums.PaymentMethod
   paymentStatus?: Prisma.EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
   paymentNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -390,6 +490,11 @@ export type OperationCostCreateManyInput = {
   totalCost?: runtime.Decimal | runtime.DecimalJsLike | number | string
   paidAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   remainingAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  hospitalCost?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  nursingCost?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  assistantDoctorsCost?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  equipmentCost?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  otherCost?: runtime.Decimal | runtime.DecimalJsLike | number | string
   paymentMethod?: $Enums.PaymentMethod
   paymentStatus?: $Enums.PaymentStatus
   paymentNotes?: string | null
@@ -402,6 +507,11 @@ export type OperationCostUpdateManyMutationInput = {
   totalCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   paidAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   remainingAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  hospitalCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  nursingCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  assistantDoctorsCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  equipmentCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  otherCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   paymentMethod?: Prisma.EnumPaymentMethodFieldUpdateOperationsInput | $Enums.PaymentMethod
   paymentStatus?: Prisma.EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
   paymentNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -415,6 +525,11 @@ export type OperationCostUncheckedUpdateManyInput = {
   totalCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   paidAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   remainingAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  hospitalCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  nursingCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  assistantDoctorsCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  equipmentCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  otherCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   paymentMethod?: Prisma.EnumPaymentMethodFieldUpdateOperationsInput | $Enums.PaymentMethod
   paymentStatus?: Prisma.EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
   paymentNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -433,6 +548,11 @@ export type OperationCostCountOrderByAggregateInput = {
   totalCost?: Prisma.SortOrder
   paidAmount?: Prisma.SortOrder
   remainingAmount?: Prisma.SortOrder
+  hospitalCost?: Prisma.SortOrder
+  nursingCost?: Prisma.SortOrder
+  assistantDoctorsCost?: Prisma.SortOrder
+  equipmentCost?: Prisma.SortOrder
+  otherCost?: Prisma.SortOrder
   paymentMethod?: Prisma.SortOrder
   paymentStatus?: Prisma.SortOrder
   paymentNotes?: Prisma.SortOrder
@@ -444,6 +564,11 @@ export type OperationCostAvgOrderByAggregateInput = {
   totalCost?: Prisma.SortOrder
   paidAmount?: Prisma.SortOrder
   remainingAmount?: Prisma.SortOrder
+  hospitalCost?: Prisma.SortOrder
+  nursingCost?: Prisma.SortOrder
+  assistantDoctorsCost?: Prisma.SortOrder
+  equipmentCost?: Prisma.SortOrder
+  otherCost?: Prisma.SortOrder
 }
 
 export type OperationCostMaxOrderByAggregateInput = {
@@ -452,6 +577,11 @@ export type OperationCostMaxOrderByAggregateInput = {
   totalCost?: Prisma.SortOrder
   paidAmount?: Prisma.SortOrder
   remainingAmount?: Prisma.SortOrder
+  hospitalCost?: Prisma.SortOrder
+  nursingCost?: Prisma.SortOrder
+  assistantDoctorsCost?: Prisma.SortOrder
+  equipmentCost?: Prisma.SortOrder
+  otherCost?: Prisma.SortOrder
   paymentMethod?: Prisma.SortOrder
   paymentStatus?: Prisma.SortOrder
   paymentNotes?: Prisma.SortOrder
@@ -465,6 +595,11 @@ export type OperationCostMinOrderByAggregateInput = {
   totalCost?: Prisma.SortOrder
   paidAmount?: Prisma.SortOrder
   remainingAmount?: Prisma.SortOrder
+  hospitalCost?: Prisma.SortOrder
+  nursingCost?: Prisma.SortOrder
+  assistantDoctorsCost?: Prisma.SortOrder
+  equipmentCost?: Prisma.SortOrder
+  otherCost?: Prisma.SortOrder
   paymentMethod?: Prisma.SortOrder
   paymentStatus?: Prisma.SortOrder
   paymentNotes?: Prisma.SortOrder
@@ -476,6 +611,11 @@ export type OperationCostSumOrderByAggregateInput = {
   totalCost?: Prisma.SortOrder
   paidAmount?: Prisma.SortOrder
   remainingAmount?: Prisma.SortOrder
+  hospitalCost?: Prisma.SortOrder
+  nursingCost?: Prisma.SortOrder
+  assistantDoctorsCost?: Prisma.SortOrder
+  equipmentCost?: Prisma.SortOrder
+  otherCost?: Prisma.SortOrder
 }
 
 export type OperationCostCreateNestedOneWithoutOperationInput = {
@@ -531,6 +671,11 @@ export type OperationCostCreateWithoutOperationInput = {
   totalCost?: runtime.Decimal | runtime.DecimalJsLike | number | string
   paidAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   remainingAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  hospitalCost?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  nursingCost?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  assistantDoctorsCost?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  equipmentCost?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  otherCost?: runtime.Decimal | runtime.DecimalJsLike | number | string
   paymentMethod?: $Enums.PaymentMethod
   paymentStatus?: $Enums.PaymentStatus
   paymentNotes?: string | null
@@ -543,6 +688,11 @@ export type OperationCostUncheckedCreateWithoutOperationInput = {
   totalCost?: runtime.Decimal | runtime.DecimalJsLike | number | string
   paidAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   remainingAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  hospitalCost?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  nursingCost?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  assistantDoctorsCost?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  equipmentCost?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  otherCost?: runtime.Decimal | runtime.DecimalJsLike | number | string
   paymentMethod?: $Enums.PaymentMethod
   paymentStatus?: $Enums.PaymentStatus
   paymentNotes?: string | null
@@ -571,6 +721,11 @@ export type OperationCostUpdateWithoutOperationInput = {
   totalCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   paidAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   remainingAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  hospitalCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  nursingCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  assistantDoctorsCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  equipmentCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  otherCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   paymentMethod?: Prisma.EnumPaymentMethodFieldUpdateOperationsInput | $Enums.PaymentMethod
   paymentStatus?: Prisma.EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
   paymentNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -583,6 +738,11 @@ export type OperationCostUncheckedUpdateWithoutOperationInput = {
   totalCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   paidAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   remainingAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  hospitalCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  nursingCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  assistantDoctorsCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  equipmentCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  otherCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   paymentMethod?: Prisma.EnumPaymentMethodFieldUpdateOperationsInput | $Enums.PaymentMethod
   paymentStatus?: Prisma.EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
   paymentNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -598,6 +758,11 @@ export type OperationCostSelect<ExtArgs extends runtime.Types.Extensions.Interna
   totalCost?: boolean
   paidAmount?: boolean
   remainingAmount?: boolean
+  hospitalCost?: boolean
+  nursingCost?: boolean
+  assistantDoctorsCost?: boolean
+  equipmentCost?: boolean
+  otherCost?: boolean
   paymentMethod?: boolean
   paymentStatus?: boolean
   paymentNotes?: boolean
@@ -612,6 +777,11 @@ export type OperationCostSelectCreateManyAndReturn<ExtArgs extends runtime.Types
   totalCost?: boolean
   paidAmount?: boolean
   remainingAmount?: boolean
+  hospitalCost?: boolean
+  nursingCost?: boolean
+  assistantDoctorsCost?: boolean
+  equipmentCost?: boolean
+  otherCost?: boolean
   paymentMethod?: boolean
   paymentStatus?: boolean
   paymentNotes?: boolean
@@ -626,6 +796,11 @@ export type OperationCostSelectUpdateManyAndReturn<ExtArgs extends runtime.Types
   totalCost?: boolean
   paidAmount?: boolean
   remainingAmount?: boolean
+  hospitalCost?: boolean
+  nursingCost?: boolean
+  assistantDoctorsCost?: boolean
+  equipmentCost?: boolean
+  otherCost?: boolean
   paymentMethod?: boolean
   paymentStatus?: boolean
   paymentNotes?: boolean
@@ -640,6 +815,11 @@ export type OperationCostSelectScalar = {
   totalCost?: boolean
   paidAmount?: boolean
   remainingAmount?: boolean
+  hospitalCost?: boolean
+  nursingCost?: boolean
+  assistantDoctorsCost?: boolean
+  equipmentCost?: boolean
+  otherCost?: boolean
   paymentMethod?: boolean
   paymentStatus?: boolean
   paymentNotes?: boolean
@@ -647,7 +827,7 @@ export type OperationCostSelectScalar = {
   updatedAt?: boolean
 }
 
-export type OperationCostOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "operationId" | "totalCost" | "paidAmount" | "remainingAmount" | "paymentMethod" | "paymentStatus" | "paymentNotes" | "createdAt" | "updatedAt", ExtArgs["result"]["operationCost"]>
+export type OperationCostOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "operationId" | "totalCost" | "paidAmount" | "remainingAmount" | "hospitalCost" | "nursingCost" | "assistantDoctorsCost" | "equipmentCost" | "otherCost" | "paymentMethod" | "paymentStatus" | "paymentNotes" | "createdAt" | "updatedAt", ExtArgs["result"]["operationCost"]>
 export type OperationCostInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   operation?: boolean | Prisma.OperationDefaultArgs<ExtArgs>
 }
@@ -669,6 +849,11 @@ export type $OperationCostPayload<ExtArgs extends runtime.Types.Extensions.Inter
     totalCost: runtime.Decimal
     paidAmount: runtime.Decimal
     remainingAmount: runtime.Decimal
+    hospitalCost: runtime.Decimal
+    nursingCost: runtime.Decimal
+    assistantDoctorsCost: runtime.Decimal
+    equipmentCost: runtime.Decimal
+    otherCost: runtime.Decimal
     paymentMethod: $Enums.PaymentMethod
     paymentStatus: $Enums.PaymentStatus
     paymentNotes: string | null
@@ -1103,6 +1288,11 @@ export interface OperationCostFieldRefs {
   readonly totalCost: Prisma.FieldRef<"OperationCost", 'Decimal'>
   readonly paidAmount: Prisma.FieldRef<"OperationCost", 'Decimal'>
   readonly remainingAmount: Prisma.FieldRef<"OperationCost", 'Decimal'>
+  readonly hospitalCost: Prisma.FieldRef<"OperationCost", 'Decimal'>
+  readonly nursingCost: Prisma.FieldRef<"OperationCost", 'Decimal'>
+  readonly assistantDoctorsCost: Prisma.FieldRef<"OperationCost", 'Decimal'>
+  readonly equipmentCost: Prisma.FieldRef<"OperationCost", 'Decimal'>
+  readonly otherCost: Prisma.FieldRef<"OperationCost", 'Decimal'>
   readonly paymentMethod: Prisma.FieldRef<"OperationCost", 'PaymentMethod'>
   readonly paymentStatus: Prisma.FieldRef<"OperationCost", 'PaymentStatus'>
   readonly paymentNotes: Prisma.FieldRef<"OperationCost", 'String'>

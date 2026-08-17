@@ -251,6 +251,7 @@ export declare const ModelName: {
     readonly DoctorSpecialty: 'DoctorSpecialty';
     readonly DoctorSubspecialty: 'DoctorSubspecialty';
     readonly OperationCatalog: 'OperationCatalog';
+    readonly Governorate: 'Governorate';
     readonly Hospital: 'Hospital';
     readonly Nurse: 'Nurse';
     readonly Operation: 'Operation';
@@ -272,7 +273,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         omit: GlobalOmitOptions;
     };
     meta: {
-        modelProps: "user" | "patient" | "specialty" | "doctor" | "doctorSpecialty" | "doctorSubspecialty" | "operationCatalog" | "hospital" | "nurse" | "operation" | "operationMedicalTeam" | "operationProcedure" | "operationTeamMember" | "operationCost" | "operationFile" | "operationTimeline";
+        modelProps: "user" | "patient" | "specialty" | "doctor" | "doctorSpecialty" | "doctorSubspecialty" | "operationCatalog" | "governorate" | "hospital" | "nurse" | "operation" | "operationMedicalTeam" | "operationProcedure" | "operationTeamMember" | "operationCost" | "operationFile" | "operationTimeline";
         txIsolationLevel: TransactionIsolationLevel;
     };
     model: {
@@ -791,6 +792,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
                 count: {
                     args: Prisma.OperationCatalogCountArgs<ExtArgs>;
                     result: runtime.Types.Utils.Optional<Prisma.OperationCatalogCountAggregateOutputType> | number;
+                };
+            };
+        };
+        Governorate: {
+            payload: Prisma.$GovernoratePayload<ExtArgs>;
+            fields: Prisma.GovernorateFieldRefs;
+            operations: {
+                findUnique: {
+                    args: Prisma.GovernorateFindUniqueArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$GovernoratePayload> | null;
+                };
+                findUniqueOrThrow: {
+                    args: Prisma.GovernorateFindUniqueOrThrowArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$GovernoratePayload>;
+                };
+                findFirst: {
+                    args: Prisma.GovernorateFindFirstArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$GovernoratePayload> | null;
+                };
+                findFirstOrThrow: {
+                    args: Prisma.GovernorateFindFirstOrThrowArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$GovernoratePayload>;
+                };
+                findMany: {
+                    args: Prisma.GovernorateFindManyArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$GovernoratePayload>[];
+                };
+                create: {
+                    args: Prisma.GovernorateCreateArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$GovernoratePayload>;
+                };
+                createMany: {
+                    args: Prisma.GovernorateCreateManyArgs<ExtArgs>;
+                    result: BatchPayload;
+                };
+                createManyAndReturn: {
+                    args: Prisma.GovernorateCreateManyAndReturnArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$GovernoratePayload>[];
+                };
+                delete: {
+                    args: Prisma.GovernorateDeleteArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$GovernoratePayload>;
+                };
+                update: {
+                    args: Prisma.GovernorateUpdateArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$GovernoratePayload>;
+                };
+                deleteMany: {
+                    args: Prisma.GovernorateDeleteManyArgs<ExtArgs>;
+                    result: BatchPayload;
+                };
+                updateMany: {
+                    args: Prisma.GovernorateUpdateManyArgs<ExtArgs>;
+                    result: BatchPayload;
+                };
+                updateManyAndReturn: {
+                    args: Prisma.GovernorateUpdateManyAndReturnArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$GovernoratePayload>[];
+                };
+                upsert: {
+                    args: Prisma.GovernorateUpsertArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$GovernoratePayload>;
+                };
+                aggregate: {
+                    args: Prisma.GovernorateAggregateArgs<ExtArgs>;
+                    result: runtime.Types.Utils.Optional<Prisma.AggregateGovernorate>;
+                };
+                groupBy: {
+                    args: Prisma.GovernorateGroupByArgs<ExtArgs>;
+                    result: runtime.Types.Utils.Optional<Prisma.GovernorateGroupByOutputType>[];
+                };
+                count: {
+                    args: Prisma.GovernorateCountArgs<ExtArgs>;
+                    result: runtime.Types.Utils.Optional<Prisma.GovernorateCountAggregateOutputType> | number;
                 };
             };
         };
@@ -1568,11 +1643,23 @@ export declare const OperationCatalogScalarFieldEnum: {
     readonly updatedAt: 'updatedAt';
 };
 export type OperationCatalogScalarFieldEnum = (typeof OperationCatalogScalarFieldEnum)[keyof typeof OperationCatalogScalarFieldEnum];
+export declare const GovernorateScalarFieldEnum: {
+    readonly id: 'id';
+    readonly nameEn: 'nameEn';
+    readonly nameAr: 'nameAr';
+    readonly code: 'code';
+    readonly isActive: 'isActive';
+};
+export type GovernorateScalarFieldEnum = (typeof GovernorateScalarFieldEnum)[keyof typeof GovernorateScalarFieldEnum];
 export declare const HospitalScalarFieldEnum: {
     readonly id: 'id';
     readonly name: 'name';
+    readonly nameAr: 'nameAr';
     readonly address: 'address';
+    readonly city: 'city';
+    readonly governorateId: 'governorateId';
     readonly phone: 'phone';
+    readonly notes: 'notes';
     readonly isActive: 'isActive';
     readonly createdBy: 'createdBy';
     readonly createdAt: 'createdAt';
@@ -1647,6 +1734,11 @@ export declare const OperationCostScalarFieldEnum: {
     readonly totalCost: 'totalCost';
     readonly paidAmount: 'paidAmount';
     readonly remainingAmount: 'remainingAmount';
+    readonly hospitalCost: 'hospitalCost';
+    readonly nursingCost: 'nursingCost';
+    readonly assistantDoctorsCost: 'assistantDoctorsCost';
+    readonly equipmentCost: 'equipmentCost';
+    readonly otherCost: 'otherCost';
     readonly paymentMethod: 'paymentMethod';
     readonly paymentStatus: 'paymentStatus';
     readonly paymentNotes: 'paymentNotes';
@@ -1939,6 +2031,7 @@ export type GlobalOmitConfig = {
     doctorSpecialty?: Prisma.DoctorSpecialtyOmit;
     doctorSubspecialty?: Prisma.DoctorSubspecialtyOmit;
     operationCatalog?: Prisma.OperationCatalogOmit;
+    governorate?: Prisma.GovernorateOmit;
     hospital?: Prisma.HospitalOmit;
     nurse?: Prisma.NurseOmit;
     operation?: Prisma.OperationOmit;

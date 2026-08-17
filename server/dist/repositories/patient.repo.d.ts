@@ -29,8 +29,12 @@ export declare class PatientRepository {
             hospital: {
                 id: string;
                 name: string;
+                nameAr: string | null;
                 address: string | null;
+                city: string | null;
+                governorateId: string | null;
                 phone: string | null;
+                notes: string | null;
                 isActive: boolean;
                 createdBy: string | null;
                 createdAt: Date;

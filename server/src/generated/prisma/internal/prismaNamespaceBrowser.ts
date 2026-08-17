@@ -58,6 +58,7 @@ export const ModelName = {
   DoctorSpecialty: 'DoctorSpecialty',
   DoctorSubspecialty: 'DoctorSubspecialty',
   OperationCatalog: 'OperationCatalog',
+  Governorate: 'Governorate',
   Hospital: 'Hospital',
   Nurse: 'Nurse',
   Operation: 'Operation',
@@ -180,11 +181,26 @@ export const OperationCatalogScalarFieldEnum = {
 export type OperationCatalogScalarFieldEnum = (typeof OperationCatalogScalarFieldEnum)[keyof typeof OperationCatalogScalarFieldEnum]
 
 
+export const GovernorateScalarFieldEnum = {
+  id: 'id',
+  nameEn: 'nameEn',
+  nameAr: 'nameAr',
+  code: 'code',
+  isActive: 'isActive'
+} as const
+
+export type GovernorateScalarFieldEnum = (typeof GovernorateScalarFieldEnum)[keyof typeof GovernorateScalarFieldEnum]
+
+
 export const HospitalScalarFieldEnum = {
   id: 'id',
   name: 'name',
+  nameAr: 'nameAr',
   address: 'address',
+  city: 'city',
+  governorateId: 'governorateId',
   phone: 'phone',
+  notes: 'notes',
   isActive: 'isActive',
   createdBy: 'createdBy',
   createdAt: 'createdAt',
@@ -277,6 +293,11 @@ export const OperationCostScalarFieldEnum = {
   totalCost: 'totalCost',
   paidAmount: 'paidAmount',
   remainingAmount: 'remainingAmount',
+  hospitalCost: 'hospitalCost',
+  nursingCost: 'nursingCost',
+  assistantDoctorsCost: 'assistantDoctorsCost',
+  equipmentCost: 'equipmentCost',
+  otherCost: 'otherCost',
   paymentMethod: 'paymentMethod',
   paymentStatus: 'paymentStatus',
   paymentNotes: 'paymentNotes',

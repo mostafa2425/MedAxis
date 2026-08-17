@@ -57,6 +57,11 @@ export type DoctorSubspecialty = Prisma.DoctorSubspecialtyModel;
  */
 export type OperationCatalog = Prisma.OperationCatalogModel;
 /**
+ * Model Governorate
+ *
+ */
+export type Governorate = Prisma.GovernorateModel;
+/**
  * Model Hospital
  *
  */

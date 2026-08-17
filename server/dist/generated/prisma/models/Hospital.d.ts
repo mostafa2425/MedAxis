@@ -13,8 +13,12 @@ export type AggregateHospital = {
 export type HospitalMinAggregateOutputType = {
     id: string | null;
     name: string | null;
+    nameAr: string | null;
     address: string | null;
+    city: string | null;
+    governorateId: string | null;
     phone: string | null;
+    notes: string | null;
     isActive: boolean | null;
     createdBy: string | null;
     createdAt: Date | null;
@@ -23,8 +27,12 @@ export type HospitalMinAggregateOutputType = {
 export type HospitalMaxAggregateOutputType = {
     id: string | null;
     name: string | null;
+    nameAr: string | null;
     address: string | null;
+    city: string | null;
+    governorateId: string | null;
     phone: string | null;
+    notes: string | null;
     isActive: boolean | null;
     createdBy: string | null;
     createdAt: Date | null;
@@ -33,8 +41,12 @@ export type HospitalMaxAggregateOutputType = {
 export type HospitalCountAggregateOutputType = {
     id: number;
     name: number;
+    nameAr: number;
     address: number;
+    city: number;
+    governorateId: number;
     phone: number;
+    notes: number;
     isActive: number;
     createdBy: number;
     createdAt: number;
@@ -44,8 +56,12 @@ export type HospitalCountAggregateOutputType = {
 export type HospitalMinAggregateInputType = {
     id?: true;
     name?: true;
+    nameAr?: true;
     address?: true;
+    city?: true;
+    governorateId?: true;
     phone?: true;
+    notes?: true;
     isActive?: true;
     createdBy?: true;
     createdAt?: true;
@@ -54,8 +70,12 @@ export type HospitalMinAggregateInputType = {
 export type HospitalMaxAggregateInputType = {
     id?: true;
     name?: true;
+    nameAr?: true;
     address?: true;
+    city?: true;
+    governorateId?: true;
     phone?: true;
+    notes?: true;
     isActive?: true;
     createdBy?: true;
     createdAt?: true;
@@ -64,8 +84,12 @@ export type HospitalMaxAggregateInputType = {
 export type HospitalCountAggregateInputType = {
     id?: true;
     name?: true;
+    nameAr?: true;
     address?: true;
+    city?: true;
+    governorateId?: true;
     phone?: true;
+    notes?: true;
     isActive?: true;
     createdBy?: true;
     createdAt?: true;
@@ -137,8 +161,12 @@ export type HospitalGroupByArgs<ExtArgs extends runtime.Types.Extensions.Interna
 export type HospitalGroupByOutputType = {
     id: string;
     name: string;
+    nameAr: string | null;
     address: string | null;
+    city: string | null;
+    governorateId: string | null;
     phone: string | null;
+    notes: string | null;
     isActive: boolean;
     createdBy: string | null;
     createdAt: Date;
@@ -156,24 +184,34 @@ export type HospitalWhereInput = {
     NOT?: Prisma.HospitalWhereInput | Prisma.HospitalWhereInput[];
     id?: Prisma.StringFilter<"Hospital"> | string;
     name?: Prisma.StringFilter<"Hospital"> | string;
+    nameAr?: Prisma.StringNullableFilter<"Hospital"> | string | null;
     address?: Prisma.StringNullableFilter<"Hospital"> | string | null;
+    city?: Prisma.StringNullableFilter<"Hospital"> | string | null;
+    governorateId?: Prisma.StringNullableFilter<"Hospital"> | string | null;
     phone?: Prisma.StringNullableFilter<"Hospital"> | string | null;
+    notes?: Prisma.StringNullableFilter<"Hospital"> | string | null;
     isActive?: Prisma.BoolFilter<"Hospital"> | boolean;
     createdBy?: Prisma.StringNullableFilter<"Hospital"> | string | null;
     createdAt?: Prisma.DateTimeFilter<"Hospital"> | Date | string;
     updatedAt?: Prisma.DateTimeFilter<"Hospital"> | Date | string;
+    governorate?: Prisma.XOR<Prisma.GovernorateNullableScalarRelationFilter, Prisma.GovernorateWhereInput> | null;
     operations?: Prisma.OperationListRelationFilter;
     creator?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null;
 };
 export type HospitalOrderByWithRelationInput = {
     id?: Prisma.SortOrder;
     name?: Prisma.SortOrder;
+    nameAr?: Prisma.SortOrderInput | Prisma.SortOrder;
     address?: Prisma.SortOrderInput | Prisma.SortOrder;
+    city?: Prisma.SortOrderInput | Prisma.SortOrder;
+    governorateId?: Prisma.SortOrderInput | Prisma.SortOrder;
     phone?: Prisma.SortOrderInput | Prisma.SortOrder;
+    notes?: Prisma.SortOrderInput | Prisma.SortOrder;
     isActive?: Prisma.SortOrder;
     createdBy?: Prisma.SortOrderInput | Prisma.SortOrder;
     createdAt?: Prisma.SortOrder;
     updatedAt?: Prisma.SortOrder;
+    governorate?: Prisma.GovernorateOrderByWithRelationInput;
     operations?: Prisma.OperationOrderByRelationAggregateInput;
     creator?: Prisma.UserOrderByWithRelationInput;
 };
@@ -183,20 +221,29 @@ export type HospitalWhereUniqueInput = Prisma.AtLeast<{
     OR?: Prisma.HospitalWhereInput[];
     NOT?: Prisma.HospitalWhereInput | Prisma.HospitalWhereInput[];
     name?: Prisma.StringFilter<"Hospital"> | string;
+    nameAr?: Prisma.StringNullableFilter<"Hospital"> | string | null;
     address?: Prisma.StringNullableFilter<"Hospital"> | string | null;
+    city?: Prisma.StringNullableFilter<"Hospital"> | string | null;
+    governorateId?: Prisma.StringNullableFilter<"Hospital"> | string | null;
     phone?: Prisma.StringNullableFilter<"Hospital"> | string | null;
+    notes?: Prisma.StringNullableFilter<"Hospital"> | string | null;
     isActive?: Prisma.BoolFilter<"Hospital"> | boolean;
     createdBy?: Prisma.StringNullableFilter<"Hospital"> | string | null;
     createdAt?: Prisma.DateTimeFilter<"Hospital"> | Date | string;
     updatedAt?: Prisma.DateTimeFilter<"Hospital"> | Date | string;
+    governorate?: Prisma.XOR<Prisma.GovernorateNullableScalarRelationFilter, Prisma.GovernorateWhereInput> | null;
     operations?: Prisma.OperationListRelationFilter;
     creator?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null;
 }, "id">;
 export type HospitalOrderByWithAggregationInput = {
     id?: Prisma.SortOrder;
     name?: Prisma.SortOrder;
+    nameAr?: Prisma.SortOrderInput | Prisma.SortOrder;
     address?: Prisma.SortOrderInput | Prisma.SortOrder;
+    city?: Prisma.SortOrderInput | Prisma.SortOrder;
+    governorateId?: Prisma.SortOrderInput | Prisma.SortOrder;
     phone?: Prisma.SortOrderInput | Prisma.SortOrder;
+    notes?: Prisma.SortOrderInput | Prisma.SortOrder;
     isActive?: Prisma.SortOrder;
     createdBy?: Prisma.SortOrderInput | Prisma.SortOrder;
     createdAt?: Prisma.SortOrder;
@@ -211,8 +258,12 @@ export type HospitalScalarWhereWithAggregatesInput = {
     NOT?: Prisma.HospitalScalarWhereWithAggregatesInput | Prisma.HospitalScalarWhereWithAggregatesInput[];
     id?: Prisma.StringWithAggregatesFilter<"Hospital"> | string;
     name?: Prisma.StringWithAggregatesFilter<"Hospital"> | string;
+    nameAr?: Prisma.StringNullableWithAggregatesFilter<"Hospital"> | string | null;
     address?: Prisma.StringNullableWithAggregatesFilter<"Hospital"> | string | null;
+    city?: Prisma.StringNullableWithAggregatesFilter<"Hospital"> | string | null;
+    governorateId?: Prisma.StringNullableWithAggregatesFilter<"Hospital"> | string | null;
     phone?: Prisma.StringNullableWithAggregatesFilter<"Hospital"> | string | null;
+    notes?: Prisma.StringNullableWithAggregatesFilter<"Hospital"> | string | null;
     isActive?: Prisma.BoolWithAggregatesFilter<"Hospital"> | boolean;
     createdBy?: Prisma.StringNullableWithAggregatesFilter<"Hospital"> | string | null;
     createdAt?: Prisma.DateTimeWithAggregatesFilter<"Hospital"> | Date | string;
@@ -221,19 +272,27 @@ export type HospitalScalarWhereWithAggregatesInput = {
 export type HospitalCreateInput = {
     id?: string;
     name: string;
+    nameAr?: string | null;
     address?: string | null;
+    city?: string | null;
     phone?: string | null;
+    notes?: string | null;
     isActive?: boolean;
     createdAt?: Date | string;
     updatedAt?: Date | string;
+    governorate?: Prisma.GovernorateCreateNestedOneWithoutHospitalsInput;
     operations?: Prisma.OperationCreateNestedManyWithoutHospitalInput;
     creator?: Prisma.UserCreateNestedOneWithoutCreatedHospitalsInput;
 };
 export type HospitalUncheckedCreateInput = {
     id?: string;
     name: string;
+    nameAr?: string | null;
     address?: string | null;
+    city?: string | null;
+    governorateId?: string | null;
     phone?: string | null;
+    notes?: string | null;
     isActive?: boolean;
     createdBy?: string | null;
     createdAt?: Date | string;
@@ -243,19 +302,27 @@ export type HospitalUncheckedCreateInput = {
 export type HospitalUpdateInput = {
     id?: Prisma.StringFieldUpdateOperationsInput | string;
     name?: Prisma.StringFieldUpdateOperationsInput | string;
+    nameAr?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+    governorate?: Prisma.GovernorateUpdateOneWithoutHospitalsNestedInput;
     operations?: Prisma.OperationUpdateManyWithoutHospitalNestedInput;
     creator?: Prisma.UserUpdateOneWithoutCreatedHospitalsNestedInput;
 };
 export type HospitalUncheckedUpdateInput = {
     id?: Prisma.StringFieldUpdateOperationsInput | string;
     name?: Prisma.StringFieldUpdateOperationsInput | string;
+    nameAr?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    governorateId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     createdBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
@@ -265,8 +332,12 @@ export type HospitalUncheckedUpdateInput = {
 export type HospitalCreateManyInput = {
     id?: string;
     name: string;
+    nameAr?: string | null;
     address?: string | null;
+    city?: string | null;
+    governorateId?: string | null;
     phone?: string | null;
+    notes?: string | null;
     isActive?: boolean;
     createdBy?: string | null;
     createdAt?: Date | string;
@@ -275,8 +346,11 @@ export type HospitalCreateManyInput = {
 export type HospitalUpdateManyMutationInput = {
     id?: Prisma.StringFieldUpdateOperationsInput | string;
     name?: Prisma.StringFieldUpdateOperationsInput | string;
+    nameAr?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
@@ -284,8 +358,12 @@ export type HospitalUpdateManyMutationInput = {
 export type HospitalUncheckedUpdateManyInput = {
     id?: Prisma.StringFieldUpdateOperationsInput | string;
     name?: Prisma.StringFieldUpdateOperationsInput | string;
+    nameAr?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    governorateId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     createdBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
@@ -302,8 +380,12 @@ export type HospitalOrderByRelationAggregateInput = {
 export type HospitalCountOrderByAggregateInput = {
     id?: Prisma.SortOrder;
     name?: Prisma.SortOrder;
+    nameAr?: Prisma.SortOrder;
     address?: Prisma.SortOrder;
+    city?: Prisma.SortOrder;
+    governorateId?: Prisma.SortOrder;
     phone?: Prisma.SortOrder;
+    notes?: Prisma.SortOrder;
     isActive?: Prisma.SortOrder;
     createdBy?: Prisma.SortOrder;
     createdAt?: Prisma.SortOrder;
@@ -312,8 +394,12 @@ export type HospitalCountOrderByAggregateInput = {
 export type HospitalMaxOrderByAggregateInput = {
     id?: Prisma.SortOrder;
     name?: Prisma.SortOrder;
+    nameAr?: Prisma.SortOrder;
     address?: Prisma.SortOrder;
+    city?: Prisma.SortOrder;
+    governorateId?: Prisma.SortOrder;
     phone?: Prisma.SortOrder;
+    notes?: Prisma.SortOrder;
     isActive?: Prisma.SortOrder;
     createdBy?: Prisma.SortOrder;
     createdAt?: Prisma.SortOrder;
@@ -322,8 +408,12 @@ export type HospitalMaxOrderByAggregateInput = {
 export type HospitalMinOrderByAggregateInput = {
     id?: Prisma.SortOrder;
     name?: Prisma.SortOrder;
+    nameAr?: Prisma.SortOrder;
     address?: Prisma.SortOrder;
+    city?: Prisma.SortOrder;
+    governorateId?: Prisma.SortOrder;
     phone?: Prisma.SortOrder;
+    notes?: Prisma.SortOrder;
     isActive?: Prisma.SortOrder;
     createdBy?: Prisma.SortOrder;
     createdAt?: Prisma.SortOrder;
@@ -371,6 +461,44 @@ export type HospitalUncheckedUpdateManyWithoutCreatorNestedInput = {
     updateMany?: Prisma.HospitalUpdateManyWithWhereWithoutCreatorInput | Prisma.HospitalUpdateManyWithWhereWithoutCreatorInput[];
     deleteMany?: Prisma.HospitalScalarWhereInput | Prisma.HospitalScalarWhereInput[];
 };
+export type HospitalCreateNestedManyWithoutGovernorateInput = {
+    create?: Prisma.XOR<Prisma.HospitalCreateWithoutGovernorateInput, Prisma.HospitalUncheckedCreateWithoutGovernorateInput> | Prisma.HospitalCreateWithoutGovernorateInput[] | Prisma.HospitalUncheckedCreateWithoutGovernorateInput[];
+    connectOrCreate?: Prisma.HospitalCreateOrConnectWithoutGovernorateInput | Prisma.HospitalCreateOrConnectWithoutGovernorateInput[];
+    createMany?: Prisma.HospitalCreateManyGovernorateInputEnvelope;
+    connect?: Prisma.HospitalWhereUniqueInput | Prisma.HospitalWhereUniqueInput[];
+};
+export type HospitalUncheckedCreateNestedManyWithoutGovernorateInput = {
+    create?: Prisma.XOR<Prisma.HospitalCreateWithoutGovernorateInput, Prisma.HospitalUncheckedCreateWithoutGovernorateInput> | Prisma.HospitalCreateWithoutGovernorateInput[] | Prisma.HospitalUncheckedCreateWithoutGovernorateInput[];
+    connectOrCreate?: Prisma.HospitalCreateOrConnectWithoutGovernorateInput | Prisma.HospitalCreateOrConnectWithoutGovernorateInput[];
+    createMany?: Prisma.HospitalCreateManyGovernorateInputEnvelope;
+    connect?: Prisma.HospitalWhereUniqueInput | Prisma.HospitalWhereUniqueInput[];
+};
+export type HospitalUpdateManyWithoutGovernorateNestedInput = {
+    create?: Prisma.XOR<Prisma.HospitalCreateWithoutGovernorateInput, Prisma.HospitalUncheckedCreateWithoutGovernorateInput> | Prisma.HospitalCreateWithoutGovernorateInput[] | Prisma.HospitalUncheckedCreateWithoutGovernorateInput[];
+    connectOrCreate?: Prisma.HospitalCreateOrConnectWithoutGovernorateInput | Prisma.HospitalCreateOrConnectWithoutGovernorateInput[];
+    upsert?: Prisma.HospitalUpsertWithWhereUniqueWithoutGovernorateInput | Prisma.HospitalUpsertWithWhereUniqueWithoutGovernorateInput[];
+    createMany?: Prisma.HospitalCreateManyGovernorateInputEnvelope;
+    set?: Prisma.HospitalWhereUniqueInput | Prisma.HospitalWhereUniqueInput[];
+    disconnect?: Prisma.HospitalWhereUniqueInput | Prisma.HospitalWhereUniqueInput[];
+    delete?: Prisma.HospitalWhereUniqueInput | Prisma.HospitalWhereUniqueInput[];
+    connect?: Prisma.HospitalWhereUniqueInput | Prisma.HospitalWhereUniqueInput[];
+    update?: Prisma.HospitalUpdateWithWhereUniqueWithoutGovernorateInput | Prisma.HospitalUpdateWithWhereUniqueWithoutGovernorateInput[];
+    updateMany?: Prisma.HospitalUpdateManyWithWhereWithoutGovernorateInput | Prisma.HospitalUpdateManyWithWhereWithoutGovernorateInput[];
+    deleteMany?: Prisma.HospitalScalarWhereInput | Prisma.HospitalScalarWhereInput[];
+};
+export type HospitalUncheckedUpdateManyWithoutGovernorateNestedInput = {
+    create?: Prisma.XOR<Prisma.HospitalCreateWithoutGovernorateInput, Prisma.HospitalUncheckedCreateWithoutGovernorateInput> | Prisma.HospitalCreateWithoutGovernorateInput[] | Prisma.HospitalUncheckedCreateWithoutGovernorateInput[];
+    connectOrCreate?: Prisma.HospitalCreateOrConnectWithoutGovernorateInput | Prisma.HospitalCreateOrConnectWithoutGovernorateInput[];
+    upsert?: Prisma.HospitalUpsertWithWhereUniqueWithoutGovernorateInput | Prisma.HospitalUpsertWithWhereUniqueWithoutGovernorateInput[];
+    createMany?: Prisma.HospitalCreateManyGovernorateInputEnvelope;
+    set?: Prisma.HospitalWhereUniqueInput | Prisma.HospitalWhereUniqueInput[];
+    disconnect?: Prisma.HospitalWhereUniqueInput | Prisma.HospitalWhereUniqueInput[];
+    delete?: Prisma.HospitalWhereUniqueInput | Prisma.HospitalWhereUniqueInput[];
+    connect?: Prisma.HospitalWhereUniqueInput | Prisma.HospitalWhereUniqueInput[];
+    update?: Prisma.HospitalUpdateWithWhereUniqueWithoutGovernorateInput | Prisma.HospitalUpdateWithWhereUniqueWithoutGovernorateInput[];
+    updateMany?: Prisma.HospitalUpdateManyWithWhereWithoutGovernorateInput | Prisma.HospitalUpdateManyWithWhereWithoutGovernorateInput[];
+    deleteMany?: Prisma.HospitalScalarWhereInput | Prisma.HospitalScalarWhereInput[];
+};
 export type HospitalCreateNestedOneWithoutOperationsInput = {
     create?: Prisma.XOR<Prisma.HospitalCreateWithoutOperationsInput, Prisma.HospitalUncheckedCreateWithoutOperationsInput>;
     connectOrCreate?: Prisma.HospitalCreateOrConnectWithoutOperationsInput;
@@ -386,18 +514,26 @@ export type HospitalUpdateOneRequiredWithoutOperationsNestedInput = {
 export type HospitalCreateWithoutCreatorInput = {
     id?: string;
     name: string;
+    nameAr?: string | null;
     address?: string | null;
+    city?: string | null;
     phone?: string | null;
+    notes?: string | null;
     isActive?: boolean;
     createdAt?: Date | string;
     updatedAt?: Date | string;
+    governorate?: Prisma.GovernorateCreateNestedOneWithoutHospitalsInput;
     operations?: Prisma.OperationCreateNestedManyWithoutHospitalInput;
 };
 export type HospitalUncheckedCreateWithoutCreatorInput = {
     id?: string;
     name: string;
+    nameAr?: string | null;
     address?: string | null;
+    city?: string | null;
+    governorateId?: string | null;
     phone?: string | null;
+    notes?: string | null;
     isActive?: boolean;
     createdAt?: Date | string;
     updatedAt?: Date | string;
@@ -430,28 +566,89 @@ export type HospitalScalarWhereInput = {
     NOT?: Prisma.HospitalScalarWhereInput | Prisma.HospitalScalarWhereInput[];
     id?: Prisma.StringFilter<"Hospital"> | string;
     name?: Prisma.StringFilter<"Hospital"> | string;
+    nameAr?: Prisma.StringNullableFilter<"Hospital"> | string | null;
     address?: Prisma.StringNullableFilter<"Hospital"> | string | null;
+    city?: Prisma.StringNullableFilter<"Hospital"> | string | null;
+    governorateId?: Prisma.StringNullableFilter<"Hospital"> | string | null;
     phone?: Prisma.StringNullableFilter<"Hospital"> | string | null;
+    notes?: Prisma.StringNullableFilter<"Hospital"> | string | null;
     isActive?: Prisma.BoolFilter<"Hospital"> | boolean;
     createdBy?: Prisma.StringNullableFilter<"Hospital"> | string | null;
     createdAt?: Prisma.DateTimeFilter<"Hospital"> | Date | string;
     updatedAt?: Prisma.DateTimeFilter<"Hospital"> | Date | string;
 };
-export type HospitalCreateWithoutOperationsInput = {
+export type HospitalCreateWithoutGovernorateInput = {
     id?: string;
     name: string;
+    nameAr?: string | null;
     address?: string | null;
+    city?: string | null;
     phone?: string | null;
+    notes?: string | null;
     isActive?: boolean;
     createdAt?: Date | string;
     updatedAt?: Date | string;
+    operations?: Prisma.OperationCreateNestedManyWithoutHospitalInput;
+    creator?: Prisma.UserCreateNestedOneWithoutCreatedHospitalsInput;
+};
+export type HospitalUncheckedCreateWithoutGovernorateInput = {
+    id?: string;
+    name: string;
+    nameAr?: string | null;
+    address?: string | null;
+    city?: string | null;
+    phone?: string | null;
+    notes?: string | null;
+    isActive?: boolean;
+    createdBy?: string | null;
+    createdAt?: Date | string;
+    updatedAt?: Date | string;
+    operations?: Prisma.OperationUncheckedCreateNestedManyWithoutHospitalInput;
+};
+export type HospitalCreateOrConnectWithoutGovernorateInput = {
+    where: Prisma.HospitalWhereUniqueInput;
+    create: Prisma.XOR<Prisma.HospitalCreateWithoutGovernorateInput, Prisma.HospitalUncheckedCreateWithoutGovernorateInput>;
+};
+export type HospitalCreateManyGovernorateInputEnvelope = {
+    data: Prisma.HospitalCreateManyGovernorateInput | Prisma.HospitalCreateManyGovernorateInput[];
+    skipDuplicates?: boolean;
+};
+export type HospitalUpsertWithWhereUniqueWithoutGovernorateInput = {
+    where: Prisma.HospitalWhereUniqueInput;
+    update: Prisma.XOR<Prisma.HospitalUpdateWithoutGovernorateInput, Prisma.HospitalUncheckedUpdateWithoutGovernorateInput>;
+    create: Prisma.XOR<Prisma.HospitalCreateWithoutGovernorateInput, Prisma.HospitalUncheckedCreateWithoutGovernorateInput>;
+};
+export type HospitalUpdateWithWhereUniqueWithoutGovernorateInput = {
+    where: Prisma.HospitalWhereUniqueInput;
+    data: Prisma.XOR<Prisma.HospitalUpdateWithoutGovernorateInput, Prisma.HospitalUncheckedUpdateWithoutGovernorateInput>;
+};
+export type HospitalUpdateManyWithWhereWithoutGovernorateInput = {
+    where: Prisma.HospitalScalarWhereInput;
+    data: Prisma.XOR<Prisma.HospitalUpdateManyMutationInput, Prisma.HospitalUncheckedUpdateManyWithoutGovernorateInput>;
+};
+export type HospitalCreateWithoutOperationsInput = {
+    id?: string;
+    name: string;
+    nameAr?: string | null;
+    address?: string | null;
+    city?: string | null;
+    phone?: string | null;
+    notes?: string | null;
+    isActive?: boolean;
+    createdAt?: Date | string;
+    updatedAt?: Date | string;
+    governorate?: Prisma.GovernorateCreateNestedOneWithoutHospitalsInput;
     creator?: Prisma.UserCreateNestedOneWithoutCreatedHospitalsInput;
 };
 export type HospitalUncheckedCreateWithoutOperationsInput = {
     id?: string;
     name: string;
+    nameAr?: string | null;
     address?: string | null;
+    city?: string | null;
+    governorateId?: string | null;
     phone?: string | null;
+    notes?: string | null;
     isActive?: boolean;
     createdBy?: string | null;
     createdAt?: Date | string;
@@ -473,18 +670,26 @@ export type HospitalUpdateToOneWithWhereWithoutOperationsInput = {
 export type HospitalUpdateWithoutOperationsInput = {
     id?: Prisma.StringFieldUpdateOperationsInput | string;
     name?: Prisma.StringFieldUpdateOperationsInput | string;
+    nameAr?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+    governorate?: Prisma.GovernorateUpdateOneWithoutHospitalsNestedInput;
     creator?: Prisma.UserUpdateOneWithoutCreatedHospitalsNestedInput;
 };
 export type HospitalUncheckedUpdateWithoutOperationsInput = {
     id?: Prisma.StringFieldUpdateOperationsInput | string;
     name?: Prisma.StringFieldUpdateOperationsInput | string;
+    nameAr?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    governorateId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     createdBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
@@ -493,8 +698,12 @@ export type HospitalUncheckedUpdateWithoutOperationsInput = {
 export type HospitalCreateManyCreatorInput = {
     id?: string;
     name: string;
+    nameAr?: string | null;
     address?: string | null;
+    city?: string | null;
+    governorateId?: string | null;
     phone?: string | null;
+    notes?: string | null;
     isActive?: boolean;
     createdAt?: Date | string;
     updatedAt?: Date | string;
@@ -502,18 +711,26 @@ export type HospitalCreateManyCreatorInput = {
 export type HospitalUpdateWithoutCreatorInput = {
     id?: Prisma.StringFieldUpdateOperationsInput | string;
     name?: Prisma.StringFieldUpdateOperationsInput | string;
+    nameAr?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+    governorate?: Prisma.GovernorateUpdateOneWithoutHospitalsNestedInput;
     operations?: Prisma.OperationUpdateManyWithoutHospitalNestedInput;
 };
 export type HospitalUncheckedUpdateWithoutCreatorInput = {
     id?: Prisma.StringFieldUpdateOperationsInput | string;
     name?: Prisma.StringFieldUpdateOperationsInput | string;
+    nameAr?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    governorateId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
@@ -522,9 +739,67 @@ export type HospitalUncheckedUpdateWithoutCreatorInput = {
 export type HospitalUncheckedUpdateManyWithoutCreatorInput = {
     id?: Prisma.StringFieldUpdateOperationsInput | string;
     name?: Prisma.StringFieldUpdateOperationsInput | string;
+    nameAr?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    governorateId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+    updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+};
+export type HospitalCreateManyGovernorateInput = {
+    id?: string;
+    name: string;
+    nameAr?: string | null;
+    address?: string | null;
+    city?: string | null;
+    phone?: string | null;
+    notes?: string | null;
+    isActive?: boolean;
+    createdBy?: string | null;
+    createdAt?: Date | string;
+    updatedAt?: Date | string;
+};
+export type HospitalUpdateWithoutGovernorateInput = {
+    id?: Prisma.StringFieldUpdateOperationsInput | string;
+    name?: Prisma.StringFieldUpdateOperationsInput | string;
+    nameAr?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+    updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+    operations?: Prisma.OperationUpdateManyWithoutHospitalNestedInput;
+    creator?: Prisma.UserUpdateOneWithoutCreatedHospitalsNestedInput;
+};
+export type HospitalUncheckedUpdateWithoutGovernorateInput = {
+    id?: Prisma.StringFieldUpdateOperationsInput | string;
+    name?: Prisma.StringFieldUpdateOperationsInput | string;
+    nameAr?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    createdBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+    updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+    operations?: Prisma.OperationUncheckedUpdateManyWithoutHospitalNestedInput;
+};
+export type HospitalUncheckedUpdateManyWithoutGovernorateInput = {
+    id?: Prisma.StringFieldUpdateOperationsInput | string;
+    name?: Prisma.StringFieldUpdateOperationsInput | string;
+    nameAr?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    createdBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
 };
@@ -555,12 +830,17 @@ export type HospitalCountOutputTypeCountOperationsArgs<ExtArgs extends runtime.T
 export type HospitalSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
     id?: boolean;
     name?: boolean;
+    nameAr?: boolean;
     address?: boolean;
+    city?: boolean;
+    governorateId?: boolean;
     phone?: boolean;
+    notes?: boolean;
     isActive?: boolean;
     createdBy?: boolean;
     createdAt?: boolean;
     updatedAt?: boolean;
+    governorate?: boolean | Prisma.Hospital$governorateArgs<ExtArgs>;
     operations?: boolean | Prisma.Hospital$operationsArgs<ExtArgs>;
     creator?: boolean | Prisma.Hospital$creatorArgs<ExtArgs>;
     _count?: boolean | Prisma.HospitalCountOutputTypeDefaultArgs<ExtArgs>;
@@ -568,58 +848,80 @@ export type HospitalSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
 export type HospitalSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
     id?: boolean;
     name?: boolean;
+    nameAr?: boolean;
     address?: boolean;
+    city?: boolean;
+    governorateId?: boolean;
     phone?: boolean;
+    notes?: boolean;
     isActive?: boolean;
     createdBy?: boolean;
     createdAt?: boolean;
     updatedAt?: boolean;
+    governorate?: boolean | Prisma.Hospital$governorateArgs<ExtArgs>;
     creator?: boolean | Prisma.Hospital$creatorArgs<ExtArgs>;
 }, ExtArgs["result"]["hospital"]>;
 export type HospitalSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
     id?: boolean;
     name?: boolean;
+    nameAr?: boolean;
     address?: boolean;
+    city?: boolean;
+    governorateId?: boolean;
     phone?: boolean;
+    notes?: boolean;
     isActive?: boolean;
     createdBy?: boolean;
     createdAt?: boolean;
     updatedAt?: boolean;
+    governorate?: boolean | Prisma.Hospital$governorateArgs<ExtArgs>;
     creator?: boolean | Prisma.Hospital$creatorArgs<ExtArgs>;
 }, ExtArgs["result"]["hospital"]>;
 export type HospitalSelectScalar = {
     id?: boolean;
     name?: boolean;
+    nameAr?: boolean;
     address?: boolean;
+    city?: boolean;
+    governorateId?: boolean;
     phone?: boolean;
+    notes?: boolean;
     isActive?: boolean;
     createdBy?: boolean;
     createdAt?: boolean;
     updatedAt?: boolean;
 };
-export type HospitalOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "address" | "phone" | "isActive" | "createdBy" | "createdAt" | "updatedAt", ExtArgs["result"]["hospital"]>;
+export type HospitalOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "nameAr" | "address" | "city" | "governorateId" | "phone" | "notes" | "isActive" | "createdBy" | "createdAt" | "updatedAt", ExtArgs["result"]["hospital"]>;
 export type HospitalInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+    governorate?: boolean | Prisma.Hospital$governorateArgs<ExtArgs>;
     operations?: boolean | Prisma.Hospital$operationsArgs<ExtArgs>;
     creator?: boolean | Prisma.Hospital$creatorArgs<ExtArgs>;
     _count?: boolean | Prisma.HospitalCountOutputTypeDefaultArgs<ExtArgs>;
 };
 export type HospitalIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+    governorate?: boolean | Prisma.Hospital$governorateArgs<ExtArgs>;
     creator?: boolean | Prisma.Hospital$creatorArgs<ExtArgs>;
 };
 export type HospitalIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+    governorate?: boolean | Prisma.Hospital$governorateArgs<ExtArgs>;
     creator?: boolean | Prisma.Hospital$creatorArgs<ExtArgs>;
 };
 export type $HospitalPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
     name: "Hospital";
     objects: {
+        governorate: Prisma.$GovernoratePayload<ExtArgs> | null;
         operations: Prisma.$OperationPayload<ExtArgs>[];
         creator: Prisma.$UserPayload<ExtArgs> | null;
     };
     scalars: runtime.Types.Extensions.GetPayloadResult<{
         id: string;
         name: string;
+        nameAr: string | null;
         address: string | null;
+        city: string | null;
+        governorateId: string | null;
         phone: string | null;
+        notes: string | null;
         isActive: boolean;
         createdBy: string | null;
         createdAt: Date;
@@ -953,6 +1255,7 @@ export interface HospitalDelegate<ExtArgs extends runtime.Types.Extensions.Inter
  */
 export interface Prisma__HospitalClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise";
+    governorate<T extends Prisma.Hospital$governorateArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Hospital$governorateArgs<ExtArgs>>): Prisma.Prisma__GovernorateClient<runtime.Types.Result.GetResult<Prisma.$GovernoratePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>;
     operations<T extends Prisma.Hospital$operationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Hospital$operationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$OperationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>;
     creator<T extends Prisma.Hospital$creatorArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Hospital$creatorArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>;
     /**
@@ -982,8 +1285,12 @@ export interface Prisma__HospitalClient<T, Null = never, ExtArgs extends runtime
 export interface HospitalFieldRefs {
     readonly id: Prisma.FieldRef<"Hospital", 'String'>;
     readonly name: Prisma.FieldRef<"Hospital", 'String'>;
+    readonly nameAr: Prisma.FieldRef<"Hospital", 'String'>;
     readonly address: Prisma.FieldRef<"Hospital", 'String'>;
+    readonly city: Prisma.FieldRef<"Hospital", 'String'>;
+    readonly governorateId: Prisma.FieldRef<"Hospital", 'String'>;
     readonly phone: Prisma.FieldRef<"Hospital", 'String'>;
+    readonly notes: Prisma.FieldRef<"Hospital", 'String'>;
     readonly isActive: Prisma.FieldRef<"Hospital", 'Boolean'>;
     readonly createdBy: Prisma.FieldRef<"Hospital", 'String'>;
     readonly createdAt: Prisma.FieldRef<"Hospital", 'DateTime'>;
@@ -1370,6 +1677,24 @@ export type HospitalDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.Inte
      * Limit how many Hospitals to delete.
      */
     limit?: number;
+};
+/**
+ * Hospital.governorate
+ */
+export type Hospital$governorateArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Governorate
+     */
+    select?: Prisma.GovernorateSelect<ExtArgs> | null;
+    /**
+     * Omit specific fields from the Governorate
+     */
+    omit?: Prisma.GovernorateOmit<ExtArgs> | null;
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: Prisma.GovernorateInclude<ExtArgs> | null;
+    where?: Prisma.GovernorateWhereInput;
 };
 /**
  * Hospital.operations

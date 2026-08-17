@@ -48,7 +48,7 @@ var __importStar = (this && this.__importStar) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.NullsOrder = exports.QueryMode = exports.SortOrder = exports.OperationTimelineScalarFieldEnum = exports.OperationFileScalarFieldEnum = exports.OperationCostScalarFieldEnum = exports.OperationTeamMemberScalarFieldEnum = exports.OperationProcedureScalarFieldEnum = exports.OperationMedicalTeamScalarFieldEnum = exports.OperationScalarFieldEnum = exports.NurseScalarFieldEnum = exports.HospitalScalarFieldEnum = exports.OperationCatalogScalarFieldEnum = exports.DoctorSubspecialtyScalarFieldEnum = exports.DoctorSpecialtyScalarFieldEnum = exports.DoctorScalarFieldEnum = exports.SpecialtyScalarFieldEnum = exports.PatientScalarFieldEnum = exports.UserScalarFieldEnum = exports.TransactionIsolationLevel = exports.ModelName = exports.AnyNull = exports.JsonNull = exports.DbNull = exports.NullTypes = exports.Decimal = void 0;
+exports.NullsOrder = exports.QueryMode = exports.SortOrder = exports.OperationTimelineScalarFieldEnum = exports.OperationFileScalarFieldEnum = exports.OperationCostScalarFieldEnum = exports.OperationTeamMemberScalarFieldEnum = exports.OperationProcedureScalarFieldEnum = exports.OperationMedicalTeamScalarFieldEnum = exports.OperationScalarFieldEnum = exports.NurseScalarFieldEnum = exports.HospitalScalarFieldEnum = exports.GovernorateScalarFieldEnum = exports.OperationCatalogScalarFieldEnum = exports.DoctorSubspecialtyScalarFieldEnum = exports.DoctorSpecialtyScalarFieldEnum = exports.DoctorScalarFieldEnum = exports.SpecialtyScalarFieldEnum = exports.PatientScalarFieldEnum = exports.UserScalarFieldEnum = exports.TransactionIsolationLevel = exports.ModelName = exports.AnyNull = exports.JsonNull = exports.DbNull = exports.NullTypes = exports.Decimal = void 0;
 const runtime = __importStar(require("@prisma/client/runtime/index-browser"));
 exports.Decimal = runtime.Decimal;
 exports.NullTypes = {
@@ -82,6 +82,7 @@ exports.ModelName = {
     DoctorSpecialty: 'DoctorSpecialty',
     DoctorSubspecialty: 'DoctorSubspecialty',
     OperationCatalog: 'OperationCatalog',
+    Governorate: 'Governorate',
     Hospital: 'Hospital',
     Nurse: 'Nurse',
     Operation: 'Operation',
@@ -168,11 +169,22 @@ exports.OperationCatalogScalarFieldEnum = {
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
 };
+exports.GovernorateScalarFieldEnum = {
+    id: 'id',
+    nameEn: 'nameEn',
+    nameAr: 'nameAr',
+    code: 'code',
+    isActive: 'isActive'
+};
 exports.HospitalScalarFieldEnum = {
     id: 'id',
     name: 'name',
+    nameAr: 'nameAr',
     address: 'address',
+    city: 'city',
+    governorateId: 'governorateId',
     phone: 'phone',
+    notes: 'notes',
     isActive: 'isActive',
     createdBy: 'createdBy',
     createdAt: 'createdAt',
@@ -241,6 +253,11 @@ exports.OperationCostScalarFieldEnum = {
     totalCost: 'totalCost',
     paidAmount: 'paidAmount',
     remainingAmount: 'remainingAmount',
+    hospitalCost: 'hospitalCost',
+    nursingCost: 'nursingCost',
+    assistantDoctorsCost: 'assistantDoctorsCost',
+    equipmentCost: 'equipmentCost',
+    otherCost: 'otherCost',
     paymentMethod: 'paymentMethod',
     paymentStatus: 'paymentStatus',
     paymentNotes: 'paymentNotes',

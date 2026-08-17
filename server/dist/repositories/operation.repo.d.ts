@@ -1,4 +1,17 @@
 import { Prisma, OperationStatus } from '../prisma';
+type CostData = {
+    totalCost: number;
+    paidAmount?: number;
+    remainingAmount?: number;
+    hospitalCost?: number;
+    nursingCost?: number;
+    assistantDoctorsCost?: number;
+    equipmentCost?: number;
+    otherCost?: number;
+    paymentMethod?: string;
+    paymentStatus?: string;
+    paymentNotes?: string;
+};
 export declare class OperationRepository {
     findAll(params: {
         page: number;
@@ -38,6 +51,11 @@ export declare class OperationRepository {
                 totalCost: import("@prisma/client-runtime-utils").Decimal;
                 paidAmount: import("@prisma/client-runtime-utils").Decimal;
                 remainingAmount: import("@prisma/client-runtime-utils").Decimal;
+                hospitalCost: import("@prisma/client-runtime-utils").Decimal;
+                nursingCost: import("@prisma/client-runtime-utils").Decimal;
+                assistantDoctorsCost: import("@prisma/client-runtime-utils").Decimal;
+                equipmentCost: import("@prisma/client-runtime-utils").Decimal;
+                otherCost: import("@prisma/client-runtime-utils").Decimal;
                 paymentMethod: import("../prisma").PaymentMethod;
                 paymentStatus: import("../prisma").PaymentStatus;
                 paymentNotes: string | null;
@@ -57,8 +75,12 @@ export declare class OperationRepository {
             hospital: {
                 id: string;
                 name: string;
+                nameAr: string | null;
                 address: string | null;
+                city: string | null;
+                governorateId: string | null;
                 phone: string | null;
+                notes: string | null;
                 isActive: boolean;
                 createdBy: string | null;
                 createdAt: Date;
@@ -255,6 +277,11 @@ export declare class OperationRepository {
             totalCost: import("@prisma/client-runtime-utils").Decimal;
             paidAmount: import("@prisma/client-runtime-utils").Decimal;
             remainingAmount: import("@prisma/client-runtime-utils").Decimal;
+            hospitalCost: import("@prisma/client-runtime-utils").Decimal;
+            nursingCost: import("@prisma/client-runtime-utils").Decimal;
+            assistantDoctorsCost: import("@prisma/client-runtime-utils").Decimal;
+            equipmentCost: import("@prisma/client-runtime-utils").Decimal;
+            otherCost: import("@prisma/client-runtime-utils").Decimal;
             paymentMethod: import("../prisma").PaymentMethod;
             paymentStatus: import("../prisma").PaymentStatus;
             paymentNotes: string | null;
@@ -285,8 +312,12 @@ export declare class OperationRepository {
         hospital: {
             id: string;
             name: string;
+            nameAr: string | null;
             address: string | null;
+            city: string | null;
+            governorateId: string | null;
             phone: string | null;
+            notes: string | null;
             isActive: boolean;
             createdBy: string | null;
             createdAt: Date;
@@ -503,14 +534,7 @@ export declare class OperationRepository {
             nurse?: string;
             notes?: string;
         };
-        cost?: {
-            totalCost: number;
-            paidAmount?: number;
-            remainingAmount?: number;
-            paymentMethod?: string;
-            paymentStatus?: string;
-            paymentNotes?: string;
-        };
+        cost?: CostData;
     }): Promise<{
         catalog: ({
             specialty: {
@@ -536,6 +560,11 @@ export declare class OperationRepository {
             totalCost: import("@prisma/client-runtime-utils").Decimal;
             paidAmount: import("@prisma/client-runtime-utils").Decimal;
             remainingAmount: import("@prisma/client-runtime-utils").Decimal;
+            hospitalCost: import("@prisma/client-runtime-utils").Decimal;
+            nursingCost: import("@prisma/client-runtime-utils").Decimal;
+            assistantDoctorsCost: import("@prisma/client-runtime-utils").Decimal;
+            equipmentCost: import("@prisma/client-runtime-utils").Decimal;
+            otherCost: import("@prisma/client-runtime-utils").Decimal;
             paymentMethod: import("../prisma").PaymentMethod;
             paymentStatus: import("../prisma").PaymentStatus;
             paymentNotes: string | null;
@@ -555,8 +584,12 @@ export declare class OperationRepository {
         hospital: {
             id: string;
             name: string;
+            nameAr: string | null;
             address: string | null;
+            city: string | null;
+            governorateId: string | null;
             phone: string | null;
+            notes: string | null;
             isActive: boolean;
             createdBy: string | null;
             createdAt: Date;
@@ -763,6 +796,11 @@ export declare class OperationRepository {
             totalCost: import("@prisma/client-runtime-utils").Decimal;
             paidAmount: import("@prisma/client-runtime-utils").Decimal;
             remainingAmount: import("@prisma/client-runtime-utils").Decimal;
+            hospitalCost: import("@prisma/client-runtime-utils").Decimal;
+            nursingCost: import("@prisma/client-runtime-utils").Decimal;
+            assistantDoctorsCost: import("@prisma/client-runtime-utils").Decimal;
+            equipmentCost: import("@prisma/client-runtime-utils").Decimal;
+            otherCost: import("@prisma/client-runtime-utils").Decimal;
             paymentMethod: import("../prisma").PaymentMethod;
             paymentStatus: import("../prisma").PaymentStatus;
             paymentNotes: string | null;
@@ -782,8 +820,12 @@ export declare class OperationRepository {
         hospital: {
             id: string;
             name: string;
+            nameAr: string | null;
             address: string | null;
+            city: string | null;
+            governorateId: string | null;
             phone: string | null;
+            notes: string | null;
             isActive: boolean;
             createdBy: string | null;
             createdAt: Date;
@@ -989,19 +1031,17 @@ export declare class OperationRepository {
         createdAt: Date;
         updatedAt: Date;
     }>;
-    upsertCost(operationId: string, data: {
-        totalCost: number;
-        paidAmount?: number;
-        remainingAmount?: number;
-        paymentMethod?: string;
-        paymentStatus?: string;
-        paymentNotes?: string;
-    }): Promise<{
+    upsertCost(operationId: string, data: CostData): Promise<{
         id: string;
         operationId: string;
         totalCost: import("@prisma/client-runtime-utils").Decimal;
         paidAmount: import("@prisma/client-runtime-utils").Decimal;
         remainingAmount: import("@prisma/client-runtime-utils").Decimal;
+        hospitalCost: import("@prisma/client-runtime-utils").Decimal;
+        nursingCost: import("@prisma/client-runtime-utils").Decimal;
+        assistantDoctorsCost: import("@prisma/client-runtime-utils").Decimal;
+        equipmentCost: import("@prisma/client-runtime-utils").Decimal;
+        otherCost: import("@prisma/client-runtime-utils").Decimal;
         paymentMethod: import("../prisma").PaymentMethod;
         paymentStatus: import("../prisma").PaymentStatus;
         paymentNotes: string | null;
@@ -1069,6 +1109,11 @@ export declare class OperationRepository {
             totalCost: import("@prisma/client-runtime-utils").Decimal;
             paidAmount: import("@prisma/client-runtime-utils").Decimal;
             remainingAmount: import("@prisma/client-runtime-utils").Decimal;
+            hospitalCost: import("@prisma/client-runtime-utils").Decimal;
+            nursingCost: import("@prisma/client-runtime-utils").Decimal;
+            assistantDoctorsCost: import("@prisma/client-runtime-utils").Decimal;
+            equipmentCost: import("@prisma/client-runtime-utils").Decimal;
+            otherCost: import("@prisma/client-runtime-utils").Decimal;
             paymentMethod: import("../prisma").PaymentMethod;
             paymentStatus: import("../prisma").PaymentStatus;
             paymentNotes: string | null;
@@ -1078,8 +1123,12 @@ export declare class OperationRepository {
         hospital: {
             id: string;
             name: string;
+            nameAr: string | null;
             address: string | null;
+            city: string | null;
+            governorateId: string | null;
             phone: string | null;
+            notes: string | null;
             isActive: boolean;
             createdBy: string | null;
             createdAt: Date;
@@ -1155,6 +1204,11 @@ export declare class OperationRepository {
             totalCost: import("@prisma/client-runtime-utils").Decimal;
             paidAmount: import("@prisma/client-runtime-utils").Decimal;
             remainingAmount: import("@prisma/client-runtime-utils").Decimal;
+            hospitalCost: import("@prisma/client-runtime-utils").Decimal;
+            nursingCost: import("@prisma/client-runtime-utils").Decimal;
+            assistantDoctorsCost: import("@prisma/client-runtime-utils").Decimal;
+            equipmentCost: import("@prisma/client-runtime-utils").Decimal;
+            otherCost: import("@prisma/client-runtime-utils").Decimal;
             paymentMethod: import("../prisma").PaymentMethod;
             paymentStatus: import("../prisma").PaymentStatus;
             paymentNotes: string | null;
@@ -1214,4 +1268,5 @@ export declare class OperationRepository {
     })[]>;
 }
 export declare const operationRepo: OperationRepository;
+export {};
 //# sourceMappingURL=operation.repo.d.ts.map

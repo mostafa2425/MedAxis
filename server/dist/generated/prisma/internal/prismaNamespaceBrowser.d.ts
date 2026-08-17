@@ -33,6 +33,7 @@ export declare const ModelName: {
     readonly DoctorSpecialty: 'DoctorSpecialty';
     readonly DoctorSubspecialty: 'DoctorSubspecialty';
     readonly OperationCatalog: 'OperationCatalog';
+    readonly Governorate: 'Governorate';
     readonly Hospital: 'Hospital';
     readonly Nurse: 'Nurse';
     readonly Operation: 'Operation';
@@ -125,11 +126,23 @@ export declare const OperationCatalogScalarFieldEnum: {
     readonly updatedAt: 'updatedAt';
 };
 export type OperationCatalogScalarFieldEnum = (typeof OperationCatalogScalarFieldEnum)[keyof typeof OperationCatalogScalarFieldEnum];
+export declare const GovernorateScalarFieldEnum: {
+    readonly id: 'id';
+    readonly nameEn: 'nameEn';
+    readonly nameAr: 'nameAr';
+    readonly code: 'code';
+    readonly isActive: 'isActive';
+};
+export type GovernorateScalarFieldEnum = (typeof GovernorateScalarFieldEnum)[keyof typeof GovernorateScalarFieldEnum];
 export declare const HospitalScalarFieldEnum: {
     readonly id: 'id';
     readonly name: 'name';
+    readonly nameAr: 'nameAr';
     readonly address: 'address';
+    readonly city: 'city';
+    readonly governorateId: 'governorateId';
     readonly phone: 'phone';
+    readonly notes: 'notes';
     readonly isActive: 'isActive';
     readonly createdBy: 'createdBy';
     readonly createdAt: 'createdAt';
@@ -204,6 +217,11 @@ export declare const OperationCostScalarFieldEnum: {
     readonly totalCost: 'totalCost';
     readonly paidAmount: 'paidAmount';
     readonly remainingAmount: 'remainingAmount';
+    readonly hospitalCost: 'hospitalCost';
+    readonly nursingCost: 'nursingCost';
+    readonly assistantDoctorsCost: 'assistantDoctorsCost';
+    readonly equipmentCost: 'equipmentCost';
+    readonly otherCost: 'otherCost';
     readonly paymentMethod: 'paymentMethod';
     readonly paymentStatus: 'paymentStatus';
     readonly paymentNotes: 'paymentNotes';

@@ -17,6 +17,11 @@ declare class DashboardService {
                 totalCost: import("@prisma/client-runtime-utils").Decimal;
                 paidAmount: import("@prisma/client-runtime-utils").Decimal;
                 remainingAmount: import("@prisma/client-runtime-utils").Decimal;
+                hospitalCost: import("@prisma/client-runtime-utils").Decimal;
+                nursingCost: import("@prisma/client-runtime-utils").Decimal;
+                assistantDoctorsCost: import("@prisma/client-runtime-utils").Decimal;
+                equipmentCost: import("@prisma/client-runtime-utils").Decimal;
+                otherCost: import("@prisma/client-runtime-utils").Decimal;
                 paymentMethod: import("../prisma").PaymentMethod;
                 paymentStatus: import("../prisma").PaymentStatus;
                 paymentNotes: string | null;
@@ -26,8 +31,12 @@ declare class DashboardService {
             hospital: {
                 id: string;
                 name: string;
+                nameAr: string | null;
                 address: string | null;
+                city: string | null;
+                governorateId: string | null;
                 phone: string | null;
+                notes: string | null;
                 isActive: boolean;
                 createdBy: string | null;
                 createdAt: Date;
@@ -96,6 +105,11 @@ declare class DashboardService {
             totalCost: import("@prisma/client-runtime-utils").Decimal;
             paidAmount: import("@prisma/client-runtime-utils").Decimal;
             remainingAmount: import("@prisma/client-runtime-utils").Decimal;
+            hospitalCost: import("@prisma/client-runtime-utils").Decimal;
+            nursingCost: import("@prisma/client-runtime-utils").Decimal;
+            assistantDoctorsCost: import("@prisma/client-runtime-utils").Decimal;
+            equipmentCost: import("@prisma/client-runtime-utils").Decimal;
+            otherCost: import("@prisma/client-runtime-utils").Decimal;
             paymentMethod: import("../prisma").PaymentMethod;
             paymentStatus: import("../prisma").PaymentStatus;
             paymentNotes: string | null;
@@ -105,8 +119,12 @@ declare class DashboardService {
         hospital: {
             id: string;
             name: string;
+            nameAr: string | null;
             address: string | null;
+            city: string | null;
+            governorateId: string | null;
             phone: string | null;
+            notes: string | null;
             isActive: boolean;
             createdBy: string | null;
             createdAt: Date;
