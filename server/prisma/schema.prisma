@@ -197,20 +197,37 @@ model OperationCatalog {
   @@map("operation_catalog")
 }
 
-model Hospital {
-  id        String   @id @default(uuid())
-  name      String
-  address   String?
-  phone     String?
-  isActive  Boolean  @default(true)
-  createdBy String?
-  createdAt DateTime @default(now()) @db.Timestamptz(6)
-  updatedAt DateTime @updatedAt @db.Timestamptz(6)
+model Governorate {
+  id        String      @id @default(uuid())
+  nameEn    String      @unique
+  nameAr    String      @unique
+  code      String      @unique
+  isActive  Boolean     @default(true)
+  hospitals Hospital[]
 
-  operations Operation[]
-  creator    User?       @relation("CreatedHospitals", fields: [createdBy], references: [id], onDelete: SetNull)
+  @@map("governorates")
+}
+
+model Hospital {
+  id            String      @id @default(uuid())
+  name          String
+  nameAr        String?
+  address       String?
+  city          String?
+  governorateId String?
+  phone         String?
+  notes         String?
+  isActive      Boolean     @default(true)
+  createdBy     String?
+  createdAt     DateTime    @default(now()) @db.Timestamptz(6)
+  updatedAt     DateTime    @updatedAt @db.Timestamptz(6)
+
+  governorate Governorate? @relation(fields: [governorateId], references: [id], onDelete: SetNull)
+  operations  Operation[]
+  creator     User?        @relation("CreatedHospitals", fields: [createdBy], references: [id], onDelete: SetNull)
 
   @@index([createdBy])
+  @@index([governorateId])
   @@map("hospitals")
 }
 
@@ -322,16 +339,21 @@ model OperationTeamMember {
 }
 
 model OperationCost {
-  id              String        @id @default(uuid())
-  operationId     String        @unique
-  totalCost       Decimal       @default(0) @db.Decimal(10, 2)
-  paidAmount      Decimal       @default(0) @db.Decimal(10, 2)
-  remainingAmount Decimal       @default(0) @db.Decimal(10, 2)
-  paymentMethod   PaymentMethod  @default(CASH)
-  paymentStatus   PaymentStatus  @default(PAID)
-  paymentNotes    String?
-  createdAt       DateTime      @default(now()) @db.Timestamptz(6)
-  updatedAt       DateTime      @updatedAt @db.Timestamptz(6)
+  id                  String        @id @default(uuid())
+  operationId         String        @unique
+  totalCost           Decimal       @default(0) @db.Decimal(10, 2)
+  paidAmount          Decimal       @default(0) @db.Decimal(10, 2)
+  remainingAmount     Decimal       @default(0) @db.Decimal(10, 2)
+  hospitalCost        Decimal       @default(0) @db.Decimal(10, 2)
+  nursingCost         Decimal       @default(0) @db.Decimal(10, 2)
+  assistantDoctorsCost Decimal      @default(0) @db.Decimal(10, 2)
+  equipmentCost       Decimal       @default(0) @db.Decimal(10, 2)
+  otherCost           Decimal       @default(0) @db.Decimal(10, 2)
+  paymentMethod       PaymentMethod @default(CASH)
+  paymentStatus       PaymentStatus @default(PAID)
+  paymentNotes        String?
+  createdAt           DateTime      @default(now()) @db.Timestamptz(6)
+  updatedAt           DateTime      @updatedAt @db.Timestamptz(6)
 
   operation Operation @relation(fields: [operationId], references: [id], onDelete: Cascade)
 
