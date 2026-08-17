@@ -1,0 +1,1356 @@
+import type * as runtime from "@prisma/client/runtime/client";
+import type * as $Enums from "../enums";
+import type * as Prisma from "../internal/prismaNamespace";
+/**
+ * Model OperationCost
+ *
+ */
+export type OperationCostModel = runtime.Types.Result.DefaultSelection<Prisma.$OperationCostPayload>;
+export type AggregateOperationCost = {
+    _count: OperationCostCountAggregateOutputType | null;
+    _avg: OperationCostAvgAggregateOutputType | null;
+    _sum: OperationCostSumAggregateOutputType | null;
+    _min: OperationCostMinAggregateOutputType | null;
+    _max: OperationCostMaxAggregateOutputType | null;
+};
+export type OperationCostAvgAggregateOutputType = {
+    totalCost: runtime.Decimal | null;
+    paidAmount: runtime.Decimal | null;
+    remainingAmount: runtime.Decimal | null;
+};
+export type OperationCostSumAggregateOutputType = {
+    totalCost: runtime.Decimal | null;
+    paidAmount: runtime.Decimal | null;
+    remainingAmount: runtime.Decimal | null;
+};
+export type OperationCostMinAggregateOutputType = {
+    id: string | null;
+    operationId: string | null;
+    totalCost: runtime.Decimal | null;
+    paidAmount: runtime.Decimal | null;
+    remainingAmount: runtime.Decimal | null;
+    paymentMethod: $Enums.PaymentMethod | null;
+    paymentStatus: $Enums.PaymentStatus | null;
+    paymentNotes: string | null;
+    createdAt: Date | null;
+    updatedAt: Date | null;
+};
+export type OperationCostMaxAggregateOutputType = {
+    id: string | null;
+    operationId: string | null;
+    totalCost: runtime.Decimal | null;
+    paidAmount: runtime.Decimal | null;
+    remainingAmount: runtime.Decimal | null;
+    paymentMethod: $Enums.PaymentMethod | null;
+    paymentStatus: $Enums.PaymentStatus | null;
+    paymentNotes: string | null;
+    createdAt: Date | null;
+    updatedAt: Date | null;
+};
+export type OperationCostCountAggregateOutputType = {
+    id: number;
+    operationId: number;
+    totalCost: number;
+    paidAmount: number;
+    remainingAmount: number;
+    paymentMethod: number;
+    paymentStatus: number;
+    paymentNotes: number;
+    createdAt: number;
+    updatedAt: number;
+    _all: number;
+};
+export type OperationCostAvgAggregateInputType = {
+    totalCost?: true;
+    paidAmount?: true;
+    remainingAmount?: true;
+};
+export type OperationCostSumAggregateInputType = {
+    totalCost?: true;
+    paidAmount?: true;
+    remainingAmount?: true;
+};
+export type OperationCostMinAggregateInputType = {
+    id?: true;
+    operationId?: true;
+    totalCost?: true;
+    paidAmount?: true;
+    remainingAmount?: true;
+    paymentMethod?: true;
+    paymentStatus?: true;
+    paymentNotes?: true;
+    createdAt?: true;
+    updatedAt?: true;
+};
+export type OperationCostMaxAggregateInputType = {
+    id?: true;
+    operationId?: true;
+    totalCost?: true;
+    paidAmount?: true;
+    remainingAmount?: true;
+    paymentMethod?: true;
+    paymentStatus?: true;
+    paymentNotes?: true;
+    createdAt?: true;
+    updatedAt?: true;
+};
+export type OperationCostCountAggregateInputType = {
+    id?: true;
+    operationId?: true;
+    totalCost?: true;
+    paidAmount?: true;
+    remainingAmount?: true;
+    paymentMethod?: true;
+    paymentStatus?: true;
+    paymentNotes?: true;
+    createdAt?: true;
+    updatedAt?: true;
+    _all?: true;
+};
+export type OperationCostAggregateArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+    /**
+     * Filter which OperationCost to aggregate.
+     */
+    where?: Prisma.OperationCostWhereInput;
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     *
+     * Determine the order of OperationCosts to fetch.
+     */
+    orderBy?: Prisma.OperationCostOrderByWithRelationInput | Prisma.OperationCostOrderByWithRelationInput[];
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     *
+     * Sets the start position
+     */
+    cursor?: Prisma.OperationCostWhereUniqueInput;
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     *
+     * Take `±n` OperationCosts from the position of the cursor.
+     */
+    take?: number;
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     *
+     * Skip the first `n` OperationCosts.
+     */
+    skip?: number;
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     *
+     * Count returned OperationCosts
+    **/
+    _count?: true | OperationCostCountAggregateInputType;
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     *
+     * Select which fields to average
+    **/
+    _avg?: OperationCostAvgAggregateInputType;
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     *
+     * Select which fields to sum
+    **/
+    _sum?: OperationCostSumAggregateInputType;
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     *
+     * Select which fields to find the minimum value
+    **/
+    _min?: OperationCostMinAggregateInputType;
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     *
+     * Select which fields to find the maximum value
+    **/
+    _max?: OperationCostMaxAggregateInputType;
+};
+export type GetOperationCostAggregateType<T extends OperationCostAggregateArgs> = {
+    [P in keyof T & keyof AggregateOperationCost]: P extends '_count' | 'count' ? T[P] extends true ? number : Prisma.GetScalarType<T[P], AggregateOperationCost[P]> : Prisma.GetScalarType<T[P], AggregateOperationCost[P]>;
+};
+export type OperationCostGroupByArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+    where?: Prisma.OperationCostWhereInput;
+    orderBy?: Prisma.OperationCostOrderByWithAggregationInput | Prisma.OperationCostOrderByWithAggregationInput[];
+    by: Prisma.OperationCostScalarFieldEnum[] | Prisma.OperationCostScalarFieldEnum;
+    having?: Prisma.OperationCostScalarWhereWithAggregatesInput;
+    take?: number;
+    skip?: number;
+    _count?: OperationCostCountAggregateInputType | true;
+    _avg?: OperationCostAvgAggregateInputType;
+    _sum?: OperationCostSumAggregateInputType;
+    _min?: OperationCostMinAggregateInputType;
+    _max?: OperationCostMaxAggregateInputType;
+};
+export type OperationCostGroupByOutputType = {
+    id: string;
+    operationId: string;
+    totalCost: runtime.Decimal;
+    paidAmount: runtime.Decimal;
+    remainingAmount: runtime.Decimal;
+    paymentMethod: $Enums.PaymentMethod;
+    paymentStatus: $Enums.PaymentStatus;
+    paymentNotes: string | null;
+    createdAt: Date;
+    updatedAt: Date;
+    _count: OperationCostCountAggregateOutputType | null;
+    _avg: OperationCostAvgAggregateOutputType | null;
+    _sum: OperationCostSumAggregateOutputType | null;
+    _min: OperationCostMinAggregateOutputType | null;
+    _max: OperationCostMaxAggregateOutputType | null;
+};
+export type GetOperationCostGroupByPayload<T extends OperationCostGroupByArgs> = Prisma.PrismaPromise<Array<Prisma.PickEnumerable<OperationCostGroupByOutputType, T['by']> & {
+    [P in ((keyof T) & (keyof OperationCostGroupByOutputType))]: P extends '_count' ? T[P] extends boolean ? number : Prisma.GetScalarType<T[P], OperationCostGroupByOutputType[P]> : Prisma.GetScalarType<T[P], OperationCostGroupByOutputType[P]>;
+}>>;
+export type OperationCostWhereInput = {
+    AND?: Prisma.OperationCostWhereInput | Prisma.OperationCostWhereInput[];
+    OR?: Prisma.OperationCostWhereInput[];
+    NOT?: Prisma.OperationCostWhereInput | Prisma.OperationCostWhereInput[];
+    id?: Prisma.StringFilter<"OperationCost"> | string;
+    operationId?: Prisma.StringFilter<"OperationCost"> | string;
+    totalCost?: Prisma.DecimalFilter<"OperationCost"> | runtime.Decimal | runtime.DecimalJsLike | number | string;
+    paidAmount?: Prisma.DecimalFilter<"OperationCost"> | runtime.Decimal | runtime.DecimalJsLike | number | string;
+    remainingAmount?: Prisma.DecimalFilter<"OperationCost"> | runtime.Decimal | runtime.DecimalJsLike | number | string;
+    paymentMethod?: Prisma.EnumPaymentMethodFilter<"OperationCost"> | $Enums.PaymentMethod;
+    paymentStatus?: Prisma.EnumPaymentStatusFilter<"OperationCost"> | $Enums.PaymentStatus;
+    paymentNotes?: Prisma.StringNullableFilter<"OperationCost"> | string | null;
+    createdAt?: Prisma.DateTimeFilter<"OperationCost"> | Date | string;
+    updatedAt?: Prisma.DateTimeFilter<"OperationCost"> | Date | string;
+    operation?: Prisma.XOR<Prisma.OperationScalarRelationFilter, Prisma.OperationWhereInput>;
+};
+export type OperationCostOrderByWithRelationInput = {
+    id?: Prisma.SortOrder;
+    operationId?: Prisma.SortOrder;
+    totalCost?: Prisma.SortOrder;
+    paidAmount?: Prisma.SortOrder;
+    remainingAmount?: Prisma.SortOrder;
+    paymentMethod?: Prisma.SortOrder;
+    paymentStatus?: Prisma.SortOrder;
+    paymentNotes?: Prisma.SortOrderInput | Prisma.SortOrder;
+    createdAt?: Prisma.SortOrder;
+    updatedAt?: Prisma.SortOrder;
+    operation?: Prisma.OperationOrderByWithRelationInput;
+};
+export type OperationCostWhereUniqueInput = Prisma.AtLeast<{
+    id?: string;
+    operationId?: string;
+    AND?: Prisma.OperationCostWhereInput | Prisma.OperationCostWhereInput[];
+    OR?: Prisma.OperationCostWhereInput[];
+    NOT?: Prisma.OperationCostWhereInput | Prisma.OperationCostWhereInput[];
+    totalCost?: Prisma.DecimalFilter<"OperationCost"> | runtime.Decimal | runtime.DecimalJsLike | number | string;
+    paidAmount?: Prisma.DecimalFilter<"OperationCost"> | runtime.Decimal | runtime.DecimalJsLike | number | string;
+    remainingAmount?: Prisma.DecimalFilter<"OperationCost"> | runtime.Decimal | runtime.DecimalJsLike | number | string;
+    paymentMethod?: Prisma.EnumPaymentMethodFilter<"OperationCost"> | $Enums.PaymentMethod;
+    paymentStatus?: Prisma.EnumPaymentStatusFilter<"OperationCost"> | $Enums.PaymentStatus;
+    paymentNotes?: Prisma.StringNullableFilter<"OperationCost"> | string | null;
+    createdAt?: Prisma.DateTimeFilter<"OperationCost"> | Date | string;
+    updatedAt?: Prisma.DateTimeFilter<"OperationCost"> | Date | string;
+    operation?: Prisma.XOR<Prisma.OperationScalarRelationFilter, Prisma.OperationWhereInput>;
+}, "id" | "operationId">;
+export type OperationCostOrderByWithAggregationInput = {
+    id?: Prisma.SortOrder;
+    operationId?: Prisma.SortOrder;
+    totalCost?: Prisma.SortOrder;
+    paidAmount?: Prisma.SortOrder;
+    remainingAmount?: Prisma.SortOrder;
+    paymentMethod?: Prisma.SortOrder;
+    paymentStatus?: Prisma.SortOrder;
+    paymentNotes?: Prisma.SortOrderInput | Prisma.SortOrder;
+    createdAt?: Prisma.SortOrder;
+    updatedAt?: Prisma.SortOrder;
+    _count?: Prisma.OperationCostCountOrderByAggregateInput;
+    _avg?: Prisma.OperationCostAvgOrderByAggregateInput;
+    _max?: Prisma.OperationCostMaxOrderByAggregateInput;
+    _min?: Prisma.OperationCostMinOrderByAggregateInput;
+    _sum?: Prisma.OperationCostSumOrderByAggregateInput;
+};
+export type OperationCostScalarWhereWithAggregatesInput = {
+    AND?: Prisma.OperationCostScalarWhereWithAggregatesInput | Prisma.OperationCostScalarWhereWithAggregatesInput[];
+    OR?: Prisma.OperationCostScalarWhereWithAggregatesInput[];
+    NOT?: Prisma.OperationCostScalarWhereWithAggregatesInput | Prisma.OperationCostScalarWhereWithAggregatesInput[];
+    id?: Prisma.StringWithAggregatesFilter<"OperationCost"> | string;
+    operationId?: Prisma.StringWithAggregatesFilter<"OperationCost"> | string;
+    totalCost?: Prisma.DecimalWithAggregatesFilter<"OperationCost"> | runtime.Decimal | runtime.DecimalJsLike | number | string;
+    paidAmount?: Prisma.DecimalWithAggregatesFilter<"OperationCost"> | runtime.Decimal | runtime.DecimalJsLike | number | string;
+    remainingAmount?: Prisma.DecimalWithAggregatesFilter<"OperationCost"> | runtime.Decimal | runtime.DecimalJsLike | number | string;
+    paymentMethod?: Prisma.EnumPaymentMethodWithAggregatesFilter<"OperationCost"> | $Enums.PaymentMethod;
+    paymentStatus?: Prisma.EnumPaymentStatusWithAggregatesFilter<"OperationCost"> | $Enums.PaymentStatus;
+    paymentNotes?: Prisma.StringNullableWithAggregatesFilter<"OperationCost"> | string | null;
+    createdAt?: Prisma.DateTimeWithAggregatesFilter<"OperationCost"> | Date | string;
+    updatedAt?: Prisma.DateTimeWithAggregatesFilter<"OperationCost"> | Date | string;
+};
+export type OperationCostCreateInput = {
+    id?: string;
+    totalCost?: runtime.Decimal | runtime.DecimalJsLike | number | string;
+    paidAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string;
+    remainingAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string;
+    paymentMethod?: $Enums.PaymentMethod;
+    paymentStatus?: $Enums.PaymentStatus;
+    paymentNotes?: string | null;
+    createdAt?: Date | string;
+    updatedAt?: Date | string;
+    operation: Prisma.OperationCreateNestedOneWithoutCostInput;
+};
+export type OperationCostUncheckedCreateInput = {
+    id?: string;
+    operationId: string;
+    totalCost?: runtime.Decimal | runtime.DecimalJsLike | number | string;
+    paidAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string;
+    remainingAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string;
+    paymentMethod?: $Enums.PaymentMethod;
+    paymentStatus?: $Enums.PaymentStatus;
+    paymentNotes?: string | null;
+    createdAt?: Date | string;
+    updatedAt?: Date | string;
+};
+export type OperationCostUpdateInput = {
+    id?: Prisma.StringFieldUpdateOperationsInput | string;
+    totalCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string;
+    paidAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string;
+    remainingAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string;
+    paymentMethod?: Prisma.EnumPaymentMethodFieldUpdateOperationsInput | $Enums.PaymentMethod;
+    paymentStatus?: Prisma.EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus;
+    paymentNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+    updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+    operation?: Prisma.OperationUpdateOneRequiredWithoutCostNestedInput;
+};
+export type OperationCostUncheckedUpdateInput = {
+    id?: Prisma.StringFieldUpdateOperationsInput | string;
+    operationId?: Prisma.StringFieldUpdateOperationsInput | string;
+    totalCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string;
+    paidAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string;
+    remainingAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string;
+    paymentMethod?: Prisma.EnumPaymentMethodFieldUpdateOperationsInput | $Enums.PaymentMethod;
+    paymentStatus?: Prisma.EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus;
+    paymentNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+    updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+};
+export type OperationCostCreateManyInput = {
+    id?: string;
+    operationId: string;
+    totalCost?: runtime.Decimal | runtime.DecimalJsLike | number | string;
+    paidAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string;
+    remainingAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string;
+    paymentMethod?: $Enums.PaymentMethod;
+    paymentStatus?: $Enums.PaymentStatus;
+    paymentNotes?: string | null;
+    createdAt?: Date | string;
+    updatedAt?: Date | string;
+};
+export type OperationCostUpdateManyMutationInput = {
+    id?: Prisma.StringFieldUpdateOperationsInput | string;
+    totalCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string;
+    paidAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string;
+    remainingAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string;
+    paymentMethod?: Prisma.EnumPaymentMethodFieldUpdateOperationsInput | $Enums.PaymentMethod;
+    paymentStatus?: Prisma.EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus;
+    paymentNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+    updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+};
+export type OperationCostUncheckedUpdateManyInput = {
+    id?: Prisma.StringFieldUpdateOperationsInput | string;
+    operationId?: Prisma.StringFieldUpdateOperationsInput | string;
+    totalCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string;
+    paidAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string;
+    remainingAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string;
+    paymentMethod?: Prisma.EnumPaymentMethodFieldUpdateOperationsInput | $Enums.PaymentMethod;
+    paymentStatus?: Prisma.EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus;
+    paymentNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+    updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+};
+export type OperationCostNullableScalarRelationFilter = {
+    is?: Prisma.OperationCostWhereInput | null;
+    isNot?: Prisma.OperationCostWhereInput | null;
+};
+export type OperationCostCountOrderByAggregateInput = {
+    id?: Prisma.SortOrder;
+    operationId?: Prisma.SortOrder;
+    totalCost?: Prisma.SortOrder;
+    paidAmount?: Prisma.SortOrder;
+    remainingAmount?: Prisma.SortOrder;
+    paymentMethod?: Prisma.SortOrder;
+    paymentStatus?: Prisma.SortOrder;
+    paymentNotes?: Prisma.SortOrder;
+    createdAt?: Prisma.SortOrder;
+    updatedAt?: Prisma.SortOrder;
+};
+export type OperationCostAvgOrderByAggregateInput = {
+    totalCost?: Prisma.SortOrder;
+    paidAmount?: Prisma.SortOrder;
+    remainingAmount?: Prisma.SortOrder;
+};
+export type OperationCostMaxOrderByAggregateInput = {
+    id?: Prisma.SortOrder;
+    operationId?: Prisma.SortOrder;
+    totalCost?: Prisma.SortOrder;
+    paidAmount?: Prisma.SortOrder;
+    remainingAmount?: Prisma.SortOrder;
+    paymentMethod?: Prisma.SortOrder;
+    paymentStatus?: Prisma.SortOrder;
+    paymentNotes?: Prisma.SortOrder;
+    createdAt?: Prisma.SortOrder;
+    updatedAt?: Prisma.SortOrder;
+};
+export type OperationCostMinOrderByAggregateInput = {
+    id?: Prisma.SortOrder;
+    operationId?: Prisma.SortOrder;
+    totalCost?: Prisma.SortOrder;
+    paidAmount?: Prisma.SortOrder;
+    remainingAmount?: Prisma.SortOrder;
+    paymentMethod?: Prisma.SortOrder;
+    paymentStatus?: Prisma.SortOrder;
+    paymentNotes?: Prisma.SortOrder;
+    createdAt?: Prisma.SortOrder;
+    updatedAt?: Prisma.SortOrder;
+};
+export type OperationCostSumOrderByAggregateInput = {
+    totalCost?: Prisma.SortOrder;
+    paidAmount?: Prisma.SortOrder;
+    remainingAmount?: Prisma.SortOrder;
+};
+export type OperationCostCreateNestedOneWithoutOperationInput = {
+    create?: Prisma.XOR<Prisma.OperationCostCreateWithoutOperationInput, Prisma.OperationCostUncheckedCreateWithoutOperationInput>;
+    connectOrCreate?: Prisma.OperationCostCreateOrConnectWithoutOperationInput;
+    connect?: Prisma.OperationCostWhereUniqueInput;
+};
+export type OperationCostUncheckedCreateNestedOneWithoutOperationInput = {
+    create?: Prisma.XOR<Prisma.OperationCostCreateWithoutOperationInput, Prisma.OperationCostUncheckedCreateWithoutOperationInput>;
+    connectOrCreate?: Prisma.OperationCostCreateOrConnectWithoutOperationInput;
+    connect?: Prisma.OperationCostWhereUniqueInput;
+};
+export type OperationCostUpdateOneWithoutOperationNestedInput = {
+    create?: Prisma.XOR<Prisma.OperationCostCreateWithoutOperationInput, Prisma.OperationCostUncheckedCreateWithoutOperationInput>;
+    connectOrCreate?: Prisma.OperationCostCreateOrConnectWithoutOperationInput;
+    upsert?: Prisma.OperationCostUpsertWithoutOperationInput;
+    disconnect?: Prisma.OperationCostWhereInput | boolean;
+    delete?: Prisma.OperationCostWhereInput | boolean;
+    connect?: Prisma.OperationCostWhereUniqueInput;
+    update?: Prisma.XOR<Prisma.XOR<Prisma.OperationCostUpdateToOneWithWhereWithoutOperationInput, Prisma.OperationCostUpdateWithoutOperationInput>, Prisma.OperationCostUncheckedUpdateWithoutOperationInput>;
+};
+export type OperationCostUncheckedUpdateOneWithoutOperationNestedInput = {
+    create?: Prisma.XOR<Prisma.OperationCostCreateWithoutOperationInput, Prisma.OperationCostUncheckedCreateWithoutOperationInput>;
+    connectOrCreate?: Prisma.OperationCostCreateOrConnectWithoutOperationInput;
+    upsert?: Prisma.OperationCostUpsertWithoutOperationInput;
+    disconnect?: Prisma.OperationCostWhereInput | boolean;
+    delete?: Prisma.OperationCostWhereInput | boolean;
+    connect?: Prisma.OperationCostWhereUniqueInput;
+    update?: Prisma.XOR<Prisma.XOR<Prisma.OperationCostUpdateToOneWithWhereWithoutOperationInput, Prisma.OperationCostUpdateWithoutOperationInput>, Prisma.OperationCostUncheckedUpdateWithoutOperationInput>;
+};
+export type DecimalFieldUpdateOperationsInput = {
+    set?: runtime.Decimal | runtime.DecimalJsLike | number | string;
+    increment?: runtime.Decimal | runtime.DecimalJsLike | number | string;
+    decrement?: runtime.Decimal | runtime.DecimalJsLike | number | string;
+    multiply?: runtime.Decimal | runtime.DecimalJsLike | number | string;
+    divide?: runtime.Decimal | runtime.DecimalJsLike | number | string;
+};
+export type EnumPaymentMethodFieldUpdateOperationsInput = {
+    set?: $Enums.PaymentMethod;
+};
+export type EnumPaymentStatusFieldUpdateOperationsInput = {
+    set?: $Enums.PaymentStatus;
+};
+export type OperationCostCreateWithoutOperationInput = {
+    id?: string;
+    totalCost?: runtime.Decimal | runtime.DecimalJsLike | number | string;
+    paidAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string;
+    remainingAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string;
+    paymentMethod?: $Enums.PaymentMethod;
+    paymentStatus?: $Enums.PaymentStatus;
+    paymentNotes?: string | null;
+    createdAt?: Date | string;
+    updatedAt?: Date | string;
+};
+export type OperationCostUncheckedCreateWithoutOperationInput = {
+    id?: string;
+    totalCost?: runtime.Decimal | runtime.DecimalJsLike | number | string;
+    paidAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string;
+    remainingAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string;
+    paymentMethod?: $Enums.PaymentMethod;
+    paymentStatus?: $Enums.PaymentStatus;
+    paymentNotes?: string | null;
+    createdAt?: Date | string;
+    updatedAt?: Date | string;
+};
+export type OperationCostCreateOrConnectWithoutOperationInput = {
+    where: Prisma.OperationCostWhereUniqueInput;
+    create: Prisma.XOR<Prisma.OperationCostCreateWithoutOperationInput, Prisma.OperationCostUncheckedCreateWithoutOperationInput>;
+};
+export type OperationCostUpsertWithoutOperationInput = {
+    update: Prisma.XOR<Prisma.OperationCostUpdateWithoutOperationInput, Prisma.OperationCostUncheckedUpdateWithoutOperationInput>;
+    create: Prisma.XOR<Prisma.OperationCostCreateWithoutOperationInput, Prisma.OperationCostUncheckedCreateWithoutOperationInput>;
+    where?: Prisma.OperationCostWhereInput;
+};
+export type OperationCostUpdateToOneWithWhereWithoutOperationInput = {
+    where?: Prisma.OperationCostWhereInput;
+    data: Prisma.XOR<Prisma.OperationCostUpdateWithoutOperationInput, Prisma.OperationCostUncheckedUpdateWithoutOperationInput>;
+};
+export type OperationCostUpdateWithoutOperationInput = {
+    id?: Prisma.StringFieldUpdateOperationsInput | string;
+    totalCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string;
+    paidAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string;
+    remainingAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string;
+    paymentMethod?: Prisma.EnumPaymentMethodFieldUpdateOperationsInput | $Enums.PaymentMethod;
+    paymentStatus?: Prisma.EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus;
+    paymentNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+    updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+};
+export type OperationCostUncheckedUpdateWithoutOperationInput = {
+    id?: Prisma.StringFieldUpdateOperationsInput | string;
+    totalCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string;
+    paidAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string;
+    remainingAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string;
+    paymentMethod?: Prisma.EnumPaymentMethodFieldUpdateOperationsInput | $Enums.PaymentMethod;
+    paymentStatus?: Prisma.EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus;
+    paymentNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+    updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+};
+export type OperationCostSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
+    id?: boolean;
+    operationId?: boolean;
+    totalCost?: boolean;
+    paidAmount?: boolean;
+    remainingAmount?: boolean;
+    paymentMethod?: boolean;
+    paymentStatus?: boolean;
+    paymentNotes?: boolean;
+    createdAt?: boolean;
+    updatedAt?: boolean;
+    operation?: boolean | Prisma.OperationDefaultArgs<ExtArgs>;
+}, ExtArgs["result"]["operationCost"]>;
+export type OperationCostSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
+    id?: boolean;
+    operationId?: boolean;
+    totalCost?: boolean;
+    paidAmount?: boolean;
+    remainingAmount?: boolean;
+    paymentMethod?: boolean;
+    paymentStatus?: boolean;
+    paymentNotes?: boolean;
+    createdAt?: boolean;
+    updatedAt?: boolean;
+    operation?: boolean | Prisma.OperationDefaultArgs<ExtArgs>;
+}, ExtArgs["result"]["operationCost"]>;
+export type OperationCostSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
+    id?: boolean;
+    operationId?: boolean;
+    totalCost?: boolean;
+    paidAmount?: boolean;
+    remainingAmount?: boolean;
+    paymentMethod?: boolean;
+    paymentStatus?: boolean;
+    paymentNotes?: boolean;
+    createdAt?: boolean;
+    updatedAt?: boolean;
+    operation?: boolean | Prisma.OperationDefaultArgs<ExtArgs>;
+}, ExtArgs["result"]["operationCost"]>;
+export type OperationCostSelectScalar = {
+    id?: boolean;
+    operationId?: boolean;
+    totalCost?: boolean;
+    paidAmount?: boolean;
+    remainingAmount?: boolean;
+    paymentMethod?: boolean;
+    paymentStatus?: boolean;
+    paymentNotes?: boolean;
+    createdAt?: boolean;
+    updatedAt?: boolean;
+};
+export type OperationCostOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "operationId" | "totalCost" | "paidAmount" | "remainingAmount" | "paymentMethod" | "paymentStatus" | "paymentNotes" | "createdAt" | "updatedAt", ExtArgs["result"]["operationCost"]>;
+export type OperationCostInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+    operation?: boolean | Prisma.OperationDefaultArgs<ExtArgs>;
+};
+export type OperationCostIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+    operation?: boolean | Prisma.OperationDefaultArgs<ExtArgs>;
+};
+export type OperationCostIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+    operation?: boolean | Prisma.OperationDefaultArgs<ExtArgs>;
+};
+export type $OperationCostPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+    name: "OperationCost";
+    objects: {
+        operation: Prisma.$OperationPayload<ExtArgs>;
+    };
+    scalars: runtime.Types.Extensions.GetPayloadResult<{
+        id: string;
+        operationId: string;
+        totalCost: runtime.Decimal;
+        paidAmount: runtime.Decimal;
+        remainingAmount: runtime.Decimal;
+        paymentMethod: $Enums.PaymentMethod;
+        paymentStatus: $Enums.PaymentStatus;
+        paymentNotes: string | null;
+        createdAt: Date;
+        updatedAt: Date;
+    }, ExtArgs["result"]["operationCost"]>;
+    composites: {};
+};
+export type OperationCostGetPayload<S extends boolean | null | undefined | OperationCostDefaultArgs> = runtime.Types.Result.GetResult<Prisma.$OperationCostPayload, S>;
+export type OperationCostCountArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = Omit<OperationCostFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+    select?: OperationCostCountAggregateInputType | true;
+};
+export interface OperationCostDelegate<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: {
+        types: Prisma.TypeMap<ExtArgs>['model']['OperationCost'];
+        meta: {
+            name: 'OperationCost';
+        };
+    };
+    /**
+     * Find zero or one OperationCost that matches the filter.
+     * @param {OperationCostFindUniqueArgs} args - Arguments to find a OperationCost
+     * @example
+     * // Get one OperationCost
+     * const operationCost = await prisma.operationCost.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends OperationCostFindUniqueArgs>(args: Prisma.SelectSubset<T, OperationCostFindUniqueArgs<ExtArgs>>): Prisma.Prisma__OperationCostClient<runtime.Types.Result.GetResult<Prisma.$OperationCostPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>;
+    /**
+     * Find one OperationCost that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {OperationCostFindUniqueOrThrowArgs} args - Arguments to find a OperationCost
+     * @example
+     * // Get one OperationCost
+     * const operationCost = await prisma.operationCost.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends OperationCostFindUniqueOrThrowArgs>(args: Prisma.SelectSubset<T, OperationCostFindUniqueOrThrowArgs<ExtArgs>>): Prisma.Prisma__OperationCostClient<runtime.Types.Result.GetResult<Prisma.$OperationCostPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>;
+    /**
+     * Find the first OperationCost that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {OperationCostFindFirstArgs} args - Arguments to find a OperationCost
+     * @example
+     * // Get one OperationCost
+     * const operationCost = await prisma.operationCost.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends OperationCostFindFirstArgs>(args?: Prisma.SelectSubset<T, OperationCostFindFirstArgs<ExtArgs>>): Prisma.Prisma__OperationCostClient<runtime.Types.Result.GetResult<Prisma.$OperationCostPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>;
+    /**
+     * Find the first OperationCost that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {OperationCostFindFirstOrThrowArgs} args - Arguments to find a OperationCost
+     * @example
+     * // Get one OperationCost
+     * const operationCost = await prisma.operationCost.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends OperationCostFindFirstOrThrowArgs>(args?: Prisma.SelectSubset<T, OperationCostFindFirstOrThrowArgs<ExtArgs>>): Prisma.Prisma__OperationCostClient<runtime.Types.Result.GetResult<Prisma.$OperationCostPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>;
+    /**
+     * Find zero or more OperationCosts that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {OperationCostFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all OperationCosts
+     * const operationCosts = await prisma.operationCost.findMany()
+     *
+     * // Get first 10 OperationCosts
+     * const operationCosts = await prisma.operationCost.findMany({ take: 10 })
+     *
+     * // Only select the `id`
+     * const operationCostWithIdOnly = await prisma.operationCost.findMany({ select: { id: true } })
+     *
+     */
+    findMany<T extends OperationCostFindManyArgs>(args?: Prisma.SelectSubset<T, OperationCostFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$OperationCostPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>;
+    /**
+     * Create a OperationCost.
+     * @param {OperationCostCreateArgs} args - Arguments to create a OperationCost.
+     * @example
+     * // Create one OperationCost
+     * const OperationCost = await prisma.operationCost.create({
+     *   data: {
+     *     // ... data to create a OperationCost
+     *   }
+     * })
+     *
+     */
+    create<T extends OperationCostCreateArgs>(args: Prisma.SelectSubset<T, OperationCostCreateArgs<ExtArgs>>): Prisma.Prisma__OperationCostClient<runtime.Types.Result.GetResult<Prisma.$OperationCostPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>;
+    /**
+     * Create many OperationCosts.
+     * @param {OperationCostCreateManyArgs} args - Arguments to create many OperationCosts.
+     * @example
+     * // Create many OperationCosts
+     * const operationCost = await prisma.operationCost.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *
+     */
+    createMany<T extends OperationCostCreateManyArgs>(args?: Prisma.SelectSubset<T, OperationCostCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<Prisma.BatchPayload>;
+    /**
+     * Create many OperationCosts and returns the data saved in the database.
+     * @param {OperationCostCreateManyAndReturnArgs} args - Arguments to create many OperationCosts.
+     * @example
+     * // Create many OperationCosts
+     * const operationCost = await prisma.operationCost.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *
+     * // Create many OperationCosts and only return the `id`
+     * const operationCostWithIdOnly = await prisma.operationCost.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     *
+     */
+    createManyAndReturn<T extends OperationCostCreateManyAndReturnArgs>(args?: Prisma.SelectSubset<T, OperationCostCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$OperationCostPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>;
+    /**
+     * Delete a OperationCost.
+     * @param {OperationCostDeleteArgs} args - Arguments to delete one OperationCost.
+     * @example
+     * // Delete one OperationCost
+     * const OperationCost = await prisma.operationCost.delete({
+     *   where: {
+     *     // ... filter to delete one OperationCost
+     *   }
+     * })
+     *
+     */
+    delete<T extends OperationCostDeleteArgs>(args: Prisma.SelectSubset<T, OperationCostDeleteArgs<ExtArgs>>): Prisma.Prisma__OperationCostClient<runtime.Types.Result.GetResult<Prisma.$OperationCostPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>;
+    /**
+     * Update one OperationCost.
+     * @param {OperationCostUpdateArgs} args - Arguments to update one OperationCost.
+     * @example
+     * // Update one OperationCost
+     * const operationCost = await prisma.operationCost.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     *
+     */
+    update<T extends OperationCostUpdateArgs>(args: Prisma.SelectSubset<T, OperationCostUpdateArgs<ExtArgs>>): Prisma.Prisma__OperationCostClient<runtime.Types.Result.GetResult<Prisma.$OperationCostPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>;
+    /**
+     * Delete zero or more OperationCosts.
+     * @param {OperationCostDeleteManyArgs} args - Arguments to filter OperationCosts to delete.
+     * @example
+     * // Delete a few OperationCosts
+     * const { count } = await prisma.operationCost.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     *
+     */
+    deleteMany<T extends OperationCostDeleteManyArgs>(args?: Prisma.SelectSubset<T, OperationCostDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<Prisma.BatchPayload>;
+    /**
+     * Update zero or more OperationCosts.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {OperationCostUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many OperationCosts
+     * const operationCost = await prisma.operationCost.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     *
+     */
+    updateMany<T extends OperationCostUpdateManyArgs>(args: Prisma.SelectSubset<T, OperationCostUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<Prisma.BatchPayload>;
+    /**
+     * Update zero or more OperationCosts and returns the data updated in the database.
+     * @param {OperationCostUpdateManyAndReturnArgs} args - Arguments to update many OperationCosts.
+     * @example
+     * // Update many OperationCosts
+     * const operationCost = await prisma.operationCost.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *
+     * // Update zero or more OperationCosts and only return the `id`
+     * const operationCostWithIdOnly = await prisma.operationCost.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     *
+     */
+    updateManyAndReturn<T extends OperationCostUpdateManyAndReturnArgs>(args: Prisma.SelectSubset<T, OperationCostUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$OperationCostPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>;
+    /**
+     * Create or update one OperationCost.
+     * @param {OperationCostUpsertArgs} args - Arguments to update or create a OperationCost.
+     * @example
+     * // Update or create a OperationCost
+     * const operationCost = await prisma.operationCost.upsert({
+     *   create: {
+     *     // ... data to create a OperationCost
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the OperationCost we want to update
+     *   }
+     * })
+     */
+    upsert<T extends OperationCostUpsertArgs>(args: Prisma.SelectSubset<T, OperationCostUpsertArgs<ExtArgs>>): Prisma.Prisma__OperationCostClient<runtime.Types.Result.GetResult<Prisma.$OperationCostPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>;
+    /**
+     * Count the number of OperationCosts.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {OperationCostCountArgs} args - Arguments to filter OperationCosts to count.
+     * @example
+     * // Count the number of OperationCosts
+     * const count = await prisma.operationCost.count({
+     *   where: {
+     *     // ... the filter for the OperationCosts we want to count
+     *   }
+     * })
+    **/
+    count<T extends OperationCostCountArgs>(args?: Prisma.Subset<T, OperationCostCountArgs>): Prisma.PrismaPromise<T extends runtime.Types.Utils.Record<'select', any> ? T['select'] extends true ? number : Prisma.GetScalarType<T['select'], OperationCostCountAggregateOutputType> : number>;
+    /**
+     * Allows you to perform aggregations operations on a OperationCost.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {OperationCostAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends OperationCostAggregateArgs>(args: Prisma.Subset<T, OperationCostAggregateArgs>): Prisma.PrismaPromise<GetOperationCostAggregateType<T>>;
+    /**
+     * Group by OperationCost.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {OperationCostGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     *
+    **/
+    groupBy<T extends OperationCostGroupByArgs, HasSelectOrTake extends Prisma.Or<Prisma.Extends<'skip', Prisma.Keys<T>>, Prisma.Extends<'take', Prisma.Keys<T>>>, OrderByArg extends Prisma.True extends HasSelectOrTake ? {
+        orderBy: OperationCostGroupByArgs['orderBy'];
+    } : {
+        orderBy?: OperationCostGroupByArgs['orderBy'];
+    }, OrderFields extends Prisma.ExcludeUnderscoreKeys<Prisma.Keys<Prisma.MaybeTupleToUnion<T['orderBy']>>>, ByFields extends Prisma.MaybeTupleToUnion<T['by']>, ByValid extends Prisma.Has<ByFields, OrderFields>, HavingFields extends Prisma.GetHavingFields<T['having']>, HavingValid extends Prisma.Has<ByFields, HavingFields>, ByEmpty extends T['by'] extends never[] ? Prisma.True : Prisma.False, InputErrors extends ByEmpty extends Prisma.True ? `Error: "by" must not be empty.` : HavingValid extends Prisma.False ? {
+        [P in HavingFields]: P extends ByFields ? never : P extends string ? `Error: Field "${P}" used in "having" needs to be provided in "by".` : [
+            Error,
+            'Field ',
+            P,
+            ` in "having" needs to be provided in "by"`
+        ];
+    }[HavingFields] : 'take' extends Prisma.Keys<T> ? 'orderBy' extends Prisma.Keys<T> ? ByValid extends Prisma.True ? {} : {
+        [P in OrderFields]: P extends ByFields ? never : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`;
+    }[OrderFields] : 'Error: If you provide "take", you also need to provide "orderBy"' : 'skip' extends Prisma.Keys<T> ? 'orderBy' extends Prisma.Keys<T> ? ByValid extends Prisma.True ? {} : {
+        [P in OrderFields]: P extends ByFields ? never : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`;
+    }[OrderFields] : 'Error: If you provide "skip", you also need to provide "orderBy"' : ByValid extends Prisma.True ? {} : {
+        [P in OrderFields]: P extends ByFields ? never : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`;
+    }[OrderFields]>(args: Prisma.SubsetIntersection<T, OperationCostGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetOperationCostGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>;
+    /**
+     * Fields of the OperationCost model
+     */
+    readonly fields: OperationCostFieldRefs;
+}
+/**
+ * The delegate class that acts as a "Promise-like" for OperationCost.
+ * Why is this prefixed with `Prisma__`?
+ * Because we want to prevent naming conflicts as mentioned in
+ * https://github.com/prisma/prisma-client-js/issues/707
+ */
+export interface Prisma__OperationCostClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise";
+    operation<T extends Prisma.OperationDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.OperationDefaultArgs<ExtArgs>>): Prisma.Prisma__OperationClient<runtime.Types.Result.GetResult<Prisma.$OperationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>;
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): runtime.Types.Utils.JsPromise<TResult1 | TResult2>;
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): runtime.Types.Utils.JsPromise<T | TResult>;
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): runtime.Types.Utils.JsPromise<T>;
+}
+/**
+ * Fields of the OperationCost model
+ */
+export interface OperationCostFieldRefs {
+    readonly id: Prisma.FieldRef<"OperationCost", 'String'>;
+    readonly operationId: Prisma.FieldRef<"OperationCost", 'String'>;
+    readonly totalCost: Prisma.FieldRef<"OperationCost", 'Decimal'>;
+    readonly paidAmount: Prisma.FieldRef<"OperationCost", 'Decimal'>;
+    readonly remainingAmount: Prisma.FieldRef<"OperationCost", 'Decimal'>;
+    readonly paymentMethod: Prisma.FieldRef<"OperationCost", 'PaymentMethod'>;
+    readonly paymentStatus: Prisma.FieldRef<"OperationCost", 'PaymentStatus'>;
+    readonly paymentNotes: Prisma.FieldRef<"OperationCost", 'String'>;
+    readonly createdAt: Prisma.FieldRef<"OperationCost", 'DateTime'>;
+    readonly updatedAt: Prisma.FieldRef<"OperationCost", 'DateTime'>;
+}
+/**
+ * OperationCost findUnique
+ */
+export type OperationCostFindUniqueArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the OperationCost
+     */
+    select?: Prisma.OperationCostSelect<ExtArgs> | null;
+    /**
+     * Omit specific fields from the OperationCost
+     */
+    omit?: Prisma.OperationCostOmit<ExtArgs> | null;
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: Prisma.OperationCostInclude<ExtArgs> | null;
+    /**
+     * Filter, which OperationCost to fetch.
+     */
+    where: Prisma.OperationCostWhereUniqueInput;
+};
+/**
+ * OperationCost findUniqueOrThrow
+ */
+export type OperationCostFindUniqueOrThrowArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the OperationCost
+     */
+    select?: Prisma.OperationCostSelect<ExtArgs> | null;
+    /**
+     * Omit specific fields from the OperationCost
+     */
+    omit?: Prisma.OperationCostOmit<ExtArgs> | null;
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: Prisma.OperationCostInclude<ExtArgs> | null;
+    /**
+     * Filter, which OperationCost to fetch.
+     */
+    where: Prisma.OperationCostWhereUniqueInput;
+};
+/**
+ * OperationCost findFirst
+ */
+export type OperationCostFindFirstArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the OperationCost
+     */
+    select?: Prisma.OperationCostSelect<ExtArgs> | null;
+    /**
+     * Omit specific fields from the OperationCost
+     */
+    omit?: Prisma.OperationCostOmit<ExtArgs> | null;
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: Prisma.OperationCostInclude<ExtArgs> | null;
+    /**
+     * Filter, which OperationCost to fetch.
+     */
+    where?: Prisma.OperationCostWhereInput;
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     *
+     * Determine the order of OperationCosts to fetch.
+     */
+    orderBy?: Prisma.OperationCostOrderByWithRelationInput | Prisma.OperationCostOrderByWithRelationInput[];
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     *
+     * Sets the position for searching for OperationCosts.
+     */
+    cursor?: Prisma.OperationCostWhereUniqueInput;
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     *
+     * Take `±n` OperationCosts from the position of the cursor.
+     */
+    take?: number;
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     *
+     * Skip the first `n` OperationCosts.
+     */
+    skip?: number;
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     *
+     * Filter by unique combinations of OperationCosts.
+     */
+    distinct?: Prisma.OperationCostScalarFieldEnum | Prisma.OperationCostScalarFieldEnum[];
+};
+/**
+ * OperationCost findFirstOrThrow
+ */
+export type OperationCostFindFirstOrThrowArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the OperationCost
+     */
+    select?: Prisma.OperationCostSelect<ExtArgs> | null;
+    /**
+     * Omit specific fields from the OperationCost
+     */
+    omit?: Prisma.OperationCostOmit<ExtArgs> | null;
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: Prisma.OperationCostInclude<ExtArgs> | null;
+    /**
+     * Filter, which OperationCost to fetch.
+     */
+    where?: Prisma.OperationCostWhereInput;
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     *
+     * Determine the order of OperationCosts to fetch.
+     */
+    orderBy?: Prisma.OperationCostOrderByWithRelationInput | Prisma.OperationCostOrderByWithRelationInput[];
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     *
+     * Sets the position for searching for OperationCosts.
+     */
+    cursor?: Prisma.OperationCostWhereUniqueInput;
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     *
+     * Take `±n` OperationCosts from the position of the cursor.
+     */
+    take?: number;
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     *
+     * Skip the first `n` OperationCosts.
+     */
+    skip?: number;
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     *
+     * Filter by unique combinations of OperationCosts.
+     */
+    distinct?: Prisma.OperationCostScalarFieldEnum | Prisma.OperationCostScalarFieldEnum[];
+};
+/**
+ * OperationCost findMany
+ */
+export type OperationCostFindManyArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the OperationCost
+     */
+    select?: Prisma.OperationCostSelect<ExtArgs> | null;
+    /**
+     * Omit specific fields from the OperationCost
+     */
+    omit?: Prisma.OperationCostOmit<ExtArgs> | null;
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: Prisma.OperationCostInclude<ExtArgs> | null;
+    /**
+     * Filter, which OperationCosts to fetch.
+     */
+    where?: Prisma.OperationCostWhereInput;
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     *
+     * Determine the order of OperationCosts to fetch.
+     */
+    orderBy?: Prisma.OperationCostOrderByWithRelationInput | Prisma.OperationCostOrderByWithRelationInput[];
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     *
+     * Sets the position for listing OperationCosts.
+     */
+    cursor?: Prisma.OperationCostWhereUniqueInput;
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     *
+     * Take `±n` OperationCosts from the position of the cursor.
+     */
+    take?: number;
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     *
+     * Skip the first `n` OperationCosts.
+     */
+    skip?: number;
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     *
+     * Filter by unique combinations of OperationCosts.
+     */
+    distinct?: Prisma.OperationCostScalarFieldEnum | Prisma.OperationCostScalarFieldEnum[];
+};
+/**
+ * OperationCost create
+ */
+export type OperationCostCreateArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the OperationCost
+     */
+    select?: Prisma.OperationCostSelect<ExtArgs> | null;
+    /**
+     * Omit specific fields from the OperationCost
+     */
+    omit?: Prisma.OperationCostOmit<ExtArgs> | null;
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: Prisma.OperationCostInclude<ExtArgs> | null;
+    /**
+     * The data needed to create a OperationCost.
+     */
+    data: Prisma.XOR<Prisma.OperationCostCreateInput, Prisma.OperationCostUncheckedCreateInput>;
+};
+/**
+ * OperationCost createMany
+ */
+export type OperationCostCreateManyArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many OperationCosts.
+     */
+    data: Prisma.OperationCostCreateManyInput | Prisma.OperationCostCreateManyInput[];
+    skipDuplicates?: boolean;
+};
+/**
+ * OperationCost createManyAndReturn
+ */
+export type OperationCostCreateManyAndReturnArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the OperationCost
+     */
+    select?: Prisma.OperationCostSelectCreateManyAndReturn<ExtArgs> | null;
+    /**
+     * Omit specific fields from the OperationCost
+     */
+    omit?: Prisma.OperationCostOmit<ExtArgs> | null;
+    /**
+     * The data used to create many OperationCosts.
+     */
+    data: Prisma.OperationCostCreateManyInput | Prisma.OperationCostCreateManyInput[];
+    skipDuplicates?: boolean;
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: Prisma.OperationCostIncludeCreateManyAndReturn<ExtArgs> | null;
+};
+/**
+ * OperationCost update
+ */
+export type OperationCostUpdateArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the OperationCost
+     */
+    select?: Prisma.OperationCostSelect<ExtArgs> | null;
+    /**
+     * Omit specific fields from the OperationCost
+     */
+    omit?: Prisma.OperationCostOmit<ExtArgs> | null;
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: Prisma.OperationCostInclude<ExtArgs> | null;
+    /**
+     * The data needed to update a OperationCost.
+     */
+    data: Prisma.XOR<Prisma.OperationCostUpdateInput, Prisma.OperationCostUncheckedUpdateInput>;
+    /**
+     * Choose, which OperationCost to update.
+     */
+    where: Prisma.OperationCostWhereUniqueInput;
+};
+/**
+ * OperationCost updateMany
+ */
+export type OperationCostUpdateManyArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+    /**
+     * The data used to update OperationCosts.
+     */
+    data: Prisma.XOR<Prisma.OperationCostUpdateManyMutationInput, Prisma.OperationCostUncheckedUpdateManyInput>;
+    /**
+     * Filter which OperationCosts to update
+     */
+    where?: Prisma.OperationCostWhereInput;
+    /**
+     * Limit how many OperationCosts to update.
+     */
+    limit?: number;
+};
+/**
+ * OperationCost updateManyAndReturn
+ */
+export type OperationCostUpdateManyAndReturnArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the OperationCost
+     */
+    select?: Prisma.OperationCostSelectUpdateManyAndReturn<ExtArgs> | null;
+    /**
+     * Omit specific fields from the OperationCost
+     */
+    omit?: Prisma.OperationCostOmit<ExtArgs> | null;
+    /**
+     * The data used to update OperationCosts.
+     */
+    data: Prisma.XOR<Prisma.OperationCostUpdateManyMutationInput, Prisma.OperationCostUncheckedUpdateManyInput>;
+    /**
+     * Filter which OperationCosts to update
+     */
+    where?: Prisma.OperationCostWhereInput;
+    /**
+     * Limit how many OperationCosts to update.
+     */
+    limit?: number;
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: Prisma.OperationCostIncludeUpdateManyAndReturn<ExtArgs> | null;
+};
+/**
+ * OperationCost upsert
+ */
+export type OperationCostUpsertArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the OperationCost
+     */
+    select?: Prisma.OperationCostSelect<ExtArgs> | null;
+    /**
+     * Omit specific fields from the OperationCost
+     */
+    omit?: Prisma.OperationCostOmit<ExtArgs> | null;
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: Prisma.OperationCostInclude<ExtArgs> | null;
+    /**
+     * The filter to search for the OperationCost to update in case it exists.
+     */
+    where: Prisma.OperationCostWhereUniqueInput;
+    /**
+     * In case the OperationCost found by the `where` argument doesn't exist, create a new OperationCost with this data.
+     */
+    create: Prisma.XOR<Prisma.OperationCostCreateInput, Prisma.OperationCostUncheckedCreateInput>;
+    /**
+     * In case the OperationCost was found with the provided `where` argument, update it with this data.
+     */
+    update: Prisma.XOR<Prisma.OperationCostUpdateInput, Prisma.OperationCostUncheckedUpdateInput>;
+};
+/**
+ * OperationCost delete
+ */
+export type OperationCostDeleteArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the OperationCost
+     */
+    select?: Prisma.OperationCostSelect<ExtArgs> | null;
+    /**
+     * Omit specific fields from the OperationCost
+     */
+    omit?: Prisma.OperationCostOmit<ExtArgs> | null;
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: Prisma.OperationCostInclude<ExtArgs> | null;
+    /**
+     * Filter which OperationCost to delete.
+     */
+    where: Prisma.OperationCostWhereUniqueInput;
+};
+/**
+ * OperationCost deleteMany
+ */
+export type OperationCostDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+    /**
+     * Filter which OperationCosts to delete
+     */
+    where?: Prisma.OperationCostWhereInput;
+    /**
+     * Limit how many OperationCosts to delete.
+     */
+    limit?: number;
+};
+/**
+ * OperationCost without action
+ */
+export type OperationCostDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the OperationCost
+     */
+    select?: Prisma.OperationCostSelect<ExtArgs> | null;
+    /**
+     * Omit specific fields from the OperationCost
+     */
+    omit?: Prisma.OperationCostOmit<ExtArgs> | null;
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: Prisma.OperationCostInclude<ExtArgs> | null;
+};
+//# sourceMappingURL=OperationCost.d.ts.map

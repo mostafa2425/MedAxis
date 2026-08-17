@@ -1,0 +1,22 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const operation_controller_1 = require("../controllers/operation.controller");
+const auth_middleware_1 = require("../middlewares/auth.middleware");
+const upload_1 = require("../middlewares/upload");
+const router = (0, express_1.Router)();
+router.get('/', auth_middleware_1.authMiddleware, operation_controller_1.operationController.getAll.bind(operation_controller_1.operationController));
+router.get('/:id', auth_middleware_1.authMiddleware, operation_controller_1.operationController.getById.bind(operation_controller_1.operationController));
+router.get('/:id/timeline', auth_middleware_1.authMiddleware, operation_controller_1.operationController.getTimeline.bind(operation_controller_1.operationController));
+router.get('/:operationId/files/:fileId/download', auth_middleware_1.authMiddleware, operation_controller_1.operationController.downloadFile.bind(operation_controller_1.operationController));
+router.post('/', auth_middleware_1.authMiddleware, operation_controller_1.operationController.create.bind(operation_controller_1.operationController));
+router.put('/:id', auth_middleware_1.authMiddleware, operation_controller_1.operationController.update.bind(operation_controller_1.operationController));
+router.patch('/:id/status', auth_middleware_1.authMiddleware, operation_controller_1.operationController.updateStatus.bind(operation_controller_1.operationController));
+router.put('/:id/cost', auth_middleware_1.authMiddleware, operation_controller_1.operationController.updateCost.bind(operation_controller_1.operationController));
+router.post('/:id/files/upload-url', auth_middleware_1.authMiddleware, operation_controller_1.operationController.createFileUploadUrl.bind(operation_controller_1.operationController));
+router.post('/:id/files/complete', auth_middleware_1.authMiddleware, operation_controller_1.operationController.completeFileUpload.bind(operation_controller_1.operationController));
+router.post('/:id/files', auth_middleware_1.authMiddleware, upload_1.uploadOperationFiles, operation_controller_1.operationController.uploadFiles.bind(operation_controller_1.operationController));
+router.delete('/:operationId/files/:fileId', auth_middleware_1.authMiddleware, operation_controller_1.operationController.deleteFile.bind(operation_controller_1.operationController));
+router.delete('/:id', auth_middleware_1.authMiddleware, operation_controller_1.operationController.delete.bind(operation_controller_1.operationController));
+exports.default = router;
+//# sourceMappingURL=operation.routes.js.map
