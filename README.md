@@ -24,7 +24,6 @@ docker-compose up -d
 
 ```bash
 cd server
-npm install
 cp .env.example .env  # Edit DATABASE_URL if needed
 npx prisma db push
 npm run seed
@@ -52,12 +51,12 @@ Frontend runs on http://localhost:3005
 ### Frontend
 - React 19 + TypeScript
 - Vite
-- Ant Design 5
+- Ant Design 6
 - React Query (@tanstack/react-query)
 - React Router
 - React Hook Form + Zod
 - Zustand
-- SCSS Modules
+- SCSS
 - i18next (English + Arabic)
 
 ### Backend
@@ -75,14 +74,35 @@ Frontend runs on http://localhost:3005
 - 📊 **Dashboard** - Stats, trends, monthly charts
 - 👨‍⚕️ **Medical Team** - Multi-doctor support
 - 🏥 **Hospital Management** - Recent hospitals auto-selected
-- 🏷️ **15 Orthopedic Specialties** - Knee, Spine, Sports, etc.
+- 🏷️ **Specialties** - Specialty and area-of-expertise hierarchy
 - 💰 **Cost Tracking** - Payment methods, status, auto-calculation
-- 📁 **File Upload** - Before/after images, X-rays, MRI, PDF
+- 📁 **Clinical Files** - Before/after images, X-rays, MRI, CT, labs and documents
 - 📋 **Timeline** - Automatic activity tracking
 - 🔍 **Global Search** - Search across all entities
 - 🌙 **Dark Mode** - Light/dark theme toggle
 - 🌐 **RTL Support** - English and Arabic
 - 📱 **Mobile First** - Touch-friendly, single column, sticky actions
+
+## Shared Design System
+
+The frontend uses a reusable Ant Design 6 component layer under `client/src/components/common/`.
+
+Core primitives:
+
+- `PageHeader` — consistent page title, metadata, back action and responsive actions
+- `StatusTag` — semantic status presentation
+- `InfoCard` — standard information sections
+- `EmptyState` — consistent empty states with optional actions
+- `DataCard` — compact label/value metadata blocks
+- `PhoneLink` — universal `tel:` action for phone numbers
+- `DateTimeTag` — consistent date/time tag presentation
+- `MoneyInput` — mobile-safe monetary input with stable currency suffix and comma formatting
+- `FileCard` — reusable clinical/document file preview card
+- `StaffCard` — reusable doctor/nurse/team member card
+- `SectionHeader` — consistent section title/description/action layout
+- `ConfirmAction` — standardized destructive confirmation action
+
+The design system follows the project's mobile-first, RTL/LTR, light/dark, accessible and Ant Design 6 principles. See `docs/DESIGN_SYSTEM.md` for usage guidance.
 
 ## Project Structure
 
@@ -90,7 +110,7 @@ Frontend runs on http://localhost:3005
 medaxis/
 ├── client/                 # React Frontend
 │   ├── src/
-│   │   ├── components/     # Reusable components
+│   │   ├── components/     # Reusable components + shared design system
 │   │   ├── pages/          # Page components
 │   │   ├── services/       # API service layer
 │   │   ├── stores/         # Zustand stores
@@ -100,19 +120,9 @@ medaxis/
 │   │   ├── styles/         # SCSS variables/mixins/global
 │   │   └── utils/          # Helpers & constants
 │   └── vite.config.ts
-├── server/                 # Express Backend
-│   ├── src/
-│   │   ├── controllers/    # Request handlers
-│   │   ├── services/       # Business logic
-│   │   ├── repositories/   # Data access (Prisma)
-│   │   ├── middlewares/    # Auth, error handling, upload
-│   │   ├── routes/         # Express routes
-│   │   ├── validators/     # Zod schemas
-│   │   └── utils/          # Prisma client, helpers
-│   └── prisma/
-│       ├── schema.prisma   # Database schema
-│       └── seed.ts         # Demo data seeder
-├── docker-compose.yml      # PostgreSQL container
+├── server/                 # Express API
+├── docs/                   # Product and design documentation
+├── docker-compose.yml      # PostgreSQL
 └── README.md
 ```
 
