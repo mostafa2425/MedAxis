@@ -1,10 +1,16 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from '../src/generated/prisma';
 import { PrismaPg } from '@prisma/adapter-pg';
 import dotenv from 'dotenv';
 
 dotenv.config();
 
-const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL });
+const connectionString = process.env.DATABASE_URL;
+
+if (!connectionString) {
+  throw new Error('DATABASE_URL is required to seed governorates.');
+}
+
+const adapter = new PrismaPg({ connectionString });
 const prisma = new PrismaClient({ adapter });
 
 const GOVERNORATES = [
@@ -44,6 +50,7 @@ async function main() {
       create: { nameEn, nameAr, code, isActive: true },
     });
   }
+
   console.log(`Seeded ${GOVERNORATES.length} Egyptian governorates.`);
 }
 
