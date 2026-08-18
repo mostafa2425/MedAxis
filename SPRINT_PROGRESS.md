@@ -31,6 +31,9 @@
 - [x] Add / complete / delete follow-ups
 - [x] Mobile-first Follow-ups tab in Operation Detail
 - [x] Arabic / English follow-up labels
+- [x] Follow-up summary cards and compact mobile actions
+- [x] Follow-up item redesign with compact Complete / Delete icon actions
+- [x] Frontend TypeScript cleanup: no unsafe `any` in FollowUpsPanel
 - [ ] Add global Follow-ups page with Upcoming / Overdue / Completed filters
 - [ ] Add dashboard follow-up summary and calendar integration
 - [ ] Add reminder notifications after notification infrastructure is introduced
@@ -42,6 +45,9 @@
 - [ ] Run `npm run build`
 - [ ] Run local API smoke tests for follow-up CRUD
 - [ ] Verify mobile UX in browser
+
+## Frontend Rules
+- [x] Added `docs/FRONTEND_RULES.md` with mobile-first Ant Design, TypeScript, and kebab-case SCSS conventions
 
 ## Next Roadmap
 - [ ] Sprint 3 — Operation Templates
