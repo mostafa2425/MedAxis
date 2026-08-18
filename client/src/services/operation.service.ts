@@ -1,4 +1,5 @@
 import api from './api';
+import { supabase } from '@/lib/supabase';
 import type { ApiResponse, PaginatedResponse, Operation, CreateOperationPayload, UpdateOperationPayload, OperationFilters, OperationCost, OperationFile, OperationTimeline } from '@/types';
 
 export interface OperationCostBreakdownPayload {
@@ -25,6 +26,8 @@ type UploadTicket = {
   fileType: string;
 };
 
+const STORAGE_BUCKET = import.meta.env.VITE_SUPABASE_STORAGE_BUCKET || 'clinical-files';
+
 export const operationService = {
   getAll(params?: OperationFilters) { return api.get<PaginatedResponse<Operation>>('/operations', { params }); },
   getById(id: string) { return api.get<ApiResponse<Operation>>(`/operations/${id}`); },
@@ -34,6 +37,10 @@ export const operationService = {
   changeStatus(id: string, status: string) { return api.patch<ApiResponse<Operation>>(`/operations/${id}/status`, { status }); },
   updateCost(id: string, data: OperationCostBreakdownPayload) { return api.put<ApiResponse<OperationCost>>(`/operations/${id}/cost`, data); },
   async uploadFiles(id: string, file: File, fileType: string) {
+    if (!supabase) {
+      throw new Error('Supabase client is not configured. Set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY in client/.env.');
+    }
+
     const ticketResponse = await api.post<ApiResponse<UploadTicket>>(`/operations/${id}/files/upload-url`, {
       fileName: file.name,
       mimeType: file.type || 'application/octet-stream',
@@ -41,12 +48,17 @@ export const operationService = {
       fileType,
     });
     const ticket = ticketResponse.data.data;
-    const uploadResponse = await fetch(ticket.signedUrl, {
-      method: 'PUT',
-      headers: { 'Content-Type': file.type || 'application/octet-stream' },
-      body: file,
-    });
-    if (!uploadResponse.ok) throw new Error(`Storage upload failed (${uploadResponse.status})`);
+
+    const { error: uploadError } = await supabase.storage
+      .from(STORAGE_BUCKET)
+      .uploadToSignedUrl(ticket.path, ticket.token, file, {
+        contentType: file.type || 'application/octet-stream',
+        cacheControl: '3600',
+      });
+
+    if (uploadError) {
+      throw new Error(`Storage upload failed: ${uploadError.message}`);
+    }
 
     return api.post<ApiResponse<OperationFile>>(`/operations/${id}/files/complete`, {
       filePath: ticket.path,
