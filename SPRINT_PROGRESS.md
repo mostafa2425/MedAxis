@@ -37,7 +37,6 @@
 - [x] Global Follow-ups page with Upcoming / Overdue / Completed filters
 - [x] Global authenticated Follow-ups API with doctor-level data isolation
 - [x] Calendar 2.0 follow-up context panel for the active calendar range
-- [ ] Add dashboard follow-up summary
 - [ ] Add reminder notifications after notification infrastructure is introduced
 
 ### Verification
@@ -48,14 +47,27 @@
 - [ ] Run local API smoke tests for global follow-up filters and CRUD
 - [ ] Verify mobile UX in browser
 
+## Sprint 3 — Patient Management 2.0
+- [x] Doctor-isolated patient management insights on list and profile APIs
+- [x] Patient list search + gender filtering
+- [x] Mobile-first patient cards with operation / active-case / follow-up / clinical-file metrics
+- [x] Patient profile workflow with operation history
+- [x] Patient profile follow-up section
+- [x] Patient profile clinical files section
+- [x] Quick action to create a new operation for the patient
+- [x] Clickable patient phone links
+- [x] Responsive desktop grid and compact mobile layout
+- [ ] Add patient clinical milestone timeline
+- [ ] Add patient-level export / print
+
 ## Frontend Rules
 - [x] Added `docs/FRONTEND_RULES.md` with mobile-first Ant Design, TypeScript, and kebab-case SCSS conventions
 
 ## Product Roadmap — Remaining
 
 ### 🔴 Core Workflow
-- [ ] Sprint 3 — Patients Management 2.0: patient profile, operation history, follow-ups, files, timeline
-- [ ] Sprint 4 — Dashboard 2.0: actionable operations, follow-ups, overdue cases, quick actions
+- [x] Sprint 3 — Patients Management 2.0: patient profile, operation history, follow-ups, files
+- [x] Sprint 4 — Dashboard 2.0: actionable operations, follow-ups, overdue cases, quick actions
 - [ ] Sprint 5 — Notifications: in-app operation and follow-up alerts
 - [ ] Sprint 6 — Global Search: patients, operations, hospitals, doctors, follow-ups
 - [ ] Sprint 7 — Activity / Audit Center: cross-system recent activity
