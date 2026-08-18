@@ -16,7 +16,7 @@
   padding: 8px 12px;
   border-radius: $radius-md;
   background: rgba(15, 23, 42, 0.04);
-  border: 1px solid $border-subtle;
+  border: 1px solid rgba(15, 23, 42, 0.10);
 }
 
 .calendarLegendItem {
@@ -45,7 +45,7 @@
 
 @include dark {
   .calendar-page .pageIcon { background: rgba(37, 99, 235, 0.2); }
-  .calendarLegend { background: rgba(255, 255, 255, 0.04); border-color: rgba(255, 255, 255, 0.08); }
+  .calendarLegend { background: rgba(255, 255, 255, 0.04); border-color: rgba(255, 255, 255, 0.10); }
 }
 
 @include responsive('lg') { .calendarShell { grid-template-columns: 1fr; } .calendarSidePanel { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); } }
