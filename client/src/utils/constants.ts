@@ -3,13 +3,13 @@ import { OperationStatus, PaymentMethod, PaymentStatus, FileType, Gender } from 
 // ──────────────────────────────────────────────
 // Operation Statuses
 // ──────────────────────────────────────────────
+// The operation creation workflow intentionally exposes only the four
+// statuses that are meaningful to a newly scheduled case.
 export const OPERATION_STATUSES = [
   { value: OperationStatus.Scheduled, label: 'Scheduled', color: '#2563EB', bg: 'rgba(37,99,235,0.1)' },
-  { value: OperationStatus.CheckedIn, label: 'Checked In', color: '#14B8A6', bg: 'rgba(20,184,166,0.1)' },
   { value: OperationStatus.InProgress, label: 'In Progress', color: '#7C3AED', bg: 'rgba(124,58,237,0.1)' },
   { value: OperationStatus.Completed, label: 'Completed', color: '#16A34A', bg: 'rgba(22,163,74,0.1)' },
   { value: OperationStatus.Cancelled, label: 'Cancelled', color: '#DC2626', bg: 'rgba(220,38,38,0.1)' },
-  { value: OperationStatus.NoShow, label: 'No Show', color: '#F97316', bg: 'rgba(249,115,22,0.1)' },
 ] as const;
 
 // ──────────────────────────────────────────────
