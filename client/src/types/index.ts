@@ -76,6 +76,21 @@ export interface User {
   updatedAt: string;
 }
 
+export interface PatientManagementSummary {
+  totalOperations: number;
+  completedOperations: number;
+  activeOperations: number;
+  cancelledOperations: number;
+  upcomingFollowUps: number;
+  clinicalFiles: number;
+  lastOperation: {
+    id: string;
+    name: string;
+    operationDate: string;
+    status: string;
+  } | null;
+}
+
 export interface Patient {
   id: string;
   fullName: string;
@@ -87,6 +102,7 @@ export interface Patient {
   createdAt: string;
   updatedAt: string;
   _count?: { operations: number };
+  management?: PatientManagementSummary;
 }
 
 export interface Specialty {
