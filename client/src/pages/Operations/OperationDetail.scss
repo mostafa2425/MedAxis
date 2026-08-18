@@ -20,9 +20,26 @@
 .loadingContainer { @include flex-center; flex-direction: column; gap: $space-4; padding: $space-8 $space-4; color: $text-muted; }
 .emptyState { padding: $space-8 $space-4; }
 
-.pageHeader { display: flex; align-items: flex-start; justify-content: space-between; gap: $space-4; flex-wrap: wrap; }
-.pageHeaderInfo { min-width: 0; }
-.backBtn { flex-shrink: 0; }
+.pageHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding: 4px 0 2px;
+}
+.pageHeaderInfo {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding-inline-start: 2px;
+}
+.pageHeaderInfo .ant-typography { max-width: min(62vw, 760px); }
+.pageHeaderInfo > .ant-typography:last-child { display: flex; align-items: center; gap: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pageHeaderInfo .ant-typography:last-child .anticon { flex-shrink: 0; }
+.pageHeader > .ant-space { flex-shrink: 0; }
+.backBtn { flex-shrink: 0; border-radius: $radius-md !important; }
 .statusDropdown { min-width: 150px; }
 
 .operation-tabs {
@@ -75,8 +92,30 @@
 
 .costSummary { margin-bottom: $space-3; }
 .costCard { border: 1px solid $border; border-radius: $radius-md; }
+
+.financials-card { border-radius: $radius-lg; box-shadow: $shadow-sm; background: $surface; }
+.financialsHeader { padding-bottom: 18px; border-bottom: 1px solid $border; }
+.financialsIcon { width: 42px; height: 42px; display: grid; place-items: center; border-radius: 12px; background: $primary-light; color: $primary; font-size: 20px; }
+.currencyTag { margin: 0; font-weight: $font-semibold; border-radius: $radius-full; }
+.financialsTopGrid { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(260px, .8fr); gap: 16px; padding: 20px 0 12px; align-items: stretch; }
+.totalCostField { min-width: 0; }
+.moneyInput { width: 100% !important; display: flex !important; }
+.moneyInput .ant-input-number { min-width: 0; width: 100%; flex: 1 1 auto; }
+.moneyInput .ant-input-number-input { font-variant-numeric: tabular-nums; }
+.moneyCurrency { flex: 0 0 auto; min-width: 58px; padding: 0 12px; border: 1px solid $border; border-inline-start: 0; display: flex; align-items: center; justify-content: center; background: $background; color: $text-secondary; font-weight: $font-semibold; }
+.doctorShareCard { padding: 16px 18px; border-radius: $radius-md; border: 1px solid rgba(82,196,26,.2); background: rgba(82,196,26,.06); min-width: 0; }
+.doctorShareValue { margin: 4px 0 2px !important; font-variant-numeric: tabular-nums; }
+.doctorShareValue small { font-size: 13px; font-weight: $font-semibold; color: $text-secondary; }
+.costBreakdownCollapse { border: 1px solid $border !important; border-radius: $radius-md !important; background: $background; }
+.collapseDot { width: 8px; height: 8px; border-radius: 50%; background: $primary; flex: 0 0 auto; }
+.breakdownIntro { margin: 0 0 16px !important; }
+.breakdownGrid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px 16px; }
+.breakdownGrid .ant-form-item { margin-bottom: 10px; }
+.financialTotals { padding: 0 2px; }
+.doctorShareRow { margin-top: 10px; padding-top: 12px; border-top: 1px solid $border; }
 .costShareStat { flex: 1 1 220px; padding: 8px 4px; }
-.cost-breakdown-error { color: $error; font-size: $font-body-sm; padding: 8px 0; }
+.cost-breakdown-error { color: $error; font-size: $font-body-sm; padding: 10px 12px; border-radius: $radius-md; background: rgba(255,77,79,.06); }
+.financialsActions { padding-top: 16px; }
 
 .timelineItem { padding-bottom: $space-2; }
 .timelineHeader { display: flex; align-items: center; justify-content: space-between; gap: $space-3; flex-wrap: wrap; }
@@ -86,7 +125,10 @@
 
 @media (max-width: 767px) {
   .operation-detail-page.page { gap: 12px; }
-  .pageHeader { gap: 10px; }
+  .pageHeader { align-items: flex-start; gap: 10px; }
+  .pageHeaderInfo { flex: 1; }
+  .pageHeaderInfo .ant-typography { max-width: 100%; }
+  .pageHeaderInfo > .ant-typography:last-child { font-size: 12px; max-width: 100%; }
   .pageHeader > .ant-space { width: 100%; }
   .pageHeader > .ant-space .ant-btn { flex: 1; }
   .operation-tabs .ant-tabs-nav { overflow-x: auto; scrollbar-width: none; margin-bottom: 14px; }
@@ -104,10 +146,17 @@
   .clinicalFilePreview { height: 120px; }
   .clinicalFileBody { padding: 8px; }
   .clinicalFileBody .ant-typography { font-size: 12px; }
+  .financials-card .ant-card-body { padding: 16px; }
+  .financialsTopGrid { grid-template-columns: 1fr; gap: 8px; padding-top: 16px; }
+  .breakdownGrid { grid-template-columns: 1fr; }
+  .financialsActions .ant-btn { width: 100%; }
+  .doctorShareValue { font-size: 28px !important; }
+  .moneyCurrency { min-width: 54px; padding-inline: 8px; }
 }
 
 @media (max-width: 420px) {
   .caseMetaGrid { grid-template-columns: 1fr; }
   .clinicalFileGrid { grid-template-columns: 1fr 1fr; }
   .clinicalFilePreview { height: 105px; }
+  .financialsHeader { align-items: flex-start !important; }
 }
