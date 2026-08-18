@@ -5,8 +5,10 @@ import { sendSuccess } from '../utils/response';
 
 const router = Router();
 
-router.get('/public-key', (_req, res) => {
-  return sendSuccess(res, { publicKey: process.env.VAPID_PUBLIC_KEY || null });
+router.get('/public-key', async (_req, res, next) => {
+  try {
+    return sendSuccess(res, { publicKey: await pushService.getPublicKey() });
+  } catch (error) { next(error); }
 });
 
 router.post('/subscribe', authMiddleware, async (req, res, next) => {
