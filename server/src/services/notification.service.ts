@@ -1,5 +1,6 @@
 import { prisma } from '../prisma';
 import { assistantService } from './assistant.service';
+import { pushService } from './push.service';
 
 export type NotificationKind = 'DAILY_BRIEF' | 'WEEKLY_BRIEF';
 
@@ -50,19 +51,32 @@ export class NotificationService {
     const prefix = kind === 'DAILY_BRIEF' ? 'Tomorrow' : 'Next week';
     const message = `${prefix}: ${brief.summary.operations} operations · ${brief.summary.followUps} follow-ups · ${brief.summary.attention} items need attention`;
     const priority = brief.summary.attention > 0 ? 'important' : 'normal';
+    const title = kind === 'DAILY_BRIEF' ? 'Your MedAxis brief' : 'Your Week Ahead';
 
-    await prisma.$executeRawUnsafe(
+    const inserted = await prisma.$queryRawUnsafe<Array<{ id: string }>>(
       `insert into public.smart_notifications
         (user_id, kind, title, message, priority, scheduled_for)
        values ($1::uuid, $2, $3, $4, $5, $6)
-       on conflict (user_id, kind, scheduled_for) do nothing`,
+       on conflict (user_id, kind, scheduled_for) do nothing
+       returning id`,
       userId,
       kind,
-      kind === 'DAILY_BRIEF' ? 'Your MedAxis brief' : 'Your Week Ahead',
+      title,
       message,
       priority,
       scheduledFor,
     );
+
+    if (inserted[0]?.id) {
+      await pushService.sendToUser(userId, {
+        title,
+        body: message,
+        url: '/assistant',
+        tag: kind,
+        kind,
+        notificationId: inserted[0].id,
+      });
+    }
 
     return brief;
   }
