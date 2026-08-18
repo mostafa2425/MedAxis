@@ -18,6 +18,38 @@ export class OperationFollowUpRepository {
     return items.map(withDerivedStatus);
   }
 
+  async findAllForDoctor(createdBy: string, filters?: { status?: FollowUpStatus; from?: Date; to?: Date }) {
+    const items = await prisma.operationFollowUp.findMany({
+      where: {
+        ...(filters?.status ? { status: filters.status } : {}),
+        ...(filters?.from || filters?.to
+          ? {
+              scheduledAt: {
+                ...(filters.from ? { gte: filters.from } : {}),
+                ...(filters.to ? { lte: filters.to } : {}),
+              },
+            }
+          : {}),
+        operation: { createdBy },
+      },
+      include: {
+        operation: {
+          select: {
+            id: true,
+            name: true,
+            operationDate: true,
+            operationTime: true,
+            patient: { select: { id: true, fullName: true, mobile: true } },
+            hospital: { select: { id: true, name: true, nameAr: true } },
+          },
+        },
+      },
+      orderBy: { scheduledAt: 'asc' },
+    });
+
+    return items.map(withDerivedStatus);
+  }
+
   async create(operationId: string, data: { title: string; scheduledAt: Date; notes?: string | null }) {
     const item = await prisma.operationFollowUp.create({
       data: { operationId, title: data.title, scheduledAt: data.scheduledAt, notes: data.notes ?? null },
