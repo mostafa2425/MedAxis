@@ -7,6 +7,7 @@
 - **Sprint 0:** 🟢 Implementation complete; local verification pending
 - **Sprint 1:** 🟢 Core implementation complete; local verification pending
 - **API routing consistency:** 🟢 Frontend services audited; centralized Axios client is the API entry point
+- **Prisma migration history:** 🟡 Baseline added; existing databases must be marked as baseline-applied before deploying migrations
 - **Production database:** 🔒 Not touched
 - **Production deployment:** 🔒 Not performed
 
@@ -130,6 +131,25 @@
 - `operation_costs.equipmentCost`
 - `operation_costs.otherCost`
 
+### Migration history
+
+- [x] Added `server/prisma/migrations/20260817_baseline/migration.sql` to reconstruct the existing Prisma schema in a fresh/shadow database.
+- [x] Kept `20260818_sprint_0_1_hospital_governorates_cost_breakdown` as the follow-up Sprint 0/1 migration.
+- [ ] On an existing local database that already contains the pre-Sprint schema, mark the baseline as applied before running `migrate dev`.
+
+### Local migration recovery
+
+If the local database already has the schema/tables and has never had the baseline migration recorded, run from `server`:
+
+```bash
+npx prisma migrate resolve --applied 20260817_baseline
+npx prisma migrate dev
+```
+
+Do **not** run `prisma migrate reset` if the local database contains data you want to preserve.
+
+For a completely disposable empty local database, a reset/recreate is also possible, but it is not required for this migration-history fix.
+
 ### Safety
 
 - New hospital fields are nullable.
@@ -137,6 +157,7 @@
 - Governorate foreign key uses `ON DELETE SET NULL`.
 - Production has not been changed by this work.
 - Do not use `prisma db push` against production.
+- Do not mark a production baseline as applied until the existing production schema has been verified against the baseline.
 
 ---
 
@@ -144,7 +165,7 @@
 
 1. Finish local verification for Sprint 0/1.
 2. Resolve any TypeScript/build issues found by verification.
-3. Review production migration/baseline strategy before applying DB changes.
+3. Verify the local migration history using the new baseline.
 4. Start **Sprint 2 — Files 2.0**:
    - Before / During / After stages
    - Imaging / Clinical / Documents / Other types
