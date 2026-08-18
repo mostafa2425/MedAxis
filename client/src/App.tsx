@@ -9,6 +9,7 @@ import AppLayout from '@/components/layout/AppLayout/AppLayout';
 const LoginPage = React.lazy(() => import('@/pages/auth/LoginPage'));
 const RegisterPage = React.lazy(() => import('@/pages/auth/RegisterPage'));
 const DashboardPage = React.lazy(() => import('@/pages/Dashboard'));
+const AssistantPage = React.lazy(() => import('@/pages/Assistant'));
 const PatientsPage = React.lazy(() => import('@/pages/Patients'));
 const PatientFormPage = React.lazy(() => import('@/pages/Patients/NewPatient'));
 const PatientDetailPage = React.lazy(() => import('@/pages/Patients/PatientDetail'));
@@ -84,6 +85,7 @@ export default function App() {
           <Route path="/register" element={<RegisterPage />} />
           <Route element={<RequireAuth />}>
             <Route path="/" element={<DashboardPage />} />
+            <Route path="/assistant" element={<AssistantPage />} />
             <Route path="/patients" element={<PatientsPage />} />
             <Route path="/patients/new" element={<PatientFormPage />} />
             <Route path="/patients/:id" element={<PatientDetailPage />} />
