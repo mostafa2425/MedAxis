@@ -113,7 +113,7 @@ export default function OperationFormPage() {
       patientSearchQuery: existingOperation.patient?.fullName ?? '',
       name: existingOperation.name,
       operationIds:
-        existingOperation.procedures?.map((procedure) => procedure.catalogId).filter((id): id is string => Boolean(id))
+        existingOperation.procedures?.map((procedure) => procedure.catalogId).filter((procedureId): procedureId is string => Boolean(procedureId))
         ?? (existingOperation.catalogId ? [existingOperation.catalogId] : []),
       operationId: existingOperation.catalogId ?? existingOperation.catalog?.id ?? '',
       diagnosis: existingOperation.diagnosis ?? '',
@@ -131,7 +131,7 @@ export default function OperationFormPage() {
           existingOperation.medicalTeam?.assistantSurgeonId,
           existingOperation.medicalTeam?.anesthesiologistId,
           existingOperation.medicalTeam?.assistantAnesthesiaId,
-        ].filter((id): id is string => Boolean(id)),
+        ].filter((doctorId): doctorId is string => Boolean(doctorId)),
       nurseIds:
         existingOperation.teamMembers?.filter((member) => member.nurseId).map((member) => member.nurseId as string)
         ?? [],
@@ -156,7 +156,7 @@ export default function OperationFormPage() {
     queryFn: () => operationService.getById(savedOperationId!),
     enabled: !!savedOperationId,
     select: (res) =>
-      res.data.data?.files?.filter((f) => isBeforeFileType(f.fileType)) ?? [],
+      res.data.data?.files?.filter((file) => isBeforeFileType(file.fileType)) ?? [],
   });
 
   const { data: afterFilesData } = useQuery({
@@ -164,7 +164,7 @@ export default function OperationFormPage() {
     queryFn: () => operationService.getById(savedOperationId!),
     enabled: !!savedOperationId,
     select: (res) =>
-      res.data.data?.files?.filter((f) => isAfterFileType(f.fileType)) ?? [],
+      res.data.data?.files?.filter((file) => isAfterFileType(file.fileType)) ?? [],
   });
 
   const beforeFiles: OperationFile[] = beforeFilesData ?? [];
@@ -218,7 +218,6 @@ export default function OperationFormPage() {
         },
       );
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- intentional notes autosave
   }, [notesDebounced, savedOperationId]);
 
   const clearError = useCallback((field: string) => {
@@ -407,12 +406,25 @@ export default function OperationFormPage() {
     ],
   );
 
+  const getBeforeFileType = (file: File): string => {
+    if (file.type === 'application/pdf') return 'BEFORE_PDF';
+    if (file.type.startsWith('image/')) return 'BEFORE_IMAGE';
+    if (/\.(dcm|dicom)$/i.test(file.name)) return 'BEFORE_XRAY';
+    return 'BEFORE_IMAGE';
+  };
+
+  const getAfterFileType = (file: File): string => {
+    if (file.type === 'application/pdf') return 'AFTER_PDF';
+    if (file.type.startsWith('image/')) return 'AFTER_IMAGE';
+    return 'AFTER_OTHER';
+  };
+
   const handleBeforeUpload = useCallback(
     async (file: File) => {
       if (!savedOperationId) return;
       const fd = new FormData();
       fd.append('file', file);
-      fd.append('fileType', FileType.BeforeOperation);
+      fd.append('fileType', getBeforeFileType(file));
       try {
         await uploadBeforeMutation.mutateAsync({ opId: savedOperationId, formData: fd });
         messageApi.success(t('operations.fileUploaded'));
@@ -430,7 +442,7 @@ export default function OperationFormPage() {
       if (!savedOperationId) return;
       const fd = new FormData();
       fd.append('file', file);
-      fd.append('fileType', FileType.AfterOperation);
+      fd.append('fileType', getAfterFileType(file));
       try {
         await uploadAfterMutation.mutateAsync({ opId: savedOperationId, formData: fd });
         messageApi.success(t('operations.fileUploaded'));
@@ -498,94 +510,51 @@ export default function OperationFormPage() {
     Boolean(formData.patientId) || formData.isNewPatient;
 
   if (isEditMode && loadingOperation) {
-    return (
-      <div className="operation-form-page page">
-        {contextHolder}
-        <div className="loadingContainer">
-          <Spin size="large" />
-          <p>{t('common.loading')}</p>
-        </div>
-      </div>
-    );
+    return <div className="operationFormLoading"><Spin size="large" /></div>;
   }
 
   return (
-    <div className="operation-form-page page">
+    <div className="operationFormPage">
       {contextHolder}
-
-      <header className="pageHeader">
-        <div className="pageHeaderLeft">
-          <Button
-            icon={<ArrowLeftOutlined />}
-            onClick={() => navigate('/operations')}
-            className="backButton"
-          >
-            {t('common.back')}
-          </Button>
-          <div className="pageHeaderText">
-            <h1 className="pageTitle">
-              {isEditMode ? t('operations.editOperation') : t('operations.addOperation')}
-            </h1>
-            <p className="pageHint">{stepHints[currentStep]}</p>
-          </div>
-        </div>
-        <div className="pageHeaderMeta">
-          <span className="stepPill">
-            {t('operations.step', { current: currentStep + 1, total: STEPS.length })}
-          </span>
-          {savedOperationId && (
-            <span className="draftPill">{t('operations.quickSave')}</span>
-          )}
+      <header className="operationFormHeader">
+        <Button type="text" icon={<ArrowLeftOutlined />} onClick={() => navigate('/operations')}>
+          {t('common.back')}
+        </Button>
+        <div>
+          <h1>{isEditMode ? t('operations.editOperation') : t('operations.addOperation')}</h1>
+          <p>{t('operations.operationFormSubtitle')}</p>
         </div>
       </header>
-
-      <WizardNav
-        currentStep={currentStep}
-        stepTitles={stepTitles}
-        onStepChange={goToStep}
-        STEPS={STEPS}
-      />
-
-      <div
-        className={`stepsContent${currentStep === 0 ? ' stepsContent--patient' : ''}`}
-        key={currentStep}
-      >
-        <div className="stepPanelHeader">
-          <h2 className="stepPanelTitle">{stepTitles[currentStep]}</h2>
-          <p className="stepPanelHint">{stepHints[currentStep]}</p>
-        </div>
-
+      <WizardNav currentStep={currentStep} steps={STEPS} stepTitles={stepTitles} onStepClick={goToStep} />
+      <main className="operationFormContent">
         {currentStep === 0 && (
           <PatientStep
             formData={formData}
-            setFormData={setFormData}
             errors={errors}
-            clearError={clearError}
+            onChange={(patch) => setFormData((prev) => ({ ...prev, ...patch }))}
+            onClearError={clearError}
           />
         )}
         {currentStep === 1 && (
           <OperationDetailsStep
             formData={formData}
-            setFormData={setFormData}
             errors={errors}
-            clearError={clearError}
+            hospitals={hospitals}
+            specialties={specialties}
+            onChange={(patch) => setFormData((prev) => ({ ...prev, ...patch }))}
+            onClearError={clearError}
           />
         )}
         {currentStep === 2 && (
           <TeamStep
             formData={formData}
-            setFormData={setFormData}
-            errors={errors}
-            clearError={clearError}
+            doctors={doctors}
+            nurses={nurses}
+            onChange={(patch) => setFormData((prev) => ({ ...prev, ...patch }))}
           />
         )}
         {currentStep === 3 && (
-          <CostStep
-            formData={formData}
-            setFormData={setFormData}
-            errors={errors}
-            clearError={clearError}
-          />
+          <CostStep formData={formData} onChange={(patch) => setFormData((prev) => ({ ...prev, ...patch }))} />
         )}
         {currentStep === 4 && (
           <FilesStep
@@ -600,25 +569,24 @@ export default function OperationFormPage() {
         {currentStep === 5 && (
           <ReviewStep
             formData={formData}
-            goToStep={goToStep}
             hospitals={hospitals}
             specialties={specialties}
             doctors={doctors}
             nurses={nurses}
+            beforeFiles={beforeFiles}
+            afterFiles={afterFiles}
           />
         )}
-      </div>
-
+      </main>
       <WizardActions
         currentStep={currentStep}
+        totalSteps={STEPS.length}
         isSaving={isSaving}
-        savedOperationId={savedOperationId}
-        isEditMode={isEditMode}
-        canContinue={currentStep === 0 ? canContinuePatientStep : true}
+        canContinuePatientStep={canContinuePatientStep}
         onBack={handleBack}
         onNext={handleNext}
+        onSave={handleSave}
         onQuickSave={() => handleSave(true)}
-        onSubmit={() => handleSave(false)}
       />
     </div>
   );
