@@ -1,10 +1,10 @@
 .calendarEvent {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 5px;
   width: 100%;
-  min-height: 22px;
-  padding: 2px 6px;
+  min-height: 24px;
+  padding: 3px 7px;
   border: 0;
   border-radius: $radius-sm;
   background: var(--event-bg);
@@ -13,13 +13,28 @@
   text-align: start;
   overflow: hidden;
   border-inline-start: 3px solid var(--event-color);
-  transition: opacity $transition-fast;
+  transition: transform $transition-fast, opacity $transition-fast, box-shadow $transition-fast;
 
   &:hover,
   &:focus-visible {
-    opacity: 0.88;
+    opacity: 0.92;
     outline: none;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.10);
   }
+}
+
+.calendarEventOperation {
+  font-weight: $font-medium;
+}
+
+.calendarEventMarker {
+  flex: 0 0 6px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--event-color);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.10);
 }
 
 .calendarEventTime {
@@ -42,6 +57,12 @@
   .calendarEventTime,
   .calendarEventName {
     font-size: 12px;
+  }
+}
+
+@include dark {
+  .calendarEventOperation {
+    --event-bg: rgba(59, 130, 246, 0.16) !important;
   }
 }
 
