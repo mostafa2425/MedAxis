@@ -1,13 +1,18 @@
 import api from './api';
 import type {
   ApiResponse,
-  Operation,
+  DashboardOverview,
   DashboardStats,
-  SpecialtyDistribution,
   MonthlyTrend,
+  Operation,
+  SpecialtyDistribution,
 } from '@/types';
 
 export const dashboardService = {
+  getOverview() {
+    return api.get<ApiResponse<DashboardOverview>>('/dashboard/overview');
+  },
+
   getStats() {
     return api.get<ApiResponse<DashboardStats>>('/dashboard/stats');
   },
@@ -23,7 +28,9 @@ export const dashboardService = {
   },
 
   getMonthlyTrends() {
-    return api.get<ApiResponse<MonthlyTrend[]>>('/dashboard/monthly-trends');
+    return api.get<ApiResponse<MonthlyTrend[]>>(
+      '/dashboard/monthly-trends',
+    );
   },
 
   getRevenue() {
