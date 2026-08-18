@@ -6,6 +6,7 @@
 
 - **Sprint 0:** 🟢 Implementation complete; local verification pending
 - **Sprint 1:** 🟢 Core implementation complete; local verification pending
+- **API routing consistency:** 🟢 Frontend services audited; centralized Axios client is the API entry point
 - **Production database:** 🔒 Not touched
 - **Production deployment:** 🔒 Not performed
 
@@ -94,6 +95,23 @@
 - [ ] Validation smoke test: breakdown > total
 - [ ] RTL smoke test
 - [ ] Mobile/tablet smoke test
+
+---
+
+## API Routing & Environment Consistency
+
+- [x] Central Axios client is used by the frontend service layer
+- [x] Local fallback API base URL is `/api` when `VITE_API_URL` is absent
+- [x] Local Vite proxy forwards `/api` to `http://localhost:5000`
+- [x] Auth endpoints use the centralized API client
+- [x] Specialty endpoints use the centralized API client
+- [x] Hospital endpoints use the centralized API client
+- [x] Operation endpoints use the centralized API client
+- [x] Governorate endpoints use the centralized API client
+- [x] Local `.env` removed from Git; environment values must be configured locally/Vercel
+- [ ] Full browser smoke test of every service endpoint
+
+> Important: seeing `http://localhost:3005/specialties` instead of `/api/specialties` after changing `.env` usually means the Vite dev server was not restarted or the calling code is bypassing the centralized client. The current service files inspected on `develop` use the centralized `api` client.
 
 ---
 
