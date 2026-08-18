@@ -1,102 +1,27 @@
 .calendar-page {
-  &.page {
-    display: flex;
-    flex-direction: column;
-    gap: $space-4;
-    animation: calendarFadeIn 0.3s ease;
-  }
-
-  .pageHeader {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: $space-3;
-    flex-wrap: wrap;
-  }
-
-  .pageHeaderLeft {
-    display: flex;
-    align-items: flex-start;
-    gap: $space-3;
-    min-width: 0;
-  }
-
-  .pageIcon {
-    @include flex-center;
-    flex-shrink: 0;
-    width: 44px;
-    height: 44px;
-    border-radius: $radius-lg;
-    background: rgba(37, 99, 235, 0.12);
-    color: $primary;
-    font-size: 20px;
-  }
-
-  .pageHeaderText {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-    min-width: 0;
-  }
-
-  .pageTitle {
-    @include page-title;
-  }
-
-  .pageHint {
-    @include page-subtitle;
-  }
+  &.page { display: flex; flex-direction: column; gap: $space-4; animation: calendarFadeIn 0.3s ease; }
+  .pageHeader { display: flex; align-items: flex-start; justify-content: space-between; gap: $space-3; flex-wrap: wrap; }
+  .pageHeaderLeft { display: flex; align-items: flex-start; gap: $space-3; min-width: 0; }
+  .pageIcon { @include flex-center; flex-shrink: 0; width: 44px; height: 44px; border-radius: $radius-lg; background: rgba(37, 99, 235, 0.12); color: $primary; font-size: 20px; }
+  .pageHeaderText { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+  .pageTitle { @include page-title; }
+  .pageHint { @include page-subtitle; }
 }
 
-.calendarShell {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) 320px;
-  gap: $space-4;
-  align-items: start;
-}
-
-.calendarMain {
-  @include card-base;
-  display: flex;
-  flex-direction: column;
-  gap: $space-3;
-  min-width: 0;
-  overflow: hidden;
-}
+.calendarShell { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: $space-4; align-items: start; }
+.calendarMain { @include card-base; display: flex; flex-direction: column; gap: $space-3; min-width: 0; overflow: hidden; }
+.calendarSidePanel { display: flex; flex-direction: column; gap: $space-3; min-width: 0; }
 
 @include dark {
-  .calendar-page .pageIcon {
-    background: rgba(37, 99, 235, 0.2);
-  }
+  .calendar-page .pageIcon { background: rgba(37, 99, 235, 0.2); }
 }
 
-@include responsive('lg') {
-  .calendarShell {
-    grid-template-columns: 1fr;
-  }
-}
-
+@include responsive('lg') { .calendarShell { grid-template-columns: 1fr; } .calendarSidePanel { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @include responsive('md') {
-  .calendar-page.page {
-    gap: $space-3;
-  }
-
-  .calendarMain {
-    padding: $space-3;
-  }
-
-  .calendar-page .pageHeader :global(.ant-btn) {
-    min-height: 44px;
-  }
+  .calendar-page.page { gap: $space-3; }
+  .calendarMain { padding: $space-3; }
+  .calendarSidePanel { display: flex; }
+  .calendar-page .pageHeader :global(.ant-btn) { min-height: 44px; }
 }
 
-@keyframes calendarFadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(8px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
+@keyframes calendarFadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
