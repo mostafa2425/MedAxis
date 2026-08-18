@@ -28,6 +28,11 @@
   font-weight: $font-medium;
 }
 
+.calendarEventOperation.is-cancelled {
+  text-decoration: line-through;
+  text-decoration-thickness: 1px;
+}
+
 .calendarEventIcon {
   display: inline-flex;
   align-items: center;
@@ -39,6 +44,10 @@
   background: rgba(37, 99, 235, 0.14);
   color: var(--event-color);
   font-size: 12px;
+}
+
+.calendarEventOperation.is-cancelled .calendarEventIcon {
+  background: rgba(180, 35, 24, 0.14);
 }
 
 .calendarEventTime {
@@ -76,8 +85,16 @@
     --event-bg: rgba(59, 130, 246, 0.16) !important;
   }
 
+  .calendarEventOperation.is-cancelled {
+    --event-bg: rgba(180, 35, 24, 0.18) !important;
+  }
+
   .calendarEventIcon {
     background: rgba(59, 130, 246, 0.20);
+  }
+
+  .calendarEventOperation.is-cancelled .calendarEventIcon {
+    background: rgba(180, 35, 24, 0.22);
   }
 }
 
