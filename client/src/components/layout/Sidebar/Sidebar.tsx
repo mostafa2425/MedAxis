@@ -23,7 +23,7 @@ const mainMenuItems: MenuItem[] = [
 interface SidebarProps { mobileOpen: boolean; onMobileClose: () => void; }
 
 export default function Sidebar({ mobileOpen, onMobileClose }: SidebarProps) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const { logout } = useAuth();
   const collapsed = useAppStore((s) => s.sidebarCollapsed);
@@ -37,7 +37,7 @@ export default function Sidebar({ mobileOpen, onMobileClose }: SidebarProps) {
         {mainMenuItems.map((item) => (
           <NavLink key={item.key} to={item.key} end={item.key === '/'} className={({ isActive }) => `menuItem ${isActive ? 'menuItemActive' : ''} ${isCollapsed ? 'menuItemCollapsed' : ''}`} onClick={onMobileClose}>
             <span className="menuItemIcon">{item.icon}</span>
-            {!isCollapsed && <span className="menuItemLabel">{t(item.labelKey)}</span>}
+            {!isCollapsed && <span className="menuItemLabel">{item.key === '/follow-ups' ? (i18n.language.startsWith('ar') ? 'المتابعات' : 'Follow-ups') : t(item.labelKey)}</span>}
           </NavLink>
         ))}
       </nav>
