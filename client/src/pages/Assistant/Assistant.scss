@@ -1,0 +1,45 @@
+.assistant-page { padding-bottom: 32px; }
+.assistantHero { display:flex; justify-content:space-between; gap:24px; align-items:flex-start; margin-bottom:24px; }
+.assistantEyebrow { display:inline-block; font-size:12px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:#2563eb; margin-bottom:6px; }
+.assistantHero h1 { margin:0; font-size:32px; line-height:1.15; }
+.assistantHero p { margin:8px 0 0; color:#64748b; max-width:720px; }
+.assistantSummaryGrid { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:14px; margin-bottom:18px; }
+.assistantSummaryGrid .ant-card { border:0; box-shadow:0 4px 18px rgba(15,23,42,.06); }
+.assistantSummaryGrid .ant-card-body { display:grid; grid-template-columns:auto 1fr; column-gap:12px; align-items:center; }
+.assistantSummaryGrid svg { grid-row:span 2; font-size:22px; color:#2563eb; }
+.assistantSummaryGrid strong { font-size:26px; line-height:1; }
+.assistantSummaryGrid span { color:#64748b; font-size:13px; }
+.assistantGrid { display:grid; grid-template-columns:1.2fr 1fr; gap:18px; }
+.assistantPanel { border:0; box-shadow:0 4px 18px rgba(15,23,42,.06); }
+.assistantPanel--attention { grid-column:1 / -1; }
+.assistantPanelHeader > div { display:flex; gap:12px; align-items:center; }
+.assistantPanelHeader h2 { margin:0; font-size:18px; }
+.assistantPanelHeader p { margin:2px 0 0; color:#64748b; font-size:13px; }
+.assistantIcon { width:40px; height:40px; border-radius:12px; display:grid; place-items:center; }
+.assistantIcon--blue { background:#eff6ff; color:#2563eb; }
+.assistantIcon--green { background:#ecfdf5; color:#16a34a; }
+.assistantIcon--orange { background:#fff7ed; color:#ea580c; }
+.assistantList { margin-top:16px; display:grid; gap:8px; }
+.assistantItem,.assistantFollowUp,.assistantAttention { width:100%; border:0; background:transparent; text-align:inherit; display:flex; align-items:center; gap:12px; padding:11px 8px; border-radius:10px; cursor:pointer; }
+.assistantItem:hover,.assistantFollowUp:hover,.assistantAttention:hover { background:#f8fafc; }
+.assistantTime { width:62px; font-weight:700; color:#334155; }
+.assistantDate { width:62px; display:flex; flex-direction:column; align-items:center; }
+.assistantDate b { font-size:18px; line-height:1; }
+.assistantDate small { color:#64748b; font-size:11px; margin-top:3px; }
+.assistantItemBody,.assistantFollowUp span,.assistantAttention span { min-width:0; flex:1; display:flex; flex-direction:column; }
+.assistantItemBody strong,.assistantFollowUp strong,.assistantAttention strong { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.assistantItemBody small,.assistantFollowUp small,.assistantAttention small { color:#64748b; margin-top:3px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.assistantSubsection { margin-top:20px; border-top:1px solid #e2e8f0; padding-top:16px; }
+.assistantSubsection h3 { margin:0 0 8px; font-size:14px; }
+.assistantFollowUp svg { color:#7c3aed; }
+.assistantWeekStats { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin:18px 0; }
+.assistantWeekStats div { padding:12px; background:#f8fafc; border-radius:10px; display:flex; flex-direction:column; }
+.assistantWeekStats strong { font-size:22px; }
+.assistantWeekStats span { color:#64748b; font-size:12px; }
+.assistantAttention { border-bottom:1px solid #f1f5f9; }
+.assistantAttention svg { color:#ea580c; }
+.assistantClear { min-height:150px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:6px; color:#64748b; }
+.assistantClear svg { font-size:30px; color:#16a34a; }
+.assistantClear strong { color:#0f172a; }
+@media (max-width: 900px) { .assistantSummaryGrid { grid-template-columns:repeat(2,1fr); } .assistantGrid { grid-template-columns:1fr; } .assistantPanel--attention { grid-column:auto; } }
+@media (max-width: 560px) { .assistantHero { flex-direction:column; } .assistantHero h1 { font-size:26px; } .assistantSummaryGrid { grid-template-columns:1fr 1fr; } .assistantSummaryGrid .ant-card-body { padding:14px; } .assistantTime,.assistantDate { width:48px; } }
