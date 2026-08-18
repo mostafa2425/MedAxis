@@ -55,10 +55,7 @@ export default function OperationDetailsStep({
     staleTime: 30_000,
   });
 
-  const hospitals: Hospital[] = useMemo(
-    () => hospitalsData?.data?.data ?? [],
-    [hospitalsData],
-  );
+  const hospitals: Hospital[] = useMemo(() => hospitalsData?.data?.data ?? [], [hospitalsData]);
   const catalogItems: OperationCatalogItem[] = useMemo(
     () => (Array.isArray(catalogData?.data?.data) ? catalogData.data.data : []),
     [catalogData],
@@ -106,10 +103,7 @@ export default function OperationDetailsStep({
     if (custom.length > 0) {
       groups.unshift({
         label: t('operations.customOperations'),
-        options: custom.map((item) => ({
-          value: item.id,
-          label: item.name,
-        })),
+        options: custom.map((item) => ({ value: item.id, label: item.name })),
       });
     }
 
@@ -137,9 +131,7 @@ export default function OperationDetailsStep({
       const created = response.data.data;
       await queryClient.invalidateQueries({ queryKey: ['operation-catalog'] });
       setFormData((prev) => {
-        const nextIds = prev.operationIds.includes(created.id)
-          ? prev.operationIds
-          : [...prev.operationIds, created.id];
+        const nextIds = prev.operationIds.includes(created.id) ? prev.operationIds : [...prev.operationIds, created.id];
         const selected = [...catalogItems, created].filter((item) => nextIds.includes(item.id));
         return {
           ...prev,
@@ -173,14 +165,14 @@ export default function OperationDetailsStep({
     }
   };
 
+  const isNewOperation = !formData.operationId || formData.status === OperationStatus.Scheduled;
+
   return (
     <div className="stepContent">
       <Row gutter={[16, 16]}>
         <Col xs={24}>
           <div className="fieldGroup" data-field="operationIds">
-            <label className="fieldLabel">
-              {t('operations.surgicalProcedures')} <span className="required">*</span>
-            </label>
+            <label className="fieldLabel">{t('operations.surgicalProcedures')} <span className="required">*</span></label>
             <Select
               size="large"
               mode="multiple"
@@ -213,54 +205,31 @@ export default function OperationDetailsStep({
                 </>
               )}
             />
-            {(errors.operationIds || errors.operationId || errors.name) && (
-              <div className="fieldError">{errors.operationIds || errors.operationId || errors.name}</div>
-            )}
+            {(errors.operationIds || errors.operationId || errors.name) && <div className="fieldError">{errors.operationIds || errors.operationId || errors.name}</div>}
           </div>
         </Col>
         <Col xs={24} md={12}>
           <div className="fieldGroup" data-field="diagnosis">
             <label className="fieldLabel">{t('operations.diagnosis')}</label>
-            <Input
-              size="large"
-              placeholder={t('operations.diagnosis')}
-              value={formData.diagnosis}
-              onChange={(e) => updateField('diagnosis', e.target.value)}
-              allowClear
-              status={errors.diagnosis ? 'error' : undefined}
-            />
+            <Input size="large" placeholder={t('operations.diagnosis')} value={formData.diagnosis} onChange={(e) => updateField('diagnosis', e.target.value)} allowClear status={errors.diagnosis ? 'error' : undefined} />
             {errors.diagnosis && <div className="fieldError">{errors.diagnosis}</div>}
           </div>
         </Col>
         <Col xs={24} md={12}>
           <div className="fieldGroup" data-field="hospitalId">
-            <label className="fieldLabel">
-              {t('operations.hospital')} <span className="required">*</span>
-            </label>
-            <Select
-              size="large"
-              placeholder={t('operations.selectHospital')}
-              value={formData.hospitalId || undefined}
-              onChange={(v: string) => updateField('hospitalId', v)}
-              allowClear
-              showSearch
-              optionFilterProp="label"
-              options={hospitals.map((h) => ({ value: h.id, label: h.name }))}
-              style={{ width: '100%' }}
-              status={errors.hospitalId ? 'error' : undefined}
-            />
+            <label className="fieldLabel">{t('operations.hospital')} <span className="required">*</span></label>
+            <Select size="large" placeholder={t('operations.selectHospital')} value={formData.hospitalId || undefined} onChange={(v: string) => updateField('hospitalId', v)} allowClear showSearch optionFilterProp="label" options={hospitals.map((h) => ({ value: h.id, label: h.name }))} style={{ width: '100%' }} status={errors.hospitalId ? 'error' : undefined} />
             {errors.hospitalId && <div className="fieldError">{errors.hospitalId}</div>}
           </div>
         </Col>
         <Col xs={24} sm={12} md={6}>
           <div className="fieldGroup" data-field="operationDate">
-            <label className="fieldLabel">
-              {t('operations.operationDate')} <span className="required">*</span>
-            </label>
+            <label className="fieldLabel">{t('operations.operationDate')} <span className="required">*</span></label>
             <DatePicker
               size="large"
               value={formData.operationDate ? dayjs(formData.operationDate) : null}
               onChange={(d) => updateField('operationDate', d?.format('YYYY-MM-DD') ?? '')}
+              disabledDate={(current) => isNewOperation && current.isBefore(dayjs().startOf('day'))}
               style={{ width: '100%' }}
               placeholder={t('operations.operationDate')}
               status={errors.operationDate ? 'error' : undefined}
@@ -270,50 +239,22 @@ export default function OperationDetailsStep({
         </Col>
         <Col xs={24} sm={12} md={6}>
           <div className="fieldGroup" data-field="operationTime">
-            <label className="fieldLabel">
-              {t('operations.operationTime')} <span className="required">*</span>
-            </label>
-            <TimePicker
-              size="large"
-              value={formData.operationTime ? dayjs(formData.operationTime, 'HH:mm') : null}
-              onChange={(t2) => updateField('operationTime', t2?.format('HH:mm') ?? '')}
-              format="HH:mm"
-              style={{ width: '100%' }}
-              placeholder={t('operations.operationTime')}
-              needConfirm={false}
-              status={errors.operationTime ? 'error' : undefined}
-            />
+            <label className="fieldLabel">{t('operations.operationTime')} <span className="required">*</span></label>
+            <TimePicker size="large" value={formData.operationTime ? dayjs(formData.operationTime, 'HH:mm') : null} onChange={(t2) => updateField('operationTime', t2?.format('HH:mm') ?? '')} format="HH:mm" style={{ width: '100%' }} placeholder={t('operations.operationTime')} needConfirm={false} status={errors.operationTime ? 'error' : undefined} />
             {errors.operationTime && <div className="fieldError">{errors.operationTime}</div>}
           </div>
         </Col>
         <Col xs={24} sm={12} md={6}>
           <div className="fieldGroup" data-field="operationRoom">
             <label className="fieldLabel">{t('operations.operationRoom')}</label>
-            <Input
-              size="large"
-              placeholder={t('operations.operationRoom')}
-              value={formData.operationRoom}
-              onChange={(e) => updateField('operationRoom', e.target.value)}
-              allowClear
-              status={errors.operationRoom ? 'error' : undefined}
-            />
+            <Input size="large" placeholder={t('operations.operationRoom')} value={formData.operationRoom} onChange={(e) => updateField('operationRoom', e.target.value)} allowClear status={errors.operationRoom ? 'error' : undefined} />
             {errors.operationRoom && <div className="fieldError">{errors.operationRoom}</div>}
           </div>
         </Col>
         <Col xs={24} sm={12} md={6}>
           <div className="fieldGroup" data-field="duration">
             <label className="fieldLabel">{t('operations.durationMinutes')}</label>
-            <InputNumber
-              size="large"
-              placeholder={t('operations.durationMinutes')}
-              min={1}
-              max={1440}
-              value={formData.duration}
-              onChange={(v) => updateField('duration', v)}
-              style={{ width: '100%' }}
-              addonAfter={t('common.minutes') || 'min'}
-              status={errors.duration ? 'error' : undefined}
-            />
+            <InputNumber size="large" placeholder={t('operations.durationMinutes')} min={1} max={1440} value={formData.duration} onChange={(v) => updateField('duration', v)} style={{ width: '100%' }} addonAfter={t('common.minutes') || 'min'} status={errors.duration ? 'error' : undefined} />
             {errors.duration && <div className="fieldError">{errors.duration}</div>}
           </div>
         </Col>
@@ -328,20 +269,7 @@ export default function OperationDetailsStep({
               status={errors.status ? 'error' : undefined}
               options={OPERATION_STATUSES.map((s) => ({
                 value: s.value,
-                label: (
-                  <span style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                    <span
-                      style={{
-                        width: 8,
-                        height: 8,
-                        borderRadius: '50%',
-                        background: s.color,
-                        display: 'inline-block',
-                      }}
-                    />
-                    {s.label}
-                  </span>
-                ),
+                label: <span style={{ display: 'flex', alignItems: 'center', gap: 8 }}><span style={{ width: 8, height: 8, borderRadius: '50%', background: s.color, display: 'inline-block' }} />{s.label}</span>,
               }))}
             />
             {errors.status && <div className="fieldError">{errors.status}</div>}
@@ -349,30 +277,10 @@ export default function OperationDetailsStep({
         </Col>
       </Row>
 
-      <Modal
-        title={t('operations.addCustomOperation')}
-        open={customOpen}
-        onCancel={() => {
-          setCustomOpen(false);
-          customForm.resetFields();
-        }}
-        onOk={onAddCustom}
-        confirmLoading={createCustomMutation.isPending}
-        okText={t('common.add')}
-        cancelText={t('common.cancel')}
-        destroyOnClose
-      >
+      <Modal title={t('operations.addCustomOperation')} open={customOpen} onCancel={() => { setCustomOpen(false); customForm.resetFields(); }} onOk={onAddCustom} confirmLoading={createCustomMutation.isPending} okText={t('common.add')} cancelText={t('common.cancel')} destroyOnClose>
         <Form form={customForm} layout="vertical">
-          <Form.Item
-            name="name"
-            label={t('operations.customOperationName')}
-            rules={[{ required: true, message: t('validation.required') }]}
-          >
-            <Input
-              size="large"
-              placeholder={t('operations.customOperationName')}
-              autoFocus
-            />
+          <Form.Item name="name" label={t('operations.customOperationName')} rules={[{ required: true, message: t('validation.required') }]}>
+            <Input size="large" placeholder={t('operations.customOperationName')} autoFocus />
           </Form.Item>
         </Form>
       </Modal>
