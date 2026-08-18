@@ -3,10 +3,6 @@
    Orthopedic Surgery SaaS Application
    ============================================================ */
 
-// ──────────────────────────────────────────────
-// String Enums
-// ──────────────────────────────────────────────
-
 export enum Gender {
   Male = 'MALE',
   Female = 'FEMALE',
@@ -51,9 +47,19 @@ export enum TimelineAction {
   NotesUpdated = 'NOTES_UPDATED',
 }
 
-// ──────────────────────────────────────────────
-// Entity Interfaces
-// ──────────────────────────────────────────────
+export type FollowUpStatus = 'UPCOMING' | 'COMPLETED' | 'OVERDUE' | 'CANCELLED';
+
+export interface OperationFollowUp {
+  id: string;
+  operationId: string;
+  title: string;
+  scheduledAt: string;
+  completedAt: string | null;
+  status: FollowUpStatus;
+  notes: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
 
 export interface User {
   id: string;
@@ -80,9 +86,7 @@ export interface Patient {
   createdBy: string;
   createdAt: string;
   updatedAt: string;
-  _count?: {
-    operations: number;
-  };
+  _count?: { operations: number };
 }
 
 export interface Specialty {
@@ -95,10 +99,7 @@ export interface Specialty {
   parentId?: string | null;
   createdAt: string;
   updatedAt: string;
-  _count?: {
-    operations: number;
-    doctors: number;
-  };
+  _count?: { operations: number; doctors: number };
 }
 
 export interface DoctorSpecialtyRef {
@@ -117,11 +118,7 @@ export interface Doctor {
   updatedAt: string;
   specialties: DoctorSpecialtyRef[];
   subspecialties?: DoctorSpecialtyRef[];
-  _count?: {
-    operationsAsPrimary: number;
-    operationsAsAssistant: number;
-    operationsAsAnesthetist: number;
-  };
+  _count?: { operationsAsPrimary: number; operationsAsAssistant: number; operationsAsAnesthetist: number };
 }
 
 export interface Nurse {
@@ -162,14 +159,14 @@ export interface Hospital {
   nameAr: string | null;
   address: string | null;
   city: string | null;
+  governorateId?: string | null;
+  governorate?: { id: string; nameEn: string; nameAr: string; code: string } | null;
   phone: string | null;
   notes: string | null;
   isActive: boolean;
   createdAt: string;
   updatedAt: string;
-  _count?: {
-    operations: number;
-  };
+  _count?: { operations: number };
 }
 
 export interface OperationCatalogItem {
@@ -208,6 +205,7 @@ export interface Operation {
   files?: OperationFile[];
   timeline?: OperationTimeline[];
   medicalTeam?: OperationMedicalTeam;
+  followUps?: OperationFollowUp[];
 }
 
 export interface OperationCost {
@@ -247,10 +245,7 @@ export interface OperationTimeline {
   metadata: Record<string, unknown> | null;
   performedBy: string;
   createdAt: string;
-  performedByUser?: {
-    id: string;
-    name: string;
-  };
+  performedByUser?: { id: string; name: string };
 }
 
 export interface OperationMedicalTeam {
@@ -270,228 +265,23 @@ export interface OperationMedicalTeam {
   assistantAnesthesia?: Doctor;
 }
 
-// ──────────────────────────────────────────────
-// API Response Types
-// ──────────────────────────────────────────────
-
-export interface ApiResponse<T> {
-  success: boolean;
-  data: T;
-  message?: string;
-}
-
-export interface PaginationMeta {
-  page: number;
-  limit: number;
-  total: number;
-  totalPages: number;
-}
-
-export interface PaginatedResponse<T> {
-  success: boolean;
-  data: T[];
-  pagination?: PaginationMeta;
-  meta?: PaginationMeta;
-  message?: string;
-}
-
-export interface PaginatedQuery {
-  page?: number;
-  limit?: number;
-  sortBy?: string;
-  sortOrder?: 'asc' | 'desc';
-  search?: string;
-  parentId?: string;
-  parentIds?: string;
-  mine?: boolean;
-  rootsOnly?: boolean;
-}
-
-// ──────────────────────────────────────────────
-// Auth Types
-// ──────────────────────────────────────────────
-
-export interface LoginPayload {
-  email: string;
-  password: string;
-}
-
-export interface RegisterPayload {
-  name: string;
-  email: string;
-  password: string;
-  phone?: string;
-  specialtyIds: string[];
-  subspecialtyIds?: string[];
-}
-
-export interface UpdateProfilePayload {
-  name?: string;
-  phone?: string | null;
-  specialtyIds?: string[];
-  subspecialtyIds?: string[];
-}
-
-export interface LoginResponse {
-  user: User;
-  token: string;
-}
-
-// ──────────────────────────────────────────────
-// Patient Types
-// ──────────────────────────────────────────────
-
-export interface CreatePatientPayload {
-  fullName: string;
-  age: number;
-  gender: Gender;
-  mobile?: string;
-  notes?: string;
-}
-
+export interface ApiResponse<T> { success: boolean; data: T; message?: string; }
+export interface PaginationMeta { page: number; limit: number; total: number; totalPages: number; }
+export interface PaginatedResponse<T> { success: boolean; data: T[]; pagination?: PaginationMeta; meta?: PaginationMeta; message?: string; }
+export interface PaginatedQuery { page?: number; limit?: number; sortBy?: string; sortOrder?: 'asc' | 'desc'; search?: string; parentId?: string; parentIds?: string; mine?: boolean; rootsOnly?: boolean; }
+export interface LoginPayload { email: string; password: string; }
+export interface RegisterPayload { name: string; email: string; password: string; phone?: string; specialtyIds: string[]; subspecialtyIds?: string[]; }
+export interface UpdateProfilePayload { name?: string; phone?: string | null; specialtyIds?: string[]; subspecialtyIds?: string[]; }
+export interface LoginResponse { user: User; token: string; }
+export interface CreatePatientPayload { fullName: string; age: number; gender: Gender; mobile?: string; notes?: string; }
 export interface UpdatePatientPayload extends Partial<CreatePatientPayload> {}
-
-// ──────────────────────────────────────────────
-// Operation Types
-// ──────────────────────────────────────────────
-
-export interface CreateOperationPayload {
-  operationId?: string;
-  operationIds?: string[];
-  name?: string;
-  diagnosis?: string | null;
-  patientId: string;
-  hospitalId: string;
-  specialtyId?: string;
-  operationDate: string;
-  operationTime: string;
-  operationRoom?: string;
-  duration?: number;
-  status?: OperationStatus;
-  notes?: string;
-  medicalTeam?: {
-    doctorIds?: string[];
-    nurseIds?: string[];
-    primarySurgeonId?: string;
-    assistantSurgeonId?: string;
-    anesthesiologistId?: string;
-    assistantAnesthesiaId?: string;
-    nurse?: string;
-    notes?: string;
-  };
-  cost?: {
-    totalCost: number;
-    paidAmount?: number;
-    remainingAmount?: number;
-    paymentMethod?: PaymentMethod;
-    paymentStatus?: PaymentStatus;
-    paymentNotes?: string;
-  };
-}
-
-export interface UpdateOperationPayload extends Partial<CreateOperationPayload> {
-  status?: OperationStatus;
-}
-
-export interface OperationFilters extends PaginatedQuery {
-  search?: string;
-  status?: OperationStatus;
-  specialtyId?: string;
-  hospitalId?: string;
-  doctorId?: string;
-  dateFrom?: string;
-  dateTo?: string;
-  paymentStatus?: PaymentStatus;
-}
-
-// ──────────────────────────────────────────────
-// Doctor Types
-// ──────────────────────────────────────────────
-
-export interface CreateDoctorPayload {
-  name: string;
-  phone?: string;
-  email?: string;
-  specialtyIds: string[];
-  subspecialtyIds?: string[];
-  isActive?: boolean;
-}
-
-// ──────────────────────────────────────────────
-// Hospital Types
-// ──────────────────────────────────────────────
-
-export interface CreateHospitalPayload {
-  name: string;
-  nameAr?: string;
-  address?: string;
-  city?: string;
-  phone?: string;
-  notes?: string;
-  isActive?: boolean;
-}
-
-// ──────────────────────────────────────────────
-// Specialty Types
-// ──────────────────────────────────────────────
-
-export interface CreateSpecialtyPayload {
-  name: string;
-  nameAr?: string;
-  description?: string;
-  icon?: string;
-  color?: string;
-}
-
-// ──────────────────────────────────────────────
-// Dashboard Types
-// ──────────────────────────────────────────────
-
-export interface DashboardStats {
-  totalPatients: number;
-  totalOperations: number;
-  operationsThisMonth: number;
-  completedOperations: number;
-  pendingOperations: number;
-  cancelledOperations: number;
-  totalDoctors: number;
-  totalNurses: number;
-  totalHospitals: number;
-  upcomingOperations?: number;
-  totalRevenue?: number;
-  paidAmount?: number;
-  pendingAmount?: number;
-  statusBreakdown?: Record<string, number>;
-  revenue?: {
-    totalCost: number;
-    totalPaid: number;
-    totalRemaining: number;
-  };
-}
-
-export interface MonthlyTrend {
-  month: string;
-  total: number;
-  completed: number;
-  cancelled: number;
-}
-
-export interface SpecialtyDistribution {
-  specialtyId: string;
-  specialtyName: string;
-  count: number;
-  percentage: number;
-}
-
-// ──────────────────────────────────────────────
-// Search Types
-// ──────────────────────────────────────────────
-
-export interface SearchFilters {
-  query: string;
-  page?: number;
-  limit?: number;
-  type?: 'patients' | 'operations' | 'doctors' | 'hospitals' | 'all';
-  dateFrom?: string;
-  dateTo?: string;
-}
+export interface CreateOperationPayload { operationId?: string; operationIds?: string[]; name?: string; diagnosis?: string | null; patientId: string; hospitalId: string; specialtyId?: string; operationDate: string; operationTime: string; operationRoom?: string; duration?: number; status?: OperationStatus; notes?: string; medicalTeam?: { doctorIds?: string[]; nurseIds?: string[]; primarySurgeonId?: string; assistantSurgeonId?: string; anesthesiologistId?: string; assistantAnesthesiaId?: string; nurse?: string; notes?: string; }; cost?: { totalCost: number; paidAmount?: number; remainingAmount?: number; paymentMethod?: PaymentMethod; paymentStatus?: PaymentStatus; paymentNotes?: string; }; }
+export interface UpdateOperationPayload extends Partial<CreateOperationPayload> { status?: OperationStatus; }
+export interface OperationFilters extends PaginatedQuery { search?: string; status?: OperationStatus; specialtyId?: string; hospitalId?: string; doctorId?: string; dateFrom?: string; dateTo?: string; paymentStatus?: PaymentStatus; }
+export interface CreateDoctorPayload { name: string; phone?: string; email?: string; specialtyIds: string[]; subspecialtyIds?: string[]; isActive?: boolean; }
+export interface CreateHospitalPayload { name: string; nameAr?: string; address?: string; city?: string; governorateId?: string; phone?: string; notes?: string; isActive?: boolean; }
+export interface CreateSpecialtyPayload { name: string; nameAr?: string; description?: string; icon?: string; color?: string; }
+export interface DashboardStats { totalPatients: number; totalOperations: number; operationsThisMonth: number; completedOperations: number; pendingOperations: number; cancelledOperations: number; totalDoctors: number; totalNurses: number; totalHospitals: number; upcomingOperations?: number; totalRevenue?: number; paidAmount?: number; pendingAmount?: number; statusBreakdown?: Record<string, number>; revenue?: { totalCost: number; totalPaid: number; totalRemaining: number; }; }
+export interface MonthlyTrend { month: string; total: number; completed: number; cancelled: number; }
+export interface SpecialtyDistribution { specialtyId: string; specialtyName: string; count: number; percentage: number; }
+export interface SearchFilters { query: string; page?: number; limit?: number; type?: 'patients' | 'operations' | 'doctors' | 'hospitals' | 'all'; dateFrom?: string; dateTo?: string; }
