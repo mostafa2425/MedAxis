@@ -9,6 +9,7 @@ import patientRoutes from './patient.routes';
 import operationRoutes from './operation.routes';
 import operationCatalogRoutes from './operationCatalog.routes';
 import dashboardRoutes from './dashboard.routes';
+import assistantRoutes from './assistant.routes';
 import exportRoutes from './export.routes';
 
 const router = Router();
@@ -23,6 +24,7 @@ router.use('/patients', patientRoutes);
 router.use('/operation-catalog', operationCatalogRoutes);
 router.use('/operations', operationRoutes);
 router.use('/dashboard', dashboardRoutes);
+router.use('/assistant', assistantRoutes);
 router.use('/export', exportRoutes);
 
 export default router;
