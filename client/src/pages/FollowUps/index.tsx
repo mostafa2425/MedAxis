@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { Button, Card, DatePicker, Empty, Flex, Segmented, Select, Skeleton, Space, Tag, Tooltip, Typography, message } from 'antd';
+import { Button, Card, DatePicker, Empty, Flex, Segmented, Skeleton, Tag, Tooltip, Typography, message } from 'antd';
 import { CalendarOutlined, CheckCircleOutlined, ClockCircleOutlined, ExclamationCircleOutlined, ReloadOutlined, RightOutlined } from '@ant-design/icons';
 import dayjs, { type Dayjs } from 'dayjs';
 import { useTranslation } from 'react-i18next';
@@ -28,7 +28,7 @@ function statusMeta(status: FollowUpStatus, isAr: boolean) {
 }
 
 export default function FollowUpsPage() {
-  const { t, i18n } = useTranslation();
+  const { i18n } = useTranslation();
   const isAr = i18n.language.startsWith('ar');
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -57,10 +57,15 @@ export default function FollowUpsPage() {
     mutationFn: (item: GlobalFollowUp) => operationService.updateFollowUp(item.operation.id, item.id, { status: 'COMPLETED' }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['global-follow-ups'] });
+      queryClient.invalidateQueries({ queryKey: ['calendar-follow-ups-events'] });
+      queryClient.invalidateQueries({ queryKey: ['calendar-follow-ups'] });
       queryClient.invalidateQueries({ queryKey: ['operation-follow-ups'] });
       messageApi.success(isAr ? 'تم إكمال المتابعة' : 'Follow-up completed');
     },
   });
+
+  const goToday = () => setDate(dayjs());
+  const clearDate = () => setDate(null);
 
   const renderStat = (value: number, label: string, icon: React.ReactNode, className: string) => (
     <Card className={`follow-up-stat ${className}`} bordered={false} size="small">
@@ -78,13 +83,9 @@ export default function FollowUpsPage() {
       <div className="page-header">
         <div>
           <Typography.Title level={2}>{isAr ? 'المتابعات' : 'Follow-ups'}</Typography.Title>
-          <Typography.Text type="secondary">
-            {isAr ? 'كل مواعيد متابعة الحالات في مكان واحد' : 'Manage every patient follow-up from one place'}
-          </Typography.Text>
+          <Typography.Text type="secondary">{isAr ? 'كل مواعيد متابعة الحالات في مكان واحد' : 'Manage every patient follow-up from one place'}</Typography.Text>
         </div>
-        <Button icon={<ReloadOutlined />} loading={isFetching} onClick={() => refetch()}>
-          {isAr ? 'تحديث' : 'Refresh'}
-        </Button>
+        <Button icon={<ReloadOutlined />} loading={isFetching} onClick={() => refetch()}>{isAr ? 'تحديث' : 'Refresh'}</Button>
       </div>
 
       <div className="follow-up-stats">
@@ -95,17 +96,12 @@ export default function FollowUpsPage() {
 
       <Card className="follow-up-filters" bordered={false}>
         <Flex gap={12} wrap align="center" justify="space-between">
-          <Segmented
-            value={status}
-            onChange={(value) => setStatus(value as FollowUpStatus | 'ALL')}
-            options={STATUS_OPTIONS.map((option) => ({ value: option.value, label: isAr ? option.ar : option.en }))}
-          />
-          <DatePicker
-            allowClear
-            value={date}
-            onChange={setDate}
-            placeholder={isAr ? 'كل التواريخ' : 'All dates'}
-          />
+          <Segmented value={status} onChange={(value) => setStatus(value as FollowUpStatus | 'ALL')} options={STATUS_OPTIONS.map((option) => ({ value: option.value, label: isAr ? option.ar : option.en }))} />
+          <Flex gap={8} wrap align="center">
+            <Button type="default" icon={<CalendarOutlined />} onClick={goToday}>{isAr ? 'اليوم' : 'Today'}</Button>
+            <DatePicker allowClear value={date} onChange={setDate} placeholder={isAr ? 'كل التواريخ' : 'All dates'} />
+            {date ? <Button type="text" onClick={clearDate}>{isAr ? 'مسح التاريخ' : 'Clear date'}</Button> : null}
+          </Flex>
         </Flex>
       </Card>
 
@@ -135,23 +131,10 @@ export default function FollowUpsPage() {
                     </div>
                   </div>
                   <div className="follow-up-card-actions">
-                    <Button type="link" onClick={() => navigate(`/operations/${item.operation.id}`)}>
-                      {isAr ? 'فتح العملية' : 'Open operation'} <RightOutlined />
-                    </Button>
-                    {item.operation.patient.mobile && (
-                      <Tooltip title={item.operation.patient.mobile}>
-                        <Button type="text" href={`tel:${item.operation.patient.mobile}`}>{isAr ? 'اتصال' : 'Call'}</Button>
-                      </Tooltip>
-                    )}
+                    <Button type="link" onClick={() => navigate(`/operations/${item.operation.id}`)}>{isAr ? 'فتح العملية' : 'Open operation'} <RightOutlined /></Button>
+                    {item.operation.patient.mobile && <Tooltip title={item.operation.patient.mobile}><Button type="text" href={`tel:${item.operation.patient.mobile}`}>{isAr ? 'اتصال' : 'Call'}</Button></Tooltip>}
                     {item.status !== 'COMPLETED' && item.status !== 'CANCELLED' && (
-                      <Button
-                        size="small"
-                        type="primary"
-                        ghost
-                        icon={<CheckCircleOutlined />}
-                        loading={completeMutation.isPending}
-                        onClick={() => completeMutation.mutate(item)}
-                      >
+                      <Button size="small" type="primary" icon={<CheckCircleOutlined />} loading={completeMutation.isPending} onClick={() => completeMutation.mutate(item)}>
                         {isAr ? 'إكمال' : 'Complete'}
                       </Button>
                     )}
@@ -160,9 +143,7 @@ export default function FollowUpsPage() {
               );
             })}
           </div>
-        ) : (
-          <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description={isAr ? 'لا توجد متابعات' : 'No follow-ups found'} />
-        )}
+        ) : <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description={isAr ? 'لا توجد متابعات' : 'No follow-ups found'} />}
       </Card>
     </div>
   );
