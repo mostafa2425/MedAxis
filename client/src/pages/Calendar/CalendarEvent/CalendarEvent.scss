@@ -1,10 +1,10 @@
 .calendarEvent {
   display: flex;
   align-items: center;
-  gap: 5px;
+  gap: 6px;
   width: 100%;
-  min-height: 24px;
-  padding: 3px 7px;
+  min-height: 30px;
+  padding: 4px 8px;
   border: 0;
   border-radius: $radius-sm;
   background: var(--event-bg);
@@ -17,7 +17,7 @@
 
   &:hover,
   &:focus-visible {
-    opacity: 0.92;
+    opacity: 0.94;
     outline: none;
     transform: translateY(-1px);
     box-shadow: 0 2px 8px rgba(15, 23, 42, 0.10);
@@ -28,13 +28,17 @@
   font-weight: $font-medium;
 }
 
-.calendarEventMarker {
-  flex: 0 0 6px;
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--event-color);
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.10);
+.calendarEventIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 20px;
+  width: 20px;
+  height: 20px;
+  border-radius: 6px;
+  background: rgba(37, 99, 235, 0.14);
+  color: var(--event-color);
+  font-size: 12px;
 }
 
 .calendarEventTime {
@@ -51,8 +55,15 @@
 }
 
 .calendarEventCompact {
-  min-height: 28px;
+  min-height: 30px;
   padding: 4px 8px;
+
+  .calendarEventIcon {
+    flex-basis: 22px;
+    width: 22px;
+    height: 22px;
+    font-size: 13px;
+  }
 
   .calendarEventTime,
   .calendarEventName {
@@ -64,12 +75,23 @@
   .calendarEventOperation {
     --event-bg: rgba(59, 130, 246, 0.16) !important;
   }
+
+  .calendarEventIcon {
+    background: rgba(59, 130, 246, 0.20);
+  }
 }
 
 @include responsive('md') {
   .calendarEvent {
-    min-height: 28px;
-    padding: 4px 8px;
+    min-height: 32px;
+    padding: 5px 8px;
+  }
+
+  .calendarEventIcon {
+    flex-basis: 22px;
+    width: 22px;
+    height: 22px;
+    font-size: 13px;
   }
 
   .calendarEventTime,
