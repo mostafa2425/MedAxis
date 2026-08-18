@@ -14,10 +14,13 @@ interface CalendarEventProps {
 
 const OPERATION_COLOR = '#2563eb';
 const OPERATION_BACKGROUND = 'rgba(37, 99, 235, 0.10)';
+const CANCELLED_COLOR = '#b42318';
+const CANCELLED_BACKGROUND = 'rgba(180, 35, 24, 0.10)';
 
 export default function CalendarEvent({ operation, compact = false }: CalendarEventProps) {
   const isMobile = useIsMobile();
   const [open, setOpen] = useState(false);
+  const isCancelled = operation.status === 'CANCELLED';
 
   const stop = (event: MouseEvent) => {
     event.stopPropagation();
@@ -26,10 +29,10 @@ export default function CalendarEvent({ operation, compact = false }: CalendarEv
   const chip = (
     <button
       type="button"
-      className={`calendarEvent calendarEventOperation ${compact ? 'calendarEventCompact' : ''}`}
+      className={`calendarEvent calendarEventOperation ${isCancelled ? 'is-cancelled' : ''} ${compact ? 'calendarEventCompact' : ''}`}
       style={{
-        '--event-color': OPERATION_COLOR,
-        '--event-bg': OPERATION_BACKGROUND,
+        '--event-color': isCancelled ? CANCELLED_COLOR : OPERATION_COLOR,
+        '--event-bg': isCancelled ? CANCELLED_BACKGROUND : OPERATION_BACKGROUND,
       } as CSSProperties}
       onClick={(event) => {
         stop(event);
