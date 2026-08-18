@@ -1,3 +1,4 @@
+import { MedicineBoxOutlined } from '@ant-design/icons';
 import { Popover, Modal } from 'antd';
 import { useState, type CSSProperties, type MouseEvent } from 'react';
 import { useIsMobile } from '@/hooks/useIsMobile';
@@ -36,7 +37,9 @@ export default function CalendarEvent({ operation, compact = false }: CalendarEv
       }}
       aria-label={operation.name}
     >
-      <span className="calendarEventMarker" aria-hidden="true" />
+      <span className="calendarEventIcon" aria-hidden="true">
+        <MedicineBoxOutlined />
+      </span>
       <span className="calendarEventTime">{formatEventTime(operation)}</span>
       <span className="calendarEventName">{operation.name}</span>
     </button>
