@@ -7,7 +7,7 @@ import { useTranslation } from 'react-i18next';
 import { patientService } from '@/services/patient.service';
 import { useDebounce } from '@/hooks/useDebounce';
 import { DEFAULT_PAGINATION } from '@/utils/constants';
-import type { Patient } from '@/types';
+import { Gender, type Patient } from '@/types';
 import PatientList from './PatientList/PatientList';
 import AddPatient from './AddPatient/AddPatient';
 import './Patients.scss';
@@ -18,6 +18,7 @@ export default function PatientsPage() {
   const [searchParams, setSearchParams] = useSearchParams();
 
   const [search, setSearch] = useState('');
+  const [gender, setGender] = useState<Gender | undefined>();
   const [page, setPage] = useState<number>(DEFAULT_PAGINATION.page);
   const [modalOpen, setModalOpen] = useState(searchParams.get('add') === '1');
   const debouncedSearch = useDebounce(search, 300);
@@ -31,12 +32,13 @@ export default function PatientsPage() {
   }, [searchParams, setSearchParams]);
 
   const { data, isLoading, isError } = useQuery({
-    queryKey: ['patients', page, debouncedSearch],
+    queryKey: ['patients', page, debouncedSearch, gender],
     queryFn: () =>
       patientService.getAll({
         page,
         limit: DEFAULT_PAGINATION.limit,
         search: debouncedSearch || undefined,
+        gender,
       }),
   });
 
@@ -46,6 +48,11 @@ export default function PatientsPage() {
 
   const handleSearchChange = (e: ChangeEvent<HTMLInputElement>) => {
     setSearch(e.target.value);
+    setPage(1);
+  };
+
+  const handleGenderChange = (value?: Gender) => {
+    setGender(value);
     setPage(1);
   };
 
@@ -64,11 +71,7 @@ export default function PatientsPage() {
             {t('patients.addPatient')}
           </Button>
         </div>
-        <Empty
-          className="emptyState"
-          image={Empty.PRESENTED_IMAGE_SIMPLE}
-          description={t('common.operationFailed')}
-        />
+        <Empty className="emptyState" image={Empty.PRESENTED_IMAGE_SIMPLE} description={t('common.operationFailed')} />
       </div>
     );
   }
@@ -99,10 +102,12 @@ export default function PatientsPage() {
       <PatientList
         patients={patients}
         isLoading={isLoading}
-        hasSearch={Boolean(debouncedSearch)}
+        hasSearch={Boolean(debouncedSearch) || Boolean(gender)}
         page={page}
         pageSize={DEFAULT_PAGINATION.limit}
         total={total}
+        gender={gender}
+        onGenderChange={handleGenderChange}
         onPageChange={setPage}
         onRowClick={(id) => navigate(`/patients/${id}`)}
         onAdd={handleOpenAdd}
