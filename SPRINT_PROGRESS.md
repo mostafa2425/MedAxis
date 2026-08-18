@@ -1,26 +1,58 @@
 # Sprint Progress
 
-## Sprint 2 — Clinical Files 2.0
+## Sprint 0 — Foundation & Data Quality
+- [x] PostgreSQL `timestamptz(6)` mapping for application DateTime fields
+- [x] Egyptian governorates catalog + seed (26 governorates)
+- [x] Hospital bilingual names and governorate support
+- [x] Operation cost breakdown with automatic doctor share calculation
+- [x] Mobile-first operation detail UX
+- [x] Shared Design System components: PageHeader, StatusTag, InfoCard, EmptyState, DataCard, PhoneLink, DateTimeTag, MoneyInput, FileCard, StaffCard, SectionHeader, ConfirmAction
 
-### Storage architecture
-- [x] Supabase DEV `clinical-files` public bucket
-- [x] Direct client uploads with signed upload URLs
-- [x] API authorization + metadata persistence
-- [x] Public preview/download URLs
-- [x] Delete storage object + metadata safely
-- [x] File size/MIME validation (50 MB max)
-- [x] Mobile upload flow wired to the Clinical Files UI
-- [ ] Local typecheck/build verification — run from the developer checkout
-- [ ] End-to-end upload/preview/delete smoke test against DEV deployment
+## Sprint 1 — Clinical Case Experience
+- [x] Operation detail tabs: Overview, Clinical Files, Medical Team, Financials, Timeline
+- [x] Clinical Files 2.0: Before / During / After / Imaging / Documents / Other UX
+- [x] Supabase DEV Storage with signed browser uploads
+- [x] Timeline visual redesign with translated human-readable actions and icons
+- [x] Mobile-first medical team cards and clickable phone links
+- [x] Financials + Cost Breakdown UX polish
 
-### Implementation
-- API defaults to `SUPABASE_STORAGE_BUCKET=clinical-files`.
-- Files are stored under `operations/{operationId}/...`.
-- The service-role key is server-only and must never be exposed to the client.
-- Existing authenticated operation access checks remain in place before upload completion, file reads and deletion.
+## Sprint 2 — Clinical Journey & Follow-up Management
+
+### Clinical Case Timeline
+- [x] Keep operation audit timeline visible with human-readable actions
+- [x] Timeline icons, colored dots and latest-event emphasis
+- [ ] Add clinical milestone semantics: Before Surgery → Surgery → After Surgery → Follow-up
+
+### Follow-up Management
+- [x] Follow-up data model and migration
+- [x] Authenticated operation-scoped Follow-up APIs
+- [x] Upcoming / Overdue / Completed / Cancelled states
+- [x] Automatic overdue derivation for unfinished past appointments
+- [x] Add / complete / delete follow-ups
+- [x] Mobile-first Follow-ups tab in Operation Detail
+- [x] Arabic / English follow-up labels
+- [ ] Add global Follow-ups page with Upcoming / Overdue / Completed filters
+- [ ] Add dashboard follow-up summary and calendar integration
+- [ ] Add reminder notifications after notification infrastructure is introduced
+
+### Verification
+- [ ] Run `npm run db:generate`
+- [ ] Run `npx prisma validate`
+- [ ] Run `npm run typecheck`
+- [ ] Run `npm run build`
+- [ ] Run local API smoke tests for follow-up CRUD
+- [ ] Verify mobile UX in browser
+
+## Next Roadmap
+- [ ] Sprint 3 — Operation Templates
+- [ ] Sprint 4 — Case Completeness
+- [ ] Sprint 5 — Implant Tracking
+- [ ] Sprint 6 — Operative Notes + Templates
+- [ ] Sprint 7 — Advanced Analytics
+- [ ] Sprint 8 — AI-assisted clinical workflow
 
 ## Environment
 - Development API: `medaxis-api-dev.vercel.app`
 - Development files: Supabase DEV Storage only
 - Production storage must remain isolated from DEV
-- See `server/.env.example` for required DEV Storage variables.
+- Service-role credentials remain server-only
