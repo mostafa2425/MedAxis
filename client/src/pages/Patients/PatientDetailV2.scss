@@ -1,0 +1,169 @@
+.patientDetailV2 {
+  max-width: 1180px;
+  margin-inline: auto;
+  padding-bottom: 32px;
+}
+
+.patientDetailTopbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.patientDetailActions { display: flex; gap: 8px; }
+
+.patientProfileHero {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 20px;
+  border: 1px solid $border;
+  border-radius: $radius-xl;
+  background: $surface;
+  box-shadow: 0 4px 18px rgba(15, 23, 42, .04);
+
+  @include dark { background: $dark-surface; border-color: $dark-border; }
+}
+
+.patientProfileAvatar {
+  @include flex-center;
+  width: 76px;
+  height: 76px;
+  flex: 0 0 76px;
+  border-radius: 50%;
+  font-size: 22px;
+  font-weight: $font-bold;
+}
+.patientProfileAvatar--male { background: rgba(37, 99, 235, .10); color: #2563eb; }
+.patientProfileAvatar--female { background: rgba(236, 72, 153, .10); color: #db2777; }
+
+.patientProfileIdentity { min-width: 0; }
+.patientProfileTitleRow { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; }
+.patientProfileTitleRow h1 { margin: 0; color: $text-primary; font-size: 24px; font-weight: $font-bold; @include dark { color: $dark-text-primary; } }
+.patientProfileMeta { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 5px; color: $text-muted; font-size: $font-caption; }
+.patientProfilePhone { display: inline-flex; align-items: center; gap: 6px; margin-top: 8px; color: $primary; }
+.patientProfilePhone .ant-btn-link { padding: 0; height: auto; }
+
+.patientDetailStats {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+  margin: 12px 0;
+}
+
+.patientDetailStat {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  grid-template-rows: auto auto;
+  align-items: center;
+  column-gap: 10px;
+  padding: 12px;
+  border: 1px solid $border;
+  border-radius: $radius-lg;
+  background: $surface;
+  @include dark { background: $dark-surface; border-color: $dark-border; }
+}
+.patientDetailStatIcon { grid-row: 1 / 3; @include flex-center; width: 34px; height: 34px; border-radius: $radius-md; font-size: 14px; }
+.patientDetailStat strong { color: $text-primary; font-size: 18px; line-height: 1; @include dark { color: $dark-text-primary; } }
+.patientDetailStat > span:last-child { margin-top: 3px; color: $text-muted; font-size: 10px; @include dark { color: $dark-text-muted; } }
+.patientDetailStat--blue .patientDetailStatIcon { background: rgba(37, 99, 235, .09); color: #2563eb; }
+.patientDetailStat--orange .patientDetailStatIcon { background: rgba(245, 158, 11, .10); color: #d97706; }
+.patientDetailStat--purple .patientDetailStatIcon { background: rgba(124, 58, 237, .10); color: #7c3aed; }
+.patientDetailStat--green .patientDetailStatIcon { background: rgba(22, 163, 74, .10); color: #16a34a; }
+
+.patientDetailSection { margin-top: 20px; }
+.patientDetailSectionHeading {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: $text-secondary;
+  font-size: $font-caption;
+  font-weight: $font-semibold;
+  @include dark { color: $dark-text-secondary; }
+}
+.patientDetailSectionHeading > svg { color: $primary; }
+.patientDetailSectionHeading--large { justify-content: space-between; margin-bottom: 10px; font-size: $font-body; }
+.patientDetailSectionHeading--large > div { display: flex; align-items: center; gap: 8px; }
+.patientDetailSectionCount { min-width: 26px; padding: 3px 8px; border-radius: $radius-full; background: $background; color: $text-muted; text-align: center; font-size: 10px; @include dark { background: $dark-surface-elevated; color: $dark-text-muted; } }
+
+.patientNotesCard,
+.patientEmptyCard { border: 1px solid $border !important; border-radius: $radius-xl !important; background: $surface !important; @include dark { background: $dark-surface !important; border-color: $dark-border !important; } }
+.patientNotesCard p { margin: 8px 0 0; color: $text-secondary; font-size: $font-body-sm; line-height: 1.6; @include dark { color: $dark-text-secondary; } }
+
+.patientCasesList { display: flex; flex-direction: column; gap: 8px; }
+.patientCaseCard {
+  width: 100%;
+  padding: 13px;
+  border: 1px solid $border;
+  border-radius: $radius-lg;
+  background: $surface;
+  color: inherit;
+  text-align: start;
+  cursor: pointer;
+  transition: transform $transition-fast, box-shadow $transition-fast, border-color $transition-fast;
+  &:hover { transform: translateY(-1px); border-color: rgba(14, 165, 233, .25); box-shadow: 0 6px 18px rgba(15, 23, 42, .06); }
+  @include dark { background: $dark-surface; border-color: $dark-border; }
+}
+.patientCaseMain { display: flex; align-items: center; gap: 10px; }
+.patientCaseIcon { @include flex-center; width: 38px; height: 38px; flex: 0 0 38px; border-radius: $radius-md; background: rgba(14, 165, 233, .09); color: $primary; }
+.patientCaseContent { min-width: 0; flex: 1; }
+.patientCaseTitleRow { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.patientCaseTitleRow strong { overflow: hidden; color: $text-primary; font-size: $font-body-sm; white-space: nowrap; text-overflow: ellipsis; @include dark { color: $dark-text-primary; } }
+.patientCaseTitleRow .ant-tag { margin: 0; flex: 0 0 auto; font-size: 10px; }
+.patientCaseMeta { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 5px; color: $text-muted; font-size: 10px; }
+.patientCaseMeta span { display: inline-flex; align-items: center; gap: 4px; }
+.patientCaseArrow { flex: 0 0 auto; color: $text-muted; font-size: 10px; }
+.patientCaseFooter { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 10px; padding-top: 8px; border-top: 1px solid $border; color: $text-muted; font-size: 10px; @include dark { border-color: $dark-border; color: $dark-text-muted; } }
+
+.patientFollowUpList { display: flex; flex-direction: column; gap: 8px; }
+.patientFollowUp {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 11px 12px;
+  border: 1px solid $border;
+  border-radius: $radius-lg;
+  background: $surface;
+  text-align: start;
+  cursor: pointer;
+  @include dark { background: $dark-surface; border-color: $dark-border; }
+}
+.patientFollowUpIcon { @include flex-center; width: 34px; height: 34px; flex: 0 0 34px; border-radius: $radius-md; }
+.patientFollowUpContent { min-width: 0; flex: 1; }
+.patientFollowUpContent strong, .patientFollowUpContent span { display: block; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.patientFollowUpContent strong { color: $text-primary; font-size: $font-body-sm; @include dark { color: $dark-text-primary; } }
+.patientFollowUpContent span { margin-top: 3px; color: $text-muted; font-size: 10px; }
+.patientFollowUp .ant-tag { margin: 0; font-size: 9px; }
+.patientFollowUp--upcoming .patientFollowUpIcon { background: rgba(124, 58, 237, .10); color: #7c3aed; }
+.patientFollowUp--overdue .patientFollowUpIcon { background: rgba(220, 38, 38, .10); color: #dc2626; }
+
+.patientFilesGrid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+.patientFileCard { min-width: 0; padding: 12px; border: 1px solid $border; border-radius: $radius-lg; background: $surface; text-align: start; cursor: pointer; @include dark { background: $dark-surface; border-color: $dark-border; } }
+.patientFileIcon { @include flex-center; width: 32px; height: 32px; margin-bottom: 8px; border-radius: $radius-md; background: rgba(22, 163, 74, .10); color: #16a34a; }
+.patientFileName { display: block; overflow: hidden; color: $text-primary; font-size: 11px; font-weight: $font-semibold; white-space: nowrap; text-overflow: ellipsis; @include dark { color: $dark-text-primary; } }
+.patientFileType { display: block; overflow: hidden; margin-top: 3px; color: $text-muted; font-size: 9px; white-space: nowrap; text-overflow: ellipsis; }
+
+@media (max-width: 767px) {
+  .patientDetailV2 { padding-bottom: 24px; }
+  .patientDetailTopbar { margin-inline: -4px; }
+  .patientDetailActions .ant-btn:first-child { padding-inline: 8px; }
+  .patientDetailActions .ant-btn:first-child span:last-child { display: none; }
+  .patientDetailActions .ant-btn-primary { min-height: 40px; }
+  .patientProfileHero { align-items: flex-start; padding: 15px; }
+  .patientProfileAvatar { width: 58px; height: 58px; flex-basis: 58px; font-size: 17px; }
+  .patientProfileTitleRow h1 { font-size: 19px; }
+  .patientDetailStats { display: flex; overflow-x: auto; gap: 8px; margin-inline: -2px; padding-bottom: 2px; scrollbar-width: none; }
+  .patientDetailStats::-webkit-scrollbar { display: none; }
+  .patientDetailStat { min-width: 128px; flex: 0 0 128px; }
+  .patientFilesGrid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 420px) {
+  .patientProfileHero { gap: 11px; }
+  .patientProfileMeta { font-size: 10px; }
+  .patientCaseTitleRow .ant-tag { display: none; }
+  .patientCaseFooter { gap: 7px; }
+}
