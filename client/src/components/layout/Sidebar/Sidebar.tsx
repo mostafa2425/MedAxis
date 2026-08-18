@@ -1,32 +1,17 @@
 import { NavLink, useNavigate } from 'react-router-dom';
 import { Drawer } from 'antd';
-import {
-  DashboardOutlined,
-  TeamOutlined,
-  ScissorOutlined,
-  UserOutlined,
-  BankOutlined,
-  TagOutlined,
-  SearchOutlined,
-  SettingOutlined,
-  LogoutOutlined,
-  MedicineBoxOutlined,
-  CalendarOutlined,
-} from '@ant-design/icons';
+import { DashboardOutlined, TeamOutlined, ScissorOutlined, UserOutlined, BankOutlined, TagOutlined, SearchOutlined, SettingOutlined, LogoutOutlined, MedicineBoxOutlined, CalendarOutlined, ScheduleOutlined } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
 import { useAppStore } from '@/stores/app.store';
 import { useAuth } from '@/hooks/useAuth';
 import './Sidebar.scss';
 
-interface MenuItem {
-  key: string;
-  icon: React.ReactNode;
-  labelKey: string;
-}
+interface MenuItem { key: string; icon: React.ReactNode; labelKey: string; }
 
 const mainMenuItems: MenuItem[] = [
   { key: '/', icon: <DashboardOutlined />, labelKey: 'sidebar.dashboard' },
   { key: '/calendar', icon: <CalendarOutlined />, labelKey: 'sidebar.calendar' },
+  { key: '/follow-ups', icon: <ScheduleOutlined />, labelKey: 'sidebar.followUps' },
   { key: '/patients', icon: <TeamOutlined />, labelKey: 'sidebar.patients' },
   { key: '/operations', icon: <ScissorOutlined />, labelKey: 'sidebar.operations' },
   { key: '/doctors', icon: <UserOutlined />, labelKey: 'sidebar.doctors' },
@@ -35,10 +20,7 @@ const mainMenuItems: MenuItem[] = [
   { key: '/search', icon: <SearchOutlined />, labelKey: 'nav.search' },
 ];
 
-interface SidebarProps {
-  mobileOpen: boolean;
-  onMobileClose: () => void;
-}
+interface SidebarProps { mobileOpen: boolean; onMobileClose: () => void; }
 
 export default function Sidebar({ mobileOpen, onMobileClose }: SidebarProps) {
   const { t } = useTranslation();
@@ -50,63 +32,21 @@ export default function Sidebar({ mobileOpen, onMobileClose }: SidebarProps) {
 
   const renderSidebar = (isCollapsed: boolean) => (
     <div className="sidebar">
-      <div className="logo">
-        <div className="logoIcon">
-          <MedicineBoxOutlined />
-        </div>
-        {!isCollapsed && <span className="logoText">MedAxis</span>}
-      </div>
-
+      <div className="logo"><div className="logoIcon"><MedicineBoxOutlined /></div>{!isCollapsed && <span className="logoText">MedAxis</span>}</div>
       <nav className="nav">
         {mainMenuItems.map((item) => (
-          <NavLink
-            key={item.key}
-            to={item.key}
-            end={item.key === '/'}
-            className={({ isActive }) =>
-              `menuItem ${isActive ? 'menuItemActive' : ''} ${isCollapsed ? 'menuItemCollapsed' : ''}`
-            }
-            onClick={() => onMobileClose()}
-          >
+          <NavLink key={item.key} to={item.key} end={item.key === '/'} className={({ isActive }) => `menuItem ${isActive ? 'menuItemActive' : ''} ${isCollapsed ? 'menuItemCollapsed' : ''}`} onClick={onMobileClose}>
             <span className="menuItemIcon">{item.icon}</span>
-            {!isCollapsed && (
-              <span className="menuItemLabel">{t(item.labelKey)}</span>
-            )}
+            {!isCollapsed && <span className="menuItemLabel">{t(item.labelKey)}</span>}
           </NavLink>
         ))}
       </nav>
-
       <div className="bottomActions">
-        <NavLink
-          to="/profile"
-          className={({ isActive }) =>
-            `menuItem ${isActive ? 'menuItemActive' : ''} ${isCollapsed ? 'menuItemCollapsed' : ''}`
-          }
-          onClick={() => onMobileClose()}
-        >
-          <span className="menuItemIcon">
-            <SettingOutlined />
-          </span>
-          {!isCollapsed && (
-            <span className="menuItemLabel">{t('layout.profile')}</span>
-          )}
+        <NavLink to="/profile" className={({ isActive }) => `menuItem ${isActive ? 'menuItemActive' : ''} ${isCollapsed ? 'menuItemCollapsed' : ''}`} onClick={onMobileClose}>
+          <span className="menuItemIcon"><SettingOutlined /></span>{!isCollapsed && <span className="menuItemLabel">{t('layout.profile')}</span>}
         </NavLink>
-
-        <button
-          className={`menuItem logoutBtn ${isCollapsed ? 'menuItemCollapsed' : ''}`}
-          onClick={() => {
-            logout();
-            navigate('/login', { replace: true });
-            onMobileClose();
-          }}
-          type="button"
-        >
-          <span className="menuItemIcon">
-            <LogoutOutlined />
-          </span>
-          {!isCollapsed && (
-            <span className="menuItemLabel">{t('nav.logout')}</span>
-          )}
+        <button className={`menuItem logoutBtn ${isCollapsed ? 'menuItemCollapsed' : ''}`} onClick={() => { logout(); navigate('/login', { replace: true }); onMobileClose(); }} type="button">
+          <span className="menuItemIcon"><LogoutOutlined /></span>{!isCollapsed && <span className="menuItemLabel">{t('nav.logout')}</span>}
         </button>
       </div>
     </div>
@@ -114,24 +54,8 @@ export default function Sidebar({ mobileOpen, onMobileClose }: SidebarProps) {
 
   return (
     <>
-      <aside
-        className={`app-sidebar-root desktopSidebar ${collapsed ? 'desktopSidebarCollapsed' : ''} ${darkMode ? 'dark' : ''}`}
-      >
-        {renderSidebar(collapsed)}
-      </aside>
-
-      <Drawer
-        placement={direction === 'rtl' ? 'right' : 'left'}
-        open={mobileOpen}
-        onClose={onMobileClose}
-        width={280}
-        closable={false}
-        styles={{
-          body: { padding: 0 },
-          header: { display: 'none' },
-        }}
-        className="mobileDrawer"
-      >
+      <aside className={`app-sidebar-root desktopSidebar ${collapsed ? 'desktopSidebarCollapsed' : ''} ${darkMode ? 'dark' : ''}`}>{renderSidebar(collapsed)}</aside>
+      <Drawer placement={direction === 'rtl' ? 'right' : 'left'} open={mobileOpen} onClose={onMobileClose} width={280} closable={false} styles={{ body: { padding: 0 }, header: { display: 'none' } }} className="mobileDrawer">
         <div className="app-sidebar-root mobileOverlayContent">{renderSidebar(false)}</div>
       </Drawer>
     </>
