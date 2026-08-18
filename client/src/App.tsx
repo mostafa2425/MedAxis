@@ -21,158 +21,58 @@ const HospitalsPage = React.lazy(() => import('@/pages/Hospitals'));
 const SpecialtiesPage = React.lazy(() => import('@/pages/Specialties'));
 const SearchPage = React.lazy(() => import('@/pages/Search'));
 const CalendarPage = React.lazy(() => import('@/pages/Calendar'));
+const FollowUpsPage = React.lazy(() => import('@/pages/FollowUps'));
 const ProfilePage = React.lazy(() => import('@/pages/Profile'));
 
-// ── Loading Fallback ─────────────────────────────────
 function PageLoader() {
   return (
-    <div
-      style={{
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        height: '100vh',
-        width: '100%',
-      }}
-    >
+    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', width: '100%' }}>
       <Spin size="large" />
     </div>
   );
 }
 
-// ── RequireAuth ─────────────────────────────────────
 function RequireAuth() {
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
-
-  if (!isAuthenticated) {
-    return <Navigate to="/login" replace />;
-  }
-
-  return (
-    <Suspense fallback={<PageLoader />}>
-      <AppLayout />
-    </Suspense>
-  );
+  if (!isAuthenticated) return <Navigate to="/login" replace />;
+  return <Suspense fallback={<PageLoader />}><AppLayout /></Suspense>;
 }
 
-// ── Ant Design Themes ───────────────────────────────
 const MEDAXIS_THEME = {
   token: {
-    colorPrimary: '#2563EB',
-    colorSuccess: '#16A34A',
-    colorWarning: '#F59E0B',
-    colorError: '#DC2626',
-    colorInfo: '#0284C7',
-    borderRadius: 8,
-    fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
-    fontSize: 14,
-    controlHeight: 40,
+    colorPrimary: '#2563EB', colorSuccess: '#16A34A', colorWarning: '#F59E0B', colorError: '#DC2626', colorInfo: '#0284C7',
+    borderRadius: 8, fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif", fontSize: 14, controlHeight: 40,
   },
   components: {
-    Button: {
-      borderRadius: 8,
-      controlHeight: 40,
-    },
-    Input: {
-      borderRadius: 8,
-      controlHeight: 40,
-    },
-    Select: {
-      borderRadius: 8,
-      controlHeight: 40,
-    },
-    Table: {
-      borderRadius: 12,
-      headerBg: '#F8FAFC',
-      headerColor: '#475569',
-      rowHoverBg: '#F8FAFC',
-    },
-    Card: {
-      borderRadius: 12,
-    },
-    Modal: {
-      borderRadius: 20,
-    },
-    Tag: {
-      borderRadiusSM: 6,
-    },
+    Button: { borderRadius: 8, controlHeight: 40 }, Input: { borderRadius: 8, controlHeight: 40 }, Select: { borderRadius: 8, controlHeight: 40 },
+    Table: { borderRadius: 12, headerBg: '#F8FAFC', headerColor: '#475569', rowHoverBg: '#F8FAFC' }, Card: { borderRadius: 12 }, Modal: { borderRadius: 20 }, Tag: { borderRadiusSM: 6 },
   },
 };
 
 const MEDAXIS_DARK_THEME = {
   token: {
-    colorPrimary: '#3B82F6',
-    colorSuccess: '#22C55E',
-    colorWarning: '#FBBF24',
-    colorError: '#EF4444',
-    colorInfo: '#38BDF8',
-    colorBgContainer: '#1E293B',
-    colorBgElevated: '#334155',
-    colorBorder: '#334155',
-    colorText: '#F1F5F9',
-    colorTextSecondary: '#94A3B8',
-    borderRadius: 8,
-    fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
-    fontSize: 14,
-    controlHeight: 40,
+    colorPrimary: '#3B82F6', colorSuccess: '#22C55E', colorWarning: '#FBBF24', colorError: '#EF4444', colorInfo: '#38BDF8',
+    colorBgContainer: '#1E293B', colorBgElevated: '#334155', colorBorder: '#334155', colorText: '#F1F5F9', colorTextSecondary: '#94A3B8',
+    borderRadius: 8, fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif", fontSize: 14, controlHeight: 40,
   },
   components: {
-    Button: {
-      borderRadius: 8,
-      controlHeight: 40,
-    },
-    Input: {
-      borderRadius: 8,
-      controlHeight: 40,
-      colorBgContainer: '#334155',
-    },
-    Select: {
-      borderRadius: 8,
-      controlHeight: 40,
-    },
-    Table: {
-      borderRadius: 12,
-      headerBg: '#1E293B',
-      headerColor: '#94A3B8',
-      rowHoverBg: '#334155',
-      colorBgContainer: '#1E293B',
-    },
-    Card: {
-      borderRadius: 12,
-      colorBgContainer: '#1E293B',
-    },
-    Modal: {
-      borderRadius: 20,
-      contentBg: '#1E293B',
-    },
+    Button: { borderRadius: 8, controlHeight: 40 }, Input: { borderRadius: 8, controlHeight: 40, colorBgContainer: '#334155' }, Select: { borderRadius: 8, controlHeight: 40 },
+    Table: { borderRadius: 12, headerBg: '#1E293B', headerColor: '#94A3B8', rowHoverBg: '#334155', colorBgContainer: '#1E293B' },
+    Card: { borderRadius: 12, colorBgContainer: '#1E293B' }, Modal: { borderRadius: 20, contentBg: '#1E293B' },
   },
 };
 
-// ── App Component ────────────────────────────────────
 export default function App() {
   const darkMode = useAppStore((s) => s.darkMode);
   const direction = useAppStore((s) => s.direction);
-
-  const theme = useMemo(
-    () =>
-      darkMode
-        ? { ...MEDAXIS_DARK_THEME, algorithm: antTheme.darkAlgorithm }
-        : { ...MEDAXIS_THEME, algorithm: antTheme.defaultAlgorithm },
-    [darkMode],
-  );
+  const theme = useMemo(() => darkMode ? { ...MEDAXIS_DARK_THEME, algorithm: antTheme.darkAlgorithm } : { ...MEDAXIS_THEME, algorithm: antTheme.defaultAlgorithm }, [darkMode]);
 
   return (
-    <ConfigProvider
-      theme={theme}
-      direction={direction === 'rtl' ? 'rtl' : 'ltr'}
-    >
+    <ConfigProvider theme={theme} direction={direction === 'rtl' ? 'rtl' : 'ltr'}>
       <Suspense fallback={<PageLoader />}>
         <Routes>
-          {/* ── Public Routes ──────────────────────── */}
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
-
-          {/* ── Protected Routes ───────────────────── */}
           <Route element={<RequireAuth />}>
             <Route path="/" element={<DashboardPage />} />
             <Route path="/patients" element={<PatientsPage />} />
@@ -187,10 +87,9 @@ export default function App() {
             <Route path="/specialties" element={<SpecialtiesPage />} />
             <Route path="/search" element={<SearchPage />} />
             <Route path="/calendar" element={<CalendarPage />} />
+            <Route path="/follow-ups" element={<FollowUpsPage />} />
             <Route path="/profile" element={<ProfilePage />} />
           </Route>
-
-          {/* ── Fallback ─────────────────────────── */}
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </Suspense>
