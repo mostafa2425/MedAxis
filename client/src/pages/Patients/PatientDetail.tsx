@@ -1,7 +1,7 @@
-import { useMemo } from 'react';
+import { useMemo, type ReactNode } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { Avatar, Button, Card, Empty, Skeleton, Tag } from 'antd';
+import { Button, Card, Empty, Skeleton, Tag } from 'antd';
 import {
   ArrowLeftOutlined,
   CalendarOutlined,
@@ -30,7 +30,7 @@ type PatientOperation = Operation & {
 
 type PatientDetailData = Patient & { operations?: PatientOperation[] };
 
-function DetailStat({ icon, value, label, tone }: { icon: React.ReactNode; value: number; label: string; tone: string }) {
+function DetailStat({ icon, value, label, tone }: { icon: ReactNode; value: number; label: string; tone: string }) {
   return (
     <div className={`patientDetailStat patientDetailStat--${tone}`}>
       <span className="patientDetailStatIcon">{icon}</span>
@@ -88,11 +88,10 @@ export default function PatientDetailPage() {
 
   const management = useMemo(() => {
     const activeOperations = operations.filter((item) => item.status === 'SCHEDULED' || item.status === 'IN_PROGRESS').length;
-    const completedOperations = operations.filter((item) => item.status === 'COMPLETED').length;
     const followUps = operations.flatMap((item) => item.followUps ?? []);
     const upcomingFollowUps = followUps.filter((item) => item.status === 'UPCOMING' || item.status === 'OVERDUE');
     const files = operations.flatMap((item) => item.files ?? []);
-    return { activeOperations, completedOperations, upcomingFollowUps, files };
+    return { activeOperations, upcomingFollowUps, files };
   }, [operations]);
 
   const handleBack = () => navigate('/patients');
@@ -101,20 +100,14 @@ export default function PatientDetailPage() {
   const handleOpenOperation = (operationId: string) => navigate(`/operations/${operationId}`);
 
   if (isLoading) {
-    return (
-      <div className="patient-detail-page page patientDetailV2">
-        <Skeleton active paragraph={{ rows: 7 }} />
-      </div>
-    );
+    return <div className="patient-detail-page page patientDetailV2"><Skeleton active paragraph={{ rows: 7 }} /></div>;
   }
 
   if (isError || !patient) {
     return (
       <div className="patient-detail-page page patientDetailV2">
         <Button icon={<ArrowLeftOutlined />} type="text" onClick={handleBack}>{t('common.back')}</Button>
-        <Empty description={t('common.noData')}>
-          <Button type="primary" onClick={handleBack}>{t('common.back')}</Button>
-        </Empty>
+        <Empty description={t('common.noData')}><Button type="primary" onClick={handleBack}>{t('common.back')}</Button></Empty>
       </div>
     );
   }
@@ -132,25 +125,17 @@ export default function PatientDetailPage() {
       </div>
 
       <section className="patientProfileHero">
-        <div className={`patientProfileAvatar patientProfileAvatar--${isMale ? 'male' : 'female'}`}>
-          {getInitials(patient.fullName)}
-        </div>
+        <div className={`patientProfileAvatar patientProfileAvatar--${isMale ? 'male' : 'female'}`}>{getInitials(patient.fullName)}</div>
         <div className="patientProfileIdentity">
           <div className="patientProfileTitleRow">
             <h1>{patient.fullName}</h1>
             <Tag color={isMale ? 'blue' : 'magenta'}>{isMale ? t('patients.male') : t('patients.female')}</Tag>
           </div>
           <div className="patientProfileMeta">
-            <span>{patient.age} {t('common.age')}</span>
-            <span>•</span>
+            <span>{patient.age} {t('common.age')}</span><span>•</span>
             <span>{t('patients.registeredOn')}: {formatDate(patient.createdAt)}</span>
           </div>
-          {patient.mobile && (
-            <div className="patientProfilePhone">
-              <PhoneOutlined />
-              <PhoneLink value={patient.mobile} showIcon={false} />
-            </div>
-          )}
+          {patient.mobile && <div className="patientProfilePhone"><PhoneOutlined /><PhoneLink value={patient.mobile} showIcon={false} /></div>}
         </div>
       </section>
 
@@ -173,7 +158,6 @@ export default function PatientDetailPage() {
           <div><MedicineBoxOutlined /><span>{t('patients.patientHistory')}</span></div>
           <span className="patientDetailSectionCount">{operations.length}</span>
         </div>
-
         {operations.length === 0 ? (
           <Card className="patientEmptyCard" bordered={false}>
             <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description={t('patients.noOperations')}>
@@ -181,11 +165,7 @@ export default function PatientDetailPage() {
             </Empty>
           </Card>
         ) : (
-          <div className="patientCasesList">
-            {operations.map((operation) => (
-              <OperationRow key={operation.id} operation={operation} onOpen={() => handleOpenOperation(operation.id)} />
-            ))}
-          </div>
+          <div className="patientCasesList">{operations.map((operation) => <OperationRow key={operation.id} operation={operation} onOpen={() => handleOpenOperation(operation.id)} />)}</div>
         )}
       </section>
 
@@ -203,10 +183,7 @@ export default function PatientDetailPage() {
               return (
                 <button key={followUp.id} type="button" className={`patientFollowUp patientFollowUp--${followUp.status.toLowerCase()}`} onClick={() => handleOpenOperation(followUp.operationId)}>
                   <span className="patientFollowUpIcon"><CalendarOutlined /></span>
-                  <span className="patientFollowUpContent">
-                    <strong>{followUp.title}</strong>
-                    <span>{formatDate(followUp.scheduledAt)} • {operation?.name ?? t('operations.operation')}</span>
-                  </span>
+                  <span className="patientFollowUpContent"><strong>{followUp.title}</strong><span>{formatDate(followUp.scheduledAt)} • {operation?.name ?? t('operations.operation')}</span></span>
                   <Tag>{followUp.status}</Tag>
                 </button>
               );
