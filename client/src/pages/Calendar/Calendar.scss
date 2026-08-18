@@ -8,12 +8,44 @@
   .pageHint { @include page-subtitle; }
 }
 
+.calendarLegend {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: $space-3;
+  padding: 8px 12px;
+  border-radius: $radius-md;
+  background: $surface-subtle;
+  border: 1px solid $border-subtle;
+}
+
+.calendarLegendItem {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 12px;
+  font-weight: $font-medium;
+  color: $text-secondary;
+}
+
+.calendarLegendDot {
+  width: 8px;
+  height: 8px;
+  flex: 0 0 8px;
+  border-radius: 50%;
+}
+
+.calendarLegendDot.operation { background: #2563eb; box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.10); }
+.calendarLegendDot.followUp { background: #7c3aed; box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.10); }
+.calendarLegendDot.overdue { background: #dc2626; }
+
 .calendarShell { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: $space-4; align-items: start; }
 .calendarMain { @include card-base; display: flex; flex-direction: column; gap: $space-3; min-width: 0; overflow: hidden; }
 .calendarSidePanel { display: flex; flex-direction: column; gap: $space-3; min-width: 0; }
 
 @include dark {
   .calendar-page .pageIcon { background: rgba(37, 99, 235, 0.2); }
+  .calendarLegend { background: rgba(255, 255, 255, 0.04); border-color: rgba(255, 255, 255, 0.08); }
 }
 
 @include responsive('lg') { .calendarShell { grid-template-columns: 1fr; } .calendarSidePanel { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); } }
@@ -22,6 +54,7 @@
   .calendarMain { padding: $space-3; }
   .calendarSidePanel { display: flex; }
   .calendar-page .pageHeader :global(.ant-btn) { min-height: 44px; }
+  .calendarLegend { gap: 8px 12px; }
 }
 
 @keyframes calendarFadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
