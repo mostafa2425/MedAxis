@@ -1,4 +1,4 @@
-import { ClockCircleOutlined, CheckCircleOutlined } from '@ant-design/icons';
+import { ClockCircleOutlined, CheckCircleOutlined, CloseCircleOutlined } from '@ant-design/icons';
 import { Tooltip } from 'antd';
 import dayjs from 'dayjs';
 import { useTranslation } from 'react-i18next';
@@ -17,17 +17,18 @@ export default function FollowUpEvent({ followUp, compact = false }: FollowUpEve
   const isAr = i18n.language.startsWith('ar');
   const overdue = followUp.status === 'OVERDUE';
   const completed = followUp.status === 'COMPLETED';
+  const cancelled = followUp.status === 'CANCELLED';
   const label = `${followUp.title} · ${followUp.operation.patient.fullName}`;
 
   return (
     <Tooltip title={label}>
       <button
         type="button"
-        className={`calendar-follow-up-event ${overdue ? 'is-overdue' : ''} ${completed ? 'is-completed' : ''} ${compact ? 'is-compact' : ''}`}
+        className={`calendar-follow-up-event ${overdue ? 'is-overdue' : ''} ${completed ? 'is-completed' : ''} ${cancelled ? 'is-cancelled' : ''} ${compact ? 'is-compact' : ''}`}
         onClick={() => navigate(`/operations/${followUp.operation.id}`)}
       >
         <span className="calendar-follow-up-event-icon">
-          {completed ? <CheckCircleOutlined /> : <ClockCircleOutlined />}
+          {cancelled ? <CloseCircleOutlined /> : completed ? <CheckCircleOutlined /> : <ClockCircleOutlined />}
         </span>
         <span className="calendar-follow-up-event-content">
           <strong>{followUp.title}</strong>
