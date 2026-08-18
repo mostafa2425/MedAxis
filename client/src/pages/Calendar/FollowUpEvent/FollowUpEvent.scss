@@ -37,6 +37,17 @@
     &:focus-visible { background: rgba(22, 163, 74, 0.15); }
   }
 
+  &.is-cancelled {
+    border-inline-start-color: #b42318;
+    background: rgba(180, 35, 24, 0.10);
+    color: #b42318;
+    text-decoration: line-through;
+    text-decoration-thickness: 1px;
+
+    &:hover,
+    &:focus-visible { background: rgba(180, 35, 24, 0.16); }
+  }
+
   &.is-compact {
     padding: 3px 5px;
     gap: 4px;
@@ -53,6 +64,7 @@
 
 .is-overdue .calendar-follow-up-event-icon { color: #dc2626; }
 .is-completed .calendar-follow-up-event-icon { color: #16a34a; }
+.is-cancelled .calendar-follow-up-event-icon { color: #b42318; }
 
 .calendar-follow-up-event-content {
   min-width: 0;
