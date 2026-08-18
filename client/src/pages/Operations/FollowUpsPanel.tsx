@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useState, type ReactNode } from 'react';
 import {
   Button,
   Card,
@@ -26,13 +26,10 @@ import dayjs, { Dayjs } from 'dayjs';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { operationService } from '@/services/operation.service';
-import type { FollowUpStatus, OperationFollowUp } from '@/types';
+import type { ApiResponse, FollowUpStatus, OperationFollowUp } from '@/types';
 import './FollowUpsPanel.scss';
 
-type FollowUpsResponse = {
-  success: boolean;
-  data: OperationFollowUp[];
-};
+type FollowUpsResponse = ApiResponse<OperationFollowUp[]>;
 
 type FollowUpFormValues = {
   title: string;
@@ -72,7 +69,7 @@ export default function FollowUpsPanel({
 
   const { data, isFetching, refetch } = useQuery<FollowUpsResponse>({
     queryKey: ['operation-follow-ups', operationId],
-    queryFn: () => operationService.getFollowUps(operationId),
+    queryFn: async () => (await operationService.getFollowUps(operationId)).data,
     initialData,
   });
 
@@ -127,7 +124,7 @@ export default function FollowUpsPanel({
   const renderStat = (
     value: number,
     label: string,
-    icon: React.ReactNode,
+    icon: ReactNode,
     className = '',
   ) => (
     <Card className={`follow-up-stat ${className}`} bordered={false} size="small">
