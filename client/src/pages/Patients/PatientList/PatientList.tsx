@@ -1,29 +1,20 @@
 import { useMemo } from 'react';
+import { Button, Card, Empty, Pagination, Select, Spin, Tag } from 'antd';
 import {
-  Table,
-  Button,
-  Empty,
-  Tag,
-  Avatar,
-  Card,
-  Spin,
-  Pagination,
-} from 'antd';
-import type { ColumnsType, TablePaginationConfig } from 'antd/es/table';
-import {
-  PlusOutlined,
-  PhoneOutlined,
-  TeamOutlined,
-  UserOutlined,
-  RightOutlined,
   CalendarOutlined,
+  CheckCircleOutlined,
+  ClockCircleOutlined,
+  FileImageOutlined,
+  PhoneOutlined,
+  RightOutlined,
+  TeamOutlined,
 } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
-
 import { getInitials } from '@/utils/helpers';
 import { Gender, type Patient } from '@/types';
-
+import PhoneLink from '@/components/common/PhoneLink';
 import './PatientList.scss';
+import './PatientManagement.scss';
 
 export interface PatientListProps {
   patients: Patient[];
@@ -32,9 +23,21 @@ export interface PatientListProps {
   page: number;
   pageSize: number;
   total: number;
+  gender?: Gender;
+  onGenderChange?: (gender?: Gender) => void;
   onPageChange: (page: number) => void;
   onRowClick: (id: string) => void;
   onAdd: () => void;
+}
+
+function Stat({ icon, value, label, tone }: { icon: React.ReactNode; value: number; label: string; tone: string }) {
+  return (
+    <div className={`patientManagementStat patientManagementStat--${tone}`}>
+      <span className="patientManagementStatIcon">{icon}</span>
+      <span className="patientManagementStatValue">{value}</span>
+      <span className="patientManagementStatLabel">{label}</span>
+    </div>
+  );
 }
 
 export default function PatientList({
@@ -44,38 +47,101 @@ export default function PatientList({
   page,
   pageSize,
   total,
+  gender,
+  onGenderChange,
   onPageChange,
   onRowClick,
   onAdd,
 }: PatientListProps) {
   const { t } = useTranslation();
 
-  const getGenderLabel = (gender: Gender) =>
-    gender === Gender.Male
-      ? t('patients.male')
-      : t('patients.female');
+  const pageStats = useMemo(() => {
+    const management = patients.map((patient) => patient.management).filter(Boolean);
+    return {
+      active: management.reduce((sum, item) => sum + (item?.activeOperations ?? 0), 0),
+      followUps: management.reduce((sum, item) => sum + (item?.upcomingFollowUps ?? 0), 0),
+      files: management.reduce((sum, item) => sum + (item?.clinicalFiles ?? 0), 0),
+    };
+  }, [patients]);
 
-  const getGenderClass = (gender: Gender) =>
-    gender === Gender.Male
-      ? 'patientListGender--male'
-      : 'patientListGender--female';
+  const getGenderLabel = (value: Gender) =>
+    value === Gender.Male ? t('patients.male') : t('patients.female');
+
+  const renderCard = (patient: Patient) => {
+    const management = patient.management;
+    const operations = management?.totalOperations ?? patient._count?.operations ?? 0;
+    const active = management?.activeOperations ?? 0;
+    const followUps = management?.upcomingFollowUps ?? 0;
+    const files = management?.clinicalFiles ?? 0;
+
+    return (
+      <Card
+        key={patient.id}
+        className="patientManagementCard"
+        bordered={false}
+        onClick={() => onRowClick(patient.id)}
+        styles={{ body: { padding: 0 } }}
+      >
+        <div className="patientManagementCardBody">
+          <div className="patientManagementCardTop">
+            <div className="patientManagementIdentity">
+              <div className={`patientManagementAvatar patientManagementAvatar--${patient.gender.toLowerCase()}`}>
+                {getInitials(patient.fullName)}
+              </div>
+              <div className="patientManagementIdentityText">
+                <div className="patientManagementName">{patient.fullName || '—'}</div>
+                <div className="patientManagementAge">
+                  <CalendarOutlined />
+                  {patient.age} {t('common.age')}
+                  <span>•</span>
+                  <span>{getGenderLabel(patient.gender)}</span>
+                </div>
+              </div>
+            </div>
+            <RightOutlined className="patientManagementChevron" />
+          </div>
+
+          <div className="patientManagementContact" onClick={(event) => event.stopPropagation()}>
+            <PhoneOutlined />
+            <PhoneLink value={patient.mobile} showIcon={false} />
+          </div>
+
+          <div className="patientManagementStats">
+            <Stat icon={<TeamOutlined />} value={operations} label={t('patients.totalOperations')} tone="blue" />
+            <Stat icon={<ClockCircleOutlined />} value={active} label={t('patients.activeCases', 'Active cases')} tone="orange" />
+            <Stat icon={<CalendarOutlined />} value={followUps} label={t('patients.upcomingFollowUps', 'Follow-ups')} tone="purple" />
+            <Stat icon={<FileImageOutlined />} value={files} label={t('patients.clinicalFiles', 'Clinical files')} tone="green" />
+          </div>
+
+          {management?.lastOperation && (
+            <div className="patientManagementLastCase">
+              <div>
+                <span className="patientManagementLastCaseLabel">{t('patients.lastOperation', 'Last operation')}</span>
+                <span className="patientManagementLastCaseName">{management.lastOperation.name}</span>
+              </div>
+              <Tag color={management.lastOperation.status === 'COMPLETED' ? 'success' : management.lastOperation.status === 'CANCELLED' ? 'error' : 'processing'}>
+                {management.lastOperation.status.replace('_', ' ')}
+              </Tag>
+            </div>
+          )}
+
+          <div className="patientManagementCardFooter">
+            <span>{t('patients.viewProfile', 'View patient profile')}</span>
+            <RightOutlined />
+          </div>
+        </div>
+      </Card>
+    );
+  };
 
   const emptyNode = (
     <div className="patientListEmpty">
       <Empty
         image={Empty.PRESENTED_IMAGE_SIMPLE}
-        description={
-          hasSearch
-            ? t('common.noResults')
-            : t('patients.noPatients')
-        }
+        description={hasSearch ? t('common.noResults') : t('patients.noPatients')}
       >
         {!hasSearch && (
-          <Button
-            type="primary"
-            icon={<PlusOutlined />}
-            onClick={onAdd}
-          >
+          <Button type="primary" onClick={onAdd}>
             {t('patients.addPatient')}
           </Button>
         )}
@@ -83,261 +149,54 @@ export default function PatientList({
     </div>
   );
 
-  const renderPatientIdentity = (
-    fullName: string,
-    patient: Patient,
-    size: number = 42,
-  ) => (
-    <div className="patientListIdentity">
-      <Avatar
-        size={size}
-        className={
-          patient.gender === Gender.Male
-            ? 'patientListAvatar patientListAvatarMale'
-            : 'patientListAvatar patientListAvatarFemale'
-        }
-      >
-        {getInitials(fullName)}
-      </Avatar>
-
-      <div className="patientListIdentityContent">
-        <span className="patientListName">
-          {fullName || '—'}
-        </span>
-
-        <span className="patientListAge">
-          <CalendarOutlined />
-          {patient.age} {t('common.age')}
-        </span>
-      </div>
-    </div>
-  );
-
-  const renderGender = (gender: Gender) => (
-    <span
-      className={`patientListGender ${getGenderClass(gender)}`}
-    >
-      <span className="patientListGenderDot" />
-      {getGenderLabel(gender)}
-    </span>
-  );
-
-  const columns: ColumnsType<Patient> = useMemo(
-    () => [
-      {
-        title: t('patients.fullName'),
-        dataIndex: 'fullName',
-        key: 'fullName',
-        width: 280,
-        ellipsis: true,
-        render: (fullName: string, record) =>
-          renderPatientIdentity(fullName, record, 44),
-      },
-
-      {
-        title: t('patients.gender'),
-        dataIndex: 'gender',
-        key: 'gender',
-        width: 130,
-        render: (gender: Gender) => renderGender(gender),
-      },
-
-      {
-        title: t('patients.mobile'),
-        dataIndex: 'mobile',
-        key: 'mobile',
-        width: 190,
-        render: (mobile: string | null) => (
-          <div className="patientListInfo">
-            <span className="patientListInfoIcon">
-              <PhoneOutlined />
-            </span>
-
-            <span className="patientListInfoText">
-              {mobile || '—'}
-            </span>
-          </div>
-        ),
-      },
-
-      {
-        title: t('patients.totalOperations'),
-        key: 'operations',
-        width: 170,
-        align: 'center',
-        render: (_, record) => {
-          const count = record._count?.operations ?? 0;
-
-          return (
-            <div className="patientListOperations">
-              <span className="patientListOperationsIcon">
-                <TeamOutlined />
-              </span>
-
-              <div className="patientListOperationsContent">
-                <span className="patientListOperationsCount">
-                  {count}
-                </span>
-
-                <span className="patientListOperationsLabel">
-                  {t('patients.totalOperations')}
-                </span>
-              </div>
-            </div>
-          );
-        },
-      },
-
-      {
-        title: '',
-        key: 'action',
-        width: 52,
-        align: 'center',
-        render: () => (
-          <span className="patientListAction">
-            <RightOutlined />
-          </span>
-        ),
-      },
-    ],
-    [t],
-  );
-
-  const pagination: TablePaginationConfig = {
-    current: page,
-    pageSize,
-    total,
-    onChange: onPageChange,
-    showSizeChanger: false,
-    showLessItems: true,
-    hideOnSinglePage: true,
-  };
-
   return (
     <div className="patientList">
-      {/* =====================================================
-          Mobile
-          ===================================================== */}
-      <div className="patientListMobile">
-        <Spin spinning={isLoading}>
-          {patients.length === 0 && !isLoading ? (
-            emptyNode
-          ) : (
-            <div className="patientListCards">
-              {patients.map((patient) => {
-                const operationsCount =
-                  patient._count?.operations ?? 0;
-
-                return (
-                  <Card
-                    key={patient.id}
-                    className="patientListCard"
-                    bordered={false}
-                    onClick={() => onRowClick(patient.id)}
-                    styles={{
-                      body: {
-                        padding: 0,
-                      },
-                    }}
-                  >
-                    <div className="patientListCardInner">
-                      <div className="patientListCardHeader">
-                        {renderPatientIdentity(
-                          patient.fullName,
-                          patient,
-                          48,
-                        )}
-
-                        {renderGender(patient.gender)}
-                      </div>
-
-                      <div className="patientListCardMeta">
-                        <div className="patientListCardMetaItem">
-                          <span className="patientListCardMetaIcon">
-                            <PhoneOutlined />
-                          </span>
-
-                          <div className="patientListCardMetaContent">
-                            <span className="patientListCardMetaLabel">
-                              {t('patients.mobile')}
-                            </span>
-
-                            <span className="patientListCardMetaValue">
-                              {patient.mobile || '—'}
-                            </span>
-                          </div>
-                        </div>
-
-                        <div className="patientListCardMetaItem">
-                          <span className="patientListCardMetaIcon">
-                            <TeamOutlined />
-                          </span>
-
-                          <div className="patientListCardMetaContent">
-                            <span className="patientListCardMetaLabel">
-                              {t('patients.totalOperations')}
-                            </span>
-
-                            <span className="patientListCardMetaValue">
-                              {t('patients.operationsCount', {
-                                count: operationsCount,
-                              })}
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-
-                      <div className="patientListCardFooter">
-                        <span>
-                          {t('common.viewDetails', 'View details')}
-                        </span>
-
-                        <RightOutlined />
-                      </div>
-                    </div>
-                  </Card>
-                );
-              })}
-            </div>
-          )}
-        </Spin>
-
-        {total > pageSize && (
-          <div className="patientListMobilePagination">
-            <Pagination
-              current={page}
-              pageSize={pageSize}
-              total={total}
-              onChange={onPageChange}
-              showSizeChanger={false}
-              showLessItems
-              size="small"
-            />
-          </div>
+      <div className="patientManagementToolbar">
+        <div className="patientManagementResultCount">
+          <strong>{total}</strong> {t('patients.patientRecords', 'patient records')}
+        </div>
+        {onGenderChange && (
+          <Select
+            allowClear
+            value={gender}
+            placeholder={t('patients.filterGender', 'Filter by gender')}
+            onChange={(value) => onGenderChange(value)}
+            options={[
+              { value: Gender.Male, label: getGenderLabel(Gender.Male) },
+              { value: Gender.Female, label: getGenderLabel(Gender.Female) },
+            ]}
+            className="patientManagementGenderFilter"
+          />
         )}
       </div>
 
-      {/* =====================================================
-          Desktop
-          ===================================================== */}
-      <div className="patientListDesktop">
-        <Table<Patient>
-          className="patientListTable"
-          rowKey="id"
-          columns={columns}
-          dataSource={patients}
-          loading={isLoading}
-          pagination={pagination}
-          scroll={{ x: 760 }}
-          onRow={(record) => ({
-            onClick: () => onRowClick(record.id),
-            className: 'patientListRow',
-          })}
-          locale={{
-            emptyText: emptyNode,
-          }}
-        />
+      <div className="patientManagementSummary">
+        <Stat icon={<TeamOutlined />} value={patients.length} label={t('patients.onThisPage', 'On this page')} tone="blue" />
+        <Stat icon={<ClockCircleOutlined />} value={pageStats.active} label={t('patients.activeCases', 'Active cases')} tone="orange" />
+        <Stat icon={<CalendarOutlined />} value={pageStats.followUps} label={t('patients.upcomingFollowUps', 'Follow-ups')} tone="purple" />
+        <Stat icon={<FileImageOutlined />} value={pageStats.files} label={t('patients.clinicalFiles', 'Clinical files')} tone="green" />
       </div>
+
+      <Spin spinning={isLoading}>
+        {patients.length === 0 && !isLoading ? (
+          emptyNode
+        ) : (
+          <div className="patientManagementGrid">{patients.map(renderCard)}</div>
+        )}
+      </Spin>
+
+      {total > pageSize && (
+        <div className="patientManagementPagination">
+          <Pagination
+            current={page}
+            pageSize={pageSize}
+            total={total}
+            onChange={onPageChange}
+            showSizeChanger={false}
+            showLessItems
+          />
+        </div>
+      )}
     </div>
   );
 }
