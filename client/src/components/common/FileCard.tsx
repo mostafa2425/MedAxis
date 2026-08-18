@@ -1,0 +1,6 @@
+import { Button, Card, Flex, Image, Popconfirm, Tag, Typography } from 'antd';
+import { DeleteOutlined, DownloadOutlined, EyeOutlined, FileTextOutlined } from '@ant-design/icons';
+import type { ReactNode } from 'react';
+import './DesignSystem.scss';
+interface Props { name: string; type?: ReactNode; url?: string; isImage?: boolean; onDelete?: () => void; }
+export default function FileCard({ name, type, url, isImage, onDelete }: Props) { return <Card size="small" className="ds-file-card" styles={{ body: { padding: 0 } }}><div className="ds-file-card__preview">{isImage && url ? <Image src={url} preview={{ mask: <Flex align="center" gap={6}><EyeOutlined />Preview</Flex> }} /> : <FileTextOutlined style={{ fontSize: 34, color: 'var(--ant-color-text-tertiary)' }} />}</div><div className="ds-file-card__body"><Typography.Text strong ellipsis title={name}>{name}</Typography.Text>{type && <div><Tag>{type}</Tag></div>}<Flex justify="space-between" align="center">{url ? <Button type="link" size="small" icon={<DownloadOutlined />} href={url} target="_blank">Open</Button> : <span />}{onDelete && <Popconfirm title="Delete this file?" onConfirm={onDelete}><Button type="text" danger size="small" icon={<DeleteOutlined />} /></Popconfirm>}</Flex></div></Card>; }
