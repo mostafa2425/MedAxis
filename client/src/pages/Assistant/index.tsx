@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react';
 import { Alert, Button, Card, Empty, Skeleton, Tag } from 'antd';
-import { CalendarOutlined, CheckCircleOutlined, ClockCircleOutlined, DollarOutlined, MedicineBoxOutlined, ReloadOutlined, WarningOutlined } from '@ant-design/icons';
+import { CalendarOutlined, CheckCircleOutlined, ClockCircleOutlined, DollarOutlined, MedicineBoxOutlined, ReloadOutlined, WarningOutlined, BellOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { assistantService, type AssistantBrief } from '@/services/assistant.service';
+import { notificationService } from '@/services/notification.service';
 import './Assistant.scss';
 
 const formatDate = (value: string, locale: string, options: Intl.DateTimeFormatOptions) => new Intl.DateTimeFormat(locale, options).format(new Date(value));
@@ -15,6 +16,9 @@ export default function AssistantPage() {
   const [weekly, setWeekly] = useState<AssistantBrief | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
+  const [pushEnabled, setPushEnabled] = useState(false);
+  const [pushLoading, setPushLoading] = useState(false);
+  const [pushError, setPushError] = useState('');
   const locale = i18n.language === 'ar' ? 'ar-EG' : 'en-US';
 
   const load = async () => {
@@ -31,7 +35,40 @@ export default function AssistantPage() {
     }
   };
 
-  useEffect(() => { void load(); }, []);
+  useEffect(() => {
+    void load();
+    if ('Notification' in window && Notification.permission === 'granted') {
+      void navigator.serviceWorker?.ready.then(async (registration) => {
+        setPushEnabled(Boolean(await registration.pushManager.getSubscription()));
+      });
+    }
+  }, []);
+
+  const enablePush = async () => {
+    setPushLoading(true);
+    setPushError('');
+    try {
+      await notificationService.enablePush();
+      setPushEnabled(true);
+    } catch (err) {
+      setPushError(err instanceof Error ? err.message : 'Unable to enable notifications');
+    } finally {
+      setPushLoading(false);
+    }
+  };
+
+  const disablePush = async () => {
+    setPushLoading(true);
+    setPushError('');
+    try {
+      await notificationService.disablePush();
+      setPushEnabled(false);
+    } catch (err) {
+      setPushError(err instanceof Error ? err.message : 'Unable to disable notifications');
+    } finally {
+      setPushLoading(false);
+    }
+  };
 
   if (loading) return <div className="assistant-page page"><Skeleton active paragraph={{ rows: 3 }} /><Skeleton active paragraph={{ rows: 5 }} /></div>;
   if (error || !daily || !weekly) return <div className="assistant-page page"><Alert type="error" message="Unable to load your MedAxis brief" action={<Button icon={<ReloadOutlined />} onClick={() => void load()}>Retry</Button>} /></div>;
@@ -44,8 +81,14 @@ export default function AssistantPage() {
           <h1>Know what matters next.</h1>
           <p>Your daily and weekly practice brief, built from your actual operations, follow-ups and payments.</p>
         </div>
-        <Button icon={<ReloadOutlined />} onClick={() => void load()}>Refresh</Button>
+        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', justifyContent: 'flex-end' }}>
+          <Button icon={<ReloadOutlined />} onClick={() => void load()}>Refresh</Button>
+          <Button type={pushEnabled ? 'default' : 'primary'} icon={<BellOutlined />} loading={pushLoading} onClick={() => void (pushEnabled ? disablePush() : enablePush())}>
+            {pushEnabled ? 'Notifications enabled' : 'Enable notifications'}
+          </Button>
+        </div>
       </header>
+      {pushError && <Alert style={{ marginBottom: 16 }} type="warning" showIcon message="Push notifications" description={pushError} closable onClose={() => setPushError('')} />}
 
       <section className="assistantSummaryGrid">
         <Card><MedicineBoxOutlined /><strong>{daily.summary.operations}</strong><span>Tomorrow's operations</span></Card>
