@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Avatar, Button, Card, Descriptions, Empty, Flex, Image, Popconfirm, Select, Space, Spin, Tabs, Tag, Timeline, Typography, Upload, message } from 'antd';
-import { ArrowLeftOutlined, BankOutlined, CalendarOutlined, ClockCircleOutlined, DeleteOutlined, DownloadOutlined, EditOutlined, EyeOutlined, FileImageOutlined, FileTextOutlined, HistoryOutlined, PhoneOutlined, TeamOutlined, UploadOutlined, DollarOutlined } from '@ant-design/icons';
+import { ArrowLeftOutlined, CalendarOutlined, DeleteOutlined, DownloadOutlined, EditOutlined, EyeOutlined, FileImageOutlined, FileTextOutlined, HistoryOutlined, PhoneOutlined, TeamOutlined, UploadOutlined, DollarOutlined } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
 import { operationService } from '@/services/operation.service';
 import { formatOperationDate, formatTime, getInitials, getSpecialtyLabel, getStatusColor, resolveMediaUrl } from '@/utils/helpers';
@@ -74,7 +74,6 @@ export default function OperationDetailPage() {
   const { data, isLoading } = useQuery({ queryKey: ['operation-detail', id], queryFn: () => operationService.getById(id!), enabled: Boolean(id) });
   const operation: Operation | undefined = data?.data?.data;
   const changeStatusMutation = useMutation({ mutationFn: (status: OperationStatus) => operationService.changeStatus(id!, status), onSuccess: () => { queryClient.invalidateQueries({ queryKey: ['operation-detail', id] }); messageApi.success(t('operations.statusUpdated')); }, onError: (e) => messageApi.error(getApiErrorMessage(e, t('common.operationFailed'))) });
-  const deleteMutation = useMutation({ mutationFn: () => operationService.delete(id!), onSuccess: () => { messageApi.success(t('operations.operationDeleted')); navigate('/operations'); } });
   const uploadMutation = useMutation({ mutationFn: (fd: FormData) => operationService.uploadFiles(id!, fd), onSuccess: () => queryClient.invalidateQueries({ queryKey: ['operation-detail', id] }), onError: (e) => messageApi.error(getApiErrorMessage(e, 'Unable to upload file')) });
   const deleteFileMutation = useMutation({ mutationFn: (fileId: string) => operationService.deleteFile(id!, fileId), onSuccess: () => queryClient.invalidateQueries({ queryKey: ['operation-detail', id] }) });
 
@@ -123,6 +122,10 @@ export default function OperationDetailPage() {
         <div className="caseMetaItem"><Typography.Text type="secondary">Room</Typography.Text><Typography.Text strong>{operation.operationRoom ?? '—'}</Typography.Text></div>
       </div>
     </Card>
+    <Flex className="caseActions" justify="space-between" align="center" gap={12} wrap>
+      <Button className="backBtn" icon={<ArrowLeftOutlined />} onClick={() => navigate('/operations')}>Back to Operations</Button>
+      <Button type="primary" icon={<EditOutlined />} onClick={() => navigate(`/operations/${operation.id}/edit`)}>{t('common.edit')}</Button>
+    </Flex>
     <Flex gap={16} wrap>
       <Card title="Patient" className="detailInfoCard" style={{ flex: '1 1 420px' }}>
         <Descriptions column={1} size="small"><Descriptions.Item label="Name"><Typography.Text strong>{operation.patient?.fullName ?? '—'}</Typography.Text></Descriptions.Item><Descriptions.Item label="Age">{operation.patient?.age ?? '—'}</Descriptions.Item><Descriptions.Item label="Gender"><Tag color="purple">{operation.patient?.gender ?? '—'}</Tag></Descriptions.Item><Descriptions.Item label="Mobile"><PhoneLink value={patientPhone} /></Descriptions.Item></Descriptions>
@@ -143,10 +146,6 @@ export default function OperationDetailPage() {
 
   return <div className="operation-detail-page page">
     {contextHolder}
-    <div className="pageHeader">
-      <Flex align="center" gap={12} style={{ minWidth: 0 }}><Button className="backBtn" icon={<ArrowLeftOutlined />} onClick={() => navigate('/operations')} /><div className="pageHeaderInfo"><Typography.Title level={3} style={{ margin: 0 }} ellipsis={{ tooltip: operation.name }}>{operation.name}</Typography.Title><Typography.Text type="secondary" ellipsis><BankOutlined /> {operation.hospital?.name ?? '—'} · <CalendarOutlined /> {formatOperationDate(operation.operationDate)} · <ClockCircleOutlined /> {formatTime(operation.operationTime)}</Typography.Text></div></Flex>
-      <Space wrap><Button icon={<EditOutlined />} onClick={() => navigate(`/operations/${operation.id}/edit`)}>{t('common.edit')}</Button><Popconfirm title={t('common.delete')} onConfirm={() => deleteMutation.mutate()}><Button danger icon={<DeleteOutlined />}>{t('common.delete')}</Button></Popconfirm></Space>
-    </div>
     <Tabs size="large" className="operation-tabs" items={[{ key: 'overview', label: 'Overview', children: overview }, { key: 'clinical', label: 'Clinical Files', icon: <FileImageOutlined />, children: clinicalFiles }, { key: 'team', label: 'Medical Team', icon: <TeamOutlined />, children: team }, { key: 'financials', label: 'Financials', icon: <DollarOutlined />, children: <CostBreakdownCard operationId={operation.id} cost={cost} currency={currency} /> }, { key: 'timeline', label: 'Timeline', icon: <HistoryOutlined />, children: timeline }]} />
   </div>;
 }
