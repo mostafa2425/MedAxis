@@ -1,6 +1,6 @@
 import { NavLink, useNavigate } from 'react-router-dom';
 import { Drawer } from 'antd';
-import { DashboardOutlined, TeamOutlined, ScissorOutlined, UserOutlined, BankOutlined, TagOutlined, SearchOutlined, SettingOutlined, LogoutOutlined, MedicineBoxOutlined, CalendarOutlined, ScheduleOutlined } from '@ant-design/icons';
+import { DashboardOutlined, TeamOutlined, ScissorOutlined, UserOutlined, BankOutlined, TagOutlined, SearchOutlined, SettingOutlined, LogoutOutlined, MedicineBoxOutlined, CalendarOutlined, ScheduleOutlined, BellOutlined } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
 import { useAppStore } from '@/stores/app.store';
 import { useAuth } from '@/hooks/useAuth';
@@ -10,6 +10,7 @@ interface MenuItem { key: string; icon: React.ReactNode; labelKey: string; }
 
 const mainMenuItems: MenuItem[] = [
   { key: '/', icon: <DashboardOutlined />, labelKey: 'sidebar.dashboard' },
+  { key: '/assistant', icon: <BellOutlined />, labelKey: 'sidebar.assistant' },
   { key: '/calendar', icon: <CalendarOutlined />, labelKey: 'sidebar.calendar' },
   { key: '/follow-ups', icon: <ScheduleOutlined />, labelKey: 'sidebar.followUps' },
   { key: '/patients', icon: <TeamOutlined />, labelKey: 'sidebar.patients' },
@@ -37,7 +38,7 @@ export default function Sidebar({ mobileOpen, onMobileClose }: SidebarProps) {
         {mainMenuItems.map((item) => (
           <NavLink key={item.key} to={item.key} end={item.key === '/'} className={({ isActive }) => `menuItem ${isActive ? 'menuItemActive' : ''} ${isCollapsed ? 'menuItemCollapsed' : ''}`} onClick={onMobileClose}>
             <span className="menuItemIcon">{item.icon}</span>
-            {!isCollapsed && <span className="menuItemLabel">{item.key === '/follow-ups' ? (i18n.language.startsWith('ar') ? 'المتابعات' : 'Follow-ups') : t(item.labelKey)}</span>}
+            {!isCollapsed && <span className="menuItemLabel">{item.key === '/assistant' ? (i18n.language.startsWith('ar') ? 'المساعد الذكي' : 'Assistant') : item.key === '/follow-ups' ? (i18n.language.startsWith('ar') ? 'المتابعات' : 'Follow-ups') : t(item.labelKey)}</span>}
           </NavLink>
         ))}
       </nav>
