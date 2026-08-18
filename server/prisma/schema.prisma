@@ -296,7 +296,7 @@ model OperationMedicalTeam {
   operation         Operation  @relation(fields: [operationId], references: [id], onDelete: Cascade)
   primarySurgeon    Doctor?    @relation(fields: [primarySurgeonId], references: [id])
   assistantSurgeon  Doctor?    @relation("AssistantSurgeon", fields: [assistantSurgeonId], references: [id])
-  anesthesiologist  Doctor?    @relation("Anesthesiologist", fields: [anesthesiologistId], references: [anesthesiologistId], onDelete: SetNull)
+  anesthesiologist  Doctor?    @relation("Anesthesiologist", fields: [anesthesiologistId], references: [id])
   assistantAnesthesia Doctor?   @relation("AssistantAnesthesia", fields: [assistantAnesthesiaId], references: [id])
 
   @@map("operation_medical_team")
@@ -393,15 +393,15 @@ model OperationTimeline {
 }
 
 model OperationFollowUp {
-  id          String   @id @default(uuid())
+  id          String    @id @default(uuid())
   operationId String
   title       String
-  scheduledAt DateTime @db.Timestamptz(6)
+  scheduledAt DateTime  @db.Timestamptz(6)
   completedAt DateTime? @db.Timestamptz(6)
-  status      String   @default("UPCOMING")
+  status      String    @default("UPCOMING")
   notes       String?
-  createdAt   DateTime @default(now()) @db.Timestamptz(6)
-  updatedAt   DateTime @updatedAt @db.Timestamptz(6)
+  createdAt   DateTime  @default(now()) @db.Timestamptz(6)
+  updatedAt   DateTime  @updatedAt @db.Timestamptz(6)
 
   operation Operation @relation(fields: [operationId], references: [id], onDelete: Cascade)
 
