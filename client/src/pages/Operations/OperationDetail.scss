@@ -20,28 +20,6 @@
 .loadingContainer { @include flex-center; flex-direction: column; gap: $space-4; padding: $space-8 $space-4; color: $text-muted; }
 .emptyState { padding: $space-8 $space-4; }
 
-.pageHeader {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  flex-wrap: wrap;
-  padding: 4px 0 2px;
-}
-.pageHeaderInfo {
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-  padding-inline-start: 2px;
-}
-.pageHeaderInfo .ant-typography { max-width: min(62vw, 760px); }
-.pageHeaderInfo > .ant-typography:last-child { display: flex; align-items: center; gap: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.pageHeaderInfo .ant-typography:last-child .anticon { flex-shrink: 0; }
-.pageHeader > .ant-space { flex-shrink: 0; }
-.backBtn { flex-shrink: 0; border-radius: $radius-md !important; }
-.statusDropdown { min-width: 150px; }
-
 .operation-tabs {
   .ant-tabs-nav { margin-bottom: $space-4; }
   .ant-tabs-tab { font-weight: $font-medium; }
@@ -64,6 +42,9 @@
 .caseMetaItem { display: flex; flex-direction: column; gap: 5px; padding: 12px 14px; border: 1px solid rgba(148,163,184,.2); border-radius: $radius-md; background: rgba(255,255,255,.7); min-width: 0; }
 .caseMetaItem .ant-typography { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .caseMetaHighlight { background: rgba(22,119,255,.08); border-color: rgba(22,119,255,.2); }
+.caseActions { padding: 2px 2px 0; }
+.caseActions .ant-btn { min-height: 40px; border-radius: $radius-md; }
+.caseActions .backBtn { flex-shrink: 0; }
 .detailInfoCard { border-radius: $radius-lg; box-shadow: $shadow-sm; }
 .detailInfoCard .ant-card-head { min-height: 48px; }
 .procedureItem { display: flex; align-items: center; gap: 8px; padding: 10px 12px; border: 1px solid $border; border-radius: $radius-md; }
@@ -125,12 +106,6 @@
 
 @media (max-width: 767px) {
   .operation-detail-page.page { gap: 12px; }
-  .pageHeader { align-items: flex-start; gap: 10px; }
-  .pageHeaderInfo { flex: 1; }
-  .pageHeaderInfo .ant-typography { max-width: 100%; }
-  .pageHeaderInfo > .ant-typography:last-child { font-size: 12px; max-width: 100%; }
-  .pageHeader > .ant-space { width: 100%; }
-  .pageHeader > .ant-space .ant-btn { flex: 1; }
   .operation-tabs .ant-tabs-nav { overflow-x: auto; scrollbar-width: none; margin-bottom: 14px; }
   .operation-tabs .ant-tabs-nav::-webkit-scrollbar { display: none; }
   .operation-tabs .ant-tabs-tab { padding: 9px 8px; font-size: 13px; }
@@ -138,6 +113,8 @@
   .caseMetaGrid { grid-template-columns: 1fr 1fr; margin-top: 16px; }
   .caseMetaItem { padding: 10px; }
   .statusSelect { width: 100%; }
+  .caseActions { width: 100%; }
+  .caseActions .ant-btn { flex: 1; }
   .medicalTeamGrid { grid-template-columns: 1fr; }
   .clinicalFilesHero .ant-space-compact { width: 100%; }
   .clinicalFilesHero .ant-select { flex: 1; min-width: 0; }
