@@ -55,15 +55,17 @@ export default function UpcomingOperations({ operations, loading = false }: Upco
                 return (
                   <button key={operation.id} type="button" className="upcomingItem" onClick={() => navigate(`/operations/${operation.id}`)}>
                     <span className="upcomingDateBlock" aria-label={`${dateTime.format('DD MMM')} ${dateTime.format('hh:mm A')}`}>
-                      <span className="upcomingDateIcon"><MedicineBoxOutlined /></span>
                       <span className="upcomingDateDay">{dateTime.format('DD')}</span>
                       <span className="upcomingDateMonth">{dateTime.format('MMM')}</span>
                       <span className="upcomingDateTime">{dateTime.format(isAr ? 'hh:mm' : 'hh:mm A')}</span>
                     </span>
                     <span className="upcomingBody">
-                      <span className="upcomingName">{operation.name}</span>
-                      <span className="upcomingMeta">{operation.patient?.fullName ?? '—'}</span>
-                      <span className="upcomingMeta">{hospitalName ?? '—'}</span>
+                      <span className="upcomingTypeIcon" aria-hidden="true"><MedicineBoxOutlined /></span>
+                      <span className="upcomingContent">
+                        <span className="upcomingName">{operation.name}</span>
+                        <span className="upcomingMeta">{operation.patient?.fullName ?? '—'}</span>
+                        <span className="upcomingMeta">{hospitalName ?? '—'}</span>
+                      </span>
                     </span>
                     <Tag bordered={false} className="upcomingStatusTag" style={{ color: getStatusColor(operation.status), background: getStatusBg(operation.status), marginInlineEnd: 0 }}>
                       {t(getStatusLabelKey(operation.status))}
