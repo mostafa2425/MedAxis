@@ -1,8 +1,7 @@
-import { useMemo } from 'react';
+import { useMemo, type ReactNode } from 'react';
 import { Button, Card, Empty, Pagination, Select, Spin, Tag } from 'antd';
 import {
   CalendarOutlined,
-  CheckCircleOutlined,
   ClockCircleOutlined,
   FileImageOutlined,
   PhoneOutlined,
@@ -30,7 +29,7 @@ export interface PatientListProps {
   onAdd: () => void;
 }
 
-function Stat({ icon, value, label, tone }: { icon: React.ReactNode; value: number; label: string; tone: string }) {
+function Stat({ icon, value, label, tone }: { icon: ReactNode; value: number; label: string; tone: string }) {
   return (
     <div className={`patientManagementStat patientManagementStat--${tone}`}>
       <span className="patientManagementStatIcon">{icon}</span>
@@ -64,8 +63,7 @@ export default function PatientList({
     };
   }, [patients]);
 
-  const getGenderLabel = (value: Gender) =>
-    value === Gender.Male ? t('patients.male') : t('patients.female');
+  const getGenderLabel = (value: Gender) => value === Gender.Male ? t('patients.male') : t('patients.female');
 
   const renderCard = (patient: Patient) => {
     const management = patient.management;
@@ -75,13 +73,7 @@ export default function PatientList({
     const files = management?.clinicalFiles ?? 0;
 
     return (
-      <Card
-        key={patient.id}
-        className="patientManagementCard"
-        bordered={false}
-        onClick={() => onRowClick(patient.id)}
-        styles={{ body: { padding: 0 } }}
-      >
+      <Card key={patient.id} className="patientManagementCard" bordered={false} onClick={() => onRowClick(patient.id)} styles={{ body: { padding: 0 } }}>
         <div className="patientManagementCardBody">
           <div className="patientManagementCardTop">
             <div className="patientManagementIdentity">
@@ -136,15 +128,8 @@ export default function PatientList({
 
   const emptyNode = (
     <div className="patientListEmpty">
-      <Empty
-        image={Empty.PRESENTED_IMAGE_SIMPLE}
-        description={hasSearch ? t('common.noResults') : t('patients.noPatients')}
-      >
-        {!hasSearch && (
-          <Button type="primary" onClick={onAdd}>
-            {t('patients.addPatient')}
-          </Button>
-        )}
+      <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description={hasSearch ? t('common.noResults') : t('patients.noPatients')}>
+        {!hasSearch && <Button type="primary" onClick={onAdd}>{t('patients.addPatient')}</Button>}
       </Empty>
     </div>
   );
@@ -152,15 +137,13 @@ export default function PatientList({
   return (
     <div className="patientList">
       <div className="patientManagementToolbar">
-        <div className="patientManagementResultCount">
-          <strong>{total}</strong> {t('patients.patientRecords', 'patient records')}
-        </div>
+        <div className="patientManagementResultCount"><strong>{total}</strong> {t('patients.patientRecords', 'patient records')}</div>
         {onGenderChange && (
           <Select
             allowClear
             value={gender}
             placeholder={t('patients.filterGender', 'Filter by gender')}
-            onChange={(value) => onGenderChange(value)}
+            onChange={(value: Gender | undefined) => onGenderChange(value)}
             options={[
               { value: Gender.Male, label: getGenderLabel(Gender.Male) },
               { value: Gender.Female, label: getGenderLabel(Gender.Female) },
@@ -178,23 +161,12 @@ export default function PatientList({
       </div>
 
       <Spin spinning={isLoading}>
-        {patients.length === 0 && !isLoading ? (
-          emptyNode
-        ) : (
-          <div className="patientManagementGrid">{patients.map(renderCard)}</div>
-        )}
+        {patients.length === 0 && !isLoading ? emptyNode : <div className="patientManagementGrid">{patients.map(renderCard)}</div>}
       </Spin>
 
       {total > pageSize && (
         <div className="patientManagementPagination">
-          <Pagination
-            current={page}
-            pageSize={pageSize}
-            total={total}
-            onChange={onPageChange}
-            showSizeChanger={false}
-            showLessItems
-          />
+          <Pagination current={page} pageSize={pageSize} total={total} onChange={onPageChange} showSizeChanger={false} showLessItems />
         </div>
       )}
     </div>
