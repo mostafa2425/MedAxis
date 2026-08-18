@@ -11,25 +11,16 @@ function withDerivedStatus<T extends { status: string; scheduledAt: Date; comple
 
 export class OperationFollowUpRepository {
   async findAll(operationId: string) {
-    const items = await prisma.operationFollowUp.findMany({
-      where: { operationId },
-      orderBy: [{ status: 'asc' }, { scheduledAt: 'asc' }],
-    });
+    const items = await prisma.operationFollowUp.findMany({ where: { operationId }, orderBy: [{ status: 'asc' }, { scheduledAt: 'asc' }] });
     return items.map(withDerivedStatus);
   }
 
   async findAllForDoctor(createdBy: string, filters?: { status?: FollowUpStatus; from?: Date; to?: Date }) {
+    const databaseStatus = filters?.status === 'OVERDUE' ? 'UPCOMING' : filters?.status;
     const items = await prisma.operationFollowUp.findMany({
       where: {
-        ...(filters?.status ? { status: filters.status } : {}),
-        ...(filters?.from || filters?.to
-          ? {
-              scheduledAt: {
-                ...(filters.from ? { gte: filters.from } : {}),
-                ...(filters.to ? { lte: filters.to } : {}),
-              },
-            }
-          : {}),
+        ...(databaseStatus ? { status: databaseStatus } : {}),
+        ...(filters?.from || filters?.to ? { scheduledAt: { ...(filters.from ? { gte: filters.from } : {}), ...(filters.to ? { lte: filters.to } : {}) } } : {}),
         operation: { createdBy },
       },
       include: {
@@ -46,24 +37,19 @@ export class OperationFollowUpRepository {
       },
       orderBy: { scheduledAt: 'asc' },
     });
-
-    return items.map(withDerivedStatus);
+    const derived = items.map(withDerivedStatus);
+    return filters?.status ? derived.filter((item) => item.status === filters.status) : derived;
   }
 
   async create(operationId: string, data: { title: string; scheduledAt: Date; notes?: string | null }) {
-    const item = await prisma.operationFollowUp.create({
-      data: { operationId, title: data.title, scheduledAt: data.scheduledAt, notes: data.notes ?? null },
-    });
+    const item = await prisma.operationFollowUp.create({ data: { operationId, title: data.title, scheduledAt: data.scheduledAt, notes: data.notes ?? null } });
     return withDerivedStatus(item);
   }
 
   async update(id: string, operationId: string, data: { title?: string; scheduledAt?: Date; notes?: string | null; status?: FollowUpStatus }) {
     const nextStatus = data.status;
     const completedAt = nextStatus === 'COMPLETED' ? new Date() : nextStatus === 'UPCOMING' || nextStatus === 'CANCELLED' ? null : undefined;
-    const item = await prisma.operationFollowUp.update({
-      where: { id, operationId },
-      data: { ...data, ...(completedAt !== undefined ? { completedAt } : {}) },
-    });
+    const item = await prisma.operationFollowUp.update({ where: { id, operationId }, data: { ...data, ...(completedAt !== undefined ? { completedAt } : {}) } });
     return withDerivedStatus(item);
   }
 
