@@ -14,16 +14,19 @@
 .loadingContainer { @include flex-center; flex-direction:column; gap:$space-4; padding:$space-8 $space-4; color:$text-muted; }
 .emptyState { padding:$space-8 $space-4; }
 .operation-tabs {
-  .ant-tabs-nav { margin-bottom:$space-4; position:relative; }
-  .ant-tabs-nav::before { border-bottom:0; }
-  .ant-tabs-nav-list { gap:6px; padding:5px; border:1px solid rgba(148,163,184,.18); border-radius:16px; background:rgba(248,250,252,.92); box-shadow:0 5px 18px rgba(15,23,42,.05); }
-  .ant-tabs-tab { position:relative; margin:0!important; min-height:44px; padding:9px 15px!important; border-radius:11px; font-weight:$font-medium; color:$text-secondary; transition:all .2s ease; }
+  width:100%;
+  .ant-tabs-nav { width:100%; margin:0 0 20px; padding:0; background:transparent; border:0!important; box-shadow:none!important; }
+  .ant-tabs-nav::before { display:none!important; }
+  .ant-tabs-nav-list { display:flex; width:100%; gap:4px; padding:0; border:0!important; background:transparent; box-shadow:none!important; }
+  .ant-tabs-tab { flex:1 1 0; justify-content:center; min-width:0; margin:0!important; min-height:50px; padding:11px 14px!important; border:0!important; border-radius:12px; background:transparent; color:$text-secondary; font-weight:$font-medium; transition:background .2s ease,color .2s ease,transform .2s ease,box-shadow .2s ease; }
   .ant-tabs-tab:hover { color:$primary; background:rgba(22,119,255,.06); }
-  .ant-tabs-tab .anticon { margin-inline-end:7px; font-size:17px; transition:transform .2s ease; }
-  .ant-tabs-tab-active { font-weight:$font-semibold; color:$primary!important; background:$surface; box-shadow:0 4px 12px rgba(15,23,42,.08); }
-  .ant-tabs-tab-active .anticon { transform:scale(1.08); }
-  .ant-tabs-ink-bar { display:none; }
+  .ant-tabs-tab .anticon { margin-inline-end:8px; font-size:18px; transition:transform .2s ease,color .2s ease; }
+  .ant-tabs-tab-active { color:$primary!important; background:$primary-light!important; font-weight:$font-semibold; box-shadow:none!important; }
+  .ant-tabs-tab-active .anticon { color:$primary; transform:scale(1.1); }
+  .ant-tabs-tab:active { transform:scale(.98); }
+  .ant-tabs-ink-bar { display:none!important; }
   .ant-tabs-content-holder { min-width:0; }
+  .ant-tabs-tab-btn { width:100%; text-align:center; }
 }
 .case-hero-card { border:0; overflow:hidden; background:linear-gradient(135deg,$surface 0%,$primary-light 100%); box-shadow:$shadow-md; border-radius:$radius-lg; .ant-card-body{padding:clamp(18px,3vw,28px);} @include dark{background:linear-gradient(135deg,$dark-surface 0%,$dark-primary-light 100%);} }
 .caseHeroMain{min-width:0}.statusSelect{min-width:160px}.caseMetaGrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-top:24px}.caseMetaItem{display:flex;flex-direction:column;gap:5px;padding:12px 14px;border:1px solid rgba(148,163,184,.2);border-radius:$radius-md;background:rgba(255,255,255,.7);min-width:0}.caseMetaItem .ant-typography{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.caseMetaHighlight{background:rgba(22,119,255,.08);border-color:rgba(22,119,255,.2)}.caseActions{padding:2px 2px 0}.caseActions .ant-btn{min-height:40px;border-radius:$radius-md}.caseActions .backBtn{flex-shrink:0}.detailInfoCard{border-radius:$radius-lg;box-shadow:$shadow-sm}.detailInfoCard .ant-card-head{min-height:48px}.procedureItem{display:flex;align-items:center;gap:8px;padding:10px 12px;border:1px solid $border;border-radius:$radius-md}.diagnosisBlock{margin-top:18px;padding-top:14px;border-top:1px solid $border}.phoneLink{padding-inline:0!important;height:auto!important}
@@ -46,5 +49,6 @@
 .case-timeline-card .timelineTimestamp { font-size:12px; }
 @media (max-width:767px){
   .operation-detail-page.page{gap:12px}.operation-tabs .ant-tabs-nav{overflow-x:auto;scrollbar-width:none;margin-bottom:14px}.operation-tabs .ant-tabs-nav::-webkit-scrollbar{display:none}.operation-tabs .ant-tabs-tab{padding:9px 8px!important;font-size:13px}.operation-tabs .ant-tabs-nav-list{gap:3px;padding:4px;border-radius:14px}.operation-tabs .ant-tabs-tab .anticon{margin-inline-end:5px;font-size:16px}.case-hero-card .ant-card-body{padding:16px}.caseMetaGrid{grid-template-columns:1fr 1fr;margin-top:16px}.caseMetaItem{padding:10px}.statusSelect{width:100%}.caseActions{width:100%}.caseActions .ant-btn{flex:1}.medicalTeamGrid{grid-template-columns:1fr}.clinicalFilesHero .ant-space-compact{width:100%}.clinicalFilesHero .ant-select{flex:1;min-width:0}.clinicalFilesHero .ant-btn{min-width:92px}.clinicalFileGrid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.clinicalFilePreview{height:120px}.clinicalFileBody{padding:8px}.clinicalFileBody .ant-typography{font-size:12px}.financials-card .ant-card-body{padding:16px}.financialsTopGrid{grid-template-columns:1fr;gap:8px;padding-top:16px}.breakdownGrid{grid-template-columns:1fr}.financialsActions .ant-btn{width:100%}.doctorShareValue{font-size:28px!important}.moneyCurrency{min-width:54px;padding-inline:8px}.case-timeline-card .ant-card-head{padding-inline:14px}.case-timeline-card .ant-timeline{padding-inline:2px}.case-timeline-card .ant-timeline-item{padding-bottom:18px}.case-timeline-card .ant-timeline-item-head-custom{width:46px;height:46px;min-width:46px;min-height:46px}.case-timeline-card .ant-timeline-item-tail{inset-inline-start:20px;top:43px}.case-timeline-card .timelineDot{width:42px;height:42px;min-width:42px;min-height:42px;flex-basis:42px;border-radius:13px;font-size:20px}.case-timeline-card .timelineDotLatest{width:48px;height:48px;min-width:48px;min-height:48px;flex-basis:48px;font-size:22px}.case-timeline-card .timelineEvent{margin-inline-start:8px;padding:12px 13px;border-radius:14px}
+  .operation-tabs .ant-tabs-nav{margin-bottom:14px}.operation-tabs .ant-tabs-nav-list{width:100%;gap:2px}.operation-tabs .ant-tabs-tab{min-height:46px;padding:8px 6px!important;border-radius:10px}.operation-tabs .ant-tabs-tab .anticon{font-size:16px;margin-inline-end:4px}.operation-tabs .ant-tabs-tab-btn{font-size:12px;white-space:nowrap}
 }
-@media (max-width:420px){.caseMetaGrid{grid-template-columns:1fr}.clinicalFileGrid{grid-template-columns:1fr 1fr}.clinicalFilePreview{height:105px}.financialsHeader{align-items:flex-start!important}.operation-tabs .ant-tabs-tab{font-size:12px;padding-inline:7px!important}.operation-tabs .ant-tabs-nav-list{width:max-content;min-width:100%}}
+@media (max-width:420px){.caseMetaGrid{grid-template-columns:1fr}.clinicalFileGrid{grid-template-columns:1fr 1fr}.clinicalFilePreview{height:105px}.financialsHeader{align-items:flex-start!important}.operation-tabs .ant-tabs-tab{min-height:44px;padding-inline:4px!important}.operation-tabs .ant-tabs-tab-btn{font-size:11px}}
