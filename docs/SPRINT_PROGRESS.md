@@ -6,6 +6,7 @@
 
 - **Sprint 0:** 🟢 Implementation complete; local verification pending
 - **Sprint 1:** 🟢 Core implementation complete; local verification pending
+- **Sprint 2 — Files 2.0:** 🟡 Clinical Files UX foundation implemented; backend metadata/storage expansion pending
 - **API routing consistency:** 🟢 Frontend services audited; centralized Axios client is the API entry point
 - **Prisma migration history:** 🟡 Baseline added; existing databases must be marked as baseline-applied before deploying migrations
 - **Production database:** 🔒 Not touched
@@ -66,6 +67,9 @@
 - [x] Timeline tab
 - [x] Responsive layout using Ant Design Flex/Card/Tabs
 - [x] Existing delete/edit/status actions retained
+- [x] Borderless full-width operation tabs
+- [x] Large, colored timeline icons with minimum dimensions
+- [x] Human-readable EN/AR timeline action labels
 
 ### Operation Financials
 
@@ -96,6 +100,48 @@
 - [ ] Validation smoke test: breakdown > total
 - [ ] RTL smoke test
 - [ ] Mobile/tablet smoke test
+
+---
+
+## Sprint 2 — Files 2.0
+
+### Clinical Files UX
+
+- [x] Dedicated `ClinicalFilesPanel` component
+- [x] Before Surgery photo section prioritized first
+- [x] After Surgery photo section prioritized second
+- [x] Imaging section for X-Ray / MRI / CT
+- [x] Lab Results section
+- [x] Reports & Documents section
+- [x] File type selector aligned with current Prisma `FileType` enum
+- [x] Image preview with Ant Design Image
+- [x] File-type visual icons
+- [x] Human-readable EN/AR file type labels
+- [x] Open/download action
+- [x] Delete confirmation
+- [x] File count per section
+- [x] Empty states
+- [x] Mobile-first two-column file grid
+- [x] Responsive upload controls
+- [x] Dedicated Clinical Files styling
+
+### Sprint 2 backend / platform work
+
+- [x] Reused existing operation file upload/delete APIs
+- [x] Preserved existing Prisma `OperationFile` model
+- [ ] Add explicit file metadata fields (category, phase, caption, uploaded-by display metadata)
+- [ ] Add secure storage abstraction and signed URL workflow
+- [ ] Add file validation/size policy at API boundary
+- [ ] Add file preview/download authorization checks
+- [ ] Add clinical file events to case timeline
+- [ ] Add bulk/multi-file upload UX
+
+### Sprint 2 next increment
+
+1. Backend file metadata and storage hardening.
+2. Before / After gallery experience with multi-image preview.
+3. Clinical file timeline integration.
+4. Case completeness rules based on operation type.
 
 ---
 
@@ -158,18 +204,3 @@ For a completely disposable empty local database, a reset/recreate is also possi
 - Production has not been changed by this work.
 - Do not use `prisma db push` against production.
 - Do not mark a production baseline as applied until the existing production schema has been verified against the baseline.
-
----
-
-## Next Planned Work
-
-1. Finish local verification for Sprint 0/1.
-2. Resolve any TypeScript/build issues found by verification.
-3. Verify the local migration history using the new baseline.
-4. Start **Sprint 2 — Files 2.0**:
-   - Before / During / After stages
-   - Imaging / Clinical / Documents / Other types
-   - File metadata
-   - Image/PDF preview
-   - Timeline integration
-   - Secure Supabase Storage workflow
