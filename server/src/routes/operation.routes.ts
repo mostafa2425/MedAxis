@@ -7,6 +7,7 @@ import { uploadOperationFiles } from '../middlewares/upload';
 const router = Router();
 
 router.get('/', authMiddleware, operationController.getAll.bind(operationController));
+router.get('/follow-ups', authMiddleware, operationFollowUpController.listAll.bind(operationFollowUpController));
 router.get('/:id', authMiddleware, operationController.getById.bind(operationController));
 router.get('/:id/timeline', authMiddleware, operationController.getTimeline.bind(operationController));
 router.get('/:id/follow-ups', authMiddleware, operationFollowUpController.list.bind(operationFollowUpController));
