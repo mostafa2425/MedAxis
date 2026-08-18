@@ -1,5 +1,7 @@
 import { Card, Empty, Tag } from 'antd';
-import { MedicineBoxOutlined } from '@ant-design/icons';
+import { MedicineBoxOutlined, UserOutlined } from '@ant-design/icons';
+
+
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import dayjs from 'dayjs';
@@ -53,24 +55,26 @@ export default function UpcomingOperations({ operations, loading = false }: Upco
                 const dateTime = parseOperationDateTime(operation);
                 const hospitalName = language === 'ar' && operation.hospital?.nameAr ? operation.hospital.nameAr : operation.hospital?.name;
                 return (
+                  <>
                   <button key={operation.id} type="button" className="upcomingItem" onClick={() => navigate(`/operations/${operation.id}`)}>
+                  {/* <Tag bordered={false} className="upcomingStatusTag" style={{ color: getStatusColor(operation.status), background: getStatusBg(operation.status), marginInlineEnd: 0 }}>
+                      {t(getStatusLabelKey(operation.status))}
+                    </Tag> */}
                     <span className="upcomingDateBlock" aria-label={`${dateTime.format('DD MMM')} ${dateTime.format('hh:mm A')}`}>
                       <span className="upcomingDateDay">{dateTime.format('DD')}</span>
                       <span className="upcomingDateMonth">{dateTime.format('MMM')}</span>
                       <span className="upcomingDateTime">{dateTime.format(isAr ? 'hh:mm' : 'hh:mm A')}</span>
                     </span>
                     <span className="upcomingBody">
-                      <span className="upcomingTypeIcon" aria-hidden="true"><MedicineBoxOutlined /></span>
                       <span className="upcomingContent">
                         <span className="upcomingName">{operation.name}</span>
-                        <span className="upcomingMeta">{operation.patient?.fullName ?? '—'}</span>
-                        <span className="upcomingMeta">{hospitalName ?? '—'}</span>
+                        <span className="upcomingMeta"> <UserOutlined /> {operation.patient?.fullName ?? '—'}</span>
+                        <span className="upcomingMeta"><MedicineBoxOutlined /> {hospitalName ?? '—'}</span>
                       </span>
                     </span>
-                    <Tag bordered={false} className="upcomingStatusTag" style={{ color: getStatusColor(operation.status), background: getStatusBg(operation.status), marginInlineEnd: 0 }}>
-                      {t(getStatusLabelKey(operation.status))}
-                    </Tag>
                   </button>
+                   
+                    </>
                 );
               })}
             </section>

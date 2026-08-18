@@ -413,7 +413,8 @@ export const ModelName = {
   OperationTeamMember: 'OperationTeamMember',
   OperationCost: 'OperationCost',
   OperationFile: 'OperationFile',
-  OperationTimeline: 'OperationTimeline'
+  OperationTimeline: 'OperationTimeline',
+  OperationFollowUp: 'OperationFollowUp'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -429,7 +430,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "patient" | "specialty" | "doctor" | "doctorSpecialty" | "doctorSubspecialty" | "operationCatalog" | "governorate" | "hospital" | "nurse" | "operation" | "operationMedicalTeam" | "operationProcedure" | "operationTeamMember" | "operationCost" | "operationFile" | "operationTimeline"
+    modelProps: "user" | "patient" | "specialty" | "doctor" | "doctorSpecialty" | "doctorSubspecialty" | "operationCatalog" | "governorate" | "hospital" | "nurse" | "operation" | "operationMedicalTeam" | "operationProcedure" | "operationTeamMember" | "operationCost" | "operationFile" | "operationTimeline" | "operationFollowUp"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1691,6 +1692,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    OperationFollowUp: {
+      payload: Prisma.$OperationFollowUpPayload<ExtArgs>
+      fields: Prisma.OperationFollowUpFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.OperationFollowUpFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OperationFollowUpPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.OperationFollowUpFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OperationFollowUpPayload>
+        }
+        findFirst: {
+          args: Prisma.OperationFollowUpFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OperationFollowUpPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.OperationFollowUpFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OperationFollowUpPayload>
+        }
+        findMany: {
+          args: Prisma.OperationFollowUpFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OperationFollowUpPayload>[]
+        }
+        create: {
+          args: Prisma.OperationFollowUpCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OperationFollowUpPayload>
+        }
+        createMany: {
+          args: Prisma.OperationFollowUpCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.OperationFollowUpCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OperationFollowUpPayload>[]
+        }
+        delete: {
+          args: Prisma.OperationFollowUpDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OperationFollowUpPayload>
+        }
+        update: {
+          args: Prisma.OperationFollowUpUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OperationFollowUpPayload>
+        }
+        deleteMany: {
+          args: Prisma.OperationFollowUpDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.OperationFollowUpUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.OperationFollowUpUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OperationFollowUpPayload>[]
+        }
+        upsert: {
+          args: Prisma.OperationFollowUpUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OperationFollowUpPayload>
+        }
+        aggregate: {
+          args: Prisma.OperationFollowUpAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateOperationFollowUp>
+        }
+        groupBy: {
+          args: Prisma.OperationFollowUpGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.OperationFollowUpGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.OperationFollowUpCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.OperationFollowUpCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -1977,6 +2052,21 @@ export const OperationTimelineScalarFieldEnum = {
 } as const
 
 export type OperationTimelineScalarFieldEnum = (typeof OperationTimelineScalarFieldEnum)[keyof typeof OperationTimelineScalarFieldEnum]
+
+
+export const OperationFollowUpScalarFieldEnum = {
+  id: 'id',
+  operationId: 'operationId',
+  title: 'title',
+  scheduledAt: 'scheduledAt',
+  completedAt: 'completedAt',
+  status: 'status',
+  notes: 'notes',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type OperationFollowUpScalarFieldEnum = (typeof OperationFollowUpScalarFieldEnum)[keyof typeof OperationFollowUpScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -2337,6 +2427,7 @@ export type GlobalOmitConfig = {
   operationCost?: Prisma.OperationCostOmit
   operationFile?: Prisma.OperationFileOmit
   operationTimeline?: Prisma.OperationTimelineOmit
+  operationFollowUp?: Prisma.OperationFollowUpOmit
 }
 
 /* Types for Logging */

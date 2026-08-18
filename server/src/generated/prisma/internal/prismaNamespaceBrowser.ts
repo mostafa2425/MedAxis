@@ -67,7 +67,8 @@ export const ModelName = {
   OperationTeamMember: 'OperationTeamMember',
   OperationCost: 'OperationCost',
   OperationFile: 'OperationFile',
-  OperationTimeline: 'OperationTimeline'
+  OperationTimeline: 'OperationTimeline',
+  OperationFollowUp: 'OperationFollowUp'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -333,6 +334,21 @@ export const OperationTimelineScalarFieldEnum = {
 } as const
 
 export type OperationTimelineScalarFieldEnum = (typeof OperationTimelineScalarFieldEnum)[keyof typeof OperationTimelineScalarFieldEnum]
+
+
+export const OperationFollowUpScalarFieldEnum = {
+  id: 'id',
+  operationId: 'operationId',
+  title: 'title',
+  scheduledAt: 'scheduledAt',
+  completedAt: 'completedAt',
+  status: 'status',
+  notes: 'notes',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type OperationFollowUpScalarFieldEnum = (typeof OperationFollowUpScalarFieldEnum)[keyof typeof OperationFollowUpScalarFieldEnum]
 
 
 export const SortOrder = {

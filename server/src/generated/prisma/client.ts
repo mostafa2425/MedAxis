@@ -124,3 +124,8 @@ export type OperationFile = Prisma.OperationFileModel
  * 
  */
 export type OperationTimeline = Prisma.OperationTimelineModel
+/**
+ * Model OperationFollowUp
+ * 
+ */
+export type OperationFollowUp = Prisma.OperationFollowUpModel
