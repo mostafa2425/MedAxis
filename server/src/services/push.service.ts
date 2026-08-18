@@ -1,13 +1,7 @@
 import webpush from 'web-push';
 import { prisma } from '../prisma';
 
-const publicKey = process.env.VAPID_PUBLIC_KEY;
-const privateKey = process.env.VAPID_PRIVATE_KEY;
-const subject = process.env.VAPID_SUBJECT || 'mailto:admin@medaxis.app';
-
-if (publicKey && privateKey) {
-  webpush.setVapidDetails(subject, publicKey, privateKey);
-}
+interface VapidConfig { subject: string; public_key: string; private_key: string; }
 
 export interface PushPayload {
   title: string;
@@ -19,8 +13,38 @@ export interface PushPayload {
 }
 
 export class PushService {
-  isConfigured() {
-    return Boolean(publicKey && privateKey);
+  private configured = false;
+  private config: VapidConfig | null = null;
+
+  private async getConfig() {
+    if (this.config) return this.config;
+    const envConfig = process.env.VAPID_PUBLIC_KEY && process.env.VAPID_PRIVATE_KEY
+      ? {
+          subject: process.env.VAPID_SUBJECT || 'mailto:admin@medaxis.app',
+          public_key: process.env.VAPID_PUBLIC_KEY,
+          private_key: process.env.VAPID_PRIVATE_KEY,
+        }
+      : null;
+
+    if (envConfig) {
+      this.config = envConfig;
+    } else {
+      const rows = await prisma.$queryRawUnsafe<VapidConfig[]>(
+        `select subject, public_key, private_key from public.push_vapid_config where id = true limit 1`,
+      );
+      this.config = rows[0] || null;
+    }
+
+    if (this.config && !this.configured) {
+      webpush.setVapidDetails(this.config.subject, this.config.public_key, this.config.private_key);
+      this.configured = true;
+    }
+    return this.config;
+  }
+
+  async getPublicKey() {
+    const config = await this.getConfig();
+    return config?.public_key || null;
   }
 
   async subscribe(userId: string, subscription: { endpoint: string; keys?: { p256dh?: string; auth?: string }; expirationTime?: number | null }, userAgent?: string) {
@@ -52,7 +76,8 @@ export class PushService {
   }
 
   async sendToUser(userId: string, payload: PushPayload) {
-    if (!this.isConfigured()) return { sent: 0, skipped: true, reason: 'VAPID keys are not configured' };
+    const config = await this.getConfig();
+    if (!config) return { sent: 0, skipped: true, reason: 'VAPID keys are not configured' };
 
     const subscriptions = await prisma.$queryRawUnsafe<Array<{ id: string; endpoint: string; p256dh: string; auth: string }>>(
       `select id, endpoint, p256dh, auth from public.push_subscriptions where user_id = $1::uuid`,
