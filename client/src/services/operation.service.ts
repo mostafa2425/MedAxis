@@ -18,6 +18,17 @@ export interface OperationCostBreakdownPayload {
 type UploadTicket = { path: string; token: string; signedUrl: string; expiresIn: number; fileName: string; mimeType: string; fileSize: number; fileType: string };
 const STORAGE_BUCKET = import.meta.env.VITE_SUPABASE_STORAGE_BUCKET || 'clinical-files';
 
+export interface GlobalFollowUp extends OperationFollowUp {
+  operation: {
+    id: string;
+    name: string;
+    operationDate: string;
+    operationTime: string;
+    patient: { id: string; fullName: string; mobile?: string | null };
+    hospital: { id: string; name: string; nameAr?: string | null };
+  };
+}
+
 export const operationService = {
   getAll(params?: OperationFilters) { return api.get<PaginatedResponse<Operation>>('/operations', { params }); },
   getById(id: string) { return api.get<ApiResponse<Operation>>(`/operations/${id}`); },
@@ -27,6 +38,9 @@ export const operationService = {
   changeStatus(id: string, status: string) { return api.patch<ApiResponse<Operation>>(`/operations/${id}/status`, { status }); },
   updateCost(id: string, data: OperationCostBreakdownPayload) { return api.put<ApiResponse<OperationCost>>(`/operations/${id}/cost`, data); },
   getFollowUps(id: string) { return api.get<ApiResponse<OperationFollowUp[]>>(`/operations/${id}/follow-ups`); },
+  getGlobalFollowUps(params?: { status?: FollowUpStatus; from?: string; to?: string }) {
+    return api.get<ApiResponse<GlobalFollowUp[]>>('/operations/follow-ups', { params });
+  },
   createFollowUp(id: string, data: { title: string; scheduledAt: string; notes?: string }) { return api.post<ApiResponse<OperationFollowUp>>(`/operations/${id}/follow-ups`, data); },
   updateFollowUp(id: string, followUpId: string, data: { title?: string; scheduledAt?: string; notes?: string | null; status?: FollowUpStatus }) { return api.patch<ApiResponse<OperationFollowUp>>(`/operations/${id}/follow-ups/${followUpId}`, data); },
   deleteFollowUp(id: string, followUpId: string) { return api.delete<ApiResponse<null>>(`/operations/${id}/follow-ups/${followUpId}`); },
