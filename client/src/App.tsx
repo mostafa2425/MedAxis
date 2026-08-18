@@ -1,4 +1,4 @@
-import React, { useMemo, Suspense } from 'react';
+import React, { useEffect, useMemo, Suspense } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { ConfigProvider, theme as antTheme, Spin } from 'antd';
 import { useAppStore } from '@/stores/app.store';
@@ -34,7 +34,11 @@ function PageLoader() {
 
 function RequireAuth() {
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
+  const isInitializing = useAuthStore((s) => s.isInitializing);
+
+  if (isInitializing) return <PageLoader />;
   if (!isAuthenticated) return <Navigate to="/login" replace />;
+
   return <Suspense fallback={<PageLoader />}><AppLayout /></Suspense>;
 }
 
@@ -65,7 +69,12 @@ const MEDAXIS_DARK_THEME = {
 export default function App() {
   const darkMode = useAppStore((s) => s.darkMode);
   const direction = useAppStore((s) => s.direction);
+  const initializeAuth = useAuthStore((s) => s.initializeAuth);
   const theme = useMemo(() => darkMode ? { ...MEDAXIS_DARK_THEME, algorithm: antTheme.darkAlgorithm } : { ...MEDAXIS_THEME, algorithm: antTheme.defaultAlgorithm }, [darkMode]);
+
+  useEffect(() => {
+    void initializeAuth();
+  }, [initializeAuth]);
 
   return (
     <ConfigProvider theme={theme} direction={direction === 'rtl' ? 'rtl' : 'ltr'}>
