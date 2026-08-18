@@ -33,7 +33,7 @@ function getFileIcon(mimeType?: string) {
   return <FileTextOutlined />;
 }
 
-function formatFileSize(size?: number) {
+function formatFileSize(size?: number | null) {
   if (!size) return '';
   if (size < 1024) return `${size} B`;
   if (size < 1024 * 1024) return `${Math.round(size / 1024)} KB`;
@@ -78,7 +78,7 @@ export default function FilesStep({
         <div className="emptyFiles">
           <div className="emptyFilesIcon"><FileImageOutlined /></div>
           <div className="emptyFilesText">{t('operations.noFiles')}</div>
-          <div className="emptyFilesHint">Upload images, reports, scans or other clinical documents.</div>
+          <div className="emptyFilesHint">{t('operations.uploadFiles')}</div>
         </div>
       );
     }
@@ -132,7 +132,7 @@ export default function FilesStep({
         <div className="uploadIcon"><InboxOutlined /></div>
         <div className="uploadTitle">{uploading ? t('operations.uploading') : t('operations.uploadFiles')}</div>
         <div className="uploadHint">JPG, PNG, PDF, DICOM, video</div>
-        <div className="uploadAction"><span>{type === 'before' ? 'Before' : 'After'} media</span></div>
+        <div className="uploadAction"><span>{t(type === 'before' ? 'operations.beforeOperation' : 'operations.afterOperation')}</span></div>
       </div>
     </Upload.Dragger>
   );
@@ -146,9 +146,7 @@ export default function FilesStep({
             <div className="fileSectionIcon">{isBefore ? <CameraOutlined /> : <FileImageOutlined />}</div>
             <div>
               <div className="fileSectionTitle">{isBefore ? t('operations.beforeOperation') : t('operations.afterOperation')}</div>
-              <div className="fileSectionSubtitle">
-                {isBefore ? 'Clinical photos, X-rays and reports before surgery' : 'Post-operative photos, scans and follow-up documents'}
-              </div>
+              <div className="fileSectionSubtitle">{t('operations.uploadFiles')}</div>
             </div>
           </div>
           <Tag>{files.length} {files.length === 1 ? 'file' : 'files'}</Tag>
@@ -171,8 +169,8 @@ export default function FilesStep({
       <div className="filesIntro">
         <div className="filesIntroIcon"><CameraOutlined /></div>
         <div>
-          <h2>Files &amp; Media</h2>
-          <p>Keep the important clinical evidence attached to this operation.</p>
+          <h2>{t('operations.step5Files')}</h2>
+          <p>{t('operations.uploadFiles')}</p>
         </div>
       </div>
 
