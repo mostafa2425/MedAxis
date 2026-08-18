@@ -2,7 +2,7 @@ import { Popover, Modal } from 'antd';
 import { useState, type CSSProperties, type MouseEvent } from 'react';
 import { useIsMobile } from '@/hooks/useIsMobile';
 import type { Operation } from '@/types';
-import { formatEventTime, getStatusStyle } from '../calendarUtils';
+import { formatEventTime } from '../calendarUtils';
 import OperationPopover from '../OperationPopover/OperationPopover';
 import './CalendarEvent.scss';
 
@@ -11,10 +11,12 @@ interface CalendarEventProps {
   compact?: boolean;
 }
 
+const OPERATION_COLOR = '#2563eb';
+const OPERATION_BACKGROUND = 'rgba(37, 99, 235, 0.10)';
+
 export default function CalendarEvent({ operation, compact = false }: CalendarEventProps) {
   const isMobile = useIsMobile();
   const [open, setOpen] = useState(false);
-  const statusStyle = getStatusStyle(operation.status);
 
   const stop = (event: MouseEvent) => {
     event.stopPropagation();
@@ -23,16 +25,18 @@ export default function CalendarEvent({ operation, compact = false }: CalendarEv
   const chip = (
     <button
       type="button"
-      className={`calendarEvent ${compact ? 'calendarEventCompact' : ''}`}
+      className={`calendarEvent calendarEventOperation ${compact ? 'calendarEventCompact' : ''}`}
       style={{
-        '--event-color': statusStyle.color,
-        '--event-bg': statusStyle.background,
+        '--event-color': OPERATION_COLOR,
+        '--event-bg': OPERATION_BACKGROUND,
       } as CSSProperties}
       onClick={(event) => {
         stop(event);
         if (isMobile) setOpen(true);
       }}
+      aria-label={operation.name}
     >
+      <span className="calendarEventMarker" aria-hidden="true" />
       <span className="calendarEventTime">{formatEventTime(operation)}</span>
       <span className="calendarEventName">{operation.name}</span>
     </button>
@@ -42,13 +46,7 @@ export default function CalendarEvent({ operation, compact = false }: CalendarEv
     return (
       <>
         {chip}
-        <Modal
-          open={open}
-          onCancel={() => setOpen(false)}
-          footer={null}
-          centered
-          destroyOnHidden
-        >
+        <Modal open={open} onCancel={() => setOpen(false)} footer={null} centered destroyOnHidden>
           <OperationPopover operation={operation} />
         </Modal>
       </>
@@ -56,11 +54,7 @@ export default function CalendarEvent({ operation, compact = false }: CalendarEv
   }
 
   return (
-    <Popover
-      trigger="click"
-      placement="topLeft"
-      content={<OperationPopover operation={operation} />}
-    >
+    <Popover trigger="click" placement="topLeft" content={<OperationPopover operation={operation} />}>
       <span onClick={stop}>{chip}</span>
     </Popover>
   );
