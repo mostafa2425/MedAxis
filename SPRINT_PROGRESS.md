@@ -34,8 +34,10 @@
 - [x] Follow-up summary cards and compact mobile actions
 - [x] Follow-up item redesign with compact Complete / Delete icon actions
 - [x] Frontend TypeScript cleanup: no unsafe `any` in FollowUpsPanel
-- [ ] Add global Follow-ups page with Upcoming / Overdue / Completed filters
-- [ ] Add dashboard follow-up summary and calendar integration
+- [x] Global Follow-ups page with Upcoming / Overdue / Completed filters
+- [x] Global authenticated Follow-ups API with doctor-level data isolation
+- [x] Calendar 2.0 follow-up context panel for the active calendar range
+- [ ] Add dashboard follow-up summary
 - [ ] Add reminder notifications after notification infrastructure is introduced
 
 ### Verification
@@ -43,19 +45,28 @@
 - [ ] Run `npx prisma validate`
 - [ ] Run `npm run typecheck`
 - [ ] Run `npm run build`
-- [ ] Run local API smoke tests for follow-up CRUD
+- [ ] Run local API smoke tests for global follow-up filters and CRUD
 - [ ] Verify mobile UX in browser
 
 ## Frontend Rules
 - [x] Added `docs/FRONTEND_RULES.md` with mobile-first Ant Design, TypeScript, and kebab-case SCSS conventions
 
-## Next Roadmap
-- [ ] Sprint 3 — Operation Templates
-- [ ] Sprint 4 — Case Completeness
-- [ ] Sprint 5 — Implant Tracking
-- [ ] Sprint 6 — Operative Notes + Templates
-- [ ] Sprint 7 — Advanced Analytics
-- [ ] Sprint 8 — AI-assisted clinical workflow
+## Product Roadmap — Remaining
+
+### 🔴 Core Workflow
+- [ ] Sprint 3 — Patients Management 2.0: patient profile, operation history, follow-ups, files, timeline
+- [ ] Sprint 4 — Dashboard 2.0: actionable operations, follow-ups, overdue cases, quick actions
+- [ ] Sprint 5 — Notifications: in-app operation and follow-up alerts
+- [ ] Sprint 6 — Global Search: patients, operations, hospitals, doctors, follow-ups
+- [ ] Sprint 7 — Activity / Audit Center: cross-system recent activity
+
+### 🟠 Clinical Intelligence — Later
+- [ ] Sprint 8 — Operation Templates
+- [ ] Sprint 9 — Case Completeness
+- [ ] Sprint 10 — Implant Tracking
+- [ ] Sprint 11 — Operative Notes + Templates
+- [ ] Sprint 12 — Advanced Analytics
+- [ ] Sprint 13 — AI-assisted clinical workflow
 
 ## Environment
 - Development API: `medaxis-api-dev.vercel.app`
