@@ -44,13 +44,51 @@ export const operationService = {
   createFollowUp(id: string, data: { title: string; scheduledAt: string; notes?: string }) { return api.post<ApiResponse<OperationFollowUp>>(`/operations/${id}/follow-ups`, data); },
   updateFollowUp(id: string, followUpId: string, data: { title?: string; scheduledAt?: string; notes?: string | null; status?: FollowUpStatus }) { return api.patch<ApiResponse<OperationFollowUp>>(`/operations/${id}/follow-ups/${followUpId}`, data); },
   deleteFollowUp(id: string, followUpId: string) { return api.delete<ApiResponse<null>>(`/operations/${id}/follow-ups/${followUpId}`); },
-  async uploadFiles(id: string, file: File, fileType: string) {
+  async uploadFiles(id: string, fileOrFormData: File | FormData, fileType?: string) {
     if (!supabase) throw new Error('Supabase client is not configured. Set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY in client/.env.');
-    const ticketResponse = await api.post<ApiResponse<UploadTicket>>(`/operations/${id}/files/upload-url`, { fileName: file.name, mimeType: file.type || 'application/octet-stream', fileSize: file.size, fileType });
+
+    let file: File;
+    let resolvedFileType = fileType;
+
+    if (fileOrFormData instanceof FormData) {
+      const formFile = fileOrFormData.get('file');
+      if (!(formFile instanceof File)) throw new Error('No file was provided for upload.');
+      file = formFile;
+      const formFileType = fileOrFormData.get('fileType');
+      if (typeof formFileType === 'string' && formFileType) resolvedFileType = formFileType;
+    } else {
+      file = fileOrFormData;
+    }
+
+    if (!resolvedFileType) throw new Error('File type is required for upload.');
+
+    const mimeType = file.type || 'application/octet-stream';
+    const ticketResponse = await api.post<ApiResponse<UploadTicket>>(
+      `/operations/${id}/files/upload-url`,
+      {
+        fileName: file.name,
+        mimeType,
+        fileSize: file.size,
+        fileType: resolvedFileType,
+      },
+    );
     const ticket = ticketResponse.data.data;
-    const { error: uploadError } = await supabase.storage.from(STORAGE_BUCKET).uploadToSignedUrl(ticket.path, ticket.token, file, { contentType: file.type || 'application/octet-stream', cacheControl: '3600' });
+    const { error: uploadError } = await supabase.storage
+      .from(STORAGE_BUCKET)
+      .uploadToSignedUrl(ticket.path, ticket.token, file, {
+        contentType: mimeType,
+        cacheControl: '3600',
+      });
+
     if (uploadError) throw new Error(`Storage upload failed: ${uploadError.message}`);
-    return api.post<ApiResponse<OperationFile>>(`/operations/${id}/files/complete`, { filePath: ticket.path, fileName: file.name, mimeType: file.type || 'application/octet-stream', fileSize: file.size, fileType });
+
+    return api.post<ApiResponse<OperationFile>>(`/operations/${id}/files/complete`, {
+      filePath: ticket.path,
+      fileName: file.name,
+      mimeType,
+      fileSize: file.size,
+      fileType: resolvedFileType,
+    });
   },
   deleteFile(id: string, fileId: string) { return api.delete<ApiResponse<null>>(`/operations/${id}/files/${fileId}`); },
   getTimeline(id: string) { return api.get<ApiResponse<OperationTimeline[]>>(`/operations/${id}/timeline`); },
