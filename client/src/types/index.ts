@@ -282,6 +282,41 @@ export interface CreateDoctorPayload { name: string; phone?: string; email?: str
 export interface CreateHospitalPayload { name: string; nameAr?: string; address?: string; city?: string; governorateId?: string; phone?: string; notes?: string; isActive?: boolean; }
 export interface CreateSpecialtyPayload { name: string; nameAr?: string; description?: string; icon?: string; color?: string; }
 export interface DashboardStats { totalPatients: number; totalOperations: number; operationsThisMonth: number; completedOperations: number; pendingOperations: number; cancelledOperations: number; totalDoctors: number; totalNurses: number; totalHospitals: number; upcomingOperations?: number; totalRevenue?: number; paidAmount?: number; pendingAmount?: number; statusBreakdown?: Record<string, number>; revenue?: { totalCost: number; totalPaid: number; totalRemaining: number; }; }
+export interface DashboardFollowUpItem {
+  id: string;
+  operationId: string;
+  title: string;
+  scheduledAt: string;
+  completedAt: string | null;
+  status: FollowUpStatus;
+  notes: string | null;
+  createdAt: string;
+  updatedAt: string;
+  operation: {
+    id: string;
+    name: string;
+    operationDate: string;
+    operationTime: string;
+    patient: { id: string; fullName: string; mobile: string | null };
+    hospital: { id: string; name: string; nameAr: string | null };
+  };
+}
+
+export interface DashboardFollowUpSummary {
+  overdue: number;
+  upcoming: number;
+  completed: number;
+  cancelled: number;
+}
+
+export interface DashboardOverview {
+  todayOperations: Operation[];
+  upcomingOperations: Operation[];
+  followUps: DashboardFollowUpItem[];
+  followUpSummary: DashboardFollowUpSummary;
+  stats: DashboardStats;
+  caseMix: SpecialtyDistribution[];
+}
 export interface MonthlyTrend { month: string; total: number; completed: number; cancelled: number; }
 export interface SpecialtyDistribution { specialtyId: string; specialtyName: string; count: number; percentage: number; }
 export interface SearchFilters { query: string; page?: number; limit?: number; type?: 'patients' | 'operations' | 'doctors' | 'hospitals' | 'all'; dateFrom?: string; dateTo?: string; }
