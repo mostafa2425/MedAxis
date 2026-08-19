@@ -38,44 +38,27 @@ async function main() {
     orderBy: { name: 'asc' },
     take: 8,
   });
-  if (catalogs.length === 0) throw new Error('No orthopedic operation catalog items found. Run npm run seed first.');
 
-  const patients = [] as Array<{ id: string }>;
-  for (const patient of DEMO_PATIENTS) {
-    const existing = await prisma.patient.findFirst({
-      where: { fullName: patient.fullName, createdBy: demoUser.id },
+  if (catalogs.length === 0) throw new Error('No active Orthopedics operation catalog entries found. Run npm run seed first.');
+
+  const patients = [];
+  for (const data of DEMO_PATIENTS) {
+    const patient = await prisma.patient.upsert({
+      where: { mobile_createdBy: { mobile: data.mobile, createdBy: demoUser.id } },
+      update: { fullName: data.fullName, age: data.age },
+      create: { ...data, createdBy: demoUser.id },
       select: { id: true },
     });
-    const record = existing ?? await prisma.patient.create({
-      data: {
-        fullName: patient.fullName,
-        age: patient.age,
-        gender: patient.age % 2 === 0 ? 'MALE' : 'FEMALE',
-        mobile: patient.mobile,
-        createdBy: demoUser.id,
-      },
-      select: { id: true },
-    });
-    patients.push(record);
+    patients.push(patient);
   }
 
-  const hospitals = [] as Array<{ id: string }>;
-  for (const hospital of DEMO_HOSPITALS) {
-    const existing = await prisma.hospital.findFirst({
-      where: { name: hospital.name, createdBy: demoUser.id },
-      select: { id: true },
-    });
-    const record = existing ?? await prisma.hospital.create({
-      data: {
-        name: hospital.name,
-        nameAr: hospital.nameAr,
-        city: hospital.city,
-        createdBy: demoUser.id,
-        isActive: true,
-      },
-      select: { id: true },
-    });
-    hospitals.push(record);
+  const hospitals = [];
+  for (const data of DEMO_HOSPITALS) {
+    const existing = await prisma.hospital.findFirst({ where: { name: data.name, createdBy: demoUser.id }, select: { id: true } });
+    const hospital = existing
+      ? await prisma.hospital.update({ where: { id: existing.id }, data: { nameAr: data.nameAr, city: data.city }, select: { id: true } })
+      : await prisma.hospital.create({ data: { ...data, createdBy: demoUser.id }, select: { id: true } });
+    hospitals.push(hospital);
   }
 
   let created = 0;
@@ -83,21 +66,15 @@ async function main() {
 
   for (let index = 0; index < 20; index += 1) {
     const status = STATUSES[index % STATUSES.length];
-    const catalog = catalogs[index % catalogs.length];
     const patient = patients[index];
     const hospital = hospitals[index];
+    const catalog = catalogs[index % catalogs.length];
     const operationDate = new Date();
-
-    if (status === 'SCHEDULED') operationDate.setDate(operationDate.getDate() + 2 + index);
-    if (status === 'IN_PROGRESS') operationDate.setHours(operationDate.getHours() - 1 - index);
-    if (status === 'COMPLETED') operationDate.setDate(operationDate.getDate() - 3 - index);
-    if (status === 'CANCELLED') operationDate.setDate(operationDate.getDate() - 1 - index);
-
+    operationDate.setDate(operationDate.getDate() + (index - 8));
     operationDate.setHours(9 + (index % 8), (index % 2) * 30, 0, 0);
 
-    const operationName = `Demo ${catalog.name} #${String(index + 1).padStart(2, '0')}`;
     const existing = await prisma.operation.findFirst({
-      where: { name: operationName, createdBy: demoUser.id },
+      where: { name: `Demo Operation ${String(index + 1).padStart(2, '0')}`, createdBy: demoUser.id },
       select: { id: true },
     });
 
@@ -107,48 +84,35 @@ async function main() {
           data: {
             patientId: patient.id,
             hospitalId: hospital.id,
-            operationDate,
-            operationTime: `${String(9 + (index % 8)).padStart(2, '0')}:${index % 2 ? '30' : '00'}`,
-            operationRoom: `OR-${String((index % 8) + 1).padStart(2, '0')}`,
-            duration: 60 + (index % 5) * 30,
-            status,
             specialtyId: orthopedics.id,
             catalogId: catalog.id,
-            diagnosis: index % 2 ? 'Knee pain / degenerative changes' : 'Orthopedic surgical case',
-            notes: `Repeatable MedAxis demo operation ${index + 1}`,
+            operationDate,
+            operationTime: `${String(operationDate.getHours()).padStart(2, '0')}:${String(operationDate.getMinutes()).padStart(2, '0')}`,
+            operationRoom: `OR-${(index % 6) + 1}`,
+            duration: 60 + (index % 4) * 30,
+            status,
+            diagnosis: `Demo diagnosis ${index + 1}`,
           },
           select: { id: true },
         })
       : await prisma.operation.create({
           data: {
-            name: operationName,
-            diagnosis: index % 2 ? 'Knee pain / degenerative changes' : 'Orthopedic surgical case',
+            name: `Demo Operation ${String(index + 1).padStart(2, '0')}`,
+            diagnosis: `Demo diagnosis ${index + 1}`,
             hospitalId: hospital.id,
             operationDate,
-            operationTime: `${String(9 + (index % 8)).padStart(2, '0')}:${index % 2 ? '30' : '00'}`,
-            operationRoom: `OR-${String((index % 8) + 1).padStart(2, '0')}`,
-            duration: 60 + (index % 5) * 30,
+            operationTime: `${String(operationDate.getHours()).padStart(2, '0')}:${String(operationDate.getMinutes()).padStart(2, '0')}`,
+            operationRoom: `OR-${(index % 6) + 1}`,
+            duration: 60 + (index % 4) * 30,
             status,
-            notes: `Repeatable MedAxis demo operation ${index + 1}`,
+            notes: 'Generated demo operation for dashboard and workflow testing',
             patientId: patient.id,
             createdBy: demoUser.id,
             specialtyId: orthopedics.id,
             catalogId: catalog.id,
-            procedures: {
-              create: {
-                catalogId: catalog.id,
-                name: catalog.name,
-                nameAr: catalog.nameAr,
-                specialtyId: catalog.specialtyId,
-                sortOrder: 0,
-              },
-            },
-            medicalTeam: {
-              create: { primarySurgeonId: demoDoctor.id },
-            },
-            teamMembers: {
-              create: { doctorId: demoDoctor.id, sortOrder: 0 },
-            },
+            procedures: { create: { catalogId: catalog.id, name: catalog.name, nameAr: catalog.nameAr, specialtyId: catalog.specialtyId, sortOrder: 0 } },
+            medicalTeam: { create: { primarySurgeonId: demoDoctor.id } },
+            teamMembers: { create: { doctorId: demoDoctor.id, sortOrder: 0 } },
             cost: {
               create: {
                 totalCost: 3000 + index * 250,
@@ -201,11 +165,16 @@ async function main() {
       created += 1;
     }
 
-    const timeline = await prisma.operationTimeline.findFirst({
-      where: { operationId: operation.id, action: 'OPERATION_CREATED' },
-      select: { id: true },
-    });
-    if (!timeline) {
+    // operation_timeline is a legacy table shape not exposed by the current generated Prisma client.
+    // Use raw SQL for both lookup and insert so the seed is compatible with that schema.
+    const timelineRows = await prisma.$queryRaw<Array<{ id: string }>>(Prisma.sql`
+      SELECT "id"
+      FROM "operation_timeline"
+      WHERE "operationId" = ${operation.id}
+        AND "action"::text = 'OPERATION_CREATED'
+      LIMIT 1
+    `);
+    if (timelineRows.length === 0) {
       await prisma.$queryRaw<Array<Record<string, unknown>>>(Prisma.sql`
         INSERT INTO "operation_timeline" ("id", "operationId", "action", "status", "description", "userId", "createdAt", "occurredAt")
         VALUES (gen_random_uuid(), ${operation.id}, 'OPERATION_CREATED'::"TimelineAction", ${status}, ${`Demo operation created with status ${status}`}, ${demoUser.id}, now(), now())
@@ -238,21 +207,20 @@ async function main() {
   const statusCounts = await prisma.operation.groupBy({
     by: ['status'],
     where: { createdBy: demoUser.id },
-    _count: { status: true },
+    _count: { _all: true },
   });
 
-  console.log(`✓ Demo patients ensured: ${patients.length}`);
-  console.log(`✓ Demo hospitals ensured: ${hospitals.length}`);
-  console.log(`✓ Demo operations created: ${created}`);
-  console.log(`✓ Demo operations updated: ${updated}`);
-  console.log(`✓ Demo follow-ups ensured: 10`);
-  console.log('✓ Status distribution:', statusCounts.map((item) => `${item.status}=${item._count.status}`).join(', '));
+  console.log(`Demo operation seed complete: ${created} created, ${updated} updated.`);
+  console.log('Status counts:', statusCounts.map((item) => `${item.status}: ${item._count._all}`).join(', '));
+  console.log('Demo patients:', patients.length);
+  console.log('Demo hospitals:', hospitals.length);
+  console.log('Demo follow-ups: up to 10 created for dashboard testing.');
 }
 
 main()
   .catch((error) => {
     console.error('❌ Demo operation seed failed:', error);
-    process.exit(1);
+    process.exitCode = 1;
   })
   .finally(async () => {
     await prisma.$disconnect();
