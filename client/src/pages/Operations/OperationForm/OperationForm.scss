@@ -1,4 +1,4 @@
-.operation-form-page {
+.operationFormPage {
   &.page {
     display: flex;
     flex-direction: column;
@@ -167,6 +167,7 @@
   // Shared field chrome used by all steps
   .stepContent {
     padding: 0;
+    padding-bottom: 80px;
   }
 
   .fieldGroup {

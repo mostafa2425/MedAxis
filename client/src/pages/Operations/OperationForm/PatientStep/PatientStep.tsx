@@ -157,7 +157,7 @@ export default function PatientStep({
 
   if (formData.isNewPatient) {
     return (
-      <div className="patientStep">
+      <div className="patientStep"> 
         <div className="patientStepCard patientStepCard--form">
           <div className="newPatientHeader">
             <Button type="text" size="small" icon={<ArrowLeftOutlined />} onClick={handleBackToSearch} className="backToSearchBtn">
@@ -254,7 +254,7 @@ export default function PatientStep({
           <button type="button" className="patientStepCard patientCreateCard" onClick={handleCreateNew}>
             <div className="patientCreateIcon"><UserAddOutlined /></div>
             <h3 className="patientCardTitle">{t('operations.createNewProfile')}</h3>
-            <p className="patientCardDesc">{t('operations.createNewProfileHint')}</p>
+            {/* <p className="patientCardDesc">{t('operations.createNewProfileHint')}</p> */}
             <span className="patientCreateCta">{t('operations.getStarted')}<ArrowRightOutlined /></span>
           </button>
         </>

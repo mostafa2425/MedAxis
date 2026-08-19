@@ -6,6 +6,7 @@ import {
   ScissorOutlined,
   SearchOutlined,
   AppstoreOutlined,
+  RobotOutlined,
 } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
 import './BottomNav.scss';
@@ -41,11 +42,11 @@ const PRIMARY_ITEMS: BottomNavItem[] = [
     match: (pathname) => pathname.startsWith('/operations'),
   },
   {
-    key: 'search',
-    to: '/search',
-    icon: <SearchOutlined />,
-    labelKey: 'nav.search',
-    match: (pathname) => pathname.startsWith('/search'),
+    key: 'assistant',
+    to: '/assistant',
+    icon: <RobotOutlined />,
+    labelKey: 'nav.assistant',
+    match: (pathname) => pathname.startsWith('/assistant'),
   },
 ];
 

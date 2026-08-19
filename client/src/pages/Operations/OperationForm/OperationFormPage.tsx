@@ -490,13 +490,13 @@ export default function OperationFormPage() {
     <div className="operationFormPage">
       {contextHolder}
       <header className="operationFormHeader">
+        <div className='flex items-center mb-4'>
         <Button type="text" icon={<ArrowLeftOutlined />} onClick={() => navigate('/operations')}>
           {t('common.back')}
         </Button>
-        <div>
-          <h1>{isEditMode ? t('operations.editOperation') : t('operations.addOperation')}</h1>
-          <p>{t('operations.operationFormSubtitle')}</p>
+          <h3 className=''>{isEditMode ? t('operations.editOperation') : t('operations.addOperation')}</h3>
         </div>
+          {/* <p>{t('operations.operationFormSubtitle')}</p> */}
       </header>
       <WizardNav currentStep={currentStep} steps={STEPS} stepTitles={stepTitles} onStepClick={goToStep} />
       <main className="operationFormContent">

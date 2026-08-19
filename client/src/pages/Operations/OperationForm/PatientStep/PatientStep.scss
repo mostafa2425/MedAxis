@@ -13,7 +13,6 @@
   border: 1px solid $border;
   border-radius: $radius-xl;
   box-shadow: 0 4px 6px rgba(15, 23, 42, 0.04);
-
   @include dark {
     background: $dark-surface-elevated;
     border-color: $dark-border;
