@@ -32,6 +32,15 @@ export class AssistantController {
     } catch (err) { next(err); }
   }
 
+  async testNotification(req: Request, res: Response, next: NextFunction) {
+    try {
+      const userId = (req as any).user?.userId as string | undefined;
+      if (!userId) throw new Error('Authenticated user is required');
+      const data = await notificationService.createTest(userId);
+      return sendSuccess(res, data, 'Test notification created and push attempted');
+    } catch (err) { next(err); }
+  }
+
   async cronDaily(req: Request, res: Response, next: NextFunction) {
     try {
       if (!this.authorizeCron(req)) return res.status(401).json({ success: false, message: 'Unauthorized' });
