@@ -124,30 +124,22 @@ export class OperationRepository {
     ]);
   }
 
-  async replaceTeamMembers(operationId: string, members: Array<{ doctorId?: string | null; nurseId?: string | null; sortOrder: number }>) {
+  async replaceTeam(operationId: string, teamMembers: Array<{ doctorId?: string | null; nurseId?: string | null; sortOrder: number }>) {
     await prisma.$transaction([
       prisma.operationTeamMember.deleteMany({ where: { operationId } }),
-      ...(members.length
-        ? [
-            prisma.operationTeamMember.createMany({
-              data: members.map((member) => ({
-                operationId,
-                doctorId: member.doctorId ?? null,
-                nurseId: member.nurseId ?? null,
-                sortOrder: member.sortOrder,
-              })),
-            }),
-          ]
-        : []),
+      prisma.operationTeamMember.createMany({
+        data: teamMembers.map((member) => ({
+          operationId,
+          doctorId: member.doctorId ?? null,
+          nurseId: member.nurseId ?? null,
+          sortOrder: member.sortOrder,
+        })),
+      }),
     ]);
   }
 
   async update(id: string, createdBy: string, data: Prisma.OperationUpdateInput) {
-    return prisma.operation.update({ where: { id, createdBy }, data, include: operationListInclude });
-  }
-
-  async updateStatus(id: string, createdBy: string, status: OperationStatus) {
-    return prisma.operation.update({ where: { id, createdBy }, data: { status } });
+    return prisma.operation.update({ where: { id, createdBy }, data });
   }
 
   async delete(id: string, createdBy: string) {
@@ -176,7 +168,17 @@ export class OperationRepository {
   }
 
   async addFile(operationId: string, data: { fileType: string; fileName: string; filePath: string; fileSize?: number; mimeType?: string; uploadedBy: string }) {
-    return prisma.operationFile.create({ data: { operationId, ...data } as any });
+    // The established database has a required storagePath column while the
+    // application contract exposes filePath. Keep both values synchronized
+    // without forcing a destructive Prisma schema re-introspection.
+    const rows = await prisma.$queryRaw<Array<Record<string, unknown>>>(Prisma.sql`
+      INSERT INTO "operation_files"
+        ("id", "operationId", "fileType", "fileName", "filePath", "storagePath", "fileSize", "mimeType", "uploadedBy", "createdAt")
+      VALUES
+        (gen_random_uuid(), ${operationId}, ${data.fileType}::"FileType", ${data.fileName}, ${data.filePath}, ${data.filePath}, ${data.fileSize ?? null}, ${data.mimeType ?? null}, ${data.uploadedBy}, now())
+      RETURNING *
+    `);
+    return rows[0];
   }
 
   async deleteFile(fileId: string, uploadedBy: string) {
@@ -234,72 +236,28 @@ export class OperationRepository {
       select: { id: true, name: true },
     });
     const specialtyMap = new Map(specialties.map((s) => [s.id, s.name]));
-    return result.map((r) => ({ specialtyId: r.specialtyId, specialtyName: specialtyMap.get(r.specialtyId!) || 'Unknown', count: r._count.specialtyId }));
+    return result.map((r) => ({ specialtyId: r.specialtyId!, specialtyName: specialtyMap.get(r.specialtyId!) || 'Unknown', count: r._count.specialtyId }));
   }
 
-  async getMonthlyTrends(createdBy: string, months = 12) {
-    const startDate = new Date();
-    startDate.setMonth(startDate.getMonth() - months);
-    startDate.setDate(1);
-    const operations = await prisma.operation.findMany({
-      where: { createdBy, operationDate: { gte: startDate } },
-      select: { operationDate: true, status: true },
-      orderBy: { operationDate: 'asc' },
-    });
-    const monthlyData: Record<string, { month: string; total: number; completed: number }> = {};
-    for (const op of operations) {
-      const key = `${op.operationDate.getFullYear()}-${String(op.operationDate.getMonth() + 1).padStart(2, '0')}`;
-      if (!monthlyData[key]) monthlyData[key] = { month: op.operationDate.toLocaleDateString('en-US', { year: 'numeric', month: 'short' }), total: 0, completed: 0 };
-      monthlyData[key].total++;
-      if (op.status === 'COMPLETED') monthlyData[key].completed++;
+  async monthlyTrends(createdBy: string, months = 12) {
+    const start = new Date();
+    start.setMonth(start.getMonth() - (months - 1), 1);
+    start.setHours(0, 0, 0, 0);
+    const operations = await prisma.operation.findMany({ where: { createdBy, operationDate: { gte: start } }, select: { operationDate: true, status: true } });
+    const result: Array<{ month: string; total: number; completed: number }> = [];
+    for (let i = 0; i < months; i++) {
+      const date = new Date(start);
+      date.setMonth(start.getMonth() + i);
+      const month = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+      const monthOps = operations.filter((op) => `${op.operationDate.getFullYear()}-${String(op.operationDate.getMonth() + 1).padStart(2, '0')}` === month);
+      result.push({ month, total: monthOps.length, completed: monthOps.filter((op) => op.status === 'COMPLETED').length });
     }
-    return Object.entries(monthlyData)
-      .sort(([a], [b]) => a.localeCompare(b))
-      .map(([, val]) => val);
+    return result;
   }
 
-  async getTotalRevenue(createdBy: string) {
-    const costs = await prisma.operationCost.findMany({
-      where: { operation: { createdBy } },
-      select: { totalCost: true, paidAmount: true, remainingAmount: true },
-    });
-    return {
-      totalCost: costs.reduce((sum, c) => sum + Number(c.totalCost), 0),
-      totalPaid: costs.reduce((sum, c) => sum + Number(c.paidAmount), 0),
-      totalRemaining: costs.reduce((sum, c) => sum + Number(c.remainingAmount), 0),
-    };
-  }
-
-  async exportData(params: { status?: OperationStatus; specialtyId?: string; hospitalId?: string; dateFrom?: string; dateTo?: string; createdBy: string }) {
-    const { status, specialtyId, hospitalId, dateFrom, dateTo, createdBy } = params;
-    const where: Prisma.OperationWhereInput = { createdBy };
-
-    if (status) where.status = status;
-    if (specialtyId) where.specialtyId = specialtyId;
-    if (hospitalId) where.hospitalId = hospitalId;
-    if (dateFrom || dateTo) {
-      where.operationDate = {};
-      if (dateFrom) (where.operationDate as { gte?: Date }).gte = new Date(dateFrom);
-      if (dateTo) (where.operationDate as { lte?: Date }).lte = new Date(dateTo);
-    }
-
-    return prisma.operation.findMany({
-      where,
-      include: {
-        patient: { select: { fullName: true, age: true, gender: true, mobile: true } },
-        hospital: { select: { name: true } },
-        specialty: { select: { name: true } },
-        cost: true,
-        medicalTeam: {
-          include: {
-            primarySurgeon: { select: { name: true } },
-            assistantSurgeon: { select: { name: true } },
-            anesthesiologist: { select: { name: true } },
-          },
-        },
-      },
-      orderBy: { operationDate: 'desc' },
-    });
+  async revenue(createdBy: string) {
+    const result = await prisma.operationCost.aggregate({ where: { operation: { createdBy } }, _sum: { totalCost: true, paidAmount: true, remainingAmount: true } });
+    return { totalCost: result._sum.totalCost || 0, totalPaid: result._sum.paidAmount || 0, totalRemaining: result._sum.remainingAmount || 0 };
   }
 }
 
