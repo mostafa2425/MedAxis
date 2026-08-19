@@ -480,15 +480,6 @@ export default function OperationFormPage() {
     t('operations.step6Review'),
   ];
 
-  const stepHints = [
-    t('operations.patientStepHint'),
-    t('operations.operationName'),
-    t('operations.selectDoctor'),
-    t('operations.totalCost'),
-    t('operations.uploadFiles'),
-    t('operations.step6Review'),
-  ];
-
   const canContinuePatientStep = Boolean(formData.patientId) || formData.isNewPatient;
 
   if (isEditMode && loadingOperation) {
@@ -562,13 +553,14 @@ export default function OperationFormPage() {
       </main>
       <WizardActions
         currentStep={currentStep}
-        totalSteps={STEPS.length}
         isSaving={isSaving}
-        canContinuePatientStep={canContinuePatientStep}
+        savedOperationId={savedOperationId}
+        isEditMode={isEditMode}
+        canContinue={canContinuePatientStep}
         onBack={handleBack}
         onNext={handleNext}
-        onSave={handleSave}
         onQuickSave={() => handleSave(true)}
+        onSubmit={() => handleSave(false)}
       />
     </div>
   );
