@@ -199,8 +199,7 @@ export default function OperationFormPage() {
   });
 
   const deleteFileMutation = useMutation({
-    mutationFn: ({ opId, fileId }: { opId: string; fileId: string }) =>
-      operationService.deleteFile(opId, fileId),
+    mutationFn: ({ opId, fileId }: { opId: string; fileId: string }) => operationService.deleteFile(opId, fileId),
   });
 
   useEffect(() => {
@@ -343,10 +342,7 @@ export default function OperationFormPage() {
         let operationId: string;
 
         if (savedOperationId) {
-          await updateOperationMutation.mutateAsync({
-            opId: savedOperationId,
-            data: payload,
-          });
+          await updateOperationMutation.mutateAsync({ opId: savedOperationId, data: payload });
           operationId = savedOperationId;
         } else {
           const result = await createOperationMutation.mutateAsync(payload);
@@ -365,9 +361,7 @@ export default function OperationFormPage() {
               : t('operations.operationCreated'),
         );
 
-        if (!quickSave) {
-          navigate(`/operations/${operationId}`);
-        }
+        if (!quickSave) navigate(`/operations/${operationId}`);
       } catch (err: unknown) {
         const issues = parseApiValidationErrors(err);
         if (issues.length > 0) {
@@ -375,15 +369,13 @@ export default function OperationFormPage() {
           setErrors(fieldErrors);
           const fields = Object.keys(fieldErrors);
           const nextStep = resolveWizardErrorStep(fields, currentStep);
-          if (nextStep !== currentStep) {
-            setCurrentStep(nextStep);
-          }
+          if (nextStep !== currentStep) setCurrentStep(nextStep);
           messageApi.error(t('validation.fixHighlightedFields'));
           window.setTimeout(() => {
             if (fields[0]) scrollToField(fields[0]);
           }, 180);
         } else {
-          messageApi.error(t('common.operationFailed'));
+          messageApi.error(getApiErrorMessage(err, t('common.operationFailed')));
         }
       } finally {
         setIsSaving(false);
@@ -419,57 +411,48 @@ export default function OperationFormPage() {
     return 'AFTER_OTHER';
   };
 
-  const handleBeforeUpload = useCallback(
-    async (file: File) => {
-      if (!savedOperationId) return;
-      const fd = new FormData();
-      fd.append('file', file);
-      fd.append('fileType', getBeforeFileType(file));
-      try {
-        await uploadBeforeMutation.mutateAsync({ opId: savedOperationId, formData: fd });
-        messageApi.success(t('operations.fileUploaded'));
-        queryClient.invalidateQueries({ queryKey: ['operation-files-before', savedOperationId] });
-        queryClient.invalidateQueries({ queryKey: ['operation-detail', savedOperationId] });
-      } catch (err) {
-        messageApi.error(getApiErrorMessage(err, t('common.operationFailed')));
-      }
-    },
-    [savedOperationId, uploadBeforeMutation, queryClient, messageApi, t],
-  );
+  const handleBeforeUpload = useCallback(async (file: File) => {
+    if (!savedOperationId) return;
+    const fd = new FormData();
+    fd.append('file', file);
+    fd.append('fileType', getBeforeFileType(file));
+    try {
+      await uploadBeforeMutation.mutateAsync({ opId: savedOperationId, formData: fd });
+      messageApi.success(t('operations.fileUploaded'));
+      queryClient.invalidateQueries({ queryKey: ['operation-files-before', savedOperationId] });
+      queryClient.invalidateQueries({ queryKey: ['operation-detail', savedOperationId] });
+    } catch (err) {
+      messageApi.error(getApiErrorMessage(err, t('common.operationFailed')));
+    }
+  }, [savedOperationId, uploadBeforeMutation, queryClient, messageApi, t]);
 
-  const handleAfterUpload = useCallback(
-    async (file: File) => {
-      if (!savedOperationId) return;
-      const fd = new FormData();
-      fd.append('file', file);
-      fd.append('fileType', getAfterFileType(file));
-      try {
-        await uploadAfterMutation.mutateAsync({ opId: savedOperationId, formData: fd });
-        messageApi.success(t('operations.fileUploaded'));
-        queryClient.invalidateQueries({ queryKey: ['operation-files-after', savedOperationId] });
-        queryClient.invalidateQueries({ queryKey: ['operation-detail', savedOperationId] });
-      } catch (err) {
-        messageApi.error(getApiErrorMessage(err, t('common.operationFailed')));
-      }
-    },
-    [savedOperationId, uploadAfterMutation, queryClient, messageApi, t],
-  );
+  const handleAfterUpload = useCallback(async (file: File) => {
+    if (!savedOperationId) return;
+    const fd = new FormData();
+    fd.append('file', file);
+    fd.append('fileType', getAfterFileType(file));
+    try {
+      await uploadAfterMutation.mutateAsync({ opId: savedOperationId, formData: fd });
+      messageApi.success(t('operations.fileUploaded'));
+      queryClient.invalidateQueries({ queryKey: ['operation-files-after', savedOperationId] });
+      queryClient.invalidateQueries({ queryKey: ['operation-detail', savedOperationId] });
+    } catch (err) {
+      messageApi.error(getApiErrorMessage(err, t('common.operationFailed')));
+    }
+  }, [savedOperationId, uploadAfterMutation, queryClient, messageApi, t]);
 
-  const handleDeleteFile = useCallback(
-    async (fileId: string) => {
-      if (!savedOperationId) return;
-      try {
-        await deleteFileMutation.mutateAsync({ opId: savedOperationId, fileId });
-        messageApi.success(t('operations.fileDeleted'));
-        queryClient.invalidateQueries({ queryKey: ['operation-files-before', savedOperationId] });
-        queryClient.invalidateQueries({ queryKey: ['operation-files-after', savedOperationId] });
-        queryClient.invalidateQueries({ queryKey: ['operation-detail', savedOperationId] });
-      } catch {
-        messageApi.error(t('common.operationFailed'));
-      }
-    },
-    [savedOperationId, deleteFileMutation, queryClient, messageApi, t],
-  );
+  const handleDeleteFile = useCallback(async (fileId: string) => {
+    if (!savedOperationId) return;
+    try {
+      await deleteFileMutation.mutateAsync({ opId: savedOperationId, fileId });
+      messageApi.success(t('operations.fileDeleted'));
+      queryClient.invalidateQueries({ queryKey: ['operation-files-before', savedOperationId] });
+      queryClient.invalidateQueries({ queryKey: ['operation-files-after', savedOperationId] });
+      queryClient.invalidateQueries({ queryKey: ['operation-detail', savedOperationId] });
+    } catch {
+      messageApi.error(t('common.operationFailed'));
+    }
+  }, [savedOperationId, deleteFileMutation, queryClient, messageApi, t]);
 
   const goToStep = useCallback((step: number) => {
     setCurrentStep(step);
@@ -506,8 +489,7 @@ export default function OperationFormPage() {
     t('operations.step6Review'),
   ];
 
-  const canContinuePatientStep =
-    Boolean(formData.patientId) || formData.isNewPatient;
+  const canContinuePatientStep = Boolean(formData.patientId) || formData.isNewPatient;
 
   if (isEditMode && loadingOperation) {
     return <div className="operationFormLoading"><Spin size="large" /></div>;
@@ -530,9 +512,9 @@ export default function OperationFormPage() {
         {currentStep === 0 && (
           <PatientStep
             formData={formData}
+            setFormData={setFormData}
             errors={errors}
-            onChange={(patch) => setFormData((prev) => ({ ...prev, ...patch }))}
-            onClearError={clearError}
+            clearError={clearError}
           />
         )}
         {currentStep === 1 && (
