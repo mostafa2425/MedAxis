@@ -1,4 +1,4 @@
-import { PrismaClient, Prisma } from '@prisma/client';
+import { PrismaClient, Prisma } from '../src/generated/prisma';
 import { PrismaPg } from '@prisma/adapter-pg';
 import dotenv from 'dotenv';
 
@@ -67,8 +67,6 @@ async function main() {
       select: { id: true },
     });
 
-    // Keep demo data compatible with older/generated Hospital Prisma clients.
-    // Hospital seed data only relies on fields that are present in all supported schemas.
     const hospital = existing
       ? await prisma.hospital.update({
           where: { id: existing.id },
