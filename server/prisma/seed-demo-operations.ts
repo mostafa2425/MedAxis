@@ -17,7 +17,6 @@ const DEMO_PATIENTS = Array.from({ length: 20 }, (_, index) => ({
 
 const DEMO_HOSPITALS = Array.from({ length: 20 }, (_, index) => ({
   name: `MedAxis Demo Hospital ${String(index + 1).padStart(2, '0')}`,
-  city: index % 2 === 0 ? 'Cairo' : 'Giza',
 }));
 
 async function main() {
@@ -68,16 +67,16 @@ async function main() {
       select: { id: true },
     });
 
-    // Keep the demo seed compatible with the currently generated Prisma Hospital client.
-    // Only update fields that are guaranteed to exist in the deployed schema/client.
+    // Keep demo data compatible with older/generated Hospital Prisma clients.
+    // Hospital seed data only relies on fields that are present in all supported schemas.
     const hospital = existing
       ? await prisma.hospital.update({
           where: { id: existing.id },
-          data: { name: data.name, city: data.city, isActive: true },
+          data: { name: data.name, isActive: true },
           select: { id: true },
         })
       : await prisma.hospital.create({
-          data: { name: data.name, city: data.city, createdBy: demoUser.id, isActive: true },
+          data: { name: data.name, createdBy: demoUser.id, isActive: true },
           select: { id: true },
         });
 
