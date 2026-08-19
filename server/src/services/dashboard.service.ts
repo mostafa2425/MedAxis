@@ -11,7 +11,7 @@ class DashboardService {
       operationRepo.countByStatus(createdBy), operationRepo.getRecent(createdBy, 5), patientRepo.findRecent(createdBy, 5), operationRepo.getTotalRevenue(createdBy),
       operationRepo.countThisMonth(createdBy), patientRepo.count(createdBy), doctorRepo.countForUser(createdBy), nurseRepo.countForUser(createdBy), hospitalRepo.countForUser(createdBy),
     ]);
-    const totalOperations = Object.values(statusCounts).reduce((a, b) => a + b, 0);
+    const totalOperations = Object.values(statusCounts as Record<string, number>).reduce((a: number, b: number) => a + b, 0);
     return {
       totalOperations, completedOperations: statusCounts.COMPLETED ?? 0, pendingOperations: (statusCounts.SCHEDULED ?? 0) + (statusCounts.IN_PROGRESS ?? 0),
       cancelledOperations: statusCounts.CANCELLED ?? 0, operationsThisMonth, totalPatients, totalDoctors, totalNurses, totalHospitals,
@@ -21,33 +21,18 @@ class DashboardService {
   }
 
   async getOverview(createdBy: string) {
-    const start = new Date();
-    start.setHours(0, 0, 0, 0);
-    const end = new Date(start);
-    end.setDate(end.getDate() + 1);
-    const nextWeek = new Date(start);
-    nextWeek.setDate(nextWeek.getDate() + 7);
-
+    const start = new Date(); start.setHours(0, 0, 0, 0);
+    const end = new Date(start); end.setDate(end.getDate() + 1);
+    const nextWeek = new Date(start); nextWeek.setDate(nextWeek.getDate() + 7);
     const [todayResult, upcomingResult, followUps, stats, specialtyDistribution] = await Promise.all([
       operationRepo.findAll({ page: 1, limit: 8, dateFrom: start.toISOString(), dateTo: end.toISOString(), sortBy: 'operationDate', sortOrder: 'asc', createdBy }),
       operationRepo.findAll({ page: 1, limit: 8, dateFrom: end.toISOString(), dateTo: nextWeek.toISOString(), sortBy: 'operationDate', sortOrder: 'asc', createdBy }),
-      operationFollowUpRepo.findAllForDoctor(createdBy, { from: start, to: nextWeek }),
-      this.getStats(createdBy),
-      operationRepo.countBySpecialty(createdBy),
+      operationFollowUpRepo.findAllForDoctor(createdBy, { from: start, to: nextWeek }), this.getStats(createdBy), operationRepo.countBySpecialty(createdBy),
     ]);
-
     return {
-      todayOperations: todayResult.data,
-      upcomingOperations: upcomingResult.data,
-      followUps: followUps.slice(0, 8),
-      followUpSummary: {
-        overdue: followUps.filter((item) => item.status === 'OVERDUE').length,
-        upcoming: followUps.filter((item) => item.status === 'UPCOMING').length,
-        completed: followUps.filter((item) => item.status === 'COMPLETED').length,
-        cancelled: followUps.filter((item) => item.status === 'CANCELLED').length,
-      },
-      stats,
-      caseMix: specialtyDistribution,
+      todayOperations: todayResult.data, upcomingOperations: upcomingResult.data, followUps: followUps.slice(0, 8),
+      followUpSummary: { overdue: followUps.filter((item) => item.status === 'OVERDUE').length, upcoming: followUps.filter((item) => item.status === 'UPCOMING').length, completed: followUps.filter((item) => item.status === 'COMPLETED').length, cancelled: followUps.filter((item) => item.status === 'CANCELLED').length },
+      stats, caseMix: specialtyDistribution,
     };
   }
 
