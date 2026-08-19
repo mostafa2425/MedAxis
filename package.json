@@ -11,6 +11,12 @@
     "build:client": "npm --prefix client run build",
     "build:server": "npm --prefix server run build",
 
+    "typecheck": "npm run typecheck:client && npm run typecheck:server",
+    "typecheck:client": "npm --prefix client run typecheck",
+    "typecheck:server": "npm --prefix server run typecheck",
+    "lint": "npm --prefix client run lint",
+    "verify": "npm run typecheck && npm run lint && npm run build",
+
     "start": "npm --prefix server run start",
 
     "seed": "npm --prefix server run seed",
@@ -23,4 +29,3 @@
     "concurrently": "^9.0.0"
   }
 }
-
