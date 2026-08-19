@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient, Prisma } from '@prisma/client';
 import { PrismaPg } from '@prisma/adapter-pg';
 import dotenv from 'dotenv';
 
@@ -206,15 +206,11 @@ async function main() {
       select: { id: true },
     });
     if (!timeline) {
-      await prisma.operationTimeline.create({
-        data: {
-          operationId: operation.id,
-          action: 'OPERATION_CREATED',
-          status,
-          description: `Demo operation created with status ${status}`,
-          userId: demoUser.id,
-        } as any,
-      });
+      await prisma.$queryRaw<Array<Record<string, unknown>>>(Prisma.sql`
+        INSERT INTO "operation_timeline" ("id", "operationId", "action", "status", "description", "userId", "createdAt", "occurredAt")
+        VALUES (gen_random_uuid(), ${operation.id}, 'OPERATION_CREATED'::"TimelineAction", ${status}, ${`Demo operation created with status ${status}`}, ${demoUser.id}, now(), now())
+        RETURNING *
+      `);
     }
 
     if (index < 10) {
