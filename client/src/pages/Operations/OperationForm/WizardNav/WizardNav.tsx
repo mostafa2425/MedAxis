@@ -5,19 +5,27 @@ import './WizardNav.scss';
 
 export interface WizardNavProps {
   currentStep: number;
-  stepTitles: string[];
-  onStepChange: (step: number) => void;
-  STEPS: readonly WizardStepDef[];
+  stepTitles?: string[];
+  onStepChange?: (step: number) => void;
+  STEPS?: readonly WizardStepDef[];
+  // Backward-compatible aliases used by the current OperationFormPage.
+  steps?: readonly WizardStepDef[];
+  onStepClick?: (step: number) => void;
 }
 
 export default function WizardNav({
   currentStep,
-  stepTitles,
+  stepTitles = [],
   onStepChange,
   STEPS,
+  steps,
+  onStepClick,
 }: WizardNavProps) {
   const { t } = useTranslation();
-  const progress = ((currentStep + 1) / STEPS.length) * 100;
+  const wizardSteps = STEPS ?? steps ?? [];
+  const handleStepChange = onStepChange ?? onStepClick ?? (() => undefined);
+  const safeCurrentStep = Math.max(0, Math.min(currentStep, Math.max(wizardSteps.length - 1, 0)));
+  const progress = wizardSteps.length > 0 ? ((safeCurrentStep + 1) / wizardSteps.length) * 100 : 0;
 
   return (
     <nav className="wizardNav" aria-label={t('operations.title')}>
@@ -26,10 +34,10 @@ export default function WizardNav({
       </div>
 
       <ol className="wizardNavList">
-        {STEPS.map((step, idx) => {
+        {wizardSteps.map((step, idx) => {
           const Icon = step.icon;
-          const isActive = idx === currentStep;
-          const isDone = idx < currentStep;
+          const isActive = idx === safeCurrentStep;
+          const isDone = idx < safeCurrentStep;
           const stateClass = isActive
             ? 'isActive'
             : isDone
@@ -41,14 +49,14 @@ export default function WizardNav({
               <button
                 type="button"
                 className={`wizardNavStep ${stateClass}`}
-                onClick={() => onStepChange(idx)}
+                onClick={() => handleStepChange(idx)}
                 aria-current={isActive ? 'step' : undefined}
-                aria-label={stepTitles[idx]}
+                aria-label={stepTitles[idx] ?? step.key}
               >
                 <span className="wizardNavIcon" aria-hidden>
                   {isDone ? <CheckOutlined /> : <Icon />}
                 </span>
-                <span className="wizardNavLabel">{stepTitles[idx]}</span>
+                <span className="wizardNavLabel">{stepTitles[idx] ?? step.key}</span>
               </button>
             </li>
           );
