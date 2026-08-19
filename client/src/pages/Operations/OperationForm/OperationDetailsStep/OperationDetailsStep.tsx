@@ -28,25 +28,66 @@ import { OPERATION_STATUSES } from '@/utils/constants';
 import { getSpecialtyLabel } from '@/utils/helpers';
 import { useAuth } from '@/hooks/useAuth';
 import { OperationStatus, type Hospital, type OperationCatalogItem } from '@/types';
-import type { WizardFormData, WizardStepProps } from '../wizardTypes';
+import type { WizardFormData, WizardStepProps, WizardFormSetter } from '../wizardTypes';
 import './OperationDetailsStep.scss';
+
+interface OperationDetailsStepProps extends Omit<WizardStepProps, 'setFormData'> {
+  setFormData?: WizardFormSetter;
+  hospitals?: Hospital[];
+  specialties?: unknown[];
+  onChange?: (patch: Partial<WizardFormData>) => void;
+  onClearError?: (field: string) => void;
+}
 
 export default function OperationDetailsStep({
   formData,
-  setFormData,
+  setFormData: providedSetFormData,
   errors = {},
-  clearError = () => {},
-}: WizardStepProps) {
+  clearError: providedClearError,
+  onChange,
+  onClearError,
+}: OperationDetailsStepProps) {
   const { t, i18n } = useTranslation();
   const { user } = useAuth();
   const queryClient = useQueryClient();
   const [customOpen, setCustomOpen] = useState(false);
   const [customForm] = Form.useForm<{ name: string }>();
 
+  const setFormData = useCallback<WizardFormSetter>(
+    (updater) => {
+      if (providedSetFormData) {
+        providedSetFormData(updater);
+        return;
+      }
+
+      if (onChange) {
+        const previous = formData;
+        const next = typeof updater === 'function' ? updater(previous) : updater;
+        const patch = Object.keys(next).reduce((acc, key) => {
+          const typedKey = key as keyof WizardFormData;
+          if (next[typedKey] !== previous[typedKey]) {
+            (acc as Record<string, unknown>)[key] = next[typedKey];
+          }
+          return acc;
+        }, {} as Partial<WizardFormData>);
+        onChange(patch);
+      }
+    },
+    [providedSetFormData, onChange, formData],
+  );
+
+  const clearError = useCallback(
+    (field: string) => {
+      (providedClearError ?? onClearError)?.(field);
+    },
+    [providedClearError, onClearError],
+  );
+
   const { data: hospitalsData } = useQuery({
     queryKey: ['hospitals-active'],
     queryFn: () => hospitalService.getActive(),
     staleTime: 60_000,
+    enabled: !providedSetFormData && !onChange,
   });
 
   const { data: catalogData, isLoading: catalogLoading } = useQuery({
@@ -55,7 +96,8 @@ export default function OperationDetailsStep({
     staleTime: 30_000,
   });
 
-  const hospitals: Hospital[] = useMemo(() => hospitalsData?.data?.data ?? [], [hospitalsData]);
+  const hospitalsFromApi: Hospital[] = useMemo(() => hospitalsData?.data?.data ?? [], [hospitalsData]);
+  const hospitals: Hospital[] = providedSetFormData || !onChange ? hospitalsFromApi : (hospitalsFromApi.length ? hospitalsFromApi : []);
   const catalogItems: OperationCatalogItem[] = useMemo(
     () => (Array.isArray(catalogData?.data?.data) ? catalogData.data.data : []),
     [catalogData],
@@ -63,10 +105,14 @@ export default function OperationDetailsStep({
 
   const updateField = useCallback(
     (field: keyof WizardFormData, value: unknown) => {
-      setFormData((prev) => ({ ...prev, [field]: value }));
+      if (providedSetFormData) {
+        providedSetFormData((prev) => ({ ...prev, [field]: value }));
+      } else {
+        onChange?.({ [field]: value } as Partial<WizardFormData>);
+      }
       clearError(field as string);
     },
-    [setFormData, clearError],
+    [providedSetFormData, onChange, clearError],
   );
 
   const groupedOptions = useMemo(() => {
@@ -113,13 +159,17 @@ export default function OperationDetailsStep({
   const handleOperationChange = (catalogIds: string[]) => {
     const selected = catalogItems.filter((item) => catalogIds.includes(item.id));
     const first = selected[0];
-    setFormData((prev) => ({
-      ...prev,
+    const patch: Partial<WizardFormData> = {
       operationIds: catalogIds,
       operationId: first?.id ?? '',
       name: selected.map((item) => item.name).join(' + '),
-      specialtyId: first?.specialty?.id ?? prev.specialtyId,
-    }));
+      specialtyId: first?.specialty?.id ?? formData.specialtyId,
+    };
+    if (providedSetFormData) {
+      providedSetFormData((prev) => ({ ...prev, ...patch }));
+    } else {
+      onChange?.(patch);
+    }
     clearError('operationId');
     clearError('operationIds');
     clearError('name');
@@ -130,17 +180,19 @@ export default function OperationDetailsStep({
     onSuccess: async (response) => {
       const created = response.data.data;
       await queryClient.invalidateQueries({ queryKey: ['operation-catalog'] });
-      setFormData((prev) => {
-        const nextIds = prev.operationIds.includes(created.id) ? prev.operationIds : [...prev.operationIds, created.id];
-        const selected = [...catalogItems, created].filter((item) => nextIds.includes(item.id));
-        return {
-          ...prev,
-          operationIds: nextIds,
-          operationId: nextIds[0] ?? created.id,
-          name: selected.map((item) => item.name).join(' + ') || created.name,
-          specialtyId: created.specialty?.id ?? prev.specialtyId,
-        };
-      });
+      const nextIds = formData.operationIds.includes(created.id) ? formData.operationIds : [...formData.operationIds, created.id];
+      const selected = [...catalogItems, created].filter((item) => nextIds.includes(item.id));
+      const patch: Partial<WizardFormData> = {
+        operationIds: nextIds,
+        operationId: nextIds[0] ?? created.id,
+        name: selected.map((item) => item.name).join(' + ') || created.name,
+        specialtyId: created.specialty?.id ?? formData.specialtyId,
+      };
+      if (providedSetFormData) {
+        providedSetFormData((prev) => ({ ...prev, ...patch }));
+      } else {
+        onChange?.(patch);
+      }
       clearError('operationId');
       clearError('name');
       setCustomOpen(false);
