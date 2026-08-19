@@ -43,12 +43,27 @@ async function main() {
 
   const patients = [];
   for (const data of DEMO_PATIENTS) {
-    const patient = await prisma.patient.upsert({
-      where: { mobile_createdBy: { mobile: data.mobile, createdBy: demoUser.id } },
-      update: { fullName: data.fullName, age: data.age },
-      create: { ...data, createdBy: demoUser.id },
+    // Patient currently has no mobile+createdBy compound unique constraint.
+    // Use a scoped lookup instead of relying on a generated compound key name.
+    const existing = await prisma.patient.findFirst({
+      where: {
+        mobile: data.mobile,
+        createdBy: demoUser.id,
+      },
       select: { id: true },
     });
+
+    const patient = existing
+      ? await prisma.patient.update({
+          where: { id: existing.id },
+          data: { fullName: data.fullName, age: data.age },
+          select: { id: true },
+        })
+      : await prisma.patient.create({
+          data: { ...data, createdBy: demoUser.id },
+          select: { id: true },
+        });
+
     patients.push(patient);
   }
 
