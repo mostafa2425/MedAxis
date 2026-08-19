@@ -1,5 +1,5 @@
 import webpush from 'web-push';
-import { prisma } from '../prisma';
+import { prisma } from '../utils/prisma';
 
 interface VapidConfig { subject: string; public_key: string; private_key: string; }
 
