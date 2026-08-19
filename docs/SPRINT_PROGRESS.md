@@ -143,7 +143,7 @@
 3. Clinical file timeline integration.
 4. Case completeness rules based on operation type.
 
----
+--
 
 ## API Routing & Environment Consistency
 
