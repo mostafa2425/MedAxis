@@ -216,7 +216,7 @@ export class OperationRepository {
     const start = new Date();
     start.setDate(1);
     start.setHours(0, 0, 0, 0);
-    return prisma.operation.count({ where: { createdBy, operationDate: { gte: start } });
+    return prisma.operation.count({ where: { createdBy, operationDate: { gte: start } } });
   }
 
   async countByStatus(createdBy: string) {
