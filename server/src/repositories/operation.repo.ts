@@ -44,18 +44,15 @@ export class OperationRepository {
   async deleteFile(fileId: string, uploadedBy: string) { const file = await prisma.operationFile.findFirst({ where: { id: fileId, operation: { createdBy: uploadedBy } } }); if (!file) return null; return prisma.operationFile.delete({ where: { id: fileId } }); }
   async addTimeline(operationId: string, data: { action: string; description?: string; userId: string; status?: string }) {
     // The development database still contains a legacy NOT NULL `status` column
-    // on operation_timeline. Keep the audit write compatible with that schema
-    // while the Prisma model uses the newer `action` field.
+    // on operation_timeline that is not represented by the current Prisma model.
+    // Use a parameterized raw insert so Prisma Client does not reject the legacy column.
     const status = data.status ?? data.action;
-    return prisma.operationTimeline.create({
-      data: {
-        operationId,
-        action: data.action as any,
-        description: data.description,
-        userId: data.userId,
-        status,
-      } as any,
-    });
+    const rows = await prisma.$queryRaw<Array<Record<string, unknown>>>(Prisma.sql`
+      INSERT INTO "operation_timeline" ("id", "operationId", "action", "status", "description", "userId", "createdAt", "occurredAt")
+      VALUES (gen_random_uuid(), ${operationId}, ${data.action}::"TimelineAction", ${status}, ${data.description ?? null}, ${data.userId}, now(), now())
+      RETURNING *
+    `);
+    return rows[0];
   }
   async getTimeline(operationId: string) { return prisma.operationTimeline.findMany({ where: { operationId }, include: { user: { select: { id: true, name: true } } }, orderBy: { createdAt: 'desc' } }); }
   async getRecent(createdBy: string, limit = 5) { return prisma.operation.findMany({ where: { createdBy }, take: limit, include: { patient: true, hospital: true, specialty: true, cost: true }, orderBy: { createdAt: 'desc' } }); }
