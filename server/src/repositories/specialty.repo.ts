@@ -9,7 +9,7 @@ export class SpecialtyRepository {
     skip?: number;
     take?: number;
   }) {
-    const where: Prisma.SpecialtyWhereInput = { isActive: true };
+    const where: Prisma.SpecialtyWhereInput = {};
 
     if (params?.parentIds && params.parentIds.length > 0) {
       where.parentId = { in: params.parentIds };
@@ -48,7 +48,7 @@ export class SpecialtyRepository {
   async findByIds(ids: string[]) {
     if (ids.length === 0) return [];
     return prisma.specialty.findMany({
-      where: { id: { in: ids }, isActive: true },
+      where: { id: { in: ids } },
     });
   }
 
@@ -65,12 +65,11 @@ export class SpecialtyRepository {
   }
 
   async delete(id: string) {
-    return prisma.specialty.update({ where: { id }, data: { isActive: false } });
+    return prisma.specialty.delete({ where: { id } });
   }
 
   async findWithOperationsCount() {
     return prisma.specialty.findMany({
-      where: { isActive: true },
       include: {
         _count: {
           select: {
