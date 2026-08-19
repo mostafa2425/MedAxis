@@ -1,4 +1,4 @@
-import { FileType } from '../prisma';
+import { FileType } from '../generated/prisma/enums';
 import { BadRequestError } from './errors';
 
 const ALIASES: Record<string, FileType> = {
