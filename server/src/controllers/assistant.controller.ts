@@ -27,7 +27,9 @@ export class AssistantController {
     try {
       const userId = (req as any).user?.userId as string | undefined;
       if (!userId) throw new Error('Authenticated user is required');
-      await notificationService.markRead(userId, req.params.id);
+      const notificationId = typeof req.params.id === 'string' ? req.params.id : req.params.id?.[0];
+      if (!notificationId) throw new Error('Notification id is required');
+      await notificationService.markRead(userId, notificationId);
       return sendSuccess(res, null, 'Notification marked as read');
     } catch (err) { next(err); }
   }
