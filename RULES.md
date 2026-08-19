@@ -42,6 +42,29 @@ Do not replace the architecture without a concrete technical reason.
 - Always regenerate Prisma Client after schema changes.
 - Keep database access on the server.
 
+### 4.1 CRITICAL — Data Preservation & Schema Sync
+
+This rule is mandatory and has priority over convenience/debugging speed.
+
+**Never run `prisma db pull`, `prisma db push`, schema replacement, database reset, truncate, drop, or migration work against an existing environment until the existing application data and database target have been verified.**
+
+Before any schema synchronization:
+
+1. Identify the exact database/environment being targeted.
+2. Inventory existing application data and tables.
+3. Determine which records must be preserved, including users, doctors, patients, hospitals, specialties, operations, operation teams, costs, timelines, files, follow-ups, and notification/PWA data.
+4. Back up or otherwise preserve required existing data before destructive or potentially destructive changes.
+5. Prefer additive/versioned migrations over `db push` for established databases.
+6. Never use `--accept-data-loss` as a shortcut when existing data may matter.
+7. Verify the resulting schema and representative records after the change.
+8. Verify demo/test login and representative doctor operations before declaring the environment ready.
+
+**Schema introspection is not data migration.** `prisma db pull` can update the Prisma schema to describe the database, but it does not migrate application records between databases.
+
+**Never recreate or reseed reference/demo data blindly if existing records must be preserved.** Seeds must be additive/idempotent and must not silently replace production or established development data.
+
+**Development and production must be treated separately.** A destructive operation that is acceptable on an empty disposable development database is not automatically acceptable on an established development or production database.
+
 ## 5. File Storage
 
 Vercel's filesystem is not persistent application storage.
