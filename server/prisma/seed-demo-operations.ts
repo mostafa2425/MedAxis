@@ -17,7 +17,6 @@ const DEMO_PATIENTS = Array.from({ length: 20 }, (_, index) => ({
 
 const DEMO_HOSPITALS = Array.from({ length: 20 }, (_, index) => ({
   name: `MedAxis Demo Hospital ${String(index + 1).padStart(2, '0')}`,
-  nameAr: `مستشفى ميد أكسيس التجريبية ${index + 1}`,
   city: index % 2 === 0 ? 'Cairo' : 'Giza',
 }));
 
@@ -43,13 +42,8 @@ async function main() {
 
   const patients = [];
   for (const data of DEMO_PATIENTS) {
-    // Patient currently has no mobile+createdBy compound unique constraint.
-    // Use a scoped lookup instead of relying on a generated compound key name.
     const existing = await prisma.patient.findFirst({
-      where: {
-        mobile: data.mobile,
-        createdBy: demoUser.id,
-      },
+      where: { mobile: data.mobile, createdBy: demoUser.id },
       select: { id: true },
     });
 
@@ -69,10 +63,24 @@ async function main() {
 
   const hospitals = [];
   for (const data of DEMO_HOSPITALS) {
-    const existing = await prisma.hospital.findFirst({ where: { name: data.name, createdBy: demoUser.id }, select: { id: true } });
+    const existing = await prisma.hospital.findFirst({
+      where: { name: data.name, createdBy: demoUser.id },
+      select: { id: true },
+    });
+
+    // Keep the demo seed compatible with the currently generated Prisma Hospital client.
+    // Only update fields that are guaranteed to exist in the deployed schema/client.
     const hospital = existing
-      ? await prisma.hospital.update({ where: { id: existing.id }, data: { nameAr: data.nameAr, city: data.city }, select: { id: true } })
-      : await prisma.hospital.create({ data: { ...data, createdBy: demoUser.id }, select: { id: true } });
+      ? await prisma.hospital.update({
+          where: { id: existing.id },
+          data: { name: data.name, city: data.city, isActive: true },
+          select: { id: true },
+        })
+      : await prisma.hospital.create({
+          data: { name: data.name, city: data.city, createdBy: demoUser.id, isActive: true },
+          select: { id: true },
+        });
+
     hospitals.push(hospital);
   }
 
@@ -88,8 +96,10 @@ async function main() {
     operationDate.setDate(operationDate.getDate() + (index - 8));
     operationDate.setHours(9 + (index % 8), (index % 2) * 30, 0, 0);
 
+    const operationName = `Demo Operation ${String(index + 1).padStart(2, '0')}`;
+    const operationTime = `${String(operationDate.getHours()).padStart(2, '0')}:${String(operationDate.getMinutes()).padStart(2, '0')}`;
     const existing = await prisma.operation.findFirst({
-      where: { name: `Demo Operation ${String(index + 1).padStart(2, '0')}`, createdBy: demoUser.id },
+      where: { name: operationName, createdBy: demoUser.id },
       select: { id: true },
     });
 
@@ -102,7 +112,7 @@ async function main() {
             specialtyId: orthopedics.id,
             catalogId: catalog.id,
             operationDate,
-            operationTime: `${String(operationDate.getHours()).padStart(2, '0')}:${String(operationDate.getMinutes()).padStart(2, '0')}`,
+            operationTime,
             operationRoom: `OR-${(index % 6) + 1}`,
             duration: 60 + (index % 4) * 30,
             status,
@@ -112,11 +122,11 @@ async function main() {
         })
       : await prisma.operation.create({
           data: {
-            name: `Demo Operation ${String(index + 1).padStart(2, '0')}`,
+            name: operationName,
             diagnosis: `Demo diagnosis ${index + 1}`,
             hospitalId: hospital.id,
             operationDate,
-            operationTime: `${String(operationDate.getHours()).padStart(2, '0')}:${String(operationDate.getMinutes()).padStart(2, '0')}`,
+            operationTime,
             operationRoom: `OR-${(index % 6) + 1}`,
             duration: 60 + (index % 4) * 30,
             status,
@@ -125,7 +135,15 @@ async function main() {
             createdBy: demoUser.id,
             specialtyId: orthopedics.id,
             catalogId: catalog.id,
-            procedures: { create: { catalogId: catalog.id, name: catalog.name, nameAr: catalog.nameAr, specialtyId: catalog.specialtyId, sortOrder: 0 } },
+            procedures: {
+              create: {
+                catalogId: catalog.id,
+                name: catalog.name,
+                nameAr: catalog.nameAr,
+                specialtyId: catalog.specialtyId,
+                sortOrder: 0,
+              },
+            },
             medicalTeam: { create: { primarySurgeonId: demoDoctor.id } },
             teamMembers: { create: { doctorId: demoDoctor.id, sortOrder: 0 } },
             cost: {
@@ -154,10 +172,17 @@ async function main() {
           sortOrder: 0,
         },
       });
+
       await prisma.operationMedicalTeam.deleteMany({ where: { operationId: operation.id } });
-      await prisma.operationMedicalTeam.create({ data: { operationId: operation.id, primarySurgeonId: demoDoctor.id } });
+      await prisma.operationMedicalTeam.create({
+        data: { operationId: operation.id, primarySurgeonId: demoDoctor.id },
+      });
+
       await prisma.operationTeamMember.deleteMany({ where: { operationId: operation.id } });
-      await prisma.operationTeamMember.create({ data: { operationId: operation.id, doctorId: demoDoctor.id, sortOrder: 0 } });
+      await prisma.operationTeamMember.create({
+        data: { operationId: operation.id, doctorId: demoDoctor.id, sortOrder: 0 },
+      });
+
       await prisma.operationCost.upsert({
         where: { operationId: operation.id },
         update: {
@@ -180,8 +205,6 @@ async function main() {
       created += 1;
     }
 
-    // operation_timeline is a legacy table shape not exposed by the current generated Prisma client.
-    // Use raw SQL for both lookup and insert so the seed is compatible with that schema.
     const timelineRows = await prisma.$queryRaw<Array<{ id: string }>>(Prisma.sql`
       SELECT "id"
       FROM "operation_timeline"
@@ -189,10 +212,11 @@ async function main() {
         AND "action"::text = 'OPERATION_CREATED'
       LIMIT 1
     `);
+
     if (timelineRows.length === 0) {
       await prisma.$queryRaw<Array<Record<string, unknown>>>(Prisma.sql`
-        INSERT INTO "operation_timeline" ("id", "operationId", "action", "status", "description", "userId", "createdAt", "occurredAt")
-        VALUES (gen_random_uuid(), ${operation.id}, 'OPERATION_CREATED'::"TimelineAction", ${status}, ${`Demo operation created with status ${status}`}, ${demoUser.id}, now(), now())
+        INSERT INTO "operation_timeline" ("id", "operationId", "action", "description", "userId", "createdAt")
+        VALUES (gen_random_uuid(), ${operation.id}, 'OPERATION_CREATED'::"TimelineAction", ${`Demo operation created with status ${status}`}, ${demoUser.id}, now())
         RETURNING *
       `);
     }
@@ -204,6 +228,7 @@ async function main() {
         where: { operationId: operation.id, title: 'Post-op review' },
         select: { id: true },
       });
+
       if (!existingFollowUp) {
         await prisma.operationFollowUp.create({
           data: {
