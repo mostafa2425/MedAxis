@@ -45,6 +45,42 @@ export class NotificationService {
     );
   }
 
+  async createTest(userId: string) {
+    const scheduledFor = new Date();
+    const title = 'MedAxis test notification';
+    const message = 'Notifications are working. This is a test notification from MedAxis.';
+
+    const inserted = await prisma.$queryRawUnsafe<Array<{ id: string }>>(
+      `insert into public.smart_notifications
+        (user_id, kind, title, message, priority, scheduled_for)
+       values ($1::uuid, 'DAILY_BRIEF', $2, $3, 'normal', $4)
+       returning id`,
+      userId,
+      title,
+      message,
+      scheduledFor,
+    );
+
+    const notificationId = inserted[0]?.id;
+    if (!notificationId) throw new Error('Failed to create test notification');
+
+    const push = await pushService.sendToUser(userId, {
+      title,
+      body: message,
+      url: '/assistant',
+      tag: 'MEDAXIS_TEST_NOTIFICATION',
+      kind: 'TEST_NOTIFICATION',
+      notificationId,
+    });
+
+    return {
+      id: notificationId,
+      title,
+      message,
+      push,
+    };
+  }
+
   private async createBrief(userId: string, kind: NotificationKind, scheduledFor: Date, start: Date, end: Date) {
     const type = kind === 'DAILY_BRIEF' ? 'daily' : 'weekly';
     const brief = await assistantService.getBrief(userId, type, start.toISOString(), end.toISOString());
