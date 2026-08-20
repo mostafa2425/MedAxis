@@ -27,10 +27,6 @@ function isIos() {
     (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
 }
 
-function isSafari() {
-  return /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
-}
-
 function wasRecentlyDismissed() {
   const value = Number(localStorage.getItem(DISMISS_KEY) || 0);
   return value > Date.now();
@@ -46,7 +42,6 @@ export default function PwaInstallPrompt() {
   useEffect(() => {
     if (!isMobile() || isStandalone() || wasRecentlyDismissed()) return;
 
-    const showIosPrompt = isIos() && isSafari();
     const handleBeforeInstall = (event: Event) => {
       event.preventDefault();
       setInstallEvent(event as BeforeInstallPromptEvent);
@@ -55,7 +50,9 @@ export default function PwaInstallPrompt() {
 
     window.addEventListener('beforeinstallprompt', handleBeforeInstall);
 
-    if (showIosPrompt) {
+    // iOS does not expose beforeinstallprompt. This guidance must work in
+    // Safari and in Chrome/Edge/Firefox on iOS because they all use WebKit.
+    if (isIos()) {
       const timer = window.setTimeout(() => setVisible(true), 1200);
       return () => {
         window.clearTimeout(timer);
