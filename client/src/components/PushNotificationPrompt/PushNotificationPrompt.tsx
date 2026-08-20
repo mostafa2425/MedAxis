@@ -8,6 +8,16 @@ import './PushNotificationPrompt.scss';
 const DISMISS_KEY = 'medaxis:push-prompt-dismissed-until';
 const DISMISS_DAYS = 14;
 
+function isStandalone() {
+  return window.matchMedia('(display-mode: standalone)').matches ||
+    Boolean((window.navigator as Navigator & { standalone?: boolean }).standalone);
+}
+
+function isIos() {
+  return /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+    (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+}
+
 function wasRecentlyDismissed() {
   const value = Number(localStorage.getItem(DISMISS_KEY) || 0);
   return value > Date.now();
@@ -21,6 +31,8 @@ export default function PushNotificationPrompt() {
   const isArabic = i18n.language === 'ar';
 
   useEffect(() => {
+    // iOS Web Push is available to installed Home Screen web apps.
+    if (isIos() && !isStandalone()) return;
     if (!pushService.isSupported() || Notification.permission === 'denied' || wasRecentlyDismissed()) return;
 
     const sync = async () => {
