@@ -37,7 +37,9 @@ export default function PwaInstallPrompt() {
   const [installEvent, setInstallEvent] = useState<BeforeInstallPromptEvent | null>(null);
   const [visible, setVisible] = useState(false);
   const [installing, setInstalling] = useState(false);
-  const isArabic = i18n.language === 'ar';
+  const [sharing, setSharing] = useState(false);
+  const isArabic = i18n.language.startsWith('ar');
+  const ios = isIos();
 
   useEffect(() => {
     if (!isMobile() || isStandalone() || wasRecentlyDismissed()) return;
@@ -50,9 +52,7 @@ export default function PwaInstallPrompt() {
 
     window.addEventListener('beforeinstallprompt', handleBeforeInstall);
 
-    // iOS does not expose beforeinstallprompt. This guidance must work in
-    // Safari and in Chrome/Edge/Firefox on iOS because they all use WebKit.
-    if (isIos()) {
+    if (ios) {
       const timer = window.setTimeout(() => setVisible(true), 1200);
       return () => {
         window.clearTimeout(timer);
@@ -61,7 +61,7 @@ export default function PwaInstallPrompt() {
     }
 
     return () => window.removeEventListener('beforeinstallprompt', handleBeforeInstall);
-  }, []);
+  }, [ios]);
 
   const dismiss = () => {
     localStorage.setItem(DISMISS_KEY, String(Date.now() + DISMISS_DAYS * 24 * 60 * 60 * 1000));
@@ -81,20 +81,36 @@ export default function PwaInstallPrompt() {
     }
   };
 
+  const share = async () => {
+    if (typeof navigator.share !== 'function') return;
+    setSharing(true);
+    try {
+      await navigator.share({
+        title: 'MedAxis',
+        text: isArabic ? 'ثبّت MedAxis على موبايلك' : 'Install MedAxis on your phone',
+        url: window.location.href,
+      });
+    } catch {
+      // User cancelled the native share sheet; no error is needed.
+    } finally {
+      setSharing(false);
+    }
+  };
+
   if (!visible) return null;
 
   const iosInstructions = isArabic
-    ? 'اضغط مشاركة في المتصفح ثم اختر «إضافة إلى الشاشة الرئيسية».'
-    : 'Tap Share in your browser, then choose “Add to Home Screen”.';
+    ? 'اضغط مشاركة، ثم اختر «إضافة إلى الشاشة الرئيسية» لتثبيت MedAxis.'
+    : 'Tap Share, then choose “Add to Home Screen” to install MedAxis.';
 
   return (
     <aside className="pwa-install-prompt" role="dialog" aria-label={isArabic ? 'تثبيت MedAxis' : 'Install MedAxis'}>
       <div className="pwa-install-prompt__icon"><DownloadOutlined /></div>
       <div className="pwa-install-prompt__content">
-        <strong>{isArabic ? 'نزّل MedAxis على موبايلك' : 'Install MedAxis on your phone'}</strong>
+        <strong>{isArabic ? 'ثبّت MedAxis على موبايلك' : 'Install MedAxis on your phone'}</strong>
         <span>
           {installEvent
-            ? (isArabic ? 'افتح MedAxis كتطبيق أسرع وأسهل، واستقبل الإشعارات المهمة.' : 'Open MedAxis like an app and receive important notifications.')
+            ? (isArabic ? 'افتح MedAxis كتطبيق أسرع وأسهل واستقبل الإشعارات المهمة.' : 'Use MedAxis like an app and receive important notifications.')
             : iosInstructions}
         </span>
       </div>
@@ -102,6 +118,10 @@ export default function PwaInstallPrompt() {
         {installEvent ? (
           <Button type="primary" size="small" loading={installing} icon={<DownloadOutlined />} onClick={() => void install()}>
             {isArabic ? 'تثبيت' : 'Install'}
+          </Button>
+        ) : ios && typeof navigator.share === 'function' ? (
+          <Button type="link" size="small" loading={sharing} icon={<ShareAltOutlined />} onClick={() => void share()}>
+            {isArabic ? 'مشاركة' : 'Share'}
           </Button>
         ) : (
           <span className="pwa-install-prompt__share"><ShareAltOutlined /> {isArabic ? 'مشاركة' : 'Share'}</span>
