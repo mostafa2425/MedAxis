@@ -67,7 +67,7 @@ export default function ProfilePage() {
       return pushService.sendTestNotification();
     },
     onSuccess: (response) => messageApi.success(response.data?.message || (i18n.language.startsWith('ar') ? 'تم إرسال الإشعار' : 'Notification sent')),
-    onError: (error) => {
+    onError: () => {
       setPushReady(false);
       const denied = typeof Notification !== 'undefined' && Notification.permission === 'denied';
       messageApi.error(denied
