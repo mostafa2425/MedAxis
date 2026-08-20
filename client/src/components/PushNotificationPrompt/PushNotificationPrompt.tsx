@@ -33,7 +33,7 @@ export default function PushNotificationPrompt() {
   useEffect(() => {
     // iOS Web Push is available to installed Home Screen web apps.
     if (isIos() && !isStandalone()) return;
-    if (!pushService.isSupported() || Notification.permission === 'denied' || wasRecentlyDismissed()) return;
+    if (!pushService.isSupported() || Notification.permission === 'denied') return;
 
     const sync = async () => {
       try {
@@ -45,9 +45,12 @@ export default function PushNotificationPrompt() {
           return;
         }
 
-        // Permission may already be granted while the browser has no active
-        // subscription (for example after clearing site data). In that case
-        // the user still needs an explicit enable action to create a new one.
+        // A granted browser permission can survive after the PushSubscription
+        // is removed (for example after clearing site data). This stale state
+        // must show the enable action again.
+        const permissionGrantedWithoutSubscription = Notification.permission === 'granted';
+        if (!permissionGrantedWithoutSubscription && wasRecentlyDismissed()) return;
+
         window.setTimeout(() => setVisible(true), 900);
       } catch {
         // Keep the prompt silent when push is not configured yet.
@@ -67,6 +70,7 @@ export default function PushNotificationPrompt() {
     setError(false);
     try {
       await pushService.subscribe();
+      localStorage.removeItem(DISMISS_KEY);
       setVisible(false);
     } catch {
       setError(true);
