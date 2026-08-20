@@ -1,3 +1,4 @@
+// Prisma 7 compatibility: enum values must be declared on separate lines.
 generator client {
   provider            = "prisma-client"
   output              = "../src/generated/prisma"
@@ -154,7 +155,7 @@ model DoctorSubspecialty {
   id          String    @id @default(uuid())
   doctorId    String
   specialtyId String
-  createdAt   DateTime  @default(now()) @db.Timestamptz(6)
+  createdAt   DateTime  @default(now()) @default(now())
   doctor      Doctor    @relation(fields: [doctorId], references: [id], onDelete: Cascade)
   specialty   Specialty @relation(fields: [specialtyId], references: [id], onDelete: Cascade)
   @@unique([doctorId, specialtyId])
@@ -170,8 +171,8 @@ model OperationCatalog {
   isActive       Boolean      @default(true)
   isCustom       Boolean      @default(false)
   createdBy      String?
-  createdAt      DateTime     @default(now()) @db.Timestamptz(6)
-  updatedAt      DateTime     @updatedAt @db.Timestamptz(6)
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
   specialty      Specialty?   @relation("CatalogSpecialty", fields: [specialtyId], references: [id], onDelete: SetNull)
   subspecialty   Specialty?   @relation("CatalogSubspecialty", fields: [subspecialtyId], references: [id], onDelete: SetNull)
   creator        User?        @relation(fields: [createdBy], references: [id], onDelete: SetNull)
@@ -222,8 +223,8 @@ model Nurse {
   email       String?
   isActive    Boolean              @default(true)
   createdBy   String
-  createdAt   DateTime             @default(now()) @db.Timestamptz(6)
-  updatedAt   DateTime             @updatedAt @db.Timestamptz(6)
+  createdAt   DateTime             @default(now()) @default(now())
+  updatedAt   DateTime             @updatedAt
   creator     User                 @relation(fields: [createdBy], references: [id])
   teamMembers OperationTeamMember[]
   @@index([createdBy])
