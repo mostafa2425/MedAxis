@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Alert, Button, Card, Empty, Skeleton, Tag } from 'antd';
-import { CalendarOutlined, CheckCircleOutlined, ClockCircleOutlined, DollarOutlined, MedicineBoxOutlined, ReloadOutlined, WarningOutlined, BellOutlined } from '@ant-design/icons';
+import { CalendarOutlined, CheckCircleOutlined, ClockCircleOutlined, DollarOutlined, MedicineBoxOutlined, ReloadOutlined, WarningOutlined, BellOutlined, SendOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { assistantService, type AssistantBrief } from '@/services/assistant.service';
@@ -18,7 +18,9 @@ export default function AssistantPage() {
   const [error, setError] = useState(false);
   const [pushEnabled, setPushEnabled] = useState(false);
   const [pushLoading, setPushLoading] = useState(false);
+  const [testLoading, setTestLoading] = useState(false);
   const [pushError, setPushError] = useState('');
+  const [testMessage, setTestMessage] = useState('');
   const locale = i18n.language === 'ar' ? 'ar-EG' : 'en-US';
 
   const load = async () => {
@@ -47,6 +49,7 @@ export default function AssistantPage() {
   const enablePush = async () => {
     setPushLoading(true);
     setPushError('');
+    setTestMessage('');
     try {
       await notificationService.enablePush();
       setPushEnabled(true);
@@ -60,6 +63,7 @@ export default function AssistantPage() {
   const disablePush = async () => {
     setPushLoading(true);
     setPushError('');
+    setTestMessage('');
     try {
       await notificationService.disablePush();
       setPushEnabled(false);
@@ -67,6 +71,26 @@ export default function AssistantPage() {
       setPushError(err instanceof Error ? err.message : 'Unable to disable notifications');
     } finally {
       setPushLoading(false);
+    }
+  };
+
+  const sendTestNotification = async () => {
+    setTestLoading(true);
+    setPushError('');
+    setTestMessage('');
+    try {
+      const result = await notificationService.sendTest();
+      if (result.push?.skipped) {
+        setPushError(result.push.reason || 'Push notifications are not configured on the server');
+      } else if (!result.push?.sent) {
+        setPushError('No active push subscription was found for this device');
+      } else {
+        setTestMessage('Test notification sent to this device.');
+      }
+    } catch (err) {
+      setPushError(err instanceof Error ? err.message : 'Unable to send test notification');
+    } finally {
+      setTestLoading(false);
     }
   };
 
@@ -86,9 +110,11 @@ export default function AssistantPage() {
           <Button type={pushEnabled ? 'default' : 'primary'} icon={<BellOutlined />} loading={pushLoading} onClick={() => void (pushEnabled ? disablePush() : enablePush())}>
             {pushEnabled ? 'Notifications enabled' : 'Enable notifications'}
           </Button>
+          {pushEnabled && <Button icon={<SendOutlined />} loading={testLoading} onClick={() => void sendTestNotification()}>Send test</Button>}
         </div>
       </header>
       {pushError && <Alert style={{ marginBottom: 16 }} type="warning" showIcon message="Push notifications" description={pushError} closable onClose={() => setPushError('')} />}
+      {testMessage && <Alert style={{ marginBottom: 16 }} type="success" showIcon message={testMessage} closable onClose={() => setTestMessage('')} />}
 
       <section className="assistantSummaryGrid">
         <Card><MedicineBoxOutlined /><strong>{daily.summary.operations}</strong><span>Tomorrow's operations</span></Card>
