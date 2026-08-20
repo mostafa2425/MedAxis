@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Avatar, Card, Form, Input, Button, Tag, Space, Spin, message, Empty, Upload } from 'antd';
 import { UserOutlined, PhoneOutlined, MailOutlined, IdcardOutlined, CameraOutlined, DownloadOutlined, BellOutlined } from '@ant-design/icons';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
@@ -8,7 +8,7 @@ import { pushService } from '@/services/push.service';
 import { specialtyService } from '@/services/specialty.service';
 import { useAuth } from '@/hooks/useAuth';
 import { parseApiValidationErrors, applyValidationErrorsToAntdForm } from '@/utils/apiValidationErrors';
-import { getSpecialtyLabel, getInitials } from '@/utils/helpers';
+import { getSpecialtyLabel } from '@/utils/helpers';
 import SpecialtyFields from '@/components/SpecialtyFields/SpecialtyFields';
 import type { Specialty, UpdateProfilePayload } from '@/types';
 import './Profile.scss';
@@ -21,6 +21,7 @@ export default function ProfilePage() {
   const { setUser } = useAuth();
   const [form] = Form.useForm<ProfileFormValues>();
   const [messageApi, contextHolder] = message.useMessage();
+  const [pushReady, setPushReady] = useState(false);
   const { data: meData, isLoading: meLoading } = useQuery({ queryKey: ['auth-me'], queryFn: () => authService.getMe() });
   const { data: specialtiesData, isLoading: specialtiesLoading } = useQuery({ queryKey: ['specialties-list'], queryFn: () => specialtyService.getAll({ limit: 100 }), staleTime: 5 * 60 * 1000 });
   const user = meData?.data?.data;
@@ -32,13 +33,48 @@ export default function ProfilePage() {
     form.setFieldsValue({ name: user.name, phone: user.phone || undefined, specialtyIds: (user.specialties ?? []).map((specialty) => specialty.id), subspecialtyIds: (user.subspecialties ?? []).map((specialty) => specialty.id) });
   }, [user, form, setUser]);
 
+  useEffect(() => {
+    let cancelled = false;
+    const checkPushSubscription = async () => {
+      if (!pushService.isSupported()) return;
+      try {
+        const registration = await navigator.serviceWorker.ready;
+        const subscription = await registration.pushManager.getSubscription();
+        if (!cancelled) setPushReady(Boolean(subscription));
+      } catch {
+        if (!cancelled) setPushReady(false);
+      }
+    };
+    void checkPushSubscription();
+    return () => { cancelled = true; };
+  }, []);
+
   const updateMutation = useMutation({
     mutationFn: (payload: UpdateProfilePayload) => authService.updateMe(payload),
     onSuccess: (response) => { const updated = response.data.data; setUser(updated); queryClient.setQueryData(['auth-me'], response); queryClient.invalidateQueries({ queryKey: ['auth-me'] }); queryClient.invalidateQueries({ queryKey: ['specialties-mine'] }); queryClient.invalidateQueries({ queryKey: ['operation-catalog'] }); queryClient.invalidateQueries({ queryKey: ['doctors'] }); queryClient.invalidateQueries({ queryKey: ['doctors-active'] }); messageApi.success(t('profile.profileUpdated')); },
     onError: (error) => { const issues = parseApiValidationErrors(error); const applied = applyValidationErrorsToAntdForm(form, issues, t, { labelKeys: { name: 'auth.fullName', phone: 'common.phone', specialtyIds: 'profile.professionalSpecialties', subspecialtyIds: 'profile.areasOfExpertise' } }); messageApi.error(applied ? t('validation.fixHighlightedFields') : t('common.operationFailed')); },
   });
   const avatarMutation = useMutation({ mutationFn: (file: File) => authService.uploadAvatar(file), onSuccess: (response) => { const updated = response.data.data; setUser(updated); queryClient.setQueryData(['auth-me'], response); messageApi.success(i18n.language.startsWith('ar') ? 'تم تحديث صورة البروفايل' : 'Profile photo updated'); }, onError: () => messageApi.error(i18n.language.startsWith('ar') ? 'تعذر رفع الصورة' : 'Unable to upload profile photo') });
-  const testPushMutation = useMutation({ mutationFn: () => pushService.sendTestNotification(), onSuccess: (response) => messageApi.success(response.data?.message || (i18n.language.startsWith('ar') ? 'تم إرسال الإشعار' : 'Notification sent')), onError: () => messageApi.error(i18n.language.startsWith('ar') ? 'لا يوجد اشتراك Push نشط. فعّل الإشعارات أولًا.' : 'No active Push subscription. Enable notifications first.') });
+  const testPushMutation = useMutation({
+    mutationFn: async () => {
+      if (!pushService.isSupported()) throw new Error('Push notifications are not supported');
+      const registration = await navigator.serviceWorker.ready;
+      let subscription = await registration.pushManager.getSubscription();
+      if (!subscription) {
+        subscription = await pushService.subscribe();
+        setPushReady(true);
+      }
+      return pushService.sendTestNotification();
+    },
+    onSuccess: (response) => messageApi.success(response.data?.message || (i18n.language.startsWith('ar') ? 'تم إرسال الإشعار' : 'Notification sent')),
+    onError: (error) => {
+      setPushReady(false);
+      const denied = typeof Notification !== 'undefined' && Notification.permission === 'denied';
+      messageApi.error(denied
+        ? (i18n.language.startsWith('ar') ? 'الإشعارات محظورة من إعدادات المتصفح. فعّلها ثم حاول مرة أخرى.' : 'Notifications are blocked by browser settings. Enable them and try again.')
+        : (i18n.language.startsWith('ar') ? 'تعذر تفعيل الإشعارات. حاول مرة أخرى.' : 'Could not enable notifications. Please try again.'));
+    },
+  });
   const onFinish = (values: ProfileFormValues) => updateMutation.mutate({ name: values.name.trim(), phone: values.phone?.trim() || null, specialtyIds: values.specialtyIds, subspecialtyIds: values.subspecialtyIds ?? [] });
   const printProfile = () => window.print();
   if (meLoading && !user) return <div className="profile-page page"><div className="loadingContainer"><Spin size="large" /></div></div>;
@@ -49,7 +85,7 @@ export default function ProfilePage() {
   return (
     <div className="profile-page page">
       {contextHolder}
-      <div className="pageHeader profilePageHeader"><div className="pageHeaderLeft"><div className="pageHeaderText"><h1 className="pageTitle">{t('profile.title')}</h1></div></div><Space><Button icon={<BellOutlined />} loading={testPushMutation.isPending} disabled={!pushService.isSupported() || (typeof Notification !== 'undefined' && Notification.permission !== 'granted')} onClick={() => testPushMutation.mutate()}>{isArabic ? 'اختبار الإشعار' : 'Test notification'}</Button><Button icon={<DownloadOutlined />} onClick={printProfile}>{isArabic ? 'حفظ البطاقة PDF' : 'Save Card as PDF'}</Button></Space></div>
+      <div className="pageHeader profilePageHeader"><div className="pageHeaderLeft"><div className="pageHeaderText"><h1 className="pageTitle">{t('profile.title')}</h1></div></div><Space><Button icon={<BellOutlined />} loading={testPushMutation.isPending} disabled={!pushService.isSupported()} onClick={() => testPushMutation.mutate()}>{pushReady ? (isArabic ? 'اختبار الإشعار' : 'Test notification') : (isArabic ? 'تفعيل الإشعارات' : 'Enable notifications')}</Button><Button icon={<DownloadOutlined />} onClick={printProfile}>{isArabic ? 'حفظ البطاقة PDF' : 'Save Card as PDF'}</Button></Space></div>
       <Card className="doctorProfileCard" id="doctor-profile-card">
         <div className="doctorProfileCard__top"><Upload accept="image/jpeg,image/png,image/webp" showUploadList={false} beforeUpload={(file) => { avatarMutation.mutate(file); return false; }} disabled={avatarMutation.isPending}><button type="button" className="doctorProfileCard__avatarButton" aria-label={isArabic ? 'تغيير صورة الطبيب' : 'Change doctor photo'}><Avatar size={96} src={user.avatarUrl || undefined} icon={!user.avatarUrl ? <UserOutlined /> : undefined} /><span><CameraOutlined /> {avatarMutation.isPending ? (isArabic ? 'جاري الرفع…' : 'Uploading…') : (isArabic ? 'تغيير الصورة' : 'Change photo')}</span></button></Upload><div className="doctorProfileCard__identity"><span className="doctorProfileCard__eyebrow">{isArabic ? 'بطاقة الطبيب' : 'Doctor Profile Card'}</span><h2>{user.name}</h2><p>{currentSpecialties.map((specialty) => getSpecialtyLabel(specialty, i18n.language)).join(' · ') || (isArabic ? 'طبيب' : 'Doctor')}</p><div className="doctorProfileCard__tags">{currentSpecialties.map((specialty) => <Tag key={specialty.id}>{getSpecialtyLabel(specialty, i18n.language)}</Tag>)}{currentAreas.map((area) => <Tag key={area.id} color="blue">{getSpecialtyLabel(area, i18n.language)}</Tag>)}</div></div></div>
         <div className="doctorProfileCard__details"><div><MailOutlined /><span>{user.email}</span></div><div><PhoneOutlined /><span>{user.phone || '—'}</span></div><div><IdcardOutlined /><span>{user.doctorId || '—'}</span></div></div>
