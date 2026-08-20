@@ -4,6 +4,7 @@ import { useAppStore } from '@/stores/app.store';
 import Sidebar from '../Sidebar/Sidebar';
 import Header from '../Header/Header';
 import BottomNav from '../BottomNav/BottomNav';
+import PwaInstallPrompt from '../../PwaInstallPrompt/PwaInstallPrompt';
 import './AppLayout.scss';
 
 /** Routes where sticky form actions replace bottom-nav-adjacent chrome padding. */
@@ -74,6 +75,7 @@ export default function AppLayout() {
       </div>
 
       <BottomNav onMoreClick={handleMoreClick} />
+      <PwaInstallPrompt />
     </div>
   );
 }
