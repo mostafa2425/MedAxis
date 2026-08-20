@@ -9,55 +9,12 @@ datasource db {
   provider = "postgresql"
 }
 
-enum Gender {
-  MALE
-  FEMALE
-}
-
-enum OperationStatus {
-  SCHEDULED
-  IN_PROGRESS
-  COMPLETED
-  CANCELLED
-}
-
-enum PaymentMethod {
-  CASH
-  CARD
-  INSURANCE
-  BANK_TRANSFER
-  OTHER
-}
-
-enum PaymentStatus {
-  PAID
-  UNPAID
-  PARTIAL
-}
-
-enum FileType {
-  BEFORE_IMAGE
-  BEFORE_XRAY
-  BEFORE_MRI
-  BEFORE_CT
-  BEFORE_LAB
-  BEFORE_PDF
-  AFTER_IMAGE
-  AFTER_REPORT
-  AFTER_PDF
-  AFTER_OTHER
-}
-
-enum TimelineAction {
-  OPERATION_CREATED
-  OPERATION_UPDATED
-  OPERATION_DELETED
-  STATUS_CHANGED
-  FILES_UPLOADED
-  COST_UPDATED
-  NOTES_UPDATED
-  TEAM_UPDATED
-}
+enum Gender { MALE FEMALE }
+enum OperationStatus { SCHEDULED IN_PROGRESS COMPLETED CANCELLED }
+enum PaymentMethod { CASH CARD INSURANCE BANK_TRANSFER OTHER }
+enum PaymentStatus { PAID UNPAID PARTIAL }
+enum FileType { BEFORE_IMAGE BEFORE_XRAY BEFORE_MRI BEFORE_CT BEFORE_LAB BEFORE_PDF AFTER_IMAGE AFTER_REPORT AFTER_PDF AFTER_OTHER }
+enum TimelineAction { OPERATION_CREATED OPERATION_UPDATED OPERATION_DELETED STATUS_CHANGED FILES_UPLOADED COST_UPDATED NOTES_UPDATED TEAM_UPDATED }
 
 model User {
   id        String   @id @default(uuid())
@@ -65,346 +22,298 @@ model User {
   password  String
   name      String
   phone     String?
+  avatarUrl String?
   role      String   @default("doctor")
   isActive  Boolean  @default(true)
   createdAt DateTime @default(now()) @db.Timestamptz(6)
   updatedAt DateTime @updatedAt @db.Timestamptz(6)
-
-  operations         Operation[]
+  operations Operation[]
   operationTimelines OperationTimeline[]
-  uploadedFiles      OperationFile[]
-  doctor             Doctor?
-  catalogItems       OperationCatalog[]
-  createdDoctors     Doctor[]   @relation("CreatedDoctors")
-  createdHospitals   Hospital[] @relation("CreatedHospitals")
-  createdNurses      Nurse[]
-
+  uploadedFiles OperationFile[]
+  doctor Doctor?
+  catalogItems OperationCatalog[]
+  createdDoctors Doctor[] @relation("CreatedDoctors")
+  createdHospitals Hospital[] @relation("CreatedHospitals")
+  createdNurses Nurse[]
   @@map("users")
 }
 
 model Patient {
-  id        String   @id @default(uuid())
-  fullName  String
-  age       Int
-  gender    Gender   @default(MALE)
-  mobile    String?
-  notes     String?
+  id String @id @default(uuid())
+  fullName String
+  age Int
+  gender Gender @default(MALE)
+  mobile String?
+  notes String?
   createdBy String
   createdAt DateTime @default(now()) @db.Timestamptz(6)
   updatedAt DateTime @updatedAt @db.Timestamptz(6)
-
   operations Operation[]
-
   @@map("patients")
 }
 
 model Specialty {
-  id        String   @id @default(uuid())
-  name      String   @unique
-  nameAr    String?
-  icon      String?
-  parentId  String?
-  isActive  Boolean  @default(true)
+  id String @id @default(uuid())
+  name String @unique
+  nameAr String?
+  icon String?
+  parentId String?
+  isActive Boolean @default(true)
   createdAt DateTime @default(now()) @db.Timestamptz(6)
   updatedAt DateTime @updatedAt @db.Timestamptz(6)
-
-  parent     Specialty?  @relation("SpecialtyHierarchy", fields: [parentId], references: [id], onDelete: SetNull)
-  children   Specialty[] @relation("SpecialtyHierarchy")
-  doctors    DoctorSpecialty[]
+  parent Specialty? @relation("SpecialtyHierarchy", fields: [parentId], references: [id], onDelete: SetNull)
+  children Specialty[] @relation("SpecialtyHierarchy")
+  doctors DoctorSpecialty[]
   doctorSubspecialties DoctorSubspecialty[]
   operations Operation[]
   catalogItems OperationCatalog[] @relation("CatalogSpecialty")
   catalogSubItems OperationCatalog[] @relation("CatalogSubspecialty")
-  procedures   OperationProcedure[]
-
+  procedures OperationProcedure[]
   @@index([parentId])
   @@map("specialties")
 }
 
 model Doctor {
-  id        String   @id @default(uuid())
-  name      String
-  phone     String?
-  email     String?
-  isActive  Boolean  @default(true)
-  userId    String?  @unique
+  id String @id @default(uuid())
+  name String
+  phone String?
+  email String?
+  isActive Boolean @default(true)
+  userId String? @unique
   createdBy String?
   createdAt DateTime @default(now()) @db.Timestamptz(6)
   updatedAt DateTime @updatedAt @db.Timestamptz(6)
-
-  user                  User?                   @relation(fields: [userId], references: [id], onDelete: SetNull)
-  creator               User?                   @relation("CreatedDoctors", fields: [createdBy], references: [id], onDelete: SetNull)
-  specialties           DoctorSpecialty[]
-  subspecialties        DoctorSubspecialty[]
-  primarySurgeon        OperationMedicalTeam[]
-  assistant             OperationMedicalTeam[]  @relation("AssistantSurgeon")
-  anesthesiologist      OperationMedicalTeam[]  @relation("Anesthesiologist")
-  assistantAnesthesia   OperationMedicalTeam[]  @relation("AssistantAnesthesia")
-  teamMembers           OperationTeamMember[]
-
+  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+  creator User? @relation("CreatedDoctors", fields: [createdBy], references: [id], onDelete: SetNull)
+  specialties DoctorSpecialty[]
+  subspecialties DoctorSubspecialty[]
+  primarySurgeon OperationMedicalTeam[]
+  assistant OperationMedicalTeam[] @relation("AssistantSurgeon")
+  anesthesiologist OperationMedicalTeam[] @relation("Anesthesiologist")
+  assistantAnesthesia OperationMedicalTeam[] @relation("AssistantAnesthesia")
+  teamMembers OperationTeamMember[]
   @@index([createdBy])
   @@map("doctors")
 }
-
 model DoctorSpecialty {
-  id          String    @id @default(uuid())
-  doctorId    String
+  id String @id @default(uuid())
+  doctorId String
   specialtyId String
-  createdAt   DateTime  @default(now()) @db.Timestamptz(6)
-
-  doctor    Doctor    @relation(fields: [doctorId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+  doctor Doctor @relation(fields: [doctorId], references: [id], onDelete: Cascade)
   specialty Specialty @relation(fields: [specialtyId], references: [id], onDelete: Cascade)
-
   @@unique([doctorId, specialtyId])
   @@map("doctor_specialties")
 }
-
 model DoctorSubspecialty {
-  id          String   @id @default(uuid())
-  doctorId    String
+  id String @id @default(uuid())
+  doctorId String
   specialtyId String
-  createdAt   DateTime @default(now()) @db.Timestamptz(6)
-
-  doctor    Doctor    @relation(fields: [doctorId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+  doctor Doctor @relation(fields: [doctorId], references: [id], onDelete: Cascade)
   specialty Specialty @relation(fields: [specialtyId], references: [id], onDelete: Cascade)
-
   @@unique([doctorId, specialtyId])
   @@map("doctor_subspecialties")
 }
-
 model OperationCatalog {
-  id             String   @id @default(uuid())
-  name           String
-  nameAr         String?
-  specialtyId    String?
+  id String @id @default(uuid())
+  name String
+  nameAr String?
+  specialtyId String?
   subspecialtyId String?
-  isActive       Boolean  @default(true)
-  isCustom       Boolean  @default(false)
-  createdBy      String?
-  createdAt      DateTime @default(now()) @db.Timestamptz(6)
-  updatedAt      DateTime @updatedAt @db.Timestamptz(6)
-
-  specialty     Specialty?  @relation("CatalogSpecialty", fields: [specialtyId], references: [id], onDelete: SetNull)
-  subspecialty  Specialty?  @relation("CatalogSubspecialty", fields: [subspecialtyId], references: [id], onDelete: SetNull)
-  creator       User?       @relation(fields: [createdBy], references: [id], onDelete: SetNull)
-  operations    Operation[]
-  procedures    OperationProcedure[]
-
+  isActive Boolean @default(true)
+  isCustom Boolean @default(false)
+  createdBy String?
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @db.Timestamptz(6)
+  specialty Specialty? @relation("CatalogSpecialty", fields: [specialtyId], references: [id], onDelete: SetNull)
+  subspecialty Specialty? @relation("CatalogSubspecialty", fields: [subspecialtyId], references: [id], onDelete: SetNull)
+  creator User? @relation(fields: [createdBy], references: [id], onDelete: SetNull)
+  operations Operation[]
+  procedures OperationProcedure[]
   @@index([specialtyId])
   @@index([subspecialtyId])
   @@index([createdBy])
   @@index([name, specialtyId])
   @@map("operation_catalog")
 }
-
 model Governorate {
-  id        String      @id @default(uuid())
-  nameEn    String      @unique
-  nameAr    String      @unique
-  code      String      @unique
-  isActive  Boolean     @default(true)
+  id String @id @default(uuid())
+  nameEn String @unique
+  nameAr String @unique
+  code String @unique
+  isActive Boolean @default(true)
   hospitals Hospital[]
-
   @@map("governorates")
 }
-
 model Hospital {
-  id            String      @id @default(uuid())
-  name          String
-  nameAr        String?
-  address       String?
-  city          String?
+  id String @id @default(uuid())
+  name String
+  nameAr String?
+  address String?
+  city String?
   governorateId String?
-  phone         String?
-  notes         String?
-  isActive      Boolean     @default(true)
-  createdBy     String?
-  createdAt     DateTime    @default(now()) @db.Timestamptz(6)
-  updatedAt     DateTime    @updatedAt @db.Timestamptz(6)
-
+  phone String?
+  notes String?
+  isActive Boolean @default(true)
+  createdBy String?
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @db.Timestamptz(6)
   governorate Governorate? @relation(fields: [governorateId], references: [id], onDelete: SetNull)
-  operations  Operation[]
-  creator     User?        @relation("CreatedHospitals", fields: [createdBy], references: [id], onDelete: SetNull)
-
+  operations Operation[]
+  creator User? @relation("CreatedHospitals", fields: [createdBy], references: [id], onDelete: SetNull)
   @@index([createdBy])
   @@index([governorateId])
   @@map("hospitals")
 }
-
 model Nurse {
-  id        String   @id @default(uuid())
-  name      String
-  phone     String?
-  email     String?
-  isActive  Boolean  @default(true)
+  id String @id @default(uuid())
+  name String
+  phone String?
+  email String?
+  isActive Boolean @default(true)
   createdBy String
   createdAt DateTime @default(now()) @db.Timestamptz(6)
   updatedAt DateTime @updatedAt @db.Timestamptz(6)
-
-  creator     User                  @relation(fields: [createdBy], references: [id])
+  creator User @relation(fields: [createdBy], references: [id])
   teamMembers OperationTeamMember[]
-
   @@index([createdBy])
   @@map("nurses")
 }
-
 model Operation {
-  id               String          @id @default(uuid())
-  name             String
-  diagnosis        String?
-  hospitalId       String
-  operationDate    DateTime        @db.Timestamptz(6)
-  operationTime    String
-  operationRoom    String?
-  duration         Int?
-  status           OperationStatus @default(COMPLETED)
-  notes            String?
-  patientId        String
-  createdBy        String
-  specialtyId      String?
-  catalogId        String?
-  createdAt        DateTime        @default(now()) @db.Timestamptz(6)
-  updatedAt        DateTime        @updatedAt @db.Timestamptz(6)
-
-  patient   Patient               @relation(fields: [patientId], references: [id], onDelete: Cascade)
-  hospital  Hospital              @relation(fields: [hospitalId], references: [id])
-  creator   User                  @relation(fields: [createdBy], references: [id])
-  specialty Specialty?            @relation(fields: [specialtyId], references: [id])
-  catalog   OperationCatalog?     @relation(fields: [catalogId], references: [id], onDelete: SetNull)
+  id String @id @default(uuid())
+  name String
+  diagnosis String?
+  hospitalId String
+  operationDate DateTime @db.Timestamptz(6)
+  operationTime String
+  operationRoom String?
+  duration Int?
+  status OperationStatus @default(COMPLETED)
+  notes String?
+  patientId String
+  createdBy String
+  specialtyId String?
+  catalogId String?
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @db.Timestamptz(6)
+  patient Patient @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  hospital Hospital @relation(fields: [hospitalId], references: [id])
+  creator User @relation(fields: [createdBy], references: [id])
+  specialty Specialty? @relation(fields: [specialtyId], references: [id])
+  catalog OperationCatalog? @relation(fields: [catalogId], references: [id], onDelete: SetNull)
   medicalTeam OperationMedicalTeam[]
-  procedures  OperationProcedure[]
+  procedures OperationProcedure[]
   teamMembers OperationTeamMember[]
-  files       OperationFile[]
-  cost        OperationCost?
-  timeline    OperationTimeline[]
-  followUps   OperationFollowUp[]
-
+  files OperationFile[]
+  cost OperationCost?
+  timeline OperationTimeline[]
+  followUps OperationFollowUp[]
   @@map("operations")
 }
-
-model OperationMedicalTeam {
-  id                  String  @id @default(uuid())
-  operationId         String
-  primarySurgeonId    String?
-  assistantSurgeonId  String?
-  anesthesiologistId  String?
-  assistantAnesthesiaId String?
-  nurse               String?
-  notes               String?
-  createdAt           DateTime @default(now()) @db.Timestamptz(6)
-
-  operation         Operation  @relation(fields: [operationId], references: [id], onDelete: Cascade)
-  primarySurgeon    Doctor?    @relation(fields: [primarySurgeonId], references: [id])
-  assistantSurgeon  Doctor?    @relation("AssistantSurgeon", fields: [assistantSurgeonId], references: [id])
-  anesthesiologist  Doctor?    @relation("Anesthesiologist", fields: [anesthesiologistId], references: [id])
-  assistantAnesthesia Doctor?   @relation("AssistantAnesthesia", fields: [assistantAnesthesiaId], references: [id])
-
-  @@map("operation_medical_team")
-}
-
 model OperationProcedure {
-  id            String   @id @default(uuid())
-  operationId   String
-  catalogId     String?
-  name          String
-  nameAr        String?
-  specialtyId   String?
-  sortOrder     Int      @default(0)
-  createdAt     DateTime @default(now()) @db.Timestamptz(6)
-
-  operation Operation          @relation(fields: [operationId], references: [id], onDelete: Cascade)
-  catalog   OperationCatalog?  @relation(fields: [catalogId], references: [id], onDelete: SetNull)
-  specialty Specialty?         @relation(fields: [specialtyId], references: [id], onDelete: SetNull)
-
+  id String @id @default(uuid())
+  operationId String
+  catalogId String?
+  name String
+  nameAr String?
+  specialtyId String?
+  sortOrder Int @default(0)
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+  operation Operation @relation(fields: [operationId], references: [id], onDelete: Cascade)
+  catalog OperationCatalog? @relation(fields: [catalogId], references: [id], onDelete: SetNull)
+  specialty Specialty? @relation(fields: [specialtyId], references: [id], onDelete: SetNull)
   @@index([operationId])
   @@index([catalogId])
   @@map("operation_procedures")
 }
-
-model OperationTeamMember {
-  id          String   @id @default(uuid())
+model OperationMedicalTeam {
+  id String @id @default(uuid())
   operationId String
-  doctorId    String?
-  nurseId     String?
-  sortOrder   Int      @default(0)
-  createdAt   DateTime @default(now()) @db.Timestamptz(6)
-
+  primarySurgeonId String?
+  assistantSurgeonId String?
+  anesthesiologistId String?
+  assistantAnesthesiaId String?
+  nurse String?
+  notes String?
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
   operation Operation @relation(fields: [operationId], references: [id], onDelete: Cascade)
-  doctor    Doctor?   @relation(fields: [doctorId], references: [id], onDelete: SetNull)
-  nurse     Nurse?    @relation(fields: [nurseId], references: [id], onDelete: SetNull)
-
+  primarySurgeon Doctor? @relation(fields: [primarySurgeonId], references: [id])
+  assistantSurgeon Doctor? @relation("AssistantSurgeon", fields: [assistantSurgeonId], references: [id])
+  anesthesiologist Doctor? @relation("Anesthesiologist", fields: [anesthesiologistId], references: [id])
+  assistantAnesthesia Doctor? @relation("AssistantAnesthesia", fields: [assistantAnesthesiaId], references: [id])
+  @@map("operation_medical_team")
+}
+model OperationTeamMember {
+  id String @id @default(uuid())
+  operationId String
+  doctorId String?
+  nurseId String?
+  sortOrder Int @default(0)
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+  operation Operation @relation(fields: [operationId], references: [id], onDelete: Cascade)
+  doctor Doctor? @relation(fields: [doctorId], references: [id], onDelete: SetNull)
+  nurse Nurse? @relation(fields: [nurseId], references: [id], onDelete: SetNull)
   @@index([operationId])
   @@index([doctorId])
   @@index([nurseId])
   @@map("operation_team_members")
 }
-
 model OperationCost {
-  id                  String        @id @default(uuid())
-  operationId         String        @unique
-  totalCost           Decimal       @default(0) @db.Decimal(10, 2)
-  paidAmount          Decimal       @default(0) @db.Decimal(10, 2)
-  remainingAmount     Decimal       @default(0) @db.Decimal(10, 2)
-  hospitalCost        Decimal       @default(0) @db.Decimal(10, 2)
-  nursingCost         Decimal       @default(0) @db.Decimal(10, 2)
-  assistantDoctorsCost Decimal      @default(0) @db.Decimal(10, 2)
-  equipmentCost       Decimal       @default(0) @db.Decimal(10, 2)
-  otherCost           Decimal       @default(0) @db.Decimal(10, 2)
-  paymentMethod       PaymentMethod @default(CASH)
-  paymentStatus       PaymentStatus @default(PAID)
-  paymentNotes        String?
-  createdAt           DateTime      @default(now()) @db.Timestamptz(6)
-  updatedAt           DateTime      @updatedAt @db.Timestamptz(6)
-
+  id String @id @default(uuid())
+  operationId String @unique
+  totalCost Decimal @default(0) @db.Decimal(10, 2)
+  paidAmount Decimal @default(0) @db.Decimal(10, 2)
+  remainingAmount Decimal @default(0) @db.Decimal(10, 2)
+  hospitalCost Decimal @default(0) @db.Decimal(10, 2)
+  nursingCost Decimal @default(0) @db.Decimal(10, 2)
+  assistantDoctorsCost Decimal @default(0) @db.Decimal(10, 2)
+  equipmentCost Decimal @default(0) @db.Decimal(10, 2)
+  otherCost Decimal @default(0) @db.Decimal(10, 2)
+  paymentMethod PaymentMethod @default(CASH)
+  paymentStatus PaymentStatus @default(PAID)
+  paymentNotes String?
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @db.Timestamptz(6)
   operation Operation @relation(fields: [operationId], references: [id], onDelete: Cascade)
-
   @@map("operation_costs")
 }
-
 model OperationFile {
-  id          String   @id @default(uuid())
+  id String @id @default(uuid())
   operationId String
-  fileType    FileType
-  fileName    String
-  filePath    String
-  fileSize    Int?
-  mimeType    String?
-  uploadedBy  String
-  createdAt   DateTime @default(now()) @db.Timestamptz(6)
-
+  fileType FileType
+  fileName String
+  filePath String
+  fileSize Int?
+  mimeType String?
+  uploadedBy String
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
   operation Operation @relation(fields: [operationId], references: [id], onDelete: Cascade)
-  uploader  User      @relation(fields: [uploadedBy], references: [id])
-
+  uploader User @relation(fields: [uploadedBy], references: [id])
   @@map("operation_files")
 }
-
 model OperationTimeline {
-  id          String         @id @default(uuid())
+  id String @id @default(uuid())
   operationId String
-  action      TimelineAction
+  action TimelineAction
   description String?
-  userId      String
-  createdAt   DateTime       @default(now()) @db.Timestamptz(6)
-
+  userId String
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
   operation Operation @relation(fields: [operationId], references: [id], onDelete: Cascade)
-  user      User      @relation(fields: [userId], references: [id])
-
+  user User @relation(fields: [userId], references: [id])
   @@map("operation_timeline")
 }
-
 model OperationFollowUp {
-  id          String    @id @default(uuid())
+  id String @id @default(uuid())
   operationId String
-  title       String
-  scheduledAt DateTime  @db.Timestamptz(6)
-  completedAt DateTime? @db.Timestamptz(6)
-  status      String    @default("UPCOMING")
-  notes       String?
-  createdAt   DateTime  @default(now()) @db.Timestamptz(6)
-  updatedAt   DateTime  @updatedAt @db.Timestamptz(6)
-
+  title String
+  scheduledAt DateTime @db.Timestamptz(6)
+  completedAt DateTime?
+  status String @default("UPCOMING")
+  notes String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
   operation Operation @relation(fields: [operationId], references: [id], onDelete: Cascade)
-
   @@index([operationId, scheduledAt])
   @@index([operationId, status])
   @@map("operation_follow_ups")
