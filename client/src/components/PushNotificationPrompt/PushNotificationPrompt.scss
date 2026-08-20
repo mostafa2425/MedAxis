@@ -3,7 +3,7 @@
   z-index: 1199;
   left: 12px;
   right: 12px;
-  bottom: calc(76px + env(safe-area-inset-bottom));
+  bottom: calc(100px + env(safe-area-inset-bottom));
   display: flex;
   align-items: center;
   gap: 12px;
