@@ -57,4 +57,8 @@ export const notificationService = {
     await api.post('/push/unsubscribe', { endpoint: subscription.endpoint });
     await subscription.unsubscribe();
   },
+  async sendTest() {
+    const response = await api.post<{ data: { push?: { sent: number; skipped?: boolean; reason?: string } } }>('/assistant/notifications/test');
+    return response.data.data;
+  },
 };
