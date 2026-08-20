@@ -7,6 +7,7 @@ import App from './App';
 import './i18n';
 import './styles/global.scss';
 import { medAxisAntdTheme } from './styles/antdTheme';
+import { initAnalytics } from './lib/posthog';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -15,6 +16,8 @@ const queryClient = new QueryClient({
 });
 
 const direction = document.documentElement.dir === 'rtl' ? 'rtl' : 'ltr';
+
+initAnalytics();
 
 if ('serviceWorker' in navigator && import.meta.env.PROD) {
   window.addEventListener('load', () => {
