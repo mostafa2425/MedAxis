@@ -73,15 +73,15 @@ export type Nurse = Prisma.NurseModel
  */
 export type Operation = Prisma.OperationModel
 /**
- * Model OperationMedicalTeam
- * 
- */
-export type OperationMedicalTeam = Prisma.OperationMedicalTeamModel
-/**
  * Model OperationProcedure
  * 
  */
 export type OperationProcedure = Prisma.OperationProcedureModel
+/**
+ * Model OperationMedicalTeam
+ * 
+ */
+export type OperationMedicalTeam = Prisma.OperationMedicalTeamModel
 /**
  * Model OperationTeamMember
  * 

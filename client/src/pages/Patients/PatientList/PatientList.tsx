@@ -102,7 +102,7 @@ export default function PatientList({
             <Stat icon={<TeamOutlined />} value={operations} label={t('patients.totalOperations')} tone="blue" />
             <Stat icon={<ClockCircleOutlined />} value={active} label={t('patients.activeCases', 'Active cases')} tone="orange" />
             <Stat icon={<CalendarOutlined />} value={followUps} label={t('patients.upcomingFollowUps', 'Follow-ups')} tone="purple" />
-            <Stat icon={<FileImageOutlined />} value={files} label={t('patients.clinicalFiles', 'Clinical files')} tone="green" />
+            {/* <Stat icon={<FileImageOutlined />} value={files} label={t('patients.clinicalFiles', 'Clinical files')} tone="green" /> */}
           </div>
 
           {management?.lastOperation && (
@@ -117,10 +117,10 @@ export default function PatientList({
             </div>
           )}
 
-          <div className="patientManagementCardFooter">
+          {/* <div className="patientManagementCardFooter">
             <span>{t('patients.viewProfile', 'View patient profile')}</span>
             <RightOutlined />
-          </div>
+          </div> */}
         </div>
       </Card>
     );

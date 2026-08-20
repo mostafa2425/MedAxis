@@ -887,20 +887,6 @@ export type EnumOperationStatusFieldUpdateOperationsInput = {
   set?: $Enums.OperationStatus
 }
 
-export type OperationCreateNestedOneWithoutMedicalTeamInput = {
-  create?: Prisma.XOR<Prisma.OperationCreateWithoutMedicalTeamInput, Prisma.OperationUncheckedCreateWithoutMedicalTeamInput>
-  connectOrCreate?: Prisma.OperationCreateOrConnectWithoutMedicalTeamInput
-  connect?: Prisma.OperationWhereUniqueInput
-}
-
-export type OperationUpdateOneRequiredWithoutMedicalTeamNestedInput = {
-  create?: Prisma.XOR<Prisma.OperationCreateWithoutMedicalTeamInput, Prisma.OperationUncheckedCreateWithoutMedicalTeamInput>
-  connectOrCreate?: Prisma.OperationCreateOrConnectWithoutMedicalTeamInput
-  upsert?: Prisma.OperationUpsertWithoutMedicalTeamInput
-  connect?: Prisma.OperationWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.OperationUpdateToOneWithWhereWithoutMedicalTeamInput, Prisma.OperationUpdateWithoutMedicalTeamInput>, Prisma.OperationUncheckedUpdateWithoutMedicalTeamInput>
-}
-
 export type OperationCreateNestedOneWithoutProceduresInput = {
   create?: Prisma.XOR<Prisma.OperationCreateWithoutProceduresInput, Prisma.OperationUncheckedCreateWithoutProceduresInput>
   connectOrCreate?: Prisma.OperationCreateOrConnectWithoutProceduresInput
@@ -913,6 +899,20 @@ export type OperationUpdateOneRequiredWithoutProceduresNestedInput = {
   upsert?: Prisma.OperationUpsertWithoutProceduresInput
   connect?: Prisma.OperationWhereUniqueInput
   update?: Prisma.XOR<Prisma.XOR<Prisma.OperationUpdateToOneWithWhereWithoutProceduresInput, Prisma.OperationUpdateWithoutProceduresInput>, Prisma.OperationUncheckedUpdateWithoutProceduresInput>
+}
+
+export type OperationCreateNestedOneWithoutMedicalTeamInput = {
+  create?: Prisma.XOR<Prisma.OperationCreateWithoutMedicalTeamInput, Prisma.OperationUncheckedCreateWithoutMedicalTeamInput>
+  connectOrCreate?: Prisma.OperationCreateOrConnectWithoutMedicalTeamInput
+  connect?: Prisma.OperationWhereUniqueInput
+}
+
+export type OperationUpdateOneRequiredWithoutMedicalTeamNestedInput = {
+  create?: Prisma.XOR<Prisma.OperationCreateWithoutMedicalTeamInput, Prisma.OperationUncheckedCreateWithoutMedicalTeamInput>
+  connectOrCreate?: Prisma.OperationCreateOrConnectWithoutMedicalTeamInput
+  upsert?: Prisma.OperationUpsertWithoutMedicalTeamInput
+  connect?: Prisma.OperationWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.OperationUpdateToOneWithWhereWithoutMedicalTeamInput, Prisma.OperationUpdateWithoutMedicalTeamInput>, Prisma.OperationUncheckedUpdateWithoutMedicalTeamInput>
 }
 
 export type OperationCreateNestedOneWithoutTeamMembersInput = {
@@ -1387,122 +1387,6 @@ export type OperationUpdateManyWithWhereWithoutHospitalInput = {
   data: Prisma.XOR<Prisma.OperationUpdateManyMutationInput, Prisma.OperationUncheckedUpdateManyWithoutHospitalInput>
 }
 
-export type OperationCreateWithoutMedicalTeamInput = {
-  id?: string
-  name: string
-  diagnosis?: string | null
-  operationDate: Date | string
-  operationTime: string
-  operationRoom?: string | null
-  duration?: number | null
-  status?: $Enums.OperationStatus
-  notes?: string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  patient: Prisma.PatientCreateNestedOneWithoutOperationsInput
-  hospital: Prisma.HospitalCreateNestedOneWithoutOperationsInput
-  creator: Prisma.UserCreateNestedOneWithoutOperationsInput
-  specialty?: Prisma.SpecialtyCreateNestedOneWithoutOperationsInput
-  catalog?: Prisma.OperationCatalogCreateNestedOneWithoutOperationsInput
-  procedures?: Prisma.OperationProcedureCreateNestedManyWithoutOperationInput
-  teamMembers?: Prisma.OperationTeamMemberCreateNestedManyWithoutOperationInput
-  files?: Prisma.OperationFileCreateNestedManyWithoutOperationInput
-  cost?: Prisma.OperationCostCreateNestedOneWithoutOperationInput
-  timeline?: Prisma.OperationTimelineCreateNestedManyWithoutOperationInput
-  followUps?: Prisma.OperationFollowUpCreateNestedManyWithoutOperationInput
-}
-
-export type OperationUncheckedCreateWithoutMedicalTeamInput = {
-  id?: string
-  name: string
-  diagnosis?: string | null
-  hospitalId: string
-  operationDate: Date | string
-  operationTime: string
-  operationRoom?: string | null
-  duration?: number | null
-  status?: $Enums.OperationStatus
-  notes?: string | null
-  patientId: string
-  createdBy: string
-  specialtyId?: string | null
-  catalogId?: string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  procedures?: Prisma.OperationProcedureUncheckedCreateNestedManyWithoutOperationInput
-  teamMembers?: Prisma.OperationTeamMemberUncheckedCreateNestedManyWithoutOperationInput
-  files?: Prisma.OperationFileUncheckedCreateNestedManyWithoutOperationInput
-  cost?: Prisma.OperationCostUncheckedCreateNestedOneWithoutOperationInput
-  timeline?: Prisma.OperationTimelineUncheckedCreateNestedManyWithoutOperationInput
-  followUps?: Prisma.OperationFollowUpUncheckedCreateNestedManyWithoutOperationInput
-}
-
-export type OperationCreateOrConnectWithoutMedicalTeamInput = {
-  where: Prisma.OperationWhereUniqueInput
-  create: Prisma.XOR<Prisma.OperationCreateWithoutMedicalTeamInput, Prisma.OperationUncheckedCreateWithoutMedicalTeamInput>
-}
-
-export type OperationUpsertWithoutMedicalTeamInput = {
-  update: Prisma.XOR<Prisma.OperationUpdateWithoutMedicalTeamInput, Prisma.OperationUncheckedUpdateWithoutMedicalTeamInput>
-  create: Prisma.XOR<Prisma.OperationCreateWithoutMedicalTeamInput, Prisma.OperationUncheckedCreateWithoutMedicalTeamInput>
-  where?: Prisma.OperationWhereInput
-}
-
-export type OperationUpdateToOneWithWhereWithoutMedicalTeamInput = {
-  where?: Prisma.OperationWhereInput
-  data: Prisma.XOR<Prisma.OperationUpdateWithoutMedicalTeamInput, Prisma.OperationUncheckedUpdateWithoutMedicalTeamInput>
-}
-
-export type OperationUpdateWithoutMedicalTeamInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  diagnosis?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  operationDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  operationTime?: Prisma.StringFieldUpdateOperationsInput | string
-  operationRoom?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  duration?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  status?: Prisma.EnumOperationStatusFieldUpdateOperationsInput | $Enums.OperationStatus
-  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  patient?: Prisma.PatientUpdateOneRequiredWithoutOperationsNestedInput
-  hospital?: Prisma.HospitalUpdateOneRequiredWithoutOperationsNestedInput
-  creator?: Prisma.UserUpdateOneRequiredWithoutOperationsNestedInput
-  specialty?: Prisma.SpecialtyUpdateOneWithoutOperationsNestedInput
-  catalog?: Prisma.OperationCatalogUpdateOneWithoutOperationsNestedInput
-  procedures?: Prisma.OperationProcedureUpdateManyWithoutOperationNestedInput
-  teamMembers?: Prisma.OperationTeamMemberUpdateManyWithoutOperationNestedInput
-  files?: Prisma.OperationFileUpdateManyWithoutOperationNestedInput
-  cost?: Prisma.OperationCostUpdateOneWithoutOperationNestedInput
-  timeline?: Prisma.OperationTimelineUpdateManyWithoutOperationNestedInput
-  followUps?: Prisma.OperationFollowUpUpdateManyWithoutOperationNestedInput
-}
-
-export type OperationUncheckedUpdateWithoutMedicalTeamInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  diagnosis?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  hospitalId?: Prisma.StringFieldUpdateOperationsInput | string
-  operationDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  operationTime?: Prisma.StringFieldUpdateOperationsInput | string
-  operationRoom?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  duration?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  status?: Prisma.EnumOperationStatusFieldUpdateOperationsInput | $Enums.OperationStatus
-  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  patientId?: Prisma.StringFieldUpdateOperationsInput | string
-  createdBy?: Prisma.StringFieldUpdateOperationsInput | string
-  specialtyId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  catalogId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  procedures?: Prisma.OperationProcedureUncheckedUpdateManyWithoutOperationNestedInput
-  teamMembers?: Prisma.OperationTeamMemberUncheckedUpdateManyWithoutOperationNestedInput
-  files?: Prisma.OperationFileUncheckedUpdateManyWithoutOperationNestedInput
-  cost?: Prisma.OperationCostUncheckedUpdateOneWithoutOperationNestedInput
-  timeline?: Prisma.OperationTimelineUncheckedUpdateManyWithoutOperationNestedInput
-  followUps?: Prisma.OperationFollowUpUncheckedUpdateManyWithoutOperationNestedInput
-}
-
 export type OperationCreateWithoutProceduresInput = {
   id?: string
   name: string
@@ -1612,6 +1496,122 @@ export type OperationUncheckedUpdateWithoutProceduresInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   medicalTeam?: Prisma.OperationMedicalTeamUncheckedUpdateManyWithoutOperationNestedInput
+  teamMembers?: Prisma.OperationTeamMemberUncheckedUpdateManyWithoutOperationNestedInput
+  files?: Prisma.OperationFileUncheckedUpdateManyWithoutOperationNestedInput
+  cost?: Prisma.OperationCostUncheckedUpdateOneWithoutOperationNestedInput
+  timeline?: Prisma.OperationTimelineUncheckedUpdateManyWithoutOperationNestedInput
+  followUps?: Prisma.OperationFollowUpUncheckedUpdateManyWithoutOperationNestedInput
+}
+
+export type OperationCreateWithoutMedicalTeamInput = {
+  id?: string
+  name: string
+  diagnosis?: string | null
+  operationDate: Date | string
+  operationTime: string
+  operationRoom?: string | null
+  duration?: number | null
+  status?: $Enums.OperationStatus
+  notes?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  patient: Prisma.PatientCreateNestedOneWithoutOperationsInput
+  hospital: Prisma.HospitalCreateNestedOneWithoutOperationsInput
+  creator: Prisma.UserCreateNestedOneWithoutOperationsInput
+  specialty?: Prisma.SpecialtyCreateNestedOneWithoutOperationsInput
+  catalog?: Prisma.OperationCatalogCreateNestedOneWithoutOperationsInput
+  procedures?: Prisma.OperationProcedureCreateNestedManyWithoutOperationInput
+  teamMembers?: Prisma.OperationTeamMemberCreateNestedManyWithoutOperationInput
+  files?: Prisma.OperationFileCreateNestedManyWithoutOperationInput
+  cost?: Prisma.OperationCostCreateNestedOneWithoutOperationInput
+  timeline?: Prisma.OperationTimelineCreateNestedManyWithoutOperationInput
+  followUps?: Prisma.OperationFollowUpCreateNestedManyWithoutOperationInput
+}
+
+export type OperationUncheckedCreateWithoutMedicalTeamInput = {
+  id?: string
+  name: string
+  diagnosis?: string | null
+  hospitalId: string
+  operationDate: Date | string
+  operationTime: string
+  operationRoom?: string | null
+  duration?: number | null
+  status?: $Enums.OperationStatus
+  notes?: string | null
+  patientId: string
+  createdBy: string
+  specialtyId?: string | null
+  catalogId?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  procedures?: Prisma.OperationProcedureUncheckedCreateNestedManyWithoutOperationInput
+  teamMembers?: Prisma.OperationTeamMemberUncheckedCreateNestedManyWithoutOperationInput
+  files?: Prisma.OperationFileUncheckedCreateNestedManyWithoutOperationInput
+  cost?: Prisma.OperationCostUncheckedCreateNestedOneWithoutOperationInput
+  timeline?: Prisma.OperationTimelineUncheckedCreateNestedManyWithoutOperationInput
+  followUps?: Prisma.OperationFollowUpUncheckedCreateNestedManyWithoutOperationInput
+}
+
+export type OperationCreateOrConnectWithoutMedicalTeamInput = {
+  where: Prisma.OperationWhereUniqueInput
+  create: Prisma.XOR<Prisma.OperationCreateWithoutMedicalTeamInput, Prisma.OperationUncheckedCreateWithoutMedicalTeamInput>
+}
+
+export type OperationUpsertWithoutMedicalTeamInput = {
+  update: Prisma.XOR<Prisma.OperationUpdateWithoutMedicalTeamInput, Prisma.OperationUncheckedUpdateWithoutMedicalTeamInput>
+  create: Prisma.XOR<Prisma.OperationCreateWithoutMedicalTeamInput, Prisma.OperationUncheckedCreateWithoutMedicalTeamInput>
+  where?: Prisma.OperationWhereInput
+}
+
+export type OperationUpdateToOneWithWhereWithoutMedicalTeamInput = {
+  where?: Prisma.OperationWhereInput
+  data: Prisma.XOR<Prisma.OperationUpdateWithoutMedicalTeamInput, Prisma.OperationUncheckedUpdateWithoutMedicalTeamInput>
+}
+
+export type OperationUpdateWithoutMedicalTeamInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  diagnosis?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  operationDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  operationTime?: Prisma.StringFieldUpdateOperationsInput | string
+  operationRoom?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  duration?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  status?: Prisma.EnumOperationStatusFieldUpdateOperationsInput | $Enums.OperationStatus
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  patient?: Prisma.PatientUpdateOneRequiredWithoutOperationsNestedInput
+  hospital?: Prisma.HospitalUpdateOneRequiredWithoutOperationsNestedInput
+  creator?: Prisma.UserUpdateOneRequiredWithoutOperationsNestedInput
+  specialty?: Prisma.SpecialtyUpdateOneWithoutOperationsNestedInput
+  catalog?: Prisma.OperationCatalogUpdateOneWithoutOperationsNestedInput
+  procedures?: Prisma.OperationProcedureUpdateManyWithoutOperationNestedInput
+  teamMembers?: Prisma.OperationTeamMemberUpdateManyWithoutOperationNestedInput
+  files?: Prisma.OperationFileUpdateManyWithoutOperationNestedInput
+  cost?: Prisma.OperationCostUpdateOneWithoutOperationNestedInput
+  timeline?: Prisma.OperationTimelineUpdateManyWithoutOperationNestedInput
+  followUps?: Prisma.OperationFollowUpUpdateManyWithoutOperationNestedInput
+}
+
+export type OperationUncheckedUpdateWithoutMedicalTeamInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  diagnosis?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hospitalId?: Prisma.StringFieldUpdateOperationsInput | string
+  operationDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  operationTime?: Prisma.StringFieldUpdateOperationsInput | string
+  operationRoom?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  duration?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  status?: Prisma.EnumOperationStatusFieldUpdateOperationsInput | $Enums.OperationStatus
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  patientId?: Prisma.StringFieldUpdateOperationsInput | string
+  createdBy?: Prisma.StringFieldUpdateOperationsInput | string
+  specialtyId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  catalogId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  procedures?: Prisma.OperationProcedureUncheckedUpdateManyWithoutOperationNestedInput
   teamMembers?: Prisma.OperationTeamMemberUncheckedUpdateManyWithoutOperationNestedInput
   files?: Prisma.OperationFileUncheckedUpdateManyWithoutOperationNestedInput
   cost?: Prisma.OperationCostUncheckedUpdateOneWithoutOperationNestedInput
