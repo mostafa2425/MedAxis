@@ -105,7 +105,7 @@ model Specialty {
   isActive              Boolean                  @default(true)
   createdAt             DateTime                 @default(now()) @db.Timestamptz(6)
   updatedAt             DateTime                 @updatedAt @db.Timestamptz(6)
-  parent                Specialty?               @relation("SpecialtyHierarchy", fields: [parentId], references: [id], onDelete: SetNull)
+  parent                Specialty?              @relation("SpecialtyHierarchy", fields: [parentId], references: [id], onDelete: SetNull)
   children              Specialty[]              @relation("SpecialtyHierarchy")
   doctors               DoctorSpecialty[]
   doctorSubspecialties  DoctorSubspecialty[]
@@ -304,10 +304,10 @@ model OperationTeamMember {
   doctorId    String?
   nurseId     String?
   sortOrder   Int       @default(0)
-  createdAt   DateTime  @default(now())
+  createdAt   DateTime @default(now())
   operation   Operation @relation(fields: [operationId], references: [id], onDelete: Cascade)
-  doctor      Doctor?   @relation(fields: [doctorId], references: [id], onDelete: SetNull)
-  nurse       Nurse?    @relation(fields: [nurseId], references: [id], onDelete: SetNull)
+  doctor      Doctor?  @relation(fields: [doctorId], references: [id], onDelete: SetNull)
+  nurse       Nurse?   @relation(fields: [nurseId], references: [id], onDelete: SetNull)
   @@index([operationId])
   @@index([doctorId])
   @@index([nurseId])
