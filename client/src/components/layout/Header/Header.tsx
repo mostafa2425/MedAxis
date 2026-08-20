@@ -4,7 +4,8 @@ import { Button, Dropdown, Avatar, Tooltip, Badge } from 'antd';
 import type { MenuProps } from 'antd';
 import {
   MenuOutlined, SunOutlined, MoonOutlined, GlobalOutlined, UserOutlined, SettingOutlined,
-  LogoutOutlined, PlusOutlined, DownOutlined, BellOutlined,
+  LogoutOutlined, PlusOutlined, DownOutlined, BellOutlined, CheckOutlined, ArrowRightOutlined,
+  CalendarOutlined, RobotOutlined, WarningOutlined,
 } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
 import { useAppStore } from '@/stores/app.store';
@@ -35,6 +36,35 @@ function getPageMeta(pathname: string): { titleKey: string; hintKey?: string } {
 }
 
 function roleLabel(role?: string): string { if (!role) return ''; return role.charAt(0) + role.slice(1).toLowerCase(); }
+
+function formatNotificationTime(value: string, language: string) {
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return '';
+  const diff = Date.now() - date.getTime();
+  const minute = 60_000;
+  const hour = 60 * minute;
+  const day = 24 * hour;
+  if (diff < minute) return language === 'ar' ? 'الآن' : 'Just now';
+  if (diff < hour) {
+    const count = Math.max(1, Math.floor(diff / minute));
+    return language === 'ar' ? `منذ ${count} د` : `${count}m ago`;
+  }
+  if (diff < day) {
+    const count = Math.max(1, Math.floor(diff / hour));
+    return language === 'ar' ? `منذ ${count} س` : `${count}h ago`;
+  }
+  if (diff < 7 * day) {
+    const count = Math.max(1, Math.floor(diff / day));
+    return language === 'ar' ? `منذ ${count} ي` : `${count}d ago`;
+  }
+  return date.toLocaleDateString(language === 'ar' ? 'ar-EG' : 'en-US', { month: 'short', day: 'numeric' });
+}
+
+function notificationIcon(item: SmartNotification) {
+  if (item.priority === 'important') return <WarningOutlined />;
+  if (item.kind === 'WEEKLY_BRIEF') return <CalendarOutlined />;
+  return <RobotOutlined />;
+}
 
 export default function Header({ onMenuClick }: HeaderProps) {
   const { t } = useTranslation();
@@ -78,18 +108,6 @@ export default function Header({ onMenuClick }: HeaderProps) {
     { key: 'logout', icon: <LogoutOutlined />, label: t('auth.logout'), danger: true },
   ], [t, user]);
 
-  const notificationItems: MenuProps['items'] = [
-    { key: 'assistant', label: <div style={{ fontWeight: 700 }}>MedAxis Assistant</div> },
-    { type: 'divider' },
-    ...notifications.slice(0, 8).map((item) => ({
-      key: item.id,
-      label: <div style={{ maxWidth: 320, whiteSpace: 'normal' }}><div style={{ fontWeight: item.read_at ? 500 : 700 }}>{item.title}</div><div style={{ fontSize: 12, opacity: 0.72, marginTop: 2 }}>{item.message}</div></div>,
-    })),
-    ...(notifications.length === 0 ? [{ key: 'empty', disabled: true, label: 'No new assistant notifications' }] : []),
-    { type: 'divider' },
-    { key: 'view-all', label: 'Open Assistant' },
-  ];
-
   const unreadCount = notifications.filter((item) => !item.read_at).length;
 
   const handleUserMenuClick: MenuProps['onClick'] = ({ key }) => {
@@ -97,13 +115,64 @@ export default function Header({ onMenuClick }: HeaderProps) {
     else if (key === 'profile' || key === 'settings') navigate('/profile');
   };
 
-  const handleNotificationClick: MenuProps['onClick'] = async ({ key }) => {
-    if (key === 'assistant' || key === 'view-all') { navigate('/assistant'); setNotificationOpen(false); return; }
-    if (key === 'empty') return;
-    const item = notifications.find((notification) => notification.id === key);
-    if (item && !item.read_at) { await notificationService.markRead(item.id); setNotifications((current) => current.map((n) => n.id === item.id ? { ...n, read_at: new Date().toISOString() } : n)); }
-    navigate('/assistant'); setNotificationOpen(false);
+  const handleNotificationClick = async (item: SmartNotification) => {
+    if (!item.read_at) {
+      try { await notificationService.markRead(item.id); } catch { /* keep navigation responsive */ }
+      setNotifications((current) => current.map((n) => n.id === item.id ? { ...n, read_at: new Date().toISOString() } : n));
+    }
+    navigate('/assistant');
+    setNotificationOpen(false);
   };
+
+  const notificationDropdown = (
+    <div className="notificationDropdown" role="dialog" aria-label={language === 'ar' ? 'الإشعارات' : 'Notifications'}>
+      <div className="notificationDropdownHeader">
+        <div>
+          <div className="notificationDropdownTitle">{language === 'ar' ? 'الإشعارات' : 'Notifications'}</div>
+          <div className="notificationDropdownSubtitle">
+            {unreadCount > 0
+              ? (language === 'ar' ? `${unreadCount} إشعار غير مقروء` : `${unreadCount} unread notification${unreadCount === 1 ? '' : 's'}`)
+              : (language === 'ar' ? 'أنت على اطلاع بكل شيء' : "You're all caught up")}
+          </div>
+        </div>
+        {unreadCount > 0 && <span className="notificationUnreadPill">{unreadCount}</span>}
+      </div>
+
+      <div className="notificationList">
+        {notifications.length === 0 ? (
+          <div className="notificationEmpty">
+            <span className="notificationEmptyIcon"><CheckOutlined /></span>
+            <strong>{language === 'ar' ? 'لا توجد إشعارات جديدة' : 'No new notifications'}</strong>
+            <span>{language === 'ar' ? 'سنعرض هنا أهم التنبيهات والموجزات.' : 'Important alerts and smart briefs will appear here.'}</span>
+          </div>
+        ) : notifications.slice(0, 8).map((item) => (
+          <button
+            key={item.id}
+            type="button"
+            className={`notificationItem ${item.read_at ? 'notificationItemRead' : 'notificationItemUnread'} ${item.priority === 'important' ? 'notificationItemImportant' : ''}`}
+            onClick={() => void handleNotificationClick(item)}
+          >
+            <span className="notificationItemIcon">{notificationIcon(item)}</span>
+            <span className="notificationItemBody">
+              <span className="notificationItemTopline">
+                <strong>{item.title}</strong>
+                <span className="notificationItemTime">{formatNotificationTime(item.created_at || item.scheduled_for, language)}</span>
+              </span>
+              <span className="notificationItemMessage">{item.message}</span>
+            </span>
+            {!item.read_at && <span className="notificationUnreadDot" aria-label="Unread" />}
+          </button>
+        ))}
+      </div>
+
+      <div className="notificationDropdownFooter">
+        <button type="button" className="notificationFooterButton" onClick={() => { navigate('/assistant'); setNotificationOpen(false); }}>
+          <span>{language === 'ar' ? 'فتح MedAxis Assistant' : 'Open MedAxis Assistant'}</span>
+          <ArrowRightOutlined />
+        </button>
+      </div>
+    </div>
+  );
 
   return (
     <header className={`app-header-root header ${collapsed ? 'headerCollapsed' : ''}`}>
@@ -113,8 +182,8 @@ export default function Header({ onMenuClick }: HeaderProps) {
       <div className="headerRight">
         <Tooltip title={t('operations.addOperation')}><Button type="primary" className="quickAddBtn" icon={<PlusOutlined />} onClick={() => navigate('/operations/new')}><span className="quickAddLabel">{t('operations.addOperation')}</span></Button></Tooltip>
         <div className="headerActions">
-          <Dropdown menu={{ items: notificationItems, onClick: handleNotificationClick }} trigger={['click']} open={notificationOpen} onOpenChange={(open) => { setNotificationOpen(open); if (open) void loadNotifications(); }} placement="bottomRight">
-            <Badge count={unreadCount} size="small" offset={[-2, 2]}><Button type="text" className="iconBtn" icon={<BellOutlined />} aria-label="Notifications" /></Badge>
+          <Dropdown dropdownRender={() => notificationDropdown} trigger={['click']} open={notificationOpen} onOpenChange={(open) => { setNotificationOpen(open); if (open) void loadNotifications(); }} placement="bottomRight">
+            <Badge count={unreadCount} size="small" offset={[-2, 2]} overflowCount={99}><Button type="text" className="iconBtn notificationTrigger" icon={<BellOutlined />} aria-label={language === 'ar' ? 'الإشعارات' : 'Notifications'} /></Badge>
           </Dropdown>
           <Tooltip title={language === 'en' ? t('layout.arabic') : t('layout.english')}><button type="button" className="langBtn" onClick={toggleLanguage} aria-label={t('layout.language')}><GlobalOutlined /><span className="langCode">{language.toUpperCase()}</span></button></Tooltip>
           <Tooltip title={darkMode ? t('settings.lightMode') : t('settings.darkMode')}><Button type="text" className={`iconBtn ${darkMode ? 'iconBtnActive' : ''}`} icon={darkMode ? <SunOutlined /> : <MoonOutlined />} onClick={toggleDarkMode} aria-label={t('layout.darkMode')} /></Tooltip>
