@@ -97,22 +97,22 @@ model Patient {
 }
 
 model Specialty {
-  id                 String                 @id @default(uuid())
-  name               String                 @unique
-  nameAr             String?
-  icon               String?
-  parentId           String?
-  isActive           Boolean                @default(true)
-  createdAt          DateTime               @default(now()) @db.Timestamptz(6)
-  updatedAt          DateTime               @updatedAt @db.Timestamptz(6)
-  parent             Specialty?             @relation("SpecialtyHierarchy", fields: [parentId], references: [id], onDelete: SetNull)
-  children           Specialty[]            @relation("SpecialtyHierarchy")
-  doctors            DoctorSpecialty[]
-  doctorSubspecialties DoctorSubspecialty[]
-  operations         Operation[]
-  catalogItems       OperationCatalog[]     @relation("CatalogSpecialty")
-  catalogSubItems    OperationCatalog[]     @relation("CatalogSubspecialty")
-  procedures         OperationProcedure[]
+  id                   String                   @id @default(uuid())
+  name                 String                   @unique
+  nameAr               String?
+  icon                 String?
+  parentId             String?
+  isActive              Boolean                  @default(true)
+  createdAt             DateTime                 @default(now()) @db.Timestamptz(6)
+  updatedAt             DateTime                 @updatedAt @db.Timestamptz(6)
+  parent                Specialty?               @relation("SpecialtyHierarchy", fields: [parentId], references: [id], onDelete: SetNull)
+  children              Specialty[]              @relation("SpecialtyHierarchy")
+  doctors               DoctorSpecialty[]
+  doctorSubspecialties  DoctorSubspecialty[]
+  operations            Operation[]
+  catalogItems          OperationCatalog[]       @relation("CatalogSpecialty")
+  catalogSubItems       OperationCatalog[]       @relation("CatalogSubspecialty")
+  procedures            OperationProcedure[]
   @@index([parentId])
   @@map("specialties")
 }
@@ -124,9 +124,9 @@ model Doctor {
   email                String?
   isActive             Boolean                 @default(true)
   userId               String?                 @unique
-  createdBy            String?
-  createdAt            DateTime                @default(now()) @db.Timestamptz(6)
-  updatedAt            DateTime                @updatedAt @db.Timestamptz(6)
+  createdBy             String?
+  createdAt             DateTime                @default(now()) @db.Timestamptz(6)
+  updatedAt             DateTime                @updatedAt @db.Timestamptz(6)
   user                 User?                   @relation(fields: [userId], references: [id], onDelete: SetNull)
   creator              User?                   @relation("CreatedDoctors", fields: [createdBy], references: [id], onDelete: SetNull)
   specialties          DoctorSpecialty[]
@@ -155,7 +155,7 @@ model DoctorSubspecialty {
   id          String    @id @default(uuid())
   doctorId    String
   specialtyId String
-  createdAt   DateTime  @default(now()) @default(now())
+  createdAt   DateTime  @default(now()) @db.Timestamptz(6)
   doctor      Doctor    @relation(fields: [doctorId], references: [id], onDelete: Cascade)
   specialty   Specialty @relation(fields: [specialtyId], references: [id], onDelete: Cascade)
   @@unique([doctorId, specialtyId])
@@ -171,8 +171,8 @@ model OperationCatalog {
   isActive       Boolean      @default(true)
   isCustom       Boolean      @default(false)
   createdBy      String?
-  createdAt      DateTime     @default(now())
-  updatedAt      DateTime     @updatedAt
+  createdAt      DateTime     @default(now()) @db.Timestamptz(6)
+  updatedAt      DateTime     @updatedAt @db.Timestamptz(6)
   specialty      Specialty?   @relation("CatalogSpecialty", fields: [specialtyId], references: [id], onDelete: SetNull)
   subspecialty   Specialty?   @relation("CatalogSubspecialty", fields: [subspecialtyId], references: [id], onDelete: SetNull)
   creator        User?        @relation(fields: [createdBy], references: [id], onDelete: SetNull)
@@ -223,8 +223,8 @@ model Nurse {
   email       String?
   isActive    Boolean              @default(true)
   createdBy   String
-  createdAt   DateTime             @default(now()) @default(now())
-  updatedAt   DateTime             @updatedAt
+  createdAt   DateTime             @default(now()) @db.Timestamptz(6)
+  updatedAt   DateTime             @updatedAt @db.Timestamptz(6)
   creator     User                 @relation(fields: [createdBy], references: [id])
   teamMembers OperationTeamMember[]
   @@index([createdBy])
@@ -328,8 +328,8 @@ model OperationCost {
   paymentMethod         PaymentMethod @default(CASH)
   paymentStatus         PaymentStatus @default(PAID)
   paymentNotes          String?
-  createdAt             DateTime      @default(now()) @db.Timestamptz(6)
-  updatedAt             DateTime      @updatedAt @db.Timestamptz(6)
+  createdAt              DateTime      @default(now()) @db.Timestamptz(6)
+  updatedAt              DateTime      @updatedAt @db.Timestamptz(6)
   operation             Operation     @relation(fields: [operationId], references: [id], onDelete: Cascade)
   @@map("operation_costs")
 }
