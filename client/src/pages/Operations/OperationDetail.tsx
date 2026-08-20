@@ -14,6 +14,7 @@ import CostBreakdownCard from './CostBreakdownCard';
 import ClinicalFilesPanel from './ClinicalFilesPanel';
 import FollowUpsPanel from './FollowUpsPanel';
 import './OperationDetail.scss';
+import './OperationDetailExtra.scss';
 
 const PHONE_KEYS = ['mobile', 'phone', 'phoneNumber'] as const;
 const getPhone = (person?: Partial<Doctor & Nurse> | null) => person ? PHONE_KEYS.map((key) => person[key as keyof typeof person] as string | undefined).find(Boolean) : undefined;
