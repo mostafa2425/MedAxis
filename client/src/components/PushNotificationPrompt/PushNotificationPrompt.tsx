@@ -37,11 +37,18 @@ export default function PushNotificationPrompt() {
 
     const sync = async () => {
       try {
-        if (Notification.permission === 'granted') {
-          await pushService.syncExistingPermission();
+        const registration = await navigator.serviceWorker.ready;
+        const subscription = await registration.pushManager.getSubscription();
+
+        if (subscription) {
+          if (Notification.permission === 'granted') await pushService.syncExistingPermission();
           return;
         }
-        window.setTimeout(() => setVisible(true), 1800);
+
+        // Permission may already be granted while the browser has no active
+        // subscription (for example after clearing site data). In that case
+        // the user still needs an explicit enable action to create a new one.
+        window.setTimeout(() => setVisible(true), 900);
       } catch {
         // Keep the prompt silent when push is not configured yet.
       }
