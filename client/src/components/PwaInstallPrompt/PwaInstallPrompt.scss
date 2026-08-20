@@ -76,14 +76,12 @@
   .pwa-install-prompt { display: none; }
 }
 
-@media (prefers-color-scheme: dark) {
-  .pwa-install-prompt {
-    background: rgba(30, 41, 59, 0.98);
-    border-color: rgba(96, 165, 250, 0.18);
+.app-layout.dark .pwa-install-prompt {
+  background: rgba(30, 41, 59, 0.98);
+  border-color: rgba(96, 165, 250, 0.18);
 
-    &__icon { background: #1e3a8a; color: #93c5fd; }
-    &__content strong { color: #f8fafc; }
-    &__content span { color: #94a3b8; }
-    &__share { color: #93c5fd; }
-  }
+  &__icon { background: #1e3a8a; color: #93c5fd; }
+  &__content strong { color: #f8fafc; }
+  &__content span { color: #94a3b8; }
+  &__share { color: #93c5fd; }
 }
