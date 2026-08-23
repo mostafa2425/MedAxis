@@ -7,7 +7,6 @@ const TOKEN_TTL_MINUTES = 30;
 const RESEND_COOLDOWN_SECONDS = 60;
 
 function hashToken(token: string) { return createHash('sha256').update(token).digest('hex'); }
-
 function getConfig() {
   const senderEmail = process.env.BREVO_SENDER_EMAIL;
   const senderName = process.env.BREVO_SENDER_NAME || 'MedAxis';
@@ -17,11 +16,8 @@ function getConfig() {
   if (!senderEmail || !appUrl || !smtpLogin || !smtpKey) throw new AppError('Email verification is not configured', 503);
   return { senderEmail, senderName, appUrl: appUrl.replace(/\/$/, ''), smtpLogin, smtpKey };
 }
-
 function verificationUrl(appUrl: string, token: string) { return `${appUrl}/verify-email?token=${encodeURIComponent(token)}`; }
-
 function escapeHtml(value: string) { return value.replace(/[&<>\"]/g, (char) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '\"': '&quot;' }[char] || char)); }
-
 function emailHtml(name: string, url: string) {
   return `<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Verify your MedAxis account</title></head><body style="margin:0;background:#f4f7fb;font-family:Arial,Helvetica,sans-serif;color:#0f172a"><table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background:#f4f7fb;padding:32px 12px"><tr><td align="center"><table role="presentation" width="600" cellspacing="0" cellpadding="0" style="max-width:600px;width:100%;background:#fff;border-radius:16px;overflow:hidden"><tr><td style="background:#2563eb;padding:28px;text-align:center;color:#fff;font-size:28px;font-weight:700">MedAxis</td></tr><tr><td style="padding:40px 32px"><div style="width:60px;height:60px;line-height:60px;margin:0 auto 20px;background:#eff6ff;border-radius:50%;text-align:center;font-size:28px">✓</div><h1 style="font-size:26px;text-align:center;margin:0 0 14px">Verify your email</h1><p style="font-size:16px;line-height:25px;color:#475569;text-align:center;margin:0 auto 26px">Hi ${escapeHtml(name)}, please verify your email address to activate your MedAxis account.</p><p style="text-align:center;margin:0 0 26px"><a href="${url}" style="display:inline-block;background:#2563eb;color:#fff;text-decoration:none;padding:14px 28px;border-radius:10px;font-weight:700">Verify Email</a></p><div style="background:#f8fafc;border-radius:10px;padding:16px;font-size:12px;line-height:18px;color:#64748b;word-break:break-all">If the button does not work, copy and paste this link into your browser:<br><br>${url}</div><p style="font-size:13px;line-height:20px;color:#64748b;text-align:center;border-top:1px solid #e2e8f0;padding-top:22px;margin-top:24px">This link expires in 30 minutes. If you did not create a MedAxis account, you can safely ignore this email.</p></td></tr><tr><td style="background:#f8fafc;padding:24px;text-align:center;color:#94a3b8;font-size:12px;line-height:18px">MedAxis · Healthcare management made simple.<br>© 2026 MedAxis. All rights reserved.</td></tr></table></td></tr></table></body></html>`;
 }
@@ -31,9 +27,8 @@ function smtpCommand(socket: tls.TLSSocket, command: string, accepted: number[] 
     let buffer = '';
     const onData = (chunk: Buffer) => {
       buffer += chunk.toString('utf8');
-      const lines = buffer.split(/\r?\n/);
-      const complete = lines.filter(Boolean);
-      const last = complete[complete.length - 1];
+      const lines = buffer.split(/\r?\n/).filter(Boolean);
+      const last = lines[lines.length - 1];
       if (!last || !/^\d{3} /.test(last)) return;
       socket.off('data', onData);
       const code = Number(last.slice(0, 3));
@@ -44,22 +39,36 @@ function smtpCommand(socket: tls.TLSSocket, command: string, accepted: number[] 
   });
 }
 
+function waitForGreeting(socket: tls.TLSSocket) {
+  return new Promise<void>((resolve, reject) => {
+    let buffer = '';
+    const onData = (chunk: Buffer) => {
+      buffer += chunk.toString('utf8');
+      const lines = buffer.split(/\r?\n/).filter(Boolean);
+      const last = lines[lines.length - 1];
+      if (!last || !/^\d{3} /.test(last)) return;
+      socket.off('data', onData);
+      if (last.startsWith('220 ')) resolve(); else reject(new Error(`SMTP greeting: ${last}`));
+    };
+    socket.on('data', onData);
+  });
+}
+
 async function sendEmail(to: string, name: string, url: string) {
   const { senderEmail, senderName, smtpLogin, smtpKey } = getConfig();
   const socket = tls.connect({ host: 'smtp-relay.brevo.com', port: 465, servername: 'smtp-relay.brevo.com' });
   try {
     await new Promise<void>((resolve, reject) => {
-      socket.once('secureConnect', () => resolve());
+      socket.once('secureConnect', resolve);
       socket.once('error', reject);
     });
-    await smtpCommand(socket, '', [220]);
+    await waitForGreeting(socket);
     await smtpCommand(socket, 'EHLO medaxis.app', [250]);
     await smtpCommand(socket, 'AUTH LOGIN', [334]);
     await smtpCommand(socket, Buffer.from(smtpLogin).toString('base64'), [334]);
     await smtpCommand(socket, Buffer.from(smtpKey).toString('base64'), [235]);
     await smtpCommand(socket, `MAIL FROM:<${senderEmail}>`, [250]);
     await smtpCommand(socket, `RCPT TO:<${to}>`, [250, 251]);
-
     const body = [
       `From: ${senderName} <${senderEmail}>`,
       `To: ${name} <${to}>`,
@@ -77,9 +86,7 @@ async function sendEmail(to: string, name: string, url: string) {
   } catch (error) {
     console.error('Brevo SMTP send failed:', error);
     throw new AppError('Unable to send verification email. Please try again later.', 503);
-  } finally {
-    socket.end();
-  }
+  } finally { socket.end(); }
 }
 
 export class EmailVerificationService {
@@ -87,7 +94,6 @@ export class EmailVerificationService {
     getConfig();
     const latest = await prisma.$queryRaw<Array<{ createdAt: Date }>>`SELECT "createdAt" FROM "email_verification_tokens" WHERE "userId" = ${userId} ORDER BY "createdAt" DESC LIMIT 1`;
     if (enforceCooldown && latest[0] && Date.now() - new Date(latest[0].createdAt).getTime() < RESEND_COOLDOWN_SECONDS * 1000) throw new AppError('Please wait before requesting another verification email.', 429);
-
     await prisma.$executeRaw`DELETE FROM "email_verification_tokens" WHERE "userId" = ${userId}`;
     const token = randomBytes(32).toString('hex');
     const tokenHash = hashToken(token);
