@@ -1,7 +1,9 @@
 import path from 'path';
+import { prisma } from '../utils/prisma';
 import { userRepo } from '../repositories/user.repo';
 import { doctorRepo, type DoctorWithSpecialties } from '../repositories/doctor.repo';
 import { specialtyService } from './specialty.service';
+import { emailVerificationService } from './emailVerification.service';
 import { hashPassword, comparePassword, generateToken, type JwtPayload } from '../utils/auth';
 import { AppError, UnauthorizedError, ConflictError } from '../utils/errors';
 import { createPublicFileUrl, deleteStoredFile, uploadOperationFile } from '../utils/supabaseStorage';
@@ -34,6 +36,13 @@ async function resolveSpecialtyLinks(specialtyIds: string[], subspecialtyIds?: s
   return { validSpecialtyIds, validSubspecialtyIds };
 }
 
+async function isEmailVerified(userId: string) {
+  const rows = await prisma.$queryRaw<Array<{ emailVerifiedAt: Date | null }>>`
+    SELECT "emailVerifiedAt" FROM "users" WHERE "id" = ${userId} LIMIT 1
+  `;
+  return Boolean(rows[0]?.emailVerifiedAt);
+}
+
 class AuthService {
   async login(email: string, password: string) {
     const user = await userRepo.findByEmail(email);
@@ -41,6 +50,12 @@ class AuthService {
     if (!user.isActive) throw new UnauthorizedError('Account is deactivated');
     const isPasswordValid = await comparePassword(password, user.password);
     if (!isPasswordValid) throw new UnauthorizedError('Invalid email or password');
+    if (!(await isEmailVerified(user.id))) {
+      throw new AppError('Please verify your email address before logging in.', 401, {
+        code: 'EMAIL_NOT_VERIFIED',
+        email: user.email,
+      });
+    }
     const payload: JwtPayload = { userId: user.id, email: user.email, role: user.role };
     const token = generateToken(payload);
     const doctor = await doctorRepo.findByUserId(user.id);
@@ -49,14 +64,36 @@ class AuthService {
 
   async register(email: string, password: string, name: string, specialtyIds: string[], phone?: string, subspecialtyIds?: string[]) {
     const existingUser = await userRepo.findByEmail(email);
-    if (existingUser) throw new ConflictError('User with this email');
+    if (existingUser) {
+      if (await isEmailVerified(existingUser.id)) throw new ConflictError('User with this email');
+      throw new ConflictError('An account with this email already exists but is not verified. Please use resend verification email.');
+    }
     const { validSpecialtyIds, validSubspecialtyIds } = await resolveSpecialtyLinks(specialtyIds, subspecialtyIds);
     const hashedPassword = await hashPassword(password);
     const user = await userRepo.create({ email, password: hashedPassword, name, phone });
     const doctor = await doctorRepo.create({ name: user.name, phone: user.phone, email: user.email, userId: user.id, createdBy: user.id }, validSpecialtyIds, validSubspecialtyIds);
-    const payload: JwtPayload = { userId: user.id, email: user.email, role: user.role };
-    const token = generateToken(payload);
-    return { token, user: toAuthUser(user, doctor) };
+
+    try {
+      await emailVerificationService.issue(user.id, user.email, user.name, false);
+    } catch (error) {
+      console.error('Registration email verification send failed:', error);
+      throw error;
+    }
+
+    return {
+      requiresEmailVerification: true,
+      email: user.email,
+      user: toAuthUser(user, doctor),
+    };
+  }
+
+  async verifyEmail(token: string) {
+    return emailVerificationService.verify(token);
+  }
+
+  async resendVerification(email: string) {
+    await emailVerificationService.resend(email.trim());
+    return { sent: true };
   }
 
   async getMe(userId: string) {

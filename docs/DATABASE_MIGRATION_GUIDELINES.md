@@ -175,6 +175,33 @@ The target database should have no unexpected failed or pending migrations.
 
 For local development, the same migration chain used by `develop` should be reproducible without destructive resets.
 
+### 9. Prisma 7 enum formatting is part of the build contract
+
+Prisma 7 requires enum members to be declared on separate lines. Do not collapse enum definitions back into one-line declarations such as:
+
+```prisma
+enum Gender { MALE FEMALE }
+```
+
+Use:
+
+```prisma
+enum Gender {
+  MALE
+  FEMALE
+}
+```
+
+This matters for Vercel builds as well as local builds because `prisma generate` runs during the server installation/build lifecycle. A schema that works only because an older generated client is present can fail immediately on a clean Vercel build.
+
+Before pushing a Prisma schema change, always run:
+
+```bash
+npx prisma generate
+```
+
+and confirm the build is using the current `develop` commit rather than an older Vercel deployment.
+
 ## Incident that prompted these rules
 
 During the August 2026 MedAxis development work, the existing database was baselined successfully, but a later migration contained assumptions about foreign-key state that did not match the actual database. The migration attempted to drop a foreign key that was already absent in the migration's expected state, while another migration-created object (`operation_follow_ups`) already existed.
@@ -199,5 +226,6 @@ Before merging:
 - [ ] Check `prisma migrate status`.
 - [ ] Verify the affected API flow after migration.
 - [ ] Confirm no migration is left in a failed state.
+- [ ] Confirm Vercel is deploying the current `develop` SHA and not an older commit.
 
 **Golden rule:** never mark a migration as applied just because the first SQL statement appears to have already happened. Verify the entire migration first.

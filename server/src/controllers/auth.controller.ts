@@ -18,7 +18,22 @@ export class AuthController {
       const parsed = registerSchema.safeParse(req.body);
       if (!parsed.success) throw new AppError(parsed.error.issues[0]?.message || 'Validation error', 400, parsed.error.issues);
       const result = await authService.register(parsed.data.email, parsed.data.password, parsed.data.name, parsed.data.specialtyIds, parsed.data.phone, parsed.data.subspecialtyIds);
-      return sendSuccess(res, result, 'Registration successful', 201);
+      return sendSuccess(res, result, 'Registration successful. Please verify your email to continue.', 201);
+    } catch (err) { next(err); }
+  }
+
+  async verifyEmail(req: Request, res: Response, next: NextFunction) {
+    try {
+      const token = typeof req.query.token === 'string' ? req.query.token : '';
+      return sendSuccess(res, await authService.verifyEmail(token), 'Email verified successfully');
+    } catch (err) { next(err); }
+  }
+
+  async resendVerification(req: Request, res: Response, next: NextFunction) {
+    try {
+      const email = typeof req.body?.email === 'string' ? req.body.email.trim() : '';
+      if (!email) throw new AppError('Email is required', 400);
+      return sendSuccess(res, await authService.resendVerification(email), 'If the account exists and is not verified, a new verification email has been sent.');
     } catch (err) { next(err); }
   }
 

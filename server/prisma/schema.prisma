@@ -1,4 +1,5 @@
-// Prisma 7 compatibility: enum values must be declared on separate lines.
+// Prisma 7 build guard: keep every enum value on its own line.
+// Do not compress enum declarations into one line; Prisma 7 schema validation rejects that format.
 generator client {
   provider            = "prisma-client"
   output              = "../src/generated/prisma"
@@ -105,7 +106,7 @@ model Specialty {
   isActive              Boolean                  @default(true)
   createdAt             DateTime                 @default(now()) @db.Timestamptz(6)
   updatedAt             DateTime                 @updatedAt @db.Timestamptz(6)
-  parent                Specialty?               @relation("SpecialtyHierarchy", fields: [parentId], references: [id], onDelete: SetNull)
+  parent                Specialty?              @relation("SpecialtyHierarchy", fields: [parentId], references: [id], onDelete: SetNull)
   children              Specialty[]              @relation("SpecialtyHierarchy")
   doctors               DoctorSpecialty[]
   doctorSubspecialties  DoctorSubspecialty[]
@@ -304,10 +305,10 @@ model OperationTeamMember {
   doctorId    String?
   nurseId     String?
   sortOrder   Int       @default(0)
-  createdAt   DateTime  @default(now())
+  createdAt   DateTime @default(now())
   operation   Operation @relation(fields: [operationId], references: [id], onDelete: Cascade)
-  doctor      Doctor?   @relation(fields: [doctorId], references: [id], onDelete: SetNull)
-  nurse       Nurse?    @relation(fields: [nurseId], references: [id], onDelete: SetNull)
+  doctor      Doctor?  @relation(fields: [doctorId], references: [id], onDelete: SetNull)
+  nurse       Nurse?   @relation(fields: [nurseId], references: [id], onDelete: SetNull)
   @@index([operationId])
   @@index([doctorId])
   @@index([nurseId])
