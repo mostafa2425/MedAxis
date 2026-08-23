@@ -99,7 +99,7 @@ export default function LoginPage() {
         {emailNotVerified && (
           <Alert
             type="warning"
-            showIcon
+            showIcon={false}
             className="verificationAlert"
             message={t('auth.emailNotVerified', { defaultValue: 'Email verification required' })}
             description={t('auth.emailNotVerifiedDescription', { defaultValue: 'Please verify your email address before signing in. We can send you a new verification email.' })}
