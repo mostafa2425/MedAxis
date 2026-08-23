@@ -53,7 +53,7 @@ export default function RegisterPage() {
       });
       login(res.data.data.token, res.data.data.user);
       messageApi.success(t('auth.registerSuccess'));
-      navigate('/calendar', { replace: true });
+      navigate('/', { replace: true });
     } catch (err: unknown) {
       const issues = parseApiValidationErrors(err);
       const applied = applyValidationErrorsToAntdForm(form, issues, t, {
