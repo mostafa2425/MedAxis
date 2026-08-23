@@ -1,4 +1,5 @@
-// Prisma 7 compatibility: enum values must be declared on separate lines.
+// Prisma 7 build guard: keep every enum value on its own line.
+// Do not compress enum declarations into one line; Prisma 7 schema validation rejects that format.
 generator client {
   provider            = "prisma-client"
   output              = "../src/generated/prisma"
