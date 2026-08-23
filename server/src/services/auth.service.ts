@@ -51,7 +51,10 @@ class AuthService {
     const isPasswordValid = await comparePassword(password, user.password);
     if (!isPasswordValid) throw new UnauthorizedError('Invalid email or password');
     if (!(await isEmailVerified(user.id))) {
-      throw new UnauthorizedError('Please verify your email address before logging in.');
+      throw new AppError('Please verify your email address before logging in.', 401, {
+        code: 'EMAIL_NOT_VERIFIED',
+        email: user.email,
+      });
     }
     const payload: JwtPayload = { userId: user.id, email: user.email, role: user.role };
     const token = generateToken(payload);
