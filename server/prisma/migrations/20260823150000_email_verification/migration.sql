@@ -1,6 +1,10 @@
 -- Email verification for MedAxis custom JWT authentication.
 ALTER TABLE "users" ADD COLUMN IF NOT EXISTS "emailVerifiedAt" TIMESTAMPTZ(6);
 
+-- Existing accounts were created before email verification existed.
+-- Treat them as verified so this security change does not lock out current doctors.
+UPDATE "users" SET "emailVerifiedAt" = COALESCE("emailVerifiedAt", "createdAt") WHERE "emailVerifiedAt" IS NULL;
+
 CREATE TABLE IF NOT EXISTS "email_verification_tokens" (
   "id" TEXT NOT NULL,
   "userId" UUID NOT NULL,
