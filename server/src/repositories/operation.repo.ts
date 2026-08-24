@@ -49,6 +49,34 @@ export class OperationRepository {
     return prisma.operation.create({ data: { ...operationData, diagnosis: operationData.diagnosis ?? null, ...(procedures?.length ? { procedures: { create: procedures.map((p) => ({ catalogId: p.catalogId ?? null, name: p.name, nameAr: p.nameAr ?? null, specialtyId: p.specialtyId ?? null, sortOrder: p.sortOrder })) } } : {}), ...(teamMembers?.length ? { teamMembers: { create: teamMembers.map((m) => ({ doctorId: m.doctorId ?? null, nurseId: m.nurseId ?? null, sortOrder: m.sortOrder })) } } : {}), ...(medicalTeam ? { medicalTeam: { create: medicalTeam } } : {}), ...(cost ? { cost: { create: { totalCost: cost.totalCost, paidAmount: cost.paidAmount ?? 0, remainingAmount: cost.remainingAmount ?? (cost.totalCost - (cost.paidAmount ?? 0)), hospitalCost: cost.hospitalCost ?? 0, nursingCost: cost.nursingCost ?? 0, assistantDoctorsCost: cost.assistantDoctorsCost ?? 0, equipmentCost: cost.equipmentCost ?? 0, otherCost: cost.otherCost ?? 0, paymentMethod: cost.paymentMethod as any, paymentStatus: cost.paymentStatus as any, paymentNotes: cost.paymentNotes } } } : {}) }, include: operationListInclude });
   }
 
+  /**
+   * Atomically creates the operation and its initial timeline entry.
+   * If any nested operation write or timeline write fails, the whole operation is rolled back.
+   */
+  async createAtomic(data: Parameters<OperationRepository['create']>[0], timeline: { action: string; description?: string; userId: string }) {
+    return prisma.$transaction(async (tx) => {
+      const { medicalTeam, cost, procedures, teamMembers, ...operationData } = data;
+      const operation = await tx.operation.create({
+        data: {
+          ...operationData,
+          diagnosis: operationData.diagnosis ?? null,
+          ...(procedures?.length ? { procedures: { create: procedures.map((p) => ({ catalogId: p.catalogId ?? null, name: p.name, nameAr: p.nameAr ?? null, specialtyId: p.specialtyId ?? null, sortOrder: p.sortOrder })) } } : {}),
+          ...(teamMembers?.length ? { teamMembers: { create: teamMembers.map((m) => ({ doctorId: m.doctorId ?? null, nurseId: m.nurseId ?? null, sortOrder: m.sortOrder })) } } : {}),
+          ...(medicalTeam ? { medicalTeam: { create: medicalTeam } } : {}),
+          ...(cost ? { cost: { create: { totalCost: cost.totalCost, paidAmount: cost.paidAmount ?? 0, remainingAmount: cost.remainingAmount ?? (cost.totalCost - (cost.paidAmount ?? 0)), hospitalCost: cost.hospitalCost ?? 0, nursingCost: cost.nursingCost ?? 0, assistantDoctorsCost: cost.assistantDoctorsCost ?? 0, equipmentCost: cost.equipmentCost ?? 0, otherCost: cost.otherCost ?? 0, paymentMethod: cost.paymentMethod as any, paymentStatus: cost.paymentStatus as any, paymentNotes: cost.paymentNotes } } } : {}),
+        },
+        include: operationListInclude,
+      });
+
+      await tx.$queryRaw<Array<Record<string, unknown>>>(Prisma.sql`
+        INSERT INTO "operation_timeline" ("id", "operationId", "action", "description", "userId", "createdAt")
+        VALUES (gen_random_uuid(), ${operation.id}, ${timeline.action}::"TimelineAction", ${timeline.description ?? null}, ${timeline.userId}, now())
+      `);
+
+      return operation;
+    });
+  }
+
   async replaceProcedures(operationId: string, procedures: Array<{ catalogId?: string | null; name: string; nameAr?: string | null; specialtyId?: string | null; sortOrder: number }>) {
     await prisma.$transaction([prisma.operationProcedure.deleteMany({ where: { operationId } }), prisma.operationProcedure.createMany({ data: procedures.map((p) => ({ operationId, catalogId: p.catalogId ?? null, name: p.name, nameAr: p.nameAr ?? null, specialtyId: p.specialtyId ?? null, sortOrder: p.sortOrder })) })]);
   }
