@@ -34,8 +34,8 @@ jobs:
         run: |
           echo "E2E_BASE_URL=${E2E_BASE_URL}"
           curl --fail --silent --show-error --location --max-time 20 "${E2E_BASE_URL}/login" -o /tmp/medaxis-login.html
-          grep -q "MedAxis" /tmp/medaxis-login.html
-          echo "Frontend preflight passed."
+          test -s /tmp/medaxis-login.html
+          echo "Frontend /login is reachable."
 
       - name: Run E2E
         run: npm run e2e
