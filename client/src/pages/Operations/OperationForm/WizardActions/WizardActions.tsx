@@ -97,9 +97,9 @@ export default function WizardActions({
         </div>
       </div>
 
-      {isPatientStep && !canContinue && (
+      {/* {isPatientStep && !canContinue && (
         <p className="wizardActionsHint">{t('operations.selectOrCreatePatient')}</p>
-      )}
+      )} */}
     </div>
   );
 }

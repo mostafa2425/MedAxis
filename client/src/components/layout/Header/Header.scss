@@ -65,9 +65,7 @@
       color: $dark-text-secondary;
     }
 
-    @include responsive('md') {
-      display: flex;
-    }
+    @include responsive('md') { display: flex; }
   }
 
   .brandMobile {
@@ -76,9 +74,7 @@
     gap: $space-2;
     min-width: 0;
 
-    @include responsive('md') {
-      display: flex;
-    }
+    @include responsive('md') { display: flex; }
   }
 
   .brandIcon {
@@ -105,9 +101,7 @@
     color: $text-primary;
     letter-spacing: -0.2px;
 
-    @include dark {
-      color: $dark-text-primary;
-    }
+    @include dark { color: $dark-text-primary; }
   }
 
   .pageHeading {
@@ -116,9 +110,7 @@
     gap: 1px;
     min-width: 0;
 
-    @include responsive('md') {
-      display: none;
-    }
+    @include responsive('md') { display: none; }
   }
 
   .pageTitle {
@@ -131,9 +123,7 @@
     margin: 0;
     line-height: 1.25;
 
-    @include dark {
-      color: $dark-text-primary;
-    }
+    @include dark { color: $dark-text-primary; }
   }
 
   .pageHint {
@@ -153,9 +143,7 @@
     min-width: 0;
     max-width: 440px;
 
-    @include responsive('lg') {
-      display: none;
-    }
+    @include responsive('lg') { display: none; }
   }
 
   .searchTrigger {
@@ -185,46 +173,13 @@
       background: $dark-surface-elevated;
       border-color: $dark-border;
       color: $dark-text-muted;
-
-      &:hover {
-        background: $dark-surface;
-        border-color: rgba($primary, 0.5);
-      }
+      &:hover { background: $dark-surface; border-color: rgba($primary, 0.5); }
     }
   }
 
-  .searchTriggerIcon {
-    color: $text-muted;
-    font-size: 15px;
-    flex-shrink: 0;
-  }
-
-  .searchTriggerText {
-    flex: 1;
-    min-width: 0;
-    font-size: $font-body-sm;
-    @include truncate;
-  }
-
-  .searchTriggerKbd {
-    flex-shrink: 0;
-    min-width: 22px;
-    height: 22px;
-    padding: 0 6px;
-    border-radius: 6px;
-    border: 1px solid $border;
-    background: $surface;
-    color: $text-muted;
-    font-size: 11px;
-    font-family: inherit;
-    @include flex-center;
-
-    @include dark {
-      background: $dark-surface;
-      border-color: $dark-border;
-      color: $dark-text-muted;
-    }
-  }
+  .searchTriggerIcon { color: $text-muted; font-size: 15px; flex-shrink: 0; }
+  .searchTriggerText { flex: 1; min-width: 0; font-size: $font-body-sm; @include truncate; }
+  .searchTriggerKbd { flex-shrink: 0; min-width: 22px; height: 22px; padding: 0 6px; border-radius: 6px; border: 1px solid $border; background: $surface; color: $text-muted; font-size: 11px; font-family: inherit; @include flex-center; }
 
   .headerRight {
     display: flex;
@@ -240,17 +195,10 @@
     box-shadow: none !important;
     padding-inline: 14px !important;
 
-    @include responsive('md') {
-      width: 36px !important;
-      padding-inline: 0 !important;
-    }
+    @include responsive('md') { width: 36px !important; padding-inline: 0 !important; }
   }
 
-  .quickAddLabel {
-    @include responsive('md') {
-      display: none;
-    }
-  }
+  .quickAddLabel { @include responsive('md') { display: none; } }
 
   .headerActions {
     display: flex;
@@ -261,16 +209,8 @@
     background: $background;
     border: 1px solid $border;
 
-    @include dark {
-      background: $dark-surface-elevated;
-      border-color: $dark-border;
-    }
-
-    @include responsive('sm') {
-      background: transparent;
-      border: none;
-      padding: 0;
-    }
+    @include dark { background: $dark-surface-elevated; border-color: $dark-border; }
+    @include responsive('sm') { background: transparent; border: none; padding: 0; }
   }
 
   .langBtn {
@@ -289,24 +229,11 @@
     font-weight: $font-semibold;
     transition: background $transition-fast, color $transition-fast;
 
-    &:hover {
-      background: $surface;
-      color: $text-primary;
-
-      @include dark {
-        background: $dark-surface;
-        color: $dark-text-primary;
-      }
-    }
-
-    @include dark {
-      color: $dark-text-secondary;
-    }
+    &:hover { background: $surface; color: $text-primary; }
+    @include dark { color: $dark-text-secondary; &:hover { background: $dark-surface; color: $dark-text-primary; } }
   }
 
-  .langCode {
-    letter-spacing: 0.04em;
-  }
+  .langCode { letter-spacing: 0.04em; }
 
   .iconBtn {
     display: flex !important;
@@ -319,25 +246,15 @@
     font-size: 16px !important;
     transition: all $transition-fast !important;
 
-    &:hover {
-      background: $surface !important;
-      color: $text-primary !important;
-
-      @include dark {
-        background: $dark-surface !important;
-        color: $dark-text-primary !important;
-      }
-    }
-
-    @include dark {
-      color: $dark-text-secondary !important;
-    }
+    &:hover { background: $surface !important; color: $text-primary !important; }
+    @include dark { color: $dark-text-secondary !important; &:hover { background: $dark-surface !important; color: $dark-text-primary !important; } }
   }
 
-  .iconBtnActive {
-    color: $primary !important;
-    background: $primary-light !important;
+  .notificationTrigger {
+    position: relative;
   }
+
+  .iconBtnActive { color: $primary !important; background: $primary-light !important; }
 
   .avatarBtn {
     display: flex;
@@ -352,105 +269,108 @@
     margin-inline-start: $space-1;
     min-height: 40px;
 
-    &:hover {
-      border-color: rgba($primary, 0.4);
-      box-shadow: 0 0 0 3px rgba($primary, 0.08);
-    }
-
-    @include dark {
-      background: $dark-surface-elevated;
-      border-color: $dark-border;
-
-      &:hover {
-        border-color: rgba($primary, 0.5);
-      }
-    }
+    &:hover { border-color: rgba($primary, 0.4); box-shadow: 0 0 0 3px rgba($primary, 0.08); }
+    @include dark { background: $dark-surface-elevated; border-color: $dark-border; &:hover { border-color: rgba($primary, 0.5); } }
   }
 
-  .userAvatar {
-    flex-shrink: 0;
-    font-size: 13px !important;
-    font-weight: $font-semibold !important;
-  }
-
-  .userMeta {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    min-width: 0;
-    line-height: 1.15;
-
-    @include responsive('md') {
-      display: none;
-    }
-  }
-
-  .userName {
-    font-size: $font-body-sm;
-    font-weight: $font-semibold;
-    color: $text-primary;
-    max-width: 120px;
-    @include truncate;
-
-    @include dark {
-      color: $dark-text-primary;
-    }
-  }
-
-  .userRole {
-    font-size: 11px;
-    color: $text-muted;
-    max-width: 120px;
-    @include truncate;
-  }
-
-  .userCaret {
-    font-size: 10px;
-    color: $text-muted;
-    flex-shrink: 0;
-
-    @include responsive('md') {
-      display: none;
-    }
-  }
+  .userAvatar { flex-shrink: 0; font-size: 13px !important; font-weight: $font-semibold !important; }
+  .userMeta { display: flex; flex-direction: column; align-items: flex-start; min-width: 0; line-height: 1.15; @include responsive('md') { display: none; } }
+  .userName { font-size: $font-body-sm; font-weight: $font-semibold; color: $text-primary; max-width: 120px; @include truncate; @include dark { color: $dark-text-primary; } }
+  .userRole { font-size: 11px; color: $text-muted; max-width: 120px; @include truncate; }
+  .userCaret { font-size: 10px; color: $text-muted; flex-shrink: 0; @include responsive('md') { display: none; } }
 
   @include responsive('md') {
-    &.header {
-      inset-inline: 0 !important;
-      height: $header-height-mobile;
-      padding: 0 $space-3;
-      gap: $space-2;
-    }
-
-    .quickAddBtn {
-      margin-inline-end: 0;
-    }
+    &.header { inset-inline: 0 !important; height: $header-height-mobile; padding: 0 $space-3; gap: $space-2; }
+    .quickAddBtn { margin-inline-end: 0; }
   }
 }
 
+/* Modern notification popover */
+.notificationDropdown {
+  width: min(390px, calc(100vw - 24px));
+  overflow: hidden;
+  border: 1px solid $border;
+  border-radius: 18px;
+  background: $surface;
+  box-shadow: 0 18px 50px rgba(15, 23, 42, 0.16), 0 3px 12px rgba(15, 23, 42, 0.08);
+
+  @include dark {
+    background: $dark-surface-elevated;
+    border-color: $dark-border;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.38);
+  }
+}
+
+.notificationDropdownHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 16px 16px 13px;
+  border-bottom: 1px solid $border;
+
+  @include dark { border-bottom-color: $dark-border; }
+}
+
+.notificationDropdownTitle { font-size: 16px; line-height: 1.25; font-weight: $font-bold; color: $text-primary; @include dark { color: $dark-text-primary; } }
+.notificationDropdownSubtitle { margin-top: 4px; font-size: 12px; color: $text-muted; @include dark { color: $dark-text-muted; } }
+.notificationUnreadPill { min-width: 28px; height: 28px; padding: 0 8px; display: inline-flex; align-items: center; justify-content: center; border-radius: $radius-full; background: $primary-light; color: $primary; font-size: 12px; font-weight: $font-bold; }
+
+.notificationList {
+  max-height: min(440px, calc(100vh - 220px));
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+}
+
+.notificationItem {
+  position: relative;
+  display: flex;
+  width: 100%;
+  gap: 11px;
+  padding: 13px 15px;
+  border: 0;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.14);
+  background: transparent;
+  color: inherit;
+  text-align: start;
+  cursor: pointer;
+  font: inherit;
+  transition: background $transition-fast;
+
+  &:hover { background: rgba($primary, 0.045); }
+  &:last-child { border-bottom: 0; }
+  @include dark { border-bottom-color: rgba(148, 163, 184, 0.1); &:hover { background: rgba($primary, 0.08); } }
+}
+
+.notificationItemUnread { background: rgba($primary, 0.025); }
+.notificationItemImportant { .notificationItemIcon { color: #d97706; background: rgba(217, 119, 6, 0.1); } }
+.notificationItemIcon { width: 34px; height: 34px; flex: 0 0 34px; display: flex; align-items: center; justify-content: center; border-radius: 11px; background: $primary-light; color: $primary; font-size: 15px; }
+.notificationItemBody { min-width: 0; flex: 1; display: flex; flex-direction: column; gap: 4px; }
+.notificationItemTopline { display: flex; align-items: baseline; gap: 8px; min-width: 0; }
+.notificationItemTopline strong { min-width: 0; flex: 1; color: $text-primary; font-size: 13px; line-height: 1.35; font-weight: $font-semibold; @include truncate; @include dark { color: $dark-text-primary; } }
+.notificationItemTime { flex-shrink: 0; color: $text-muted; font-size: 10px; white-space: nowrap; @include dark { color: $dark-text-muted; } }
+.notificationItemMessage { color: $text-secondary; font-size: 12px; line-height: 1.45; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; @include dark { color: $dark-text-secondary; } }
+.notificationItemRead { opacity: 0.86; }
+.notificationUnreadDot { flex: 0 0 7px; width: 7px; height: 7px; margin-top: 6px; border-radius: 50%; background: $primary; box-shadow: 0 0 0 3px rgba($primary, 0.12); }
+
+.notificationEmpty { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px; min-height: 180px; padding: 28px 24px; text-align: center; }
+.notificationEmptyIcon { width: 42px; height: 42px; margin-bottom: 4px; display: flex; align-items: center; justify-content: center; border-radius: 50%; background: rgba(16, 185, 129, 0.1); color: #059669; font-size: 18px; }
+.notificationEmpty strong { color: $text-primary; font-size: 13px; @include dark { color: $dark-text-primary; } }
+.notificationEmpty > span:last-child { max-width: 260px; color: $text-muted; font-size: 11px; line-height: 1.45; }
+
+.notificationDropdownFooter { padding: 10px 12px 12px; border-top: 1px solid $border; @include dark { border-top-color: $dark-border; } }
+.notificationFooterButton { width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 9px 10px; border: 0; border-radius: 10px; background: transparent; color: $primary; cursor: pointer; font: inherit; font-size: 12px; font-weight: $font-semibold; text-align: start; transition: background $transition-fast; &:hover { background: $primary-light; } }
+
 .headerUserDropdown {
-  .ant-dropdown-menu-item-disabled {
-    cursor: default !important;
-    opacity: 1 !important;
-  }
+  .ant-dropdown-menu-item-disabled { cursor: default !important; opacity: 1 !important; }
+  .userMenuHeader { display: flex; flex-direction: column; gap: 2px; padding: 2px 0 4px; min-width: 180px; }
+  .userMenuName { font-size: $font-body-sm; font-weight: $font-semibold; color: $text-primary; }
+  .userMenuMeta { font-size: $font-caption; color: $text-muted; @include truncate(220px); }
+}
 
-  .userMenuHeader {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-    padding: 2px 0 4px;
-    min-width: 180px;
-  }
-
-  .userMenuName {
-    font-size: $font-body-sm;
-    font-weight: $font-semibold;
-    color: $text-primary;
-  }
-
-  .userMenuMeta {
-    font-size: $font-caption;
-    color: $text-muted;
-    @include truncate(220px);
-  }
+@media (max-width: 480px) {
+  .notificationDropdown { width: calc(100vw - 16px); border-radius: 16px; }
+  .notificationDropdownHeader { padding-inline: 14px; }
+  .notificationItem { padding-inline: 13px; }
 }

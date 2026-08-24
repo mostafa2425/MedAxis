@@ -21,34 +21,95 @@ export class PatientRepository {
         { id: { contains: term, mode: 'insensitive' } },
       ];
     }
-    if (gender) {
-      where.gender = gender;
-    }
+    if (gender) where.gender = gender;
 
     const [data, total] = await Promise.all([
       prisma.patient.findMany({
         where,
         skip,
         take: limit,
-        include: {
-          _count: { select: { operations: true } },
-        },
-        orderBy: { createdAt: 'desc' },
+        include: { _count: { select: { operations: true } } },
+        orderBy: { updatedAt: 'desc' },
       }),
       prisma.patient.count({ where }),
     ]);
 
-    return { data, total };
+    if (data.length === 0) return { data: [], total };
+
+    const patientIds = data.map((patient) => patient.id);
+    const operations = await prisma.operation.findMany({
+      where: { patientId: { in: patientIds }, createdBy },
+      select: {
+        id: true,
+        patientId: true,
+        name: true,
+        operationDate: true,
+        status: true,
+        followUps: {
+          select: { status: true, scheduledAt: true },
+          orderBy: { scheduledAt: 'asc' },
+        },
+        _count: { select: { files: true } },
+      },
+      orderBy: { operationDate: 'desc' },
+    });
+
+    const operationsByPatient = new Map<string, typeof operations>();
+    for (const operation of operations) {
+      const current = operationsByPatient.get(operation.patientId) ?? [];
+      current.push(operation);
+      operationsByPatient.set(operation.patientId, current);
+    }
+
+    const enriched = data.map((patient) => {
+      const patientOperations = operationsByPatient.get(patient.id) ?? [];
+      const upcomingFollowUps = patientOperations.reduce(
+        (count, operation) =>
+          count + operation.followUps.filter(
+            (followUp) => followUp.status === 'UPCOMING' || followUp.status === 'OVERDUE',
+          ).length,
+        0,
+      );
+
+      return {
+        ...patient,
+        management: {
+          totalOperations: patientOperations.length,
+          completedOperations: patientOperations.filter((item) => item.status === 'COMPLETED').length,
+          activeOperations: patientOperations.filter(
+            (item) => item.status === 'SCHEDULED' || item.status === 'IN_PROGRESS',
+          ).length,
+          cancelledOperations: patientOperations.filter((item) => item.status === 'CANCELLED').length,
+          upcomingFollowUps,
+          clinicalFiles: patientOperations.reduce((count, item) => count + item._count.files, 0),
+          lastOperation: patientOperations[0]
+            ? {
+                id: patientOperations[0].id,
+                name: patientOperations[0].name,
+                operationDate: patientOperations[0].operationDate,
+                status: patientOperations[0].status,
+              }
+            : null,
+        },
+      };
+    });
+
+    return { data: enriched, total };
   }
 
   async findById(id: string, createdBy: string) {
     return prisma.patient.findFirst({
       where: { id, createdBy },
       include: {
+        _count: { select: { operations: true } },
         operations: {
+          where: { createdBy },
           include: {
             hospital: true,
             specialty: true,
+            cost: true,
+            files: { orderBy: { createdAt: 'desc' } },
+            followUps: { orderBy: { scheduledAt: 'asc' } },
           },
           orderBy: { operationDate: 'desc' },
         },
@@ -68,16 +129,11 @@ export class PatientRepository {
   }
 
   async update(id: string, createdBy: string, data: Prisma.PatientUpdateInput) {
-    return prisma.patient.update({
-      where: { id, createdBy },
-      data,
-    });
+    return prisma.patient.update({ where: { id, createdBy }, data });
   }
 
   async delete(id: string, createdBy: string) {
-    return prisma.patient.delete({
-      where: { id, createdBy },
-    });
+    return prisma.patient.delete({ where: { id, createdBy } });
   }
 
   async findRecent(createdBy: string, limit = 5) {

@@ -16,6 +16,12 @@ const queryClient = new QueryClient({
 
 const direction = document.documentElement.dir === 'rtl' ? 'rtl' : 'ltr';
 
+if ('serviceWorker' in navigator && import.meta.env.PROD) {
+  window.addEventListener('load', () => {
+    void navigator.serviceWorker.register('/sw.js');
+  });
+}
+
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <ConfigProvider theme={medAxisAntdTheme} direction={direction} componentSize="middle">

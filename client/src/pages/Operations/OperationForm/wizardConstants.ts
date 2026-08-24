@@ -14,7 +14,7 @@ export function getDefaultFormData(): WizardFormData {
   const lastHospital = typeof window !== 'undefined' ? localStorage.getItem(LAST_USED_HOSPITAL_KEY) : null;
   return {
     patientSearchQuery: '', patientId: '', selectedPatientName: '', selectedPatientMobile: '', isNewPatient: false, newPatientName: '', newPatientAge: null, newPatientGender: Gender.Male, newPatientMobile: '',
-    operationIds: [], operationId: '', name: '', diagnosis: '', hospitalId: lastHospital || '', specialtyId: '', operationDate: dayjs().format('YYYY-MM-DD'), operationTime: dayjs().format('HH:mm'), operationRoom: '', duration: null, status: OperationStatus.Completed,
+    operationIds: [], operationId: '', name: '', diagnosis: '', hospitalId: lastHospital || '', specialtyId: '', operationDate: dayjs().format('YYYY-MM-DD'), operationTime: dayjs().format('HH:mm'), operationRoom: '', duration: null, status: OperationStatus.Scheduled,
     doctorIds: [], nurseIds: [], primarySurgeonId: '', assistantSurgeonId: '', anesthesiologistId: '', assistantAnesthesiaId: '', nurseId: '', teamNotes: '',
     totalCost: 0, paidAmount: 0, paymentMethod: PaymentMethod.Cash, paymentStatus: PaymentStatus.Paid, paymentNotes: '', notes: '',
   };

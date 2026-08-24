@@ -113,7 +113,7 @@ export default function OperationFormPage() {
       patientSearchQuery: existingOperation.patient?.fullName ?? '',
       name: existingOperation.name,
       operationIds:
-        existingOperation.procedures?.map((procedure) => procedure.catalogId).filter((id): id is string => Boolean(id))
+        existingOperation.procedures?.map((procedure) => procedure.catalogId).filter((procedureId): procedureId is string => Boolean(procedureId))
         ?? (existingOperation.catalogId ? [existingOperation.catalogId] : []),
       operationId: existingOperation.catalogId ?? existingOperation.catalog?.id ?? '',
       diagnosis: existingOperation.diagnosis ?? '',
@@ -131,7 +131,7 @@ export default function OperationFormPage() {
           existingOperation.medicalTeam?.assistantSurgeonId,
           existingOperation.medicalTeam?.anesthesiologistId,
           existingOperation.medicalTeam?.assistantAnesthesiaId,
-        ].filter((id): id is string => Boolean(id)),
+        ].filter((doctorId): doctorId is string => Boolean(doctorId)),
       nurseIds:
         existingOperation.teamMembers?.filter((member) => member.nurseId).map((member) => member.nurseId as string)
         ?? [],
@@ -156,7 +156,7 @@ export default function OperationFormPage() {
     queryFn: () => operationService.getById(savedOperationId!),
     enabled: !!savedOperationId,
     select: (res) =>
-      res.data.data?.files?.filter((f) => isBeforeFileType(f.fileType)) ?? [],
+      res.data.data?.files?.filter((file) => isBeforeFileType(file.fileType)) ?? [],
   });
 
   const { data: afterFilesData } = useQuery({
@@ -164,7 +164,7 @@ export default function OperationFormPage() {
     queryFn: () => operationService.getById(savedOperationId!),
     enabled: !!savedOperationId,
     select: (res) =>
-      res.data.data?.files?.filter((f) => isAfterFileType(f.fileType)) ?? [],
+      res.data.data?.files?.filter((file) => isAfterFileType(file.fileType)) ?? [],
   });
 
   const beforeFiles: OperationFile[] = beforeFilesData ?? [];
@@ -199,8 +199,7 @@ export default function OperationFormPage() {
   });
 
   const deleteFileMutation = useMutation({
-    mutationFn: ({ opId, fileId }: { opId: string; fileId: string }) =>
-      operationService.deleteFile(opId, fileId),
+    mutationFn: ({ opId, fileId }: { opId: string; fileId: string }) => operationService.deleteFile(opId, fileId),
   });
 
   useEffect(() => {
@@ -218,7 +217,6 @@ export default function OperationFormPage() {
         },
       );
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- intentional notes autosave
   }, [notesDebounced, savedOperationId]);
 
   const clearError = useCallback((field: string) => {
@@ -344,10 +342,7 @@ export default function OperationFormPage() {
         let operationId: string;
 
         if (savedOperationId) {
-          await updateOperationMutation.mutateAsync({
-            opId: savedOperationId,
-            data: payload,
-          });
+          await updateOperationMutation.mutateAsync({ opId: savedOperationId, data: payload });
           operationId = savedOperationId;
         } else {
           const result = await createOperationMutation.mutateAsync(payload);
@@ -366,9 +361,7 @@ export default function OperationFormPage() {
               : t('operations.operationCreated'),
         );
 
-        if (!quickSave) {
-          navigate(`/operations/${operationId}`);
-        }
+        if (!quickSave) navigate(`/operations/${operationId}`);
       } catch (err: unknown) {
         const issues = parseApiValidationErrors(err);
         if (issues.length > 0) {
@@ -376,15 +369,13 @@ export default function OperationFormPage() {
           setErrors(fieldErrors);
           const fields = Object.keys(fieldErrors);
           const nextStep = resolveWizardErrorStep(fields, currentStep);
-          if (nextStep !== currentStep) {
-            setCurrentStep(nextStep);
-          }
+          if (nextStep !== currentStep) setCurrentStep(nextStep);
           messageApi.error(t('validation.fixHighlightedFields'));
           window.setTimeout(() => {
             if (fields[0]) scrollToField(fields[0]);
           }, 180);
         } else {
-          messageApi.error(t('common.operationFailed'));
+          messageApi.error(getApiErrorMessage(err, t('common.operationFailed')));
         }
       } finally {
         setIsSaving(false);
@@ -407,57 +398,61 @@ export default function OperationFormPage() {
     ],
   );
 
-  const handleBeforeUpload = useCallback(
-    async (file: File) => {
-      if (!savedOperationId) return;
-      const fd = new FormData();
-      fd.append('file', file);
-      fd.append('fileType', FileType.BeforeOperation);
-      try {
-        await uploadBeforeMutation.mutateAsync({ opId: savedOperationId, formData: fd });
-        messageApi.success(t('operations.fileUploaded'));
-        queryClient.invalidateQueries({ queryKey: ['operation-files-before', savedOperationId] });
-        queryClient.invalidateQueries({ queryKey: ['operation-detail', savedOperationId] });
-      } catch (err) {
-        messageApi.error(getApiErrorMessage(err, t('common.operationFailed')));
-      }
-    },
-    [savedOperationId, uploadBeforeMutation, queryClient, messageApi, t],
-  );
+  const getBeforeFileType = (file: File): string => {
+    if (file.type === 'application/pdf') return 'BEFORE_PDF';
+    if (file.type.startsWith('image/')) return 'BEFORE_IMAGE';
+    if (/\.(dcm|dicom)$/i.test(file.name)) return 'BEFORE_XRAY';
+    return 'BEFORE_IMAGE';
+  };
 
-  const handleAfterUpload = useCallback(
-    async (file: File) => {
-      if (!savedOperationId) return;
-      const fd = new FormData();
-      fd.append('file', file);
-      fd.append('fileType', FileType.AfterOperation);
-      try {
-        await uploadAfterMutation.mutateAsync({ opId: savedOperationId, formData: fd });
-        messageApi.success(t('operations.fileUploaded'));
-        queryClient.invalidateQueries({ queryKey: ['operation-files-after', savedOperationId] });
-        queryClient.invalidateQueries({ queryKey: ['operation-detail', savedOperationId] });
-      } catch (err) {
-        messageApi.error(getApiErrorMessage(err, t('common.operationFailed')));
-      }
-    },
-    [savedOperationId, uploadAfterMutation, queryClient, messageApi, t],
-  );
+  const getAfterFileType = (file: File): string => {
+    if (file.type === 'application/pdf') return 'AFTER_PDF';
+    if (file.type.startsWith('image/')) return 'AFTER_IMAGE';
+    return 'AFTER_OTHER';
+  };
 
-  const handleDeleteFile = useCallback(
-    async (fileId: string) => {
-      if (!savedOperationId) return;
-      try {
-        await deleteFileMutation.mutateAsync({ opId: savedOperationId, fileId });
-        messageApi.success(t('operations.fileDeleted'));
-        queryClient.invalidateQueries({ queryKey: ['operation-files-before', savedOperationId] });
-        queryClient.invalidateQueries({ queryKey: ['operation-files-after', savedOperationId] });
-        queryClient.invalidateQueries({ queryKey: ['operation-detail', savedOperationId] });
-      } catch {
-        messageApi.error(t('common.operationFailed'));
-      }
-    },
-    [savedOperationId, deleteFileMutation, queryClient, messageApi, t],
-  );
+  const handleBeforeUpload = useCallback(async (file: File) => {
+    if (!savedOperationId) return;
+    const fd = new FormData();
+    fd.append('file', file);
+    fd.append('fileType', getBeforeFileType(file));
+    try {
+      await uploadBeforeMutation.mutateAsync({ opId: savedOperationId, formData: fd });
+      messageApi.success(t('operations.fileUploaded'));
+      queryClient.invalidateQueries({ queryKey: ['operation-files-before', savedOperationId] });
+      queryClient.invalidateQueries({ queryKey: ['operation-detail', savedOperationId] });
+    } catch (err) {
+      messageApi.error(getApiErrorMessage(err, t('common.operationFailed')));
+    }
+  }, [savedOperationId, uploadBeforeMutation, queryClient, messageApi, t]);
+
+  const handleAfterUpload = useCallback(async (file: File) => {
+    if (!savedOperationId) return;
+    const fd = new FormData();
+    fd.append('file', file);
+    fd.append('fileType', getAfterFileType(file));
+    try {
+      await uploadAfterMutation.mutateAsync({ opId: savedOperationId, formData: fd });
+      messageApi.success(t('operations.fileUploaded'));
+      queryClient.invalidateQueries({ queryKey: ['operation-files-after', savedOperationId] });
+      queryClient.invalidateQueries({ queryKey: ['operation-detail', savedOperationId] });
+    } catch (err) {
+      messageApi.error(getApiErrorMessage(err, t('common.operationFailed')));
+    }
+  }, [savedOperationId, uploadAfterMutation, queryClient, messageApi, t]);
+
+  const handleDeleteFile = useCallback(async (fileId: string) => {
+    if (!savedOperationId) return;
+    try {
+      await deleteFileMutation.mutateAsync({ opId: savedOperationId, fileId });
+      messageApi.success(t('operations.fileDeleted'));
+      queryClient.invalidateQueries({ queryKey: ['operation-files-before', savedOperationId] });
+      queryClient.invalidateQueries({ queryKey: ['operation-files-after', savedOperationId] });
+      queryClient.invalidateQueries({ queryKey: ['operation-detail', savedOperationId] });
+    } catch {
+      messageApi.error(t('common.operationFailed'));
+    }
+  }, [savedOperationId, deleteFileMutation, queryClient, messageApi, t]);
 
   const goToStep = useCallback((step: number) => {
     setCurrentStep(step);
@@ -485,76 +480,26 @@ export default function OperationFormPage() {
     t('operations.step6Review'),
   ];
 
-  const stepHints = [
-    t('operations.patientStepHint'),
-    t('operations.operationName'),
-    t('operations.selectDoctor'),
-    t('operations.totalCost'),
-    t('operations.uploadFiles'),
-    t('operations.step6Review'),
-  ];
-
-  const canContinuePatientStep =
-    Boolean(formData.patientId) || formData.isNewPatient;
+  const canContinuePatientStep = Boolean(formData.patientId) || formData.isNewPatient;
 
   if (isEditMode && loadingOperation) {
-    return (
-      <div className="operation-form-page page">
-        {contextHolder}
-        <div className="loadingContainer">
-          <Spin size="large" />
-          <p>{t('common.loading')}</p>
-        </div>
-      </div>
-    );
+    return <div className="operationFormLoading"><Spin size="large" /></div>;
   }
 
   return (
-    <div className="operation-form-page page">
+    <div className="operationFormPage">
       {contextHolder}
-
-      <header className="pageHeader">
-        <div className="pageHeaderLeft">
-          <Button
-            icon={<ArrowLeftOutlined />}
-            onClick={() => navigate('/operations')}
-            className="backButton"
-          >
-            {t('common.back')}
-          </Button>
-          <div className="pageHeaderText">
-            <h1 className="pageTitle">
-              {isEditMode ? t('operations.editOperation') : t('operations.addOperation')}
-            </h1>
-            <p className="pageHint">{stepHints[currentStep]}</p>
-          </div>
+      <header className="operationFormHeader">
+        <div className='flex items-center mb-4'>
+        <Button type="text" icon={<ArrowLeftOutlined />} onClick={() => navigate('/operations')}>
+          {t('common.back')}
+        </Button>
+          <h3 className=''>{isEditMode ? t('operations.editOperation') : t('operations.addOperation')}</h3>
         </div>
-        <div className="pageHeaderMeta">
-          <span className="stepPill">
-            {t('operations.step', { current: currentStep + 1, total: STEPS.length })}
-          </span>
-          {savedOperationId && (
-            <span className="draftPill">{t('operations.quickSave')}</span>
-          )}
-        </div>
+          {/* <p>{t('operations.operationFormSubtitle')}</p> */}
       </header>
-
-      <WizardNav
-        currentStep={currentStep}
-        stepTitles={stepTitles}
-        onStepChange={goToStep}
-        STEPS={STEPS}
-      />
-
-      <div
-        className={`stepsContent${currentStep === 0 ? ' stepsContent--patient' : ''}`}
-        key={currentStep}
-      >
-        <div className="stepPanelHeader">
-          <h2 className="stepPanelTitle">{stepTitles[currentStep]}</h2>
-          <p className="stepPanelHint">{stepHints[currentStep]}</p>
-        </div>
-
+      <WizardNav currentStep={currentStep} steps={STEPS} stepTitles={stepTitles} onStepClick={goToStep} />
+      <main className="operationFormContent">
         {currentStep === 0 && (
           <PatientStep
             formData={formData}
@@ -566,26 +511,23 @@ export default function OperationFormPage() {
         {currentStep === 1 && (
           <OperationDetailsStep
             formData={formData}
-            setFormData={setFormData}
             errors={errors}
-            clearError={clearError}
+            hospitals={hospitals}
+            specialties={specialties}
+            onChange={(patch) => setFormData((prev) => ({ ...prev, ...patch }))}
+            onClearError={clearError}
           />
         )}
         {currentStep === 2 && (
           <TeamStep
             formData={formData}
-            setFormData={setFormData}
-            errors={errors}
-            clearError={clearError}
+            doctors={doctors}
+            nurses={nurses}
+            onChange={(patch) => setFormData((prev) => ({ ...prev, ...patch }))}
           />
         )}
         {currentStep === 3 && (
-          <CostStep
-            formData={formData}
-            setFormData={setFormData}
-            errors={errors}
-            clearError={clearError}
-          />
+          <CostStep formData={formData} onChange={(patch) => setFormData((prev) => ({ ...prev, ...patch }))} />
         )}
         {currentStep === 4 && (
           <FilesStep
@@ -600,21 +542,21 @@ export default function OperationFormPage() {
         {currentStep === 5 && (
           <ReviewStep
             formData={formData}
-            goToStep={goToStep}
             hospitals={hospitals}
             specialties={specialties}
             doctors={doctors}
             nurses={nurses}
+            beforeFiles={beforeFiles}
+            afterFiles={afterFiles}
           />
         )}
-      </div>
-
+      </main>
       <WizardActions
         currentStep={currentStep}
         isSaving={isSaving}
         savedOperationId={savedOperationId}
         isEditMode={isEditMode}
-        canContinue={currentStep === 0 ? canContinuePatientStep : true}
+        canContinue={canContinuePatientStep}
         onBack={handleBack}
         onNext={handleNext}
         onQuickSave={() => handleSave(true)}

@@ -1,348 +1,219 @@
-import React from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useMemo, type ReactNode } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import {
-  Button,
-  Avatar,
-  Tag,
-  Empty,
-  Skeleton,
-  Divider,
-} from 'antd';
+import { Button, Card, Empty, Skeleton, Tag } from 'antd';
 import {
   ArrowLeftOutlined,
-  EditOutlined,
-  PhoneOutlined,
   CalendarOutlined,
-  TeamOutlined,
+  ClockCircleOutlined,
+  EditOutlined,
+  FileImageOutlined,
   FileTextOutlined,
-  BankOutlined,
-  DollarOutlined,
+  MedicineBoxOutlined,
+  PhoneOutlined,
+  PlusOutlined,
+  RightOutlined,
+  TeamOutlined,
 } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
 import { patientService } from '@/services/patient.service';
-import { operationService } from '@/services/operation.service';
-import { formatDate, getInitials, formatCurrency, getStatusColor } from '@/utils/helpers';
-import OperationSchedule from '@/components/OperationSchedule/OperationSchedule';
-import { Gender, OperationStatus, type Patient, type Operation } from '@/types';
+import { formatDate, getInitials, getStatusColor } from '@/utils/helpers';
+import PhoneLink from '@/components/common/PhoneLink';
+import { Gender, type Operation, type OperationFollowUp, type Patient } from '@/types';
 import './PatientDetail.scss';
+import './PatientDetailV2.scss';
 
-// ─── Status Tag Label ─────────────────────────────
-function getStatusLabel(status: OperationStatus, t: (key: string) => string): string {
-  const labels: Record<OperationStatus, string> = {
-    [OperationStatus.Scheduled]: t('operations.scheduled'),
-    [OperationStatus.CheckedIn]: t('operations.checkedIn'),
-    [OperationStatus.InProgress]: t('operations.inProgress'),
-    [OperationStatus.Completed]: t('operations.completed'),
-    [OperationStatus.Cancelled]: t('operations.cancelled'),
-    [OperationStatus.NoShow]: t('operations.noShow'),
-  };
-  return labels[status] ?? status;
-}
+type PatientOperation = Operation & {
+  files?: Array<{ id: string; fileName: string; fileType: string; fileSize: number | null; mimeType: string | null }>;
+  followUps?: OperationFollowUp[];
+};
 
-// ─── Info Row ─────────────────────────────────────
-function InfoRow({
-  icon,
-  label,
-  value,
-}: {
-  icon: React.ReactNode;
-  label: string;
-  value: React.ReactNode;
-}) {
+type PatientDetailData = Patient & { operations?: PatientOperation[] };
+
+function DetailStat({ icon, value, label, tone }: { icon: ReactNode; value: number; label: string; tone: string }) {
   return (
-    <div className="infoRow">
-      <div className="infoRowIcon">{icon}</div>
-      <div className="infoRowContent">
-        <span className="infoRowLabel">{label}</span>
-        <span className="infoRowValue">{value || '—'}</span>
-      </div>
+    <div className={`patientDetailStat patientDetailStat--${tone}`}>
+      <span className="patientDetailStatIcon">{icon}</span>
+      <strong>{value}</strong>
+      <span>{label}</span>
     </div>
   );
 }
 
-// ─── Operation Card ───────────────────────────────
-function OperationCard({ operation }: { operation: Operation }) {
+function OperationRow({ operation, onOpen }: { operation: PatientOperation; onOpen: () => void }) {
   const { t } = useTranslation();
-  const navigate = useNavigate();
-  const statusColor = getStatusColor(operation.status);
-  const statusLabel = getStatusLabel(operation.status, t);
-
-  const handleOperationClick = () => {
-    navigate(`/operations/${operation.id}`);
-  };
+  const followUps = operation.followUps ?? [];
+  const activeFollowUps = followUps.filter((item) => item.status === 'UPCOMING' || item.status === 'OVERDUE');
+  const statusLabel = t(`operations.${operation.status.toLowerCase()}`, operation.status.replace('_', ' '));
 
   return (
-    <div className="operationCard" onClick={handleOperationClick} role="button" tabIndex={0}>
-      <div className="operationCardHeader">
-        <span className="operationName">{operation.name}</span>
-        <Tag
-          color={statusColor}
-          className="statusTag"
-        >
-          {statusLabel}
-        </Tag>
-      </div>
-      <div className="operationCardBody">
-        {operation.hospital && (
-          <span className="operationMetaItem">
-            <BankOutlined className="operationMetaIcon" />
-            {operation.hospital.name}
-          </span>
-        )}
-        <span className="operationMetaItem">
-          <CalendarOutlined className="operationMetaIcon" />
-          <OperationSchedule
-            date={operation.operationDate}
-            time={operation.operationTime}
-            stacked={false}
-          />
-        </span>
-        {operation.cost && (
-          <span className="operationMetaItem">
-            <DollarOutlined className="operationMetaIcon" />
-            {formatCurrency(operation.cost.totalCost)}
-          </span>
-        )}
-      </div>
-    </div>
-  );
-}
-
-// ─── Loading Skeleton ─────────────────────────────
-function DetailSkeleton() {
-  return (
-    <div className="patient-detail-page page">
-      <div className="pageHeader">
-        <Skeleton.Input active size="small" style={{ width: 120, height: 20 }} />
-        <div style={{ display: 'flex', gap: 8 }}>
-          <Skeleton.Button active size="small" />
-          <Skeleton.Button active size="small" />
-        </div>
-      </div>
-      <div className="patientInfoCard">
-        <div className="infoCardHeader">
-          <Skeleton.Avatar active size={72} shape="circle" />
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 8, flex: 1 }}>
-            <Skeleton.Input active size="small" style={{ width: 200, height: 22 }} />
-            <Skeleton.Input active size="small" style={{ width: 120, height: 16 }} />
+    <button type="button" className="patientCaseCard" onClick={onOpen}>
+      <div className="patientCaseMain">
+        <div className="patientCaseIcon"><MedicineBoxOutlined /></div>
+        <div className="patientCaseContent">
+          <div className="patientCaseTitleRow">
+            <strong>{operation.name}</strong>
+            <Tag color={getStatusColor(operation.status)}>{statusLabel}</Tag>
+          </div>
+          <div className="patientCaseMeta">
+            <span><CalendarOutlined /> {formatDate(operation.operationDate)}</span>
+            {operation.operationTime && <span><ClockCircleOutlined /> {operation.operationTime}</span>}
+            {operation.hospital && <span>{operation.hospital.name}</span>}
           </div>
         </div>
-        <Divider style={{ margin: '16px 0' }} />
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-          {Array.from({ length: 4 }).map((_, i) => (
-            <div key={i} style={{ display: 'flex', gap: 12, alignItems: 'flex-start' }}>
-              <Skeleton.Avatar active size={32} shape="circle" />
-              <Skeleton.Input active size="small" style={{ width: 180, height: 16 }} />
-            </div>
-          ))}
-        </div>
+        <RightOutlined className="patientCaseArrow" />
       </div>
-      <div className="operationsSection">
-        <Skeleton.Input active size="small" style={{ width: 160, height: 22, marginBottom: 16 }} />
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-          {Array.from({ length: 3 }).map((_, i) => (
-            <div key={i} className="operationCard">
-              <Skeleton.Input active size="small" style={{ width: 200, height: 18 }} />
-              <div style={{ display: 'flex', gap: 16, marginTop: 8 }}>
-                <Skeleton.Input active size="small" style={{ width: 100, height: 14 }} />
-                <Skeleton.Input active size="small" style={{ width: 100, height: 14 }} />
-              </div>
-            </div>
-          ))}
-        </div>
+      <div className="patientCaseFooter">
+        <span>{operation.files?.length ?? 0} {t('patients.clinicalFiles', 'files')}</span>
+        <span>{activeFollowUps.length} {t('patients.followUps', 'follow-ups')}</span>
+        {operation.cost && <span>{operation.cost.totalCost.toLocaleString()} EGP</span>}
       </div>
-    </div>
+    </button>
   );
 }
 
-// ═══════════════════════════════════════════════════════
-// Patient Detail Page
-// ═══════════════════════════════════════════════════════
 export default function PatientDetailPage() {
   const { id } = useParams<{ id: string }>();
   const { t } = useTranslation();
   const navigate = useNavigate();
 
-  // ─── Fetch Patient ───────────────────────────────
-  const {
-    data: patientResponse,
-    isLoading: isLoadingPatient,
-    isError: isPatientError,
-  } = useQuery({
+  const { data, isLoading, isError } = useQuery({
     queryKey: ['patient', id],
     queryFn: () => patientService.getById(id!),
     enabled: Boolean(id),
   });
 
-  const patient: Patient | null = patientResponse?.data?.data ?? null;
+  const patient = (data?.data?.data ?? null) as PatientDetailData | null;
+  const operations = patient?.operations ?? [];
 
-  // ─── Fetch Operations for this Patient ──────────
-  const { data: operationsResponse } = useQuery({
-    queryKey: ['patient-operations', id],
-    queryFn: () =>
-      operationService.getAll({
-        patientId: id,
-        limit: 50,
-      } as Parameters<typeof operationService.getAll>[0]),
-    enabled: Boolean(id),
-  });
+  const management = useMemo(() => {
+    const activeOperations = operations.filter((item) => item.status === 'SCHEDULED' || item.status === 'IN_PROGRESS').length;
+    const followUps = operations.flatMap((item) => item.followUps ?? []);
+    const upcomingFollowUps = followUps.filter((item) => item.status === 'UPCOMING' || item.status === 'OVERDUE');
+    const files = operations.flatMap((item) => item.files ?? []);
+    return { activeOperations, upcomingFollowUps, files };
+  }, [operations]);
 
-  const operations: Operation[] = operationsResponse?.data?.data ?? [];
+  const handleBack = () => navigate('/patients');
+  const handleEdit = () => navigate(`/patients/new?edit=${id}`);
+  const handleAddOperation = () => navigate(`/operations/new?patientId=${id}`);
+  const handleOpenOperation = (operationId: string) => navigate(`/operations/${operationId}`);
 
-  // ─── Derived Values ──────────────────────────────
-  const age = patient?.age ?? null;
-  const isMale = patient?.gender === Gender.Male;
-
-  // ─── Handlers ────────────────────────────────────
-  const handleBack = () => {
-    navigate('/patients');
-  };
-
-  const handleEdit = () => {
-    navigate(`/patients/new?edit=${id}`);
-  };
-
-  // ─── Loading ─────────────────────────────────────
-  if (isLoadingPatient) {
-    return <DetailSkeleton />;
+  if (isLoading) {
+    return <div className="patient-detail-page page patientDetailV2"><Skeleton active paragraph={{ rows: 7 }} /></div>;
   }
 
-  // ─── Error ───────────────────────────────────────
-  if (isPatientError || !patient) {
+  if (isError || !patient) {
     return (
-      <div className="patient-detail-page page">
-        <div className="pageHeader">
-          <Button
-            icon={<ArrowLeftOutlined />}
-            onClick={handleBack}
-            type="text"
-            className="backButton"
-          >
-            {t('common.back')}
-          </Button>
-        </div>
-        <Empty
-          className="emptyState"
-          image={Empty.PRESENTED_IMAGE_SIMPLE}
-          description={t('common.noData')}
-        >
-          <Button type="primary" onClick={handleBack}>
-            {t('common.back')}
-          </Button>
-        </Empty>
+      <div className="patient-detail-page page patientDetailV2">
+        <Button icon={<ArrowLeftOutlined />} type="text" onClick={handleBack}>{t('common.back')}</Button>
+        <Empty description={t('common.noData')}><Button type="primary" onClick={handleBack}>{t('common.back')}</Button></Empty>
       </div>
     );
   }
 
+  const isMale = patient.gender === Gender.Male;
+
   return (
-    <div className="patient-detail-page page">
-      {/* ─── Page Header ────────────────────────────── */}
-      <div className="pageHeader">
-        <div className="headerLeft">
-          <Button
-            icon={<ArrowLeftOutlined />}
-            onClick={handleBack}
-            type="text"
-            className="backButton"
-          >
-            {t('common.back')}
-          </Button>
-          <h1 className="pageTitle">{patient.fullName}</h1>
+    <div className="patient-detail-page page patientDetailV2">
+      <div className="patientDetailTopbar">
+        <Button icon={<ArrowLeftOutlined />} type="text" onClick={handleBack}>{t('common.back')}</Button>
+        <div className="patientDetailActions">
+          <Button icon={<EditOutlined />} onClick={handleEdit}>{t('common.edit')}</Button>
+          <Button type="primary" icon={<PlusOutlined />} onClick={handleAddOperation}>{t('patients.newOperation')}</Button>
         </div>
-        <Button
-          icon={<EditOutlined />}
-          onClick={handleEdit}
-          size="large"
-        >
-          {t('common.edit')}
-        </Button>
       </div>
 
-      {/* ─── Patient Info Card ──────────────────────── */}
-      <div className="patientInfoCard">
-        <div className="infoCardHeader">
-          <Avatar
-            size={72}
-            className={`patientAvatar ${isMale ? 'patientAvatarMale' : 'patientAvatarFemale'}`}
-          >
-            {getInitials(patient.fullName)}
-          </Avatar>
-          <div className="infoCardTitleSection">
-            <h2 className="infoCardName">{patient.fullName}</h2>
-            <div className="infoCardBadges">
-              <Tag
-                className="genderBadge"
-                style={{
-                  color: isMale ? '#2563EB' : '#EC4899',
-                  background: isMale ? 'rgba(37,99,235,0.1)' : 'rgba(236,72,153,0.1)',
-                  borderColor: isMale ? 'rgba(37,99,235,0.2)' : 'rgba(236,72,153,0.2)',
-                }}
-              >
-                {isMale ? t('patients.male') : t('patients.female')}
-              </Tag>
-              {age !== null && (
-                <Tag className="ageBadge">
-                  {age} {t('common.age')}
-                </Tag>
-              )}
-            </div>
+      <section className="patientProfileHero">
+        <div className={`patientProfileAvatar patientProfileAvatar--${isMale ? 'male' : 'female'}`}>{getInitials(patient.fullName)}</div>
+        <div className="patientProfileIdentity">
+          <div className="patientProfileTitleRow">
+            <h1>{patient.fullName}</h1>
+            <Tag color={isMale ? 'blue' : 'magenta'}>{isMale ? t('patients.male') : t('patients.female')}</Tag>
           </div>
+          <div className="patientProfileMeta">
+            <span>{patient.age} {t('common.age')}</span><span>•</span>
+            <span>{t('patients.registeredOn')}: {formatDate(patient.createdAt)}</span>
+          </div>
+          {patient.mobile && <div className="patientProfilePhone"><PhoneOutlined /><PhoneLink value={patient.mobile} showIcon={false} /></div>}
         </div>
+      </section>
 
-        <Divider className="infoCardDivider" />
-
-        <div className="infoGrid">
-          {patient.mobile && (
-            <InfoRow
-              icon={<PhoneOutlined />}
-              label={t('patients.mobile')}
-              value={patient.mobile}
-            />
-          )}
-          <InfoRow
-            icon={<CalendarOutlined />}
-            label={t('patients.registeredOn')}
-            value={formatDate(patient.createdAt)}
-          />
-          <InfoRow
-            icon={<TeamOutlined />}
-            label={t('patients.totalOperations')}
-            value={t('patients.operationsCount', {
-              count: patient._count?.operations ?? 0,
-            })}
-          />
-          {patient.notes && (
-            <InfoRow
-              icon={<FileTextOutlined />}
-              label={t('patients.notes')}
-              value={
-                <span className="notesText">{patient.notes}</span>
-              }
-            />
-          )}
-        </div>
+      <div className="patientDetailStats">
+        <DetailStat icon={<TeamOutlined />} value={operations.length} label={t('patients.totalOperations')} tone="blue" />
+        <DetailStat icon={<ClockCircleOutlined />} value={management.activeOperations} label={t('patients.activeCases', 'Active cases')} tone="orange" />
+        <DetailStat icon={<CalendarOutlined />} value={management.upcomingFollowUps.length} label={t('patients.upcomingFollowUps', 'Follow-ups')} tone="purple" />
+        <DetailStat icon={<FileImageOutlined />} value={management.files.length} label={t('patients.clinicalFiles', 'Clinical files')} tone="green" />
       </div>
 
-      {/* ─── Operations History ─────────────────────── */}
-      <div className="operationsSection">
-        <h2 className="sectionTitle">{t('patients.patientHistory')}</h2>
+      {patient.notes && (
+        <Card className="patientNotesCard" bordered={false}>
+          <div className="patientDetailSectionHeading"><FileTextOutlined /><span>{t('patients.notes')}</span></div>
+          <p>{patient.notes}</p>
+        </Card>
+      )}
 
+      <section className="patientDetailSection">
+        <div className="patientDetailSectionHeading patientDetailSectionHeading--large">
+          <div><MedicineBoxOutlined /><span>{t('patients.patientHistory')}</span></div>
+          <span className="patientDetailSectionCount">{operations.length}</span>
+        </div>
         {operations.length === 0 ? (
-          <div className="operationsEmpty">
-            <Empty
-              image={Empty.PRESENTED_IMAGE_SIMPLE}
-              description={t('patients.noOperations')}
-            />
-          </div>
+          <Card className="patientEmptyCard" bordered={false}>
+            <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description={t('patients.noOperations')}>
+              <Button type="primary" icon={<PlusOutlined />} onClick={handleAddOperation}>{t('patients.newOperation')}</Button>
+            </Empty>
+          </Card>
         ) : (
-          <div className="operationsGrid">
-            {operations.map((op) => (
-              <OperationCard key={op.id} operation={op} />
+          <div className="patientCasesList">{operations.map((operation) => <OperationRow key={operation.id} operation={operation} onOpen={() => handleOpenOperation(operation.id)} />)}</div>
+        )}
+      </section>
+
+      <section className="patientDetailSection">
+        <div className="patientDetailSectionHeading patientDetailSectionHeading--large">
+          <div><CalendarOutlined /><span>{t('patients.upcomingFollowUps', 'Follow-ups')}</span></div>
+          <span className="patientDetailSectionCount">{management.upcomingFollowUps.length}</span>
+        </div>
+        {management.upcomingFollowUps.length === 0 ? (
+          <Card className="patientEmptyCard" bordered={false}><Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description={t('patients.noFollowUps', 'No upcoming follow-ups')} /></Card>
+        ) : (
+          <div className="patientFollowUpList">
+            {management.upcomingFollowUps.slice(0, 6).map((followUp) => {
+              const operation = operations.find((item) => item.id === followUp.operationId);
+              return (
+                <button key={followUp.id} type="button" className={`patientFollowUp patientFollowUp--${followUp.status.toLowerCase()}`} onClick={() => handleOpenOperation(followUp.operationId)}>
+                  <span className="patientFollowUpIcon"><CalendarOutlined /></span>
+                  <span className="patientFollowUpContent"><strong>{followUp.title}</strong><span>{formatDate(followUp.scheduledAt)} • {operation?.name ?? t('operations.operation')}</span></span>
+                  <Tag>{followUp.status}</Tag>
+                </button>
+              );
+            })}
+          </div>
+        )}
+      </section>
+
+      <section className="patientDetailSection">
+        <div className="patientDetailSectionHeading patientDetailSectionHeading--large">
+          <div><FileImageOutlined /><span>{t('patients.clinicalFiles', 'Clinical files')}</span></div>
+          <span className="patientDetailSectionCount">{management.files.length}</span>
+        </div>
+        {management.files.length === 0 ? (
+          <Card className="patientEmptyCard" bordered={false}><Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description={t('patients.noFiles', 'No clinical files yet')} /></Card>
+        ) : (
+          <div className="patientFilesGrid">
+            {management.files.slice(0, 8).map((file) => (
+              <button key={file.id} type="button" className="patientFileCard" onClick={() => {
+                const operation = operations.find((item) => item.files?.some((itemFile) => itemFile.id === file.id));
+                if (operation) handleOpenOperation(operation.id);
+              }}>
+                <span className="patientFileIcon"><FileImageOutlined /></span>
+                <span className="patientFileName">{file.fileName}</span>
+                <span className="patientFileType">{file.fileType.replaceAll('_', ' ')}</span>
+              </button>
             ))}
           </div>
         )}
-      </div>
+      </section>
     </div>
   );
 }

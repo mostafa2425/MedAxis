@@ -1,0 +1,14 @@
+{
+  "name": "MedAxis",
+  "short_name": "MedAxis",
+  "description": "MedAxis digital operation logbook for doctors",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#2563eb",
+  "lang": "en",
+  "icons": [
+    { "src": "/medaxis-icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+  ]
+}

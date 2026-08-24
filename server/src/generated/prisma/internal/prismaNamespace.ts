@@ -408,12 +408,13 @@ export const ModelName = {
   Hospital: 'Hospital',
   Nurse: 'Nurse',
   Operation: 'Operation',
-  OperationMedicalTeam: 'OperationMedicalTeam',
   OperationProcedure: 'OperationProcedure',
+  OperationMedicalTeam: 'OperationMedicalTeam',
   OperationTeamMember: 'OperationTeamMember',
   OperationCost: 'OperationCost',
   OperationFile: 'OperationFile',
-  OperationTimeline: 'OperationTimeline'
+  OperationTimeline: 'OperationTimeline',
+  OperationFollowUp: 'OperationFollowUp'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -429,7 +430,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "patient" | "specialty" | "doctor" | "doctorSpecialty" | "doctorSubspecialty" | "operationCatalog" | "governorate" | "hospital" | "nurse" | "operation" | "operationMedicalTeam" | "operationProcedure" | "operationTeamMember" | "operationCost" | "operationFile" | "operationTimeline"
+    modelProps: "user" | "patient" | "specialty" | "doctor" | "doctorSpecialty" | "doctorSubspecialty" | "operationCatalog" | "governorate" | "hospital" | "nurse" | "operation" | "operationProcedure" | "operationMedicalTeam" | "operationTeamMember" | "operationCost" | "operationFile" | "operationTimeline" | "operationFollowUp"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1247,80 +1248,6 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
-    OperationMedicalTeam: {
-      payload: Prisma.$OperationMedicalTeamPayload<ExtArgs>
-      fields: Prisma.OperationMedicalTeamFieldRefs
-      operations: {
-        findUnique: {
-          args: Prisma.OperationMedicalTeamFindUniqueArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$OperationMedicalTeamPayload> | null
-        }
-        findUniqueOrThrow: {
-          args: Prisma.OperationMedicalTeamFindUniqueOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$OperationMedicalTeamPayload>
-        }
-        findFirst: {
-          args: Prisma.OperationMedicalTeamFindFirstArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$OperationMedicalTeamPayload> | null
-        }
-        findFirstOrThrow: {
-          args: Prisma.OperationMedicalTeamFindFirstOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$OperationMedicalTeamPayload>
-        }
-        findMany: {
-          args: Prisma.OperationMedicalTeamFindManyArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$OperationMedicalTeamPayload>[]
-        }
-        create: {
-          args: Prisma.OperationMedicalTeamCreateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$OperationMedicalTeamPayload>
-        }
-        createMany: {
-          args: Prisma.OperationMedicalTeamCreateManyArgs<ExtArgs>
-          result: BatchPayload
-        }
-        createManyAndReturn: {
-          args: Prisma.OperationMedicalTeamCreateManyAndReturnArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$OperationMedicalTeamPayload>[]
-        }
-        delete: {
-          args: Prisma.OperationMedicalTeamDeleteArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$OperationMedicalTeamPayload>
-        }
-        update: {
-          args: Prisma.OperationMedicalTeamUpdateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$OperationMedicalTeamPayload>
-        }
-        deleteMany: {
-          args: Prisma.OperationMedicalTeamDeleteManyArgs<ExtArgs>
-          result: BatchPayload
-        }
-        updateMany: {
-          args: Prisma.OperationMedicalTeamUpdateManyArgs<ExtArgs>
-          result: BatchPayload
-        }
-        updateManyAndReturn: {
-          args: Prisma.OperationMedicalTeamUpdateManyAndReturnArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$OperationMedicalTeamPayload>[]
-        }
-        upsert: {
-          args: Prisma.OperationMedicalTeamUpsertArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$OperationMedicalTeamPayload>
-        }
-        aggregate: {
-          args: Prisma.OperationMedicalTeamAggregateArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.AggregateOperationMedicalTeam>
-        }
-        groupBy: {
-          args: Prisma.OperationMedicalTeamGroupByArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.OperationMedicalTeamGroupByOutputType>[]
-        }
-        count: {
-          args: Prisma.OperationMedicalTeamCountArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.OperationMedicalTeamCountAggregateOutputType> | number
-        }
-      }
-    }
     OperationProcedure: {
       payload: Prisma.$OperationProcedurePayload<ExtArgs>
       fields: Prisma.OperationProcedureFieldRefs
@@ -1392,6 +1319,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.OperationProcedureCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.OperationProcedureCountAggregateOutputType> | number
+        }
+      }
+    }
+    OperationMedicalTeam: {
+      payload: Prisma.$OperationMedicalTeamPayload<ExtArgs>
+      fields: Prisma.OperationMedicalTeamFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.OperationMedicalTeamFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OperationMedicalTeamPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.OperationMedicalTeamFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OperationMedicalTeamPayload>
+        }
+        findFirst: {
+          args: Prisma.OperationMedicalTeamFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OperationMedicalTeamPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.OperationMedicalTeamFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OperationMedicalTeamPayload>
+        }
+        findMany: {
+          args: Prisma.OperationMedicalTeamFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OperationMedicalTeamPayload>[]
+        }
+        create: {
+          args: Prisma.OperationMedicalTeamCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OperationMedicalTeamPayload>
+        }
+        createMany: {
+          args: Prisma.OperationMedicalTeamCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.OperationMedicalTeamCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OperationMedicalTeamPayload>[]
+        }
+        delete: {
+          args: Prisma.OperationMedicalTeamDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OperationMedicalTeamPayload>
+        }
+        update: {
+          args: Prisma.OperationMedicalTeamUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OperationMedicalTeamPayload>
+        }
+        deleteMany: {
+          args: Prisma.OperationMedicalTeamDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.OperationMedicalTeamUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.OperationMedicalTeamUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OperationMedicalTeamPayload>[]
+        }
+        upsert: {
+          args: Prisma.OperationMedicalTeamUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OperationMedicalTeamPayload>
+        }
+        aggregate: {
+          args: Prisma.OperationMedicalTeamAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateOperationMedicalTeam>
+        }
+        groupBy: {
+          args: Prisma.OperationMedicalTeamGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.OperationMedicalTeamGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.OperationMedicalTeamCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.OperationMedicalTeamCountAggregateOutputType> | number
         }
       }
     }
@@ -1691,6 +1692,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    OperationFollowUp: {
+      payload: Prisma.$OperationFollowUpPayload<ExtArgs>
+      fields: Prisma.OperationFollowUpFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.OperationFollowUpFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OperationFollowUpPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.OperationFollowUpFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OperationFollowUpPayload>
+        }
+        findFirst: {
+          args: Prisma.OperationFollowUpFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OperationFollowUpPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.OperationFollowUpFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OperationFollowUpPayload>
+        }
+        findMany: {
+          args: Prisma.OperationFollowUpFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OperationFollowUpPayload>[]
+        }
+        create: {
+          args: Prisma.OperationFollowUpCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OperationFollowUpPayload>
+        }
+        createMany: {
+          args: Prisma.OperationFollowUpCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.OperationFollowUpCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OperationFollowUpPayload>[]
+        }
+        delete: {
+          args: Prisma.OperationFollowUpDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OperationFollowUpPayload>
+        }
+        update: {
+          args: Prisma.OperationFollowUpUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OperationFollowUpPayload>
+        }
+        deleteMany: {
+          args: Prisma.OperationFollowUpDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.OperationFollowUpUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.OperationFollowUpUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OperationFollowUpPayload>[]
+        }
+        upsert: {
+          args: Prisma.OperationFollowUpUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OperationFollowUpPayload>
+        }
+        aggregate: {
+          args: Prisma.OperationFollowUpAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateOperationFollowUp>
+        }
+        groupBy: {
+          args: Prisma.OperationFollowUpGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.OperationFollowUpGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.OperationFollowUpCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.OperationFollowUpCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -1736,6 +1811,7 @@ export const UserScalarFieldEnum = {
   password: 'password',
   name: 'name',
   phone: 'phone',
+  avatarUrl: 'avatarUrl',
   role: 'role',
   isActive: 'isActive',
   createdAt: 'createdAt',
@@ -1890,6 +1966,20 @@ export const OperationScalarFieldEnum = {
 export type OperationScalarFieldEnum = (typeof OperationScalarFieldEnum)[keyof typeof OperationScalarFieldEnum]
 
 
+export const OperationProcedureScalarFieldEnum = {
+  id: 'id',
+  operationId: 'operationId',
+  catalogId: 'catalogId',
+  name: 'name',
+  nameAr: 'nameAr',
+  specialtyId: 'specialtyId',
+  sortOrder: 'sortOrder',
+  createdAt: 'createdAt'
+} as const
+
+export type OperationProcedureScalarFieldEnum = (typeof OperationProcedureScalarFieldEnum)[keyof typeof OperationProcedureScalarFieldEnum]
+
+
 export const OperationMedicalTeamScalarFieldEnum = {
   id: 'id',
   operationId: 'operationId',
@@ -1903,20 +1993,6 @@ export const OperationMedicalTeamScalarFieldEnum = {
 } as const
 
 export type OperationMedicalTeamScalarFieldEnum = (typeof OperationMedicalTeamScalarFieldEnum)[keyof typeof OperationMedicalTeamScalarFieldEnum]
-
-
-export const OperationProcedureScalarFieldEnum = {
-  id: 'id',
-  operationId: 'operationId',
-  catalogId: 'catalogId',
-  name: 'name',
-  nameAr: 'nameAr',
-  specialtyId: 'specialtyId',
-  sortOrder: 'sortOrder',
-  createdAt: 'createdAt'
-} as const
-
-export type OperationProcedureScalarFieldEnum = (typeof OperationProcedureScalarFieldEnum)[keyof typeof OperationProcedureScalarFieldEnum]
 
 
 export const OperationTeamMemberScalarFieldEnum = {
@@ -1977,6 +2053,21 @@ export const OperationTimelineScalarFieldEnum = {
 } as const
 
 export type OperationTimelineScalarFieldEnum = (typeof OperationTimelineScalarFieldEnum)[keyof typeof OperationTimelineScalarFieldEnum]
+
+
+export const OperationFollowUpScalarFieldEnum = {
+  id: 'id',
+  operationId: 'operationId',
+  title: 'title',
+  scheduledAt: 'scheduledAt',
+  completedAt: 'completedAt',
+  status: 'status',
+  notes: 'notes',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type OperationFollowUpScalarFieldEnum = (typeof OperationFollowUpScalarFieldEnum)[keyof typeof OperationFollowUpScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -2331,12 +2422,13 @@ export type GlobalOmitConfig = {
   hospital?: Prisma.HospitalOmit
   nurse?: Prisma.NurseOmit
   operation?: Prisma.OperationOmit
-  operationMedicalTeam?: Prisma.OperationMedicalTeamOmit
   operationProcedure?: Prisma.OperationProcedureOmit
+  operationMedicalTeam?: Prisma.OperationMedicalTeamOmit
   operationTeamMember?: Prisma.OperationTeamMemberOmit
   operationCost?: Prisma.OperationCostOmit
   operationFile?: Prisma.OperationFileOmit
   operationTimeline?: Prisma.OperationTimelineOmit
+  operationFollowUp?: Prisma.OperationFollowUpOmit
 }
 
 /* Types for Logging */

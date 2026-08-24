@@ -1,10 +1,10 @@
 .calendarEvent {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 6px;
   width: 100%;
-  min-height: 22px;
-  padding: 2px 6px;
+  min-height: 30px;
+  padding: 4px 8px;
   border: 0;
   border-radius: $radius-sm;
   background: var(--event-bg);
@@ -13,13 +13,41 @@
   text-align: start;
   overflow: hidden;
   border-inline-start: 3px solid var(--event-color);
-  transition: opacity $transition-fast;
+  transition: transform $transition-fast, opacity $transition-fast, box-shadow $transition-fast;
 
   &:hover,
   &:focus-visible {
-    opacity: 0.88;
+    opacity: 0.94;
     outline: none;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.10);
   }
+}
+
+.calendarEventOperation {
+  font-weight: $font-medium;
+}
+
+.calendarEventOperation.is-cancelled {
+  text-decoration: line-through;
+  text-decoration-thickness: 1px;
+}
+
+.calendarEventIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 20px;
+  width: 20px;
+  height: 20px;
+  border-radius: 6px;
+  background: rgba(37, 99, 235, 0.14);
+  color: var(--event-color);
+  font-size: 12px;
+}
+
+.calendarEventOperation.is-cancelled .calendarEventIcon {
+  background: rgba(180, 35, 24, 0.14);
 }
 
 .calendarEventTime {
@@ -36,8 +64,15 @@
 }
 
 .calendarEventCompact {
-  min-height: 28px;
+  min-height: 30px;
   padding: 4px 8px;
+
+  .calendarEventIcon {
+    flex-basis: 22px;
+    width: 22px;
+    height: 22px;
+    font-size: 13px;
+  }
 
   .calendarEventTime,
   .calendarEventName {
@@ -45,10 +80,35 @@
   }
 }
 
+@include dark {
+  .calendarEventOperation {
+    --event-bg: rgba(59, 130, 246, 0.16) !important;
+  }
+
+  .calendarEventOperation.is-cancelled {
+    --event-bg: rgba(180, 35, 24, 0.18) !important;
+  }
+
+  .calendarEventIcon {
+    background: rgba(59, 130, 246, 0.20);
+  }
+
+  .calendarEventOperation.is-cancelled .calendarEventIcon {
+    background: rgba(180, 35, 24, 0.22);
+  }
+}
+
 @include responsive('md') {
   .calendarEvent {
-    min-height: 28px;
-    padding: 4px 8px;
+    min-height: 32px;
+    padding: 5px 8px;
+  }
+
+  .calendarEventIcon {
+    flex-basis: 22px;
+    width: 22px;
+    height: 22px;
+    font-size: 13px;
   }
 
   .calendarEventTime,

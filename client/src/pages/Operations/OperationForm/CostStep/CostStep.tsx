@@ -8,12 +8,26 @@ import { PaymentMethod, PaymentStatus } from '@/types';
 import type { WizardFormData, WizardStepProps } from '../wizardTypes';
 import './CostStep.scss';
 
-export default function CostStep({ formData, setFormData, errors = {}, clearError = () => {} }: WizardStepProps) {
+type CostStepProps = Pick<WizardStepProps, 'formData' | 'errors' | 'clearError'> & {
+  setFormData?: WizardStepProps['setFormData'];
+  onChange?: (patch: Partial<WizardFormData>) => void;
+};
+
+export default function CostStep({ formData, setFormData, onChange, errors = {}, clearError = () => {} }: CostStepProps) {
   const { t } = useTranslation();
   const currency = t('common.currency');
   const isPartial = formData.paymentStatus === PaymentStatus.Partial;
   const remaining = calculateRemaining(formData.totalCost, formData.paidAmount);
-  const updateFields = useCallback((patch: Partial<WizardFormData>) => { setFormData((prev) => ({ ...prev, ...patch })); Object.keys(patch).forEach((field) => clearError(field)); }, [setFormData, clearError]);
-  const applyPayment = useCallback((total: number, paid: number, status: PaymentStatus) => { updateFields({ totalCost: total, paidAmount: resolvePaidAmount(total, paid, status), paymentStatus: status }); }, [updateFields]);
+
+  const updateFields = useCallback((patch: Partial<WizardFormData>) => {
+    if (onChange) onChange(patch);
+    else if (setFormData) setFormData((prev) => ({ ...prev, ...patch }));
+    Object.keys(patch).forEach((field) => clearError(field));
+  }, [onChange, setFormData, clearError]);
+
+  const applyPayment = useCallback((total: number, paid: number, status: PaymentStatus) => {
+    updateFields({ totalCost: total, paidAmount: resolvePaidAmount(total, paid, status), paymentStatus: status });
+  }, [updateFields]);
+
   return <div className="stepContent"><div className={`costSummary ${remaining > 0 ? 'costSummary--due' : 'costSummary--clear'}`}><div className="costSummaryItem"><span className="costSummaryLabel">{t('operations.totalCost')}</span><strong>{formatCurrency(formData.totalCost, currency)}</strong></div><div className="costSummaryItem"><span className="costSummaryLabel">{t('operations.paidAmount')}</span><strong>{formatCurrency(formData.paidAmount, currency)}</strong></div><div className="costSummaryItem costSummaryItem--remaining" data-field="remainingAmount"><span className="costSummaryLabel"><DollarOutlined /> {t('operations.remainingAmount')}</span><strong>{formatCurrency(remaining, currency)}</strong><Tag className="autoCalculatedTag">{t('operations.autoCalculated')}</Tag></div></div><Row gutter={[16, 16]}><Col xs={24} sm={12} md={8}><div className="fieldGroup" data-field="totalCost"><label className="fieldLabel">{t('operations.totalCost')} <span className="required">*</span> ({currency})</label><InputNumber size="large" placeholder={t('operations.totalCost')} min={0} max={99999999} value={formData.totalCost} onChange={(v) => applyPayment(v ?? 0, formData.paidAmount, formData.paymentStatus)} style={{ width: '100%' }} formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')} parser={(value) => Number(value?.replace(/,/g, '') ?? 0)} status={errors.totalCost ? 'error' : undefined} />{errors.totalCost && <div className="fieldError">{errors.totalCost}</div>}</div></Col><Col xs={24} sm={12} md={8}><div className="fieldGroup" data-field="paymentStatus"><label className="fieldLabel">{t('operations.paymentStatus')}</label><Select size="large" value={formData.paymentStatus} onChange={(v: PaymentStatus) => applyPayment(formData.totalCost, formData.paidAmount, v)} style={{ width: '100%' }} status={errors.paymentStatus ? 'error' : undefined} options={PAYMENT_STATUSES.map((s) => ({ value: s.value, label: s.label }))} />{errors.paymentStatus && <div className="fieldError">{errors.paymentStatus}</div>}</div></Col>{isPartial && <Col xs={24} sm={12} md={8}><div className="fieldGroup" data-field="paidAmount"><label className="fieldLabel">{t('operations.paidAmount')} ({currency})</label><InputNumber size="large" placeholder={t('operations.paidAmount')} min={0} max={formData.totalCost} value={formData.paidAmount} onChange={(v) => applyPayment(formData.totalCost, v ?? 0, formData.paymentStatus)} style={{ width: '100%' }} formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')} parser={(value) => Number(value?.replace(/,/g, '') ?? 0)} status={errors.paidAmount ? 'error' : undefined} />{errors.paidAmount && <div className="fieldError">{errors.paidAmount}</div>}</div></Col>}{isPartial && <Col xs={24} sm={12} md={8}><div className="fieldGroup remainingField" data-field="remainingAmount"><label className="fieldLabel">{t('operations.remainingAmount')}</label><div className="remainingValue">{formatCurrency(remaining, currency)}</div></div></Col>}<Col xs={24} sm={12} md={8}><div className="fieldGroup" data-field="paymentMethod"><label className="fieldLabel">{t('operations.paymentMethod')}</label><Select size="large" value={formData.paymentMethod} onChange={(v: PaymentMethod) => updateFields({ paymentMethod: v })} style={{ width: '100%' }} status={errors.paymentMethod ? 'error' : undefined} options={PAYMENT_METHODS.map((m) => ({ value: m.value, label: m.label }))} />{errors.paymentMethod && <div className="fieldError">{errors.paymentMethod}</div>}</div></Col><Col xs={24} md={8}><div className="fieldGroup" data-field="paymentNotes"><label className="fieldLabel">{t('operations.paymentNotes')}</label><Input.TextArea rows={1} placeholder={t('operations.paymentNotes')} value={formData.paymentNotes} onChange={(e) => updateFields({ paymentNotes: e.target.value })} status={errors.paymentNotes ? 'error' : undefined} />{errors.paymentNotes && <div className="fieldError">{errors.paymentNotes}</div>}</div></Col></Row></div>;
 }

@@ -1,7 +1,12 @@
 import axios from 'axios';
 
+// Keep local development working even when VITE_API_URL is not defined.
+// Vite proxies /api to the local backend (localhost:5000), while production
+// can provide the absolute backend URL through VITE_API_URL.
+const baseURL = import.meta.env.VITE_API_URL || '/api';
+
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL,
+  baseURL,
   timeout: 30000,
   headers: {
     'Content-Type': 'application/json',

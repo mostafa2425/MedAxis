@@ -17,6 +17,12 @@
   }
 }
 
+.verificationAlert{
+  flex-direction: column;
+  .ant-alert-actions{
+    margin: 0;
+  }
+}
 // ─── Card ────────────────────────────────────────────
 .card {
   width: 100%;

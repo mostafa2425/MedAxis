@@ -1,0 +1,52 @@
+name: Playwright E2E
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [develop]
+
+jobs:
+  e2e:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+    env:
+      # Stable Vercel branch alias for the current develop frontend.
+      E2E_BASE_URL: https://med-axis-git-develop-gamalmostafa32s-projects.vercel.app
+      E2E_EMAIL: ${{ secrets.E2E_EMAIL }}
+      E2E_PASSWORD: ${{ secrets.E2E_PASSWORD }}
+      VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright browser
+        run: npx playwright install --with-deps chromium
+
+      - name: Preflight frontend
+        run: |
+          echo "E2E_BASE_URL=${E2E_BASE_URL}"
+          curl --fail --silent --show-error --location --max-time 20             -H "x-vercel-protection-bypass: ${VERCEL_AUTOMATION_BYPASS_SECRET}"             -H "x-vercel-set-bypass-cookie: samesitenone"             "${E2E_BASE_URL}/login" -o /tmp/medaxis-login.html
+          test -s /tmp/medaxis-login.html
+          echo "Frontend /login is reachable."
+
+      - name: Run E2E
+        run: npm run e2e
+
+      - name: Upload Playwright report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: playwright-report/
+          if-no-files-found: ignore

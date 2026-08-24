@@ -315,6 +315,7 @@ export type OperationWhereInput = {
   files?: Prisma.OperationFileListRelationFilter
   cost?: Prisma.XOR<Prisma.OperationCostNullableScalarRelationFilter, Prisma.OperationCostWhereInput> | null
   timeline?: Prisma.OperationTimelineListRelationFilter
+  followUps?: Prisma.OperationFollowUpListRelationFilter
 }
 
 export type OperationOrderByWithRelationInput = {
@@ -345,6 +346,7 @@ export type OperationOrderByWithRelationInput = {
   files?: Prisma.OperationFileOrderByRelationAggregateInput
   cost?: Prisma.OperationCostOrderByWithRelationInput
   timeline?: Prisma.OperationTimelineOrderByRelationAggregateInput
+  followUps?: Prisma.OperationFollowUpOrderByRelationAggregateInput
 }
 
 export type OperationWhereUniqueInput = Prisma.AtLeast<{
@@ -378,6 +380,7 @@ export type OperationWhereUniqueInput = Prisma.AtLeast<{
   files?: Prisma.OperationFileListRelationFilter
   cost?: Prisma.XOR<Prisma.OperationCostNullableScalarRelationFilter, Prisma.OperationCostWhereInput> | null
   timeline?: Prisma.OperationTimelineListRelationFilter
+  followUps?: Prisma.OperationFollowUpListRelationFilter
 }, "id">
 
 export type OperationOrderByWithAggregationInput = {
@@ -449,6 +452,7 @@ export type OperationCreateInput = {
   files?: Prisma.OperationFileCreateNestedManyWithoutOperationInput
   cost?: Prisma.OperationCostCreateNestedOneWithoutOperationInput
   timeline?: Prisma.OperationTimelineCreateNestedManyWithoutOperationInput
+  followUps?: Prisma.OperationFollowUpCreateNestedManyWithoutOperationInput
 }
 
 export type OperationUncheckedCreateInput = {
@@ -474,6 +478,7 @@ export type OperationUncheckedCreateInput = {
   files?: Prisma.OperationFileUncheckedCreateNestedManyWithoutOperationInput
   cost?: Prisma.OperationCostUncheckedCreateNestedOneWithoutOperationInput
   timeline?: Prisma.OperationTimelineUncheckedCreateNestedManyWithoutOperationInput
+  followUps?: Prisma.OperationFollowUpUncheckedCreateNestedManyWithoutOperationInput
 }
 
 export type OperationUpdateInput = {
@@ -499,6 +504,7 @@ export type OperationUpdateInput = {
   files?: Prisma.OperationFileUpdateManyWithoutOperationNestedInput
   cost?: Prisma.OperationCostUpdateOneWithoutOperationNestedInput
   timeline?: Prisma.OperationTimelineUpdateManyWithoutOperationNestedInput
+  followUps?: Prisma.OperationFollowUpUpdateManyWithoutOperationNestedInput
 }
 
 export type OperationUncheckedUpdateInput = {
@@ -524,6 +530,7 @@ export type OperationUncheckedUpdateInput = {
   files?: Prisma.OperationFileUncheckedUpdateManyWithoutOperationNestedInput
   cost?: Prisma.OperationCostUncheckedUpdateOneWithoutOperationNestedInput
   timeline?: Prisma.OperationTimelineUncheckedUpdateManyWithoutOperationNestedInput
+  followUps?: Prisma.OperationFollowUpUncheckedUpdateManyWithoutOperationNestedInput
 }
 
 export type OperationCreateManyInput = {
@@ -880,20 +887,6 @@ export type EnumOperationStatusFieldUpdateOperationsInput = {
   set?: $Enums.OperationStatus
 }
 
-export type OperationCreateNestedOneWithoutMedicalTeamInput = {
-  create?: Prisma.XOR<Prisma.OperationCreateWithoutMedicalTeamInput, Prisma.OperationUncheckedCreateWithoutMedicalTeamInput>
-  connectOrCreate?: Prisma.OperationCreateOrConnectWithoutMedicalTeamInput
-  connect?: Prisma.OperationWhereUniqueInput
-}
-
-export type OperationUpdateOneRequiredWithoutMedicalTeamNestedInput = {
-  create?: Prisma.XOR<Prisma.OperationCreateWithoutMedicalTeamInput, Prisma.OperationUncheckedCreateWithoutMedicalTeamInput>
-  connectOrCreate?: Prisma.OperationCreateOrConnectWithoutMedicalTeamInput
-  upsert?: Prisma.OperationUpsertWithoutMedicalTeamInput
-  connect?: Prisma.OperationWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.OperationUpdateToOneWithWhereWithoutMedicalTeamInput, Prisma.OperationUpdateWithoutMedicalTeamInput>, Prisma.OperationUncheckedUpdateWithoutMedicalTeamInput>
-}
-
 export type OperationCreateNestedOneWithoutProceduresInput = {
   create?: Prisma.XOR<Prisma.OperationCreateWithoutProceduresInput, Prisma.OperationUncheckedCreateWithoutProceduresInput>
   connectOrCreate?: Prisma.OperationCreateOrConnectWithoutProceduresInput
@@ -906,6 +899,20 @@ export type OperationUpdateOneRequiredWithoutProceduresNestedInput = {
   upsert?: Prisma.OperationUpsertWithoutProceduresInput
   connect?: Prisma.OperationWhereUniqueInput
   update?: Prisma.XOR<Prisma.XOR<Prisma.OperationUpdateToOneWithWhereWithoutProceduresInput, Prisma.OperationUpdateWithoutProceduresInput>, Prisma.OperationUncheckedUpdateWithoutProceduresInput>
+}
+
+export type OperationCreateNestedOneWithoutMedicalTeamInput = {
+  create?: Prisma.XOR<Prisma.OperationCreateWithoutMedicalTeamInput, Prisma.OperationUncheckedCreateWithoutMedicalTeamInput>
+  connectOrCreate?: Prisma.OperationCreateOrConnectWithoutMedicalTeamInput
+  connect?: Prisma.OperationWhereUniqueInput
+}
+
+export type OperationUpdateOneRequiredWithoutMedicalTeamNestedInput = {
+  create?: Prisma.XOR<Prisma.OperationCreateWithoutMedicalTeamInput, Prisma.OperationUncheckedCreateWithoutMedicalTeamInput>
+  connectOrCreate?: Prisma.OperationCreateOrConnectWithoutMedicalTeamInput
+  upsert?: Prisma.OperationUpsertWithoutMedicalTeamInput
+  connect?: Prisma.OperationWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.OperationUpdateToOneWithWhereWithoutMedicalTeamInput, Prisma.OperationUpdateWithoutMedicalTeamInput>, Prisma.OperationUncheckedUpdateWithoutMedicalTeamInput>
 }
 
 export type OperationCreateNestedOneWithoutTeamMembersInput = {
@@ -964,6 +971,20 @@ export type OperationUpdateOneRequiredWithoutTimelineNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.OperationUpdateToOneWithWhereWithoutTimelineInput, Prisma.OperationUpdateWithoutTimelineInput>, Prisma.OperationUncheckedUpdateWithoutTimelineInput>
 }
 
+export type OperationCreateNestedOneWithoutFollowUpsInput = {
+  create?: Prisma.XOR<Prisma.OperationCreateWithoutFollowUpsInput, Prisma.OperationUncheckedCreateWithoutFollowUpsInput>
+  connectOrCreate?: Prisma.OperationCreateOrConnectWithoutFollowUpsInput
+  connect?: Prisma.OperationWhereUniqueInput
+}
+
+export type OperationUpdateOneRequiredWithoutFollowUpsNestedInput = {
+  create?: Prisma.XOR<Prisma.OperationCreateWithoutFollowUpsInput, Prisma.OperationUncheckedCreateWithoutFollowUpsInput>
+  connectOrCreate?: Prisma.OperationCreateOrConnectWithoutFollowUpsInput
+  upsert?: Prisma.OperationUpsertWithoutFollowUpsInput
+  connect?: Prisma.OperationWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.OperationUpdateToOneWithWhereWithoutFollowUpsInput, Prisma.OperationUpdateWithoutFollowUpsInput>, Prisma.OperationUncheckedUpdateWithoutFollowUpsInput>
+}
+
 export type OperationCreateWithoutCreatorInput = {
   id?: string
   name: string
@@ -986,6 +1007,7 @@ export type OperationCreateWithoutCreatorInput = {
   files?: Prisma.OperationFileCreateNestedManyWithoutOperationInput
   cost?: Prisma.OperationCostCreateNestedOneWithoutOperationInput
   timeline?: Prisma.OperationTimelineCreateNestedManyWithoutOperationInput
+  followUps?: Prisma.OperationFollowUpCreateNestedManyWithoutOperationInput
 }
 
 export type OperationUncheckedCreateWithoutCreatorInput = {
@@ -1010,6 +1032,7 @@ export type OperationUncheckedCreateWithoutCreatorInput = {
   files?: Prisma.OperationFileUncheckedCreateNestedManyWithoutOperationInput
   cost?: Prisma.OperationCostUncheckedCreateNestedOneWithoutOperationInput
   timeline?: Prisma.OperationTimelineUncheckedCreateNestedManyWithoutOperationInput
+  followUps?: Prisma.OperationFollowUpUncheckedCreateNestedManyWithoutOperationInput
 }
 
 export type OperationCreateOrConnectWithoutCreatorInput = {
@@ -1082,6 +1105,7 @@ export type OperationCreateWithoutPatientInput = {
   files?: Prisma.OperationFileCreateNestedManyWithoutOperationInput
   cost?: Prisma.OperationCostCreateNestedOneWithoutOperationInput
   timeline?: Prisma.OperationTimelineCreateNestedManyWithoutOperationInput
+  followUps?: Prisma.OperationFollowUpCreateNestedManyWithoutOperationInput
 }
 
 export type OperationUncheckedCreateWithoutPatientInput = {
@@ -1106,6 +1130,7 @@ export type OperationUncheckedCreateWithoutPatientInput = {
   files?: Prisma.OperationFileUncheckedCreateNestedManyWithoutOperationInput
   cost?: Prisma.OperationCostUncheckedCreateNestedOneWithoutOperationInput
   timeline?: Prisma.OperationTimelineUncheckedCreateNestedManyWithoutOperationInput
+  followUps?: Prisma.OperationFollowUpUncheckedCreateNestedManyWithoutOperationInput
 }
 
 export type OperationCreateOrConnectWithoutPatientInput = {
@@ -1156,6 +1181,7 @@ export type OperationCreateWithoutSpecialtyInput = {
   files?: Prisma.OperationFileCreateNestedManyWithoutOperationInput
   cost?: Prisma.OperationCostCreateNestedOneWithoutOperationInput
   timeline?: Prisma.OperationTimelineCreateNestedManyWithoutOperationInput
+  followUps?: Prisma.OperationFollowUpCreateNestedManyWithoutOperationInput
 }
 
 export type OperationUncheckedCreateWithoutSpecialtyInput = {
@@ -1180,6 +1206,7 @@ export type OperationUncheckedCreateWithoutSpecialtyInput = {
   files?: Prisma.OperationFileUncheckedCreateNestedManyWithoutOperationInput
   cost?: Prisma.OperationCostUncheckedCreateNestedOneWithoutOperationInput
   timeline?: Prisma.OperationTimelineUncheckedCreateNestedManyWithoutOperationInput
+  followUps?: Prisma.OperationFollowUpUncheckedCreateNestedManyWithoutOperationInput
 }
 
 export type OperationCreateOrConnectWithoutSpecialtyInput = {
@@ -1230,6 +1257,7 @@ export type OperationCreateWithoutCatalogInput = {
   files?: Prisma.OperationFileCreateNestedManyWithoutOperationInput
   cost?: Prisma.OperationCostCreateNestedOneWithoutOperationInput
   timeline?: Prisma.OperationTimelineCreateNestedManyWithoutOperationInput
+  followUps?: Prisma.OperationFollowUpCreateNestedManyWithoutOperationInput
 }
 
 export type OperationUncheckedCreateWithoutCatalogInput = {
@@ -1254,6 +1282,7 @@ export type OperationUncheckedCreateWithoutCatalogInput = {
   files?: Prisma.OperationFileUncheckedCreateNestedManyWithoutOperationInput
   cost?: Prisma.OperationCostUncheckedCreateNestedOneWithoutOperationInput
   timeline?: Prisma.OperationTimelineUncheckedCreateNestedManyWithoutOperationInput
+  followUps?: Prisma.OperationFollowUpUncheckedCreateNestedManyWithoutOperationInput
 }
 
 export type OperationCreateOrConnectWithoutCatalogInput = {
@@ -1304,6 +1333,7 @@ export type OperationCreateWithoutHospitalInput = {
   files?: Prisma.OperationFileCreateNestedManyWithoutOperationInput
   cost?: Prisma.OperationCostCreateNestedOneWithoutOperationInput
   timeline?: Prisma.OperationTimelineCreateNestedManyWithoutOperationInput
+  followUps?: Prisma.OperationFollowUpCreateNestedManyWithoutOperationInput
 }
 
 export type OperationUncheckedCreateWithoutHospitalInput = {
@@ -1328,6 +1358,7 @@ export type OperationUncheckedCreateWithoutHospitalInput = {
   files?: Prisma.OperationFileUncheckedCreateNestedManyWithoutOperationInput
   cost?: Prisma.OperationCostUncheckedCreateNestedOneWithoutOperationInput
   timeline?: Prisma.OperationTimelineUncheckedCreateNestedManyWithoutOperationInput
+  followUps?: Prisma.OperationFollowUpUncheckedCreateNestedManyWithoutOperationInput
 }
 
 export type OperationCreateOrConnectWithoutHospitalInput = {
@@ -1356,118 +1387,6 @@ export type OperationUpdateManyWithWhereWithoutHospitalInput = {
   data: Prisma.XOR<Prisma.OperationUpdateManyMutationInput, Prisma.OperationUncheckedUpdateManyWithoutHospitalInput>
 }
 
-export type OperationCreateWithoutMedicalTeamInput = {
-  id?: string
-  name: string
-  diagnosis?: string | null
-  operationDate: Date | string
-  operationTime: string
-  operationRoom?: string | null
-  duration?: number | null
-  status?: $Enums.OperationStatus
-  notes?: string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  patient: Prisma.PatientCreateNestedOneWithoutOperationsInput
-  hospital: Prisma.HospitalCreateNestedOneWithoutOperationsInput
-  creator: Prisma.UserCreateNestedOneWithoutOperationsInput
-  specialty?: Prisma.SpecialtyCreateNestedOneWithoutOperationsInput
-  catalog?: Prisma.OperationCatalogCreateNestedOneWithoutOperationsInput
-  procedures?: Prisma.OperationProcedureCreateNestedManyWithoutOperationInput
-  teamMembers?: Prisma.OperationTeamMemberCreateNestedManyWithoutOperationInput
-  files?: Prisma.OperationFileCreateNestedManyWithoutOperationInput
-  cost?: Prisma.OperationCostCreateNestedOneWithoutOperationInput
-  timeline?: Prisma.OperationTimelineCreateNestedManyWithoutOperationInput
-}
-
-export type OperationUncheckedCreateWithoutMedicalTeamInput = {
-  id?: string
-  name: string
-  diagnosis?: string | null
-  hospitalId: string
-  operationDate: Date | string
-  operationTime: string
-  operationRoom?: string | null
-  duration?: number | null
-  status?: $Enums.OperationStatus
-  notes?: string | null
-  patientId: string
-  createdBy: string
-  specialtyId?: string | null
-  catalogId?: string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  procedures?: Prisma.OperationProcedureUncheckedCreateNestedManyWithoutOperationInput
-  teamMembers?: Prisma.OperationTeamMemberUncheckedCreateNestedManyWithoutOperationInput
-  files?: Prisma.OperationFileUncheckedCreateNestedManyWithoutOperationInput
-  cost?: Prisma.OperationCostUncheckedCreateNestedOneWithoutOperationInput
-  timeline?: Prisma.OperationTimelineUncheckedCreateNestedManyWithoutOperationInput
-}
-
-export type OperationCreateOrConnectWithoutMedicalTeamInput = {
-  where: Prisma.OperationWhereUniqueInput
-  create: Prisma.XOR<Prisma.OperationCreateWithoutMedicalTeamInput, Prisma.OperationUncheckedCreateWithoutMedicalTeamInput>
-}
-
-export type OperationUpsertWithoutMedicalTeamInput = {
-  update: Prisma.XOR<Prisma.OperationUpdateWithoutMedicalTeamInput, Prisma.OperationUncheckedUpdateWithoutMedicalTeamInput>
-  create: Prisma.XOR<Prisma.OperationCreateWithoutMedicalTeamInput, Prisma.OperationUncheckedCreateWithoutMedicalTeamInput>
-  where?: Prisma.OperationWhereInput
-}
-
-export type OperationUpdateToOneWithWhereWithoutMedicalTeamInput = {
-  where?: Prisma.OperationWhereInput
-  data: Prisma.XOR<Prisma.OperationUpdateWithoutMedicalTeamInput, Prisma.OperationUncheckedUpdateWithoutMedicalTeamInput>
-}
-
-export type OperationUpdateWithoutMedicalTeamInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  diagnosis?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  operationDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  operationTime?: Prisma.StringFieldUpdateOperationsInput | string
-  operationRoom?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  duration?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  status?: Prisma.EnumOperationStatusFieldUpdateOperationsInput | $Enums.OperationStatus
-  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  patient?: Prisma.PatientUpdateOneRequiredWithoutOperationsNestedInput
-  hospital?: Prisma.HospitalUpdateOneRequiredWithoutOperationsNestedInput
-  creator?: Prisma.UserUpdateOneRequiredWithoutOperationsNestedInput
-  specialty?: Prisma.SpecialtyUpdateOneWithoutOperationsNestedInput
-  catalog?: Prisma.OperationCatalogUpdateOneWithoutOperationsNestedInput
-  procedures?: Prisma.OperationProcedureUpdateManyWithoutOperationNestedInput
-  teamMembers?: Prisma.OperationTeamMemberUpdateManyWithoutOperationNestedInput
-  files?: Prisma.OperationFileUpdateManyWithoutOperationNestedInput
-  cost?: Prisma.OperationCostUpdateOneWithoutOperationNestedInput
-  timeline?: Prisma.OperationTimelineUpdateManyWithoutOperationNestedInput
-}
-
-export type OperationUncheckedUpdateWithoutMedicalTeamInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  diagnosis?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  hospitalId?: Prisma.StringFieldUpdateOperationsInput | string
-  operationDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  operationTime?: Prisma.StringFieldUpdateOperationsInput | string
-  operationRoom?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  duration?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  status?: Prisma.EnumOperationStatusFieldUpdateOperationsInput | $Enums.OperationStatus
-  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  patientId?: Prisma.StringFieldUpdateOperationsInput | string
-  createdBy?: Prisma.StringFieldUpdateOperationsInput | string
-  specialtyId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  catalogId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  procedures?: Prisma.OperationProcedureUncheckedUpdateManyWithoutOperationNestedInput
-  teamMembers?: Prisma.OperationTeamMemberUncheckedUpdateManyWithoutOperationNestedInput
-  files?: Prisma.OperationFileUncheckedUpdateManyWithoutOperationNestedInput
-  cost?: Prisma.OperationCostUncheckedUpdateOneWithoutOperationNestedInput
-  timeline?: Prisma.OperationTimelineUncheckedUpdateManyWithoutOperationNestedInput
-}
-
 export type OperationCreateWithoutProceduresInput = {
   id?: string
   name: string
@@ -1490,6 +1409,7 @@ export type OperationCreateWithoutProceduresInput = {
   files?: Prisma.OperationFileCreateNestedManyWithoutOperationInput
   cost?: Prisma.OperationCostCreateNestedOneWithoutOperationInput
   timeline?: Prisma.OperationTimelineCreateNestedManyWithoutOperationInput
+  followUps?: Prisma.OperationFollowUpCreateNestedManyWithoutOperationInput
 }
 
 export type OperationUncheckedCreateWithoutProceduresInput = {
@@ -1514,6 +1434,7 @@ export type OperationUncheckedCreateWithoutProceduresInput = {
   files?: Prisma.OperationFileUncheckedCreateNestedManyWithoutOperationInput
   cost?: Prisma.OperationCostUncheckedCreateNestedOneWithoutOperationInput
   timeline?: Prisma.OperationTimelineUncheckedCreateNestedManyWithoutOperationInput
+  followUps?: Prisma.OperationFollowUpUncheckedCreateNestedManyWithoutOperationInput
 }
 
 export type OperationCreateOrConnectWithoutProceduresInput = {
@@ -1554,6 +1475,7 @@ export type OperationUpdateWithoutProceduresInput = {
   files?: Prisma.OperationFileUpdateManyWithoutOperationNestedInput
   cost?: Prisma.OperationCostUpdateOneWithoutOperationNestedInput
   timeline?: Prisma.OperationTimelineUpdateManyWithoutOperationNestedInput
+  followUps?: Prisma.OperationFollowUpUpdateManyWithoutOperationNestedInput
 }
 
 export type OperationUncheckedUpdateWithoutProceduresInput = {
@@ -1578,6 +1500,123 @@ export type OperationUncheckedUpdateWithoutProceduresInput = {
   files?: Prisma.OperationFileUncheckedUpdateManyWithoutOperationNestedInput
   cost?: Prisma.OperationCostUncheckedUpdateOneWithoutOperationNestedInput
   timeline?: Prisma.OperationTimelineUncheckedUpdateManyWithoutOperationNestedInput
+  followUps?: Prisma.OperationFollowUpUncheckedUpdateManyWithoutOperationNestedInput
+}
+
+export type OperationCreateWithoutMedicalTeamInput = {
+  id?: string
+  name: string
+  diagnosis?: string | null
+  operationDate: Date | string
+  operationTime: string
+  operationRoom?: string | null
+  duration?: number | null
+  status?: $Enums.OperationStatus
+  notes?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  patient: Prisma.PatientCreateNestedOneWithoutOperationsInput
+  hospital: Prisma.HospitalCreateNestedOneWithoutOperationsInput
+  creator: Prisma.UserCreateNestedOneWithoutOperationsInput
+  specialty?: Prisma.SpecialtyCreateNestedOneWithoutOperationsInput
+  catalog?: Prisma.OperationCatalogCreateNestedOneWithoutOperationsInput
+  procedures?: Prisma.OperationProcedureCreateNestedManyWithoutOperationInput
+  teamMembers?: Prisma.OperationTeamMemberCreateNestedManyWithoutOperationInput
+  files?: Prisma.OperationFileCreateNestedManyWithoutOperationInput
+  cost?: Prisma.OperationCostCreateNestedOneWithoutOperationInput
+  timeline?: Prisma.OperationTimelineCreateNestedManyWithoutOperationInput
+  followUps?: Prisma.OperationFollowUpCreateNestedManyWithoutOperationInput
+}
+
+export type OperationUncheckedCreateWithoutMedicalTeamInput = {
+  id?: string
+  name: string
+  diagnosis?: string | null
+  hospitalId: string
+  operationDate: Date | string
+  operationTime: string
+  operationRoom?: string | null
+  duration?: number | null
+  status?: $Enums.OperationStatus
+  notes?: string | null
+  patientId: string
+  createdBy: string
+  specialtyId?: string | null
+  catalogId?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  procedures?: Prisma.OperationProcedureUncheckedCreateNestedManyWithoutOperationInput
+  teamMembers?: Prisma.OperationTeamMemberUncheckedCreateNestedManyWithoutOperationInput
+  files?: Prisma.OperationFileUncheckedCreateNestedManyWithoutOperationInput
+  cost?: Prisma.OperationCostUncheckedCreateNestedOneWithoutOperationInput
+  timeline?: Prisma.OperationTimelineUncheckedCreateNestedManyWithoutOperationInput
+  followUps?: Prisma.OperationFollowUpUncheckedCreateNestedManyWithoutOperationInput
+}
+
+export type OperationCreateOrConnectWithoutMedicalTeamInput = {
+  where: Prisma.OperationWhereUniqueInput
+  create: Prisma.XOR<Prisma.OperationCreateWithoutMedicalTeamInput, Prisma.OperationUncheckedCreateWithoutMedicalTeamInput>
+}
+
+export type OperationUpsertWithoutMedicalTeamInput = {
+  update: Prisma.XOR<Prisma.OperationUpdateWithoutMedicalTeamInput, Prisma.OperationUncheckedUpdateWithoutMedicalTeamInput>
+  create: Prisma.XOR<Prisma.OperationCreateWithoutMedicalTeamInput, Prisma.OperationUncheckedCreateWithoutMedicalTeamInput>
+  where?: Prisma.OperationWhereInput
+}
+
+export type OperationUpdateToOneWithWhereWithoutMedicalTeamInput = {
+  where?: Prisma.OperationWhereInput
+  data: Prisma.XOR<Prisma.OperationUpdateWithoutMedicalTeamInput, Prisma.OperationUncheckedUpdateWithoutMedicalTeamInput>
+}
+
+export type OperationUpdateWithoutMedicalTeamInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  diagnosis?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  operationDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  operationTime?: Prisma.StringFieldUpdateOperationsInput | string
+  operationRoom?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  duration?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  status?: Prisma.EnumOperationStatusFieldUpdateOperationsInput | $Enums.OperationStatus
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  patient?: Prisma.PatientUpdateOneRequiredWithoutOperationsNestedInput
+  hospital?: Prisma.HospitalUpdateOneRequiredWithoutOperationsNestedInput
+  creator?: Prisma.UserUpdateOneRequiredWithoutOperationsNestedInput
+  specialty?: Prisma.SpecialtyUpdateOneWithoutOperationsNestedInput
+  catalog?: Prisma.OperationCatalogUpdateOneWithoutOperationsNestedInput
+  procedures?: Prisma.OperationProcedureUpdateManyWithoutOperationNestedInput
+  teamMembers?: Prisma.OperationTeamMemberUpdateManyWithoutOperationNestedInput
+  files?: Prisma.OperationFileUpdateManyWithoutOperationNestedInput
+  cost?: Prisma.OperationCostUpdateOneWithoutOperationNestedInput
+  timeline?: Prisma.OperationTimelineUpdateManyWithoutOperationNestedInput
+  followUps?: Prisma.OperationFollowUpUpdateManyWithoutOperationNestedInput
+}
+
+export type OperationUncheckedUpdateWithoutMedicalTeamInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  diagnosis?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hospitalId?: Prisma.StringFieldUpdateOperationsInput | string
+  operationDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  operationTime?: Prisma.StringFieldUpdateOperationsInput | string
+  operationRoom?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  duration?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  status?: Prisma.EnumOperationStatusFieldUpdateOperationsInput | $Enums.OperationStatus
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  patientId?: Prisma.StringFieldUpdateOperationsInput | string
+  createdBy?: Prisma.StringFieldUpdateOperationsInput | string
+  specialtyId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  catalogId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  procedures?: Prisma.OperationProcedureUncheckedUpdateManyWithoutOperationNestedInput
+  teamMembers?: Prisma.OperationTeamMemberUncheckedUpdateManyWithoutOperationNestedInput
+  files?: Prisma.OperationFileUncheckedUpdateManyWithoutOperationNestedInput
+  cost?: Prisma.OperationCostUncheckedUpdateOneWithoutOperationNestedInput
+  timeline?: Prisma.OperationTimelineUncheckedUpdateManyWithoutOperationNestedInput
+  followUps?: Prisma.OperationFollowUpUncheckedUpdateManyWithoutOperationNestedInput
 }
 
 export type OperationCreateWithoutTeamMembersInput = {
@@ -1602,6 +1641,7 @@ export type OperationCreateWithoutTeamMembersInput = {
   files?: Prisma.OperationFileCreateNestedManyWithoutOperationInput
   cost?: Prisma.OperationCostCreateNestedOneWithoutOperationInput
   timeline?: Prisma.OperationTimelineCreateNestedManyWithoutOperationInput
+  followUps?: Prisma.OperationFollowUpCreateNestedManyWithoutOperationInput
 }
 
 export type OperationUncheckedCreateWithoutTeamMembersInput = {
@@ -1626,6 +1666,7 @@ export type OperationUncheckedCreateWithoutTeamMembersInput = {
   files?: Prisma.OperationFileUncheckedCreateNestedManyWithoutOperationInput
   cost?: Prisma.OperationCostUncheckedCreateNestedOneWithoutOperationInput
   timeline?: Prisma.OperationTimelineUncheckedCreateNestedManyWithoutOperationInput
+  followUps?: Prisma.OperationFollowUpUncheckedCreateNestedManyWithoutOperationInput
 }
 
 export type OperationCreateOrConnectWithoutTeamMembersInput = {
@@ -1666,6 +1707,7 @@ export type OperationUpdateWithoutTeamMembersInput = {
   files?: Prisma.OperationFileUpdateManyWithoutOperationNestedInput
   cost?: Prisma.OperationCostUpdateOneWithoutOperationNestedInput
   timeline?: Prisma.OperationTimelineUpdateManyWithoutOperationNestedInput
+  followUps?: Prisma.OperationFollowUpUpdateManyWithoutOperationNestedInput
 }
 
 export type OperationUncheckedUpdateWithoutTeamMembersInput = {
@@ -1690,6 +1732,7 @@ export type OperationUncheckedUpdateWithoutTeamMembersInput = {
   files?: Prisma.OperationFileUncheckedUpdateManyWithoutOperationNestedInput
   cost?: Prisma.OperationCostUncheckedUpdateOneWithoutOperationNestedInput
   timeline?: Prisma.OperationTimelineUncheckedUpdateManyWithoutOperationNestedInput
+  followUps?: Prisma.OperationFollowUpUncheckedUpdateManyWithoutOperationNestedInput
 }
 
 export type OperationCreateWithoutCostInput = {
@@ -1714,6 +1757,7 @@ export type OperationCreateWithoutCostInput = {
   teamMembers?: Prisma.OperationTeamMemberCreateNestedManyWithoutOperationInput
   files?: Prisma.OperationFileCreateNestedManyWithoutOperationInput
   timeline?: Prisma.OperationTimelineCreateNestedManyWithoutOperationInput
+  followUps?: Prisma.OperationFollowUpCreateNestedManyWithoutOperationInput
 }
 
 export type OperationUncheckedCreateWithoutCostInput = {
@@ -1738,6 +1782,7 @@ export type OperationUncheckedCreateWithoutCostInput = {
   teamMembers?: Prisma.OperationTeamMemberUncheckedCreateNestedManyWithoutOperationInput
   files?: Prisma.OperationFileUncheckedCreateNestedManyWithoutOperationInput
   timeline?: Prisma.OperationTimelineUncheckedCreateNestedManyWithoutOperationInput
+  followUps?: Prisma.OperationFollowUpUncheckedCreateNestedManyWithoutOperationInput
 }
 
 export type OperationCreateOrConnectWithoutCostInput = {
@@ -1778,6 +1823,7 @@ export type OperationUpdateWithoutCostInput = {
   teamMembers?: Prisma.OperationTeamMemberUpdateManyWithoutOperationNestedInput
   files?: Prisma.OperationFileUpdateManyWithoutOperationNestedInput
   timeline?: Prisma.OperationTimelineUpdateManyWithoutOperationNestedInput
+  followUps?: Prisma.OperationFollowUpUpdateManyWithoutOperationNestedInput
 }
 
 export type OperationUncheckedUpdateWithoutCostInput = {
@@ -1802,6 +1848,7 @@ export type OperationUncheckedUpdateWithoutCostInput = {
   teamMembers?: Prisma.OperationTeamMemberUncheckedUpdateManyWithoutOperationNestedInput
   files?: Prisma.OperationFileUncheckedUpdateManyWithoutOperationNestedInput
   timeline?: Prisma.OperationTimelineUncheckedUpdateManyWithoutOperationNestedInput
+  followUps?: Prisma.OperationFollowUpUncheckedUpdateManyWithoutOperationNestedInput
 }
 
 export type OperationCreateWithoutFilesInput = {
@@ -1826,6 +1873,7 @@ export type OperationCreateWithoutFilesInput = {
   teamMembers?: Prisma.OperationTeamMemberCreateNestedManyWithoutOperationInput
   cost?: Prisma.OperationCostCreateNestedOneWithoutOperationInput
   timeline?: Prisma.OperationTimelineCreateNestedManyWithoutOperationInput
+  followUps?: Prisma.OperationFollowUpCreateNestedManyWithoutOperationInput
 }
 
 export type OperationUncheckedCreateWithoutFilesInput = {
@@ -1850,6 +1898,7 @@ export type OperationUncheckedCreateWithoutFilesInput = {
   teamMembers?: Prisma.OperationTeamMemberUncheckedCreateNestedManyWithoutOperationInput
   cost?: Prisma.OperationCostUncheckedCreateNestedOneWithoutOperationInput
   timeline?: Prisma.OperationTimelineUncheckedCreateNestedManyWithoutOperationInput
+  followUps?: Prisma.OperationFollowUpUncheckedCreateNestedManyWithoutOperationInput
 }
 
 export type OperationCreateOrConnectWithoutFilesInput = {
@@ -1890,6 +1939,7 @@ export type OperationUpdateWithoutFilesInput = {
   teamMembers?: Prisma.OperationTeamMemberUpdateManyWithoutOperationNestedInput
   cost?: Prisma.OperationCostUpdateOneWithoutOperationNestedInput
   timeline?: Prisma.OperationTimelineUpdateManyWithoutOperationNestedInput
+  followUps?: Prisma.OperationFollowUpUpdateManyWithoutOperationNestedInput
 }
 
 export type OperationUncheckedUpdateWithoutFilesInput = {
@@ -1914,6 +1964,7 @@ export type OperationUncheckedUpdateWithoutFilesInput = {
   teamMembers?: Prisma.OperationTeamMemberUncheckedUpdateManyWithoutOperationNestedInput
   cost?: Prisma.OperationCostUncheckedUpdateOneWithoutOperationNestedInput
   timeline?: Prisma.OperationTimelineUncheckedUpdateManyWithoutOperationNestedInput
+  followUps?: Prisma.OperationFollowUpUncheckedUpdateManyWithoutOperationNestedInput
 }
 
 export type OperationCreateWithoutTimelineInput = {
@@ -1938,6 +1989,7 @@ export type OperationCreateWithoutTimelineInput = {
   teamMembers?: Prisma.OperationTeamMemberCreateNestedManyWithoutOperationInput
   files?: Prisma.OperationFileCreateNestedManyWithoutOperationInput
   cost?: Prisma.OperationCostCreateNestedOneWithoutOperationInput
+  followUps?: Prisma.OperationFollowUpCreateNestedManyWithoutOperationInput
 }
 
 export type OperationUncheckedCreateWithoutTimelineInput = {
@@ -1962,6 +2014,7 @@ export type OperationUncheckedCreateWithoutTimelineInput = {
   teamMembers?: Prisma.OperationTeamMemberUncheckedCreateNestedManyWithoutOperationInput
   files?: Prisma.OperationFileUncheckedCreateNestedManyWithoutOperationInput
   cost?: Prisma.OperationCostUncheckedCreateNestedOneWithoutOperationInput
+  followUps?: Prisma.OperationFollowUpUncheckedCreateNestedManyWithoutOperationInput
 }
 
 export type OperationCreateOrConnectWithoutTimelineInput = {
@@ -2002,6 +2055,7 @@ export type OperationUpdateWithoutTimelineInput = {
   teamMembers?: Prisma.OperationTeamMemberUpdateManyWithoutOperationNestedInput
   files?: Prisma.OperationFileUpdateManyWithoutOperationNestedInput
   cost?: Prisma.OperationCostUpdateOneWithoutOperationNestedInput
+  followUps?: Prisma.OperationFollowUpUpdateManyWithoutOperationNestedInput
 }
 
 export type OperationUncheckedUpdateWithoutTimelineInput = {
@@ -2026,6 +2080,123 @@ export type OperationUncheckedUpdateWithoutTimelineInput = {
   teamMembers?: Prisma.OperationTeamMemberUncheckedUpdateManyWithoutOperationNestedInput
   files?: Prisma.OperationFileUncheckedUpdateManyWithoutOperationNestedInput
   cost?: Prisma.OperationCostUncheckedUpdateOneWithoutOperationNestedInput
+  followUps?: Prisma.OperationFollowUpUncheckedUpdateManyWithoutOperationNestedInput
+}
+
+export type OperationCreateWithoutFollowUpsInput = {
+  id?: string
+  name: string
+  diagnosis?: string | null
+  operationDate: Date | string
+  operationTime: string
+  operationRoom?: string | null
+  duration?: number | null
+  status?: $Enums.OperationStatus
+  notes?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  patient: Prisma.PatientCreateNestedOneWithoutOperationsInput
+  hospital: Prisma.HospitalCreateNestedOneWithoutOperationsInput
+  creator: Prisma.UserCreateNestedOneWithoutOperationsInput
+  specialty?: Prisma.SpecialtyCreateNestedOneWithoutOperationsInput
+  catalog?: Prisma.OperationCatalogCreateNestedOneWithoutOperationsInput
+  medicalTeam?: Prisma.OperationMedicalTeamCreateNestedManyWithoutOperationInput
+  procedures?: Prisma.OperationProcedureCreateNestedManyWithoutOperationInput
+  teamMembers?: Prisma.OperationTeamMemberCreateNestedManyWithoutOperationInput
+  files?: Prisma.OperationFileCreateNestedManyWithoutOperationInput
+  cost?: Prisma.OperationCostCreateNestedOneWithoutOperationInput
+  timeline?: Prisma.OperationTimelineCreateNestedManyWithoutOperationInput
+}
+
+export type OperationUncheckedCreateWithoutFollowUpsInput = {
+  id?: string
+  name: string
+  diagnosis?: string | null
+  hospitalId: string
+  operationDate: Date | string
+  operationTime: string
+  operationRoom?: string | null
+  duration?: number | null
+  status?: $Enums.OperationStatus
+  notes?: string | null
+  patientId: string
+  createdBy: string
+  specialtyId?: string | null
+  catalogId?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  medicalTeam?: Prisma.OperationMedicalTeamUncheckedCreateNestedManyWithoutOperationInput
+  procedures?: Prisma.OperationProcedureUncheckedCreateNestedManyWithoutOperationInput
+  teamMembers?: Prisma.OperationTeamMemberUncheckedCreateNestedManyWithoutOperationInput
+  files?: Prisma.OperationFileUncheckedCreateNestedManyWithoutOperationInput
+  cost?: Prisma.OperationCostUncheckedCreateNestedOneWithoutOperationInput
+  timeline?: Prisma.OperationTimelineUncheckedCreateNestedManyWithoutOperationInput
+}
+
+export type OperationCreateOrConnectWithoutFollowUpsInput = {
+  where: Prisma.OperationWhereUniqueInput
+  create: Prisma.XOR<Prisma.OperationCreateWithoutFollowUpsInput, Prisma.OperationUncheckedCreateWithoutFollowUpsInput>
+}
+
+export type OperationUpsertWithoutFollowUpsInput = {
+  update: Prisma.XOR<Prisma.OperationUpdateWithoutFollowUpsInput, Prisma.OperationUncheckedUpdateWithoutFollowUpsInput>
+  create: Prisma.XOR<Prisma.OperationCreateWithoutFollowUpsInput, Prisma.OperationUncheckedCreateWithoutFollowUpsInput>
+  where?: Prisma.OperationWhereInput
+}
+
+export type OperationUpdateToOneWithWhereWithoutFollowUpsInput = {
+  where?: Prisma.OperationWhereInput
+  data: Prisma.XOR<Prisma.OperationUpdateWithoutFollowUpsInput, Prisma.OperationUncheckedUpdateWithoutFollowUpsInput>
+}
+
+export type OperationUpdateWithoutFollowUpsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  diagnosis?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  operationDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  operationTime?: Prisma.StringFieldUpdateOperationsInput | string
+  operationRoom?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  duration?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  status?: Prisma.EnumOperationStatusFieldUpdateOperationsInput | $Enums.OperationStatus
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  patient?: Prisma.PatientUpdateOneRequiredWithoutOperationsNestedInput
+  hospital?: Prisma.HospitalUpdateOneRequiredWithoutOperationsNestedInput
+  creator?: Prisma.UserUpdateOneRequiredWithoutOperationsNestedInput
+  specialty?: Prisma.SpecialtyUpdateOneWithoutOperationsNestedInput
+  catalog?: Prisma.OperationCatalogUpdateOneWithoutOperationsNestedInput
+  medicalTeam?: Prisma.OperationMedicalTeamUpdateManyWithoutOperationNestedInput
+  procedures?: Prisma.OperationProcedureUpdateManyWithoutOperationNestedInput
+  teamMembers?: Prisma.OperationTeamMemberUpdateManyWithoutOperationNestedInput
+  files?: Prisma.OperationFileUpdateManyWithoutOperationNestedInput
+  cost?: Prisma.OperationCostUpdateOneWithoutOperationNestedInput
+  timeline?: Prisma.OperationTimelineUpdateManyWithoutOperationNestedInput
+}
+
+export type OperationUncheckedUpdateWithoutFollowUpsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  diagnosis?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hospitalId?: Prisma.StringFieldUpdateOperationsInput | string
+  operationDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  operationTime?: Prisma.StringFieldUpdateOperationsInput | string
+  operationRoom?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  duration?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  status?: Prisma.EnumOperationStatusFieldUpdateOperationsInput | $Enums.OperationStatus
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  patientId?: Prisma.StringFieldUpdateOperationsInput | string
+  createdBy?: Prisma.StringFieldUpdateOperationsInput | string
+  specialtyId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  catalogId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  medicalTeam?: Prisma.OperationMedicalTeamUncheckedUpdateManyWithoutOperationNestedInput
+  procedures?: Prisma.OperationProcedureUncheckedUpdateManyWithoutOperationNestedInput
+  teamMembers?: Prisma.OperationTeamMemberUncheckedUpdateManyWithoutOperationNestedInput
+  files?: Prisma.OperationFileUncheckedUpdateManyWithoutOperationNestedInput
+  cost?: Prisma.OperationCostUncheckedUpdateOneWithoutOperationNestedInput
+  timeline?: Prisma.OperationTimelineUncheckedUpdateManyWithoutOperationNestedInput
 }
 
 export type OperationCreateManyCreatorInput = {
@@ -2068,6 +2239,7 @@ export type OperationUpdateWithoutCreatorInput = {
   files?: Prisma.OperationFileUpdateManyWithoutOperationNestedInput
   cost?: Prisma.OperationCostUpdateOneWithoutOperationNestedInput
   timeline?: Prisma.OperationTimelineUpdateManyWithoutOperationNestedInput
+  followUps?: Prisma.OperationFollowUpUpdateManyWithoutOperationNestedInput
 }
 
 export type OperationUncheckedUpdateWithoutCreatorInput = {
@@ -2092,6 +2264,7 @@ export type OperationUncheckedUpdateWithoutCreatorInput = {
   files?: Prisma.OperationFileUncheckedUpdateManyWithoutOperationNestedInput
   cost?: Prisma.OperationCostUncheckedUpdateOneWithoutOperationNestedInput
   timeline?: Prisma.OperationTimelineUncheckedUpdateManyWithoutOperationNestedInput
+  followUps?: Prisma.OperationFollowUpUncheckedUpdateManyWithoutOperationNestedInput
 }
 
 export type OperationUncheckedUpdateManyWithoutCreatorInput = {
@@ -2152,6 +2325,7 @@ export type OperationUpdateWithoutPatientInput = {
   files?: Prisma.OperationFileUpdateManyWithoutOperationNestedInput
   cost?: Prisma.OperationCostUpdateOneWithoutOperationNestedInput
   timeline?: Prisma.OperationTimelineUpdateManyWithoutOperationNestedInput
+  followUps?: Prisma.OperationFollowUpUpdateManyWithoutOperationNestedInput
 }
 
 export type OperationUncheckedUpdateWithoutPatientInput = {
@@ -2176,6 +2350,7 @@ export type OperationUncheckedUpdateWithoutPatientInput = {
   files?: Prisma.OperationFileUncheckedUpdateManyWithoutOperationNestedInput
   cost?: Prisma.OperationCostUncheckedUpdateOneWithoutOperationNestedInput
   timeline?: Prisma.OperationTimelineUncheckedUpdateManyWithoutOperationNestedInput
+  followUps?: Prisma.OperationFollowUpUncheckedUpdateManyWithoutOperationNestedInput
 }
 
 export type OperationUncheckedUpdateManyWithoutPatientInput = {
@@ -2236,6 +2411,7 @@ export type OperationUpdateWithoutSpecialtyInput = {
   files?: Prisma.OperationFileUpdateManyWithoutOperationNestedInput
   cost?: Prisma.OperationCostUpdateOneWithoutOperationNestedInput
   timeline?: Prisma.OperationTimelineUpdateManyWithoutOperationNestedInput
+  followUps?: Prisma.OperationFollowUpUpdateManyWithoutOperationNestedInput
 }
 
 export type OperationUncheckedUpdateWithoutSpecialtyInput = {
@@ -2260,6 +2436,7 @@ export type OperationUncheckedUpdateWithoutSpecialtyInput = {
   files?: Prisma.OperationFileUncheckedUpdateManyWithoutOperationNestedInput
   cost?: Prisma.OperationCostUncheckedUpdateOneWithoutOperationNestedInput
   timeline?: Prisma.OperationTimelineUncheckedUpdateManyWithoutOperationNestedInput
+  followUps?: Prisma.OperationFollowUpUncheckedUpdateManyWithoutOperationNestedInput
 }
 
 export type OperationUncheckedUpdateManyWithoutSpecialtyInput = {
@@ -2320,6 +2497,7 @@ export type OperationUpdateWithoutCatalogInput = {
   files?: Prisma.OperationFileUpdateManyWithoutOperationNestedInput
   cost?: Prisma.OperationCostUpdateOneWithoutOperationNestedInput
   timeline?: Prisma.OperationTimelineUpdateManyWithoutOperationNestedInput
+  followUps?: Prisma.OperationFollowUpUpdateManyWithoutOperationNestedInput
 }
 
 export type OperationUncheckedUpdateWithoutCatalogInput = {
@@ -2344,6 +2522,7 @@ export type OperationUncheckedUpdateWithoutCatalogInput = {
   files?: Prisma.OperationFileUncheckedUpdateManyWithoutOperationNestedInput
   cost?: Prisma.OperationCostUncheckedUpdateOneWithoutOperationNestedInput
   timeline?: Prisma.OperationTimelineUncheckedUpdateManyWithoutOperationNestedInput
+  followUps?: Prisma.OperationFollowUpUncheckedUpdateManyWithoutOperationNestedInput
 }
 
 export type OperationUncheckedUpdateManyWithoutCatalogInput = {
@@ -2404,6 +2583,7 @@ export type OperationUpdateWithoutHospitalInput = {
   files?: Prisma.OperationFileUpdateManyWithoutOperationNestedInput
   cost?: Prisma.OperationCostUpdateOneWithoutOperationNestedInput
   timeline?: Prisma.OperationTimelineUpdateManyWithoutOperationNestedInput
+  followUps?: Prisma.OperationFollowUpUpdateManyWithoutOperationNestedInput
 }
 
 export type OperationUncheckedUpdateWithoutHospitalInput = {
@@ -2428,6 +2608,7 @@ export type OperationUncheckedUpdateWithoutHospitalInput = {
   files?: Prisma.OperationFileUncheckedUpdateManyWithoutOperationNestedInput
   cost?: Prisma.OperationCostUncheckedUpdateOneWithoutOperationNestedInput
   timeline?: Prisma.OperationTimelineUncheckedUpdateManyWithoutOperationNestedInput
+  followUps?: Prisma.OperationFollowUpUncheckedUpdateManyWithoutOperationNestedInput
 }
 
 export type OperationUncheckedUpdateManyWithoutHospitalInput = {
@@ -2459,6 +2640,7 @@ export type OperationCountOutputType = {
   teamMembers: number
   files: number
   timeline: number
+  followUps: number
 }
 
 export type OperationCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -2467,6 +2649,7 @@ export type OperationCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensi
   teamMembers?: boolean | OperationCountOutputTypeCountTeamMembersArgs
   files?: boolean | OperationCountOutputTypeCountFilesArgs
   timeline?: boolean | OperationCountOutputTypeCountTimelineArgs
+  followUps?: boolean | OperationCountOutputTypeCountFollowUpsArgs
 }
 
 /**
@@ -2514,6 +2697,13 @@ export type OperationCountOutputTypeCountTimelineArgs<ExtArgs extends runtime.Ty
   where?: Prisma.OperationTimelineWhereInput
 }
 
+/**
+ * OperationCountOutputType without action
+ */
+export type OperationCountOutputTypeCountFollowUpsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.OperationFollowUpWhereInput
+}
+
 
 export type OperationSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -2543,6 +2733,7 @@ export type OperationSelect<ExtArgs extends runtime.Types.Extensions.InternalArg
   files?: boolean | Prisma.Operation$filesArgs<ExtArgs>
   cost?: boolean | Prisma.Operation$costArgs<ExtArgs>
   timeline?: boolean | Prisma.Operation$timelineArgs<ExtArgs>
+  followUps?: boolean | Prisma.Operation$followUpsArgs<ExtArgs>
   _count?: boolean | Prisma.OperationCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["operation"]>
 
@@ -2626,6 +2817,7 @@ export type OperationInclude<ExtArgs extends runtime.Types.Extensions.InternalAr
   files?: boolean | Prisma.Operation$filesArgs<ExtArgs>
   cost?: boolean | Prisma.Operation$costArgs<ExtArgs>
   timeline?: boolean | Prisma.Operation$timelineArgs<ExtArgs>
+  followUps?: boolean | Prisma.Operation$followUpsArgs<ExtArgs>
   _count?: boolean | Prisma.OperationCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type OperationIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -2657,6 +2849,7 @@ export type $OperationPayload<ExtArgs extends runtime.Types.Extensions.InternalA
     files: Prisma.$OperationFilePayload<ExtArgs>[]
     cost: Prisma.$OperationCostPayload<ExtArgs> | null
     timeline: Prisma.$OperationTimelinePayload<ExtArgs>[]
+    followUps: Prisma.$OperationFollowUpPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -3080,6 +3273,7 @@ export interface Prisma__OperationClient<T, Null = never, ExtArgs extends runtim
   files<T extends Prisma.Operation$filesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Operation$filesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$OperationFilePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   cost<T extends Prisma.Operation$costArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Operation$costArgs<ExtArgs>>): Prisma.Prisma__OperationCostClient<runtime.Types.Result.GetResult<Prisma.$OperationCostPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   timeline<T extends Prisma.Operation$timelineArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Operation$timelineArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$OperationTimelinePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  followUps<T extends Prisma.Operation$followUpsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Operation$followUpsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$OperationFollowUpPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -3700,6 +3894,30 @@ export type Operation$timelineArgs<ExtArgs extends runtime.Types.Extensions.Inte
   take?: number
   skip?: number
   distinct?: Prisma.OperationTimelineScalarFieldEnum | Prisma.OperationTimelineScalarFieldEnum[]
+}
+
+/**
+ * Operation.followUps
+ */
+export type Operation$followUpsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the OperationFollowUp
+   */
+  select?: Prisma.OperationFollowUpSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the OperationFollowUp
+   */
+  omit?: Prisma.OperationFollowUpOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.OperationFollowUpInclude<ExtArgs> | null
+  where?: Prisma.OperationFollowUpWhereInput
+  orderBy?: Prisma.OperationFollowUpOrderByWithRelationInput | Prisma.OperationFollowUpOrderByWithRelationInput[]
+  cursor?: Prisma.OperationFollowUpWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.OperationFollowUpScalarFieldEnum | Prisma.OperationFollowUpScalarFieldEnum[]
 }
 
 /**

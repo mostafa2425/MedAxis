@@ -62,12 +62,13 @@ export const ModelName = {
   Hospital: 'Hospital',
   Nurse: 'Nurse',
   Operation: 'Operation',
-  OperationMedicalTeam: 'OperationMedicalTeam',
   OperationProcedure: 'OperationProcedure',
+  OperationMedicalTeam: 'OperationMedicalTeam',
   OperationTeamMember: 'OperationTeamMember',
   OperationCost: 'OperationCost',
   OperationFile: 'OperationFile',
-  OperationTimeline: 'OperationTimeline'
+  OperationTimeline: 'OperationTimeline',
+  OperationFollowUp: 'OperationFollowUp'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -92,6 +93,7 @@ export const UserScalarFieldEnum = {
   password: 'password',
   name: 'name',
   phone: 'phone',
+  avatarUrl: 'avatarUrl',
   role: 'role',
   isActive: 'isActive',
   createdAt: 'createdAt',
@@ -246,6 +248,20 @@ export const OperationScalarFieldEnum = {
 export type OperationScalarFieldEnum = (typeof OperationScalarFieldEnum)[keyof typeof OperationScalarFieldEnum]
 
 
+export const OperationProcedureScalarFieldEnum = {
+  id: 'id',
+  operationId: 'operationId',
+  catalogId: 'catalogId',
+  name: 'name',
+  nameAr: 'nameAr',
+  specialtyId: 'specialtyId',
+  sortOrder: 'sortOrder',
+  createdAt: 'createdAt'
+} as const
+
+export type OperationProcedureScalarFieldEnum = (typeof OperationProcedureScalarFieldEnum)[keyof typeof OperationProcedureScalarFieldEnum]
+
+
 export const OperationMedicalTeamScalarFieldEnum = {
   id: 'id',
   operationId: 'operationId',
@@ -259,20 +275,6 @@ export const OperationMedicalTeamScalarFieldEnum = {
 } as const
 
 export type OperationMedicalTeamScalarFieldEnum = (typeof OperationMedicalTeamScalarFieldEnum)[keyof typeof OperationMedicalTeamScalarFieldEnum]
-
-
-export const OperationProcedureScalarFieldEnum = {
-  id: 'id',
-  operationId: 'operationId',
-  catalogId: 'catalogId',
-  name: 'name',
-  nameAr: 'nameAr',
-  specialtyId: 'specialtyId',
-  sortOrder: 'sortOrder',
-  createdAt: 'createdAt'
-} as const
-
-export type OperationProcedureScalarFieldEnum = (typeof OperationProcedureScalarFieldEnum)[keyof typeof OperationProcedureScalarFieldEnum]
 
 
 export const OperationTeamMemberScalarFieldEnum = {
@@ -333,6 +335,21 @@ export const OperationTimelineScalarFieldEnum = {
 } as const
 
 export type OperationTimelineScalarFieldEnum = (typeof OperationTimelineScalarFieldEnum)[keyof typeof OperationTimelineScalarFieldEnum]
+
+
+export const OperationFollowUpScalarFieldEnum = {
+  id: 'id',
+  operationId: 'operationId',
+  title: 'title',
+  scheduledAt: 'scheduledAt',
+  completedAt: 'completedAt',
+  status: 'status',
+  notes: 'notes',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type OperationFollowUpScalarFieldEnum = (typeof OperationFollowUpScalarFieldEnum)[keyof typeof OperationFollowUpScalarFieldEnum]
 
 
 export const SortOrder = {

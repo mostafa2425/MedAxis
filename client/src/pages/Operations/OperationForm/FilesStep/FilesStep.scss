@@ -1,173 +1,319 @@
-// Files step styles (extracted from OperationForm.scss)
+.filesStep {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.filesIntro {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 18px;
+  border: 1px solid var(--border-subtle, #e2e8f0);
+  border-radius: 16px;
+  background: var(--surface-subtle, #f8fafc);
+}
+
+.filesIntroIcon {
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
+  min-height: 44px;
+  display: grid;
+  place-items: center;
+  border-radius: 12px;
+  background: rgba(37, 99, 235, 0.1);
+  color: #2563eb;
+  font-size: 20px;
+}
+
+.filesIntro h2 {
+  margin: 0 0 3px;
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--text-primary, #0f172a);
+}
+
+.filesIntro p {
+  margin: 0;
+  font-size: 12px;
+  color: var(--text-secondary, #64748b);
+}
 
 .fileSection {
   display: flex;
   flex-direction: column;
-  gap: $space-4;
+  gap: 14px;
+  padding: 18px;
+  border: 1px solid var(--border-subtle, #e2e8f0);
+  border-radius: 18px;
+  background: var(--surface, #fff);
+}
+
+.fileSection--before {
+  border-top: 3px solid #2563eb;
+}
+
+.fileSection--after {
+  border-top: 3px solid #16a34a;
+}
+
+.fileSectionHeader,
+.fileSectionHeading {
+  display: flex;
+  align-items: center;
 }
 
 .fileSectionHeader {
-  display: flex;
-  align-items: center;
-  gap: $space-2;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.fileSectionHeading {
+  gap: 11px;
+  min-width: 0;
 }
 
 .fileSectionIcon {
+  width: 40px;
+  height: 40px;
+  min-width: 40px;
+  min-height: 40px;
+  display: grid;
+  place-items: center;
+  border-radius: 11px;
   font-size: 18px;
-  color: $primary;
+}
+
+.fileSection--before .fileSectionIcon {
+  color: #2563eb;
+  background: rgba(37, 99, 235, 0.1);
+}
+
+.fileSection--after .fileSectionIcon {
+  color: #16a34a;
+  background: rgba(22, 163, 74, 0.1);
 }
 
 .fileSectionTitle {
-  font-size: $font-h5;
-  font-weight: $font-semibold;
-  color: $text-primary;
-  margin: 0;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-primary, #0f172a);
+}
 
-  @include dark {
-    color: $dark-text-primary;
-  }
+.fileSectionSubtitle {
+  margin-top: 2px;
+  font-size: 11px;
+  line-height: 1.4;
+  color: var(--text-secondary, #64748b);
 }
 
 .fileGallery {
-  display: flex;
-  flex-wrap: wrap;
-  gap: $space-3;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(155px, 1fr));
+  gap: 12px;
 }
 
-.fileThumb {
-  width: 120px;
-  display: flex;
-  flex-direction: column;
-  gap: $space-2;
-  border: 1px solid $border;
-  border-radius: $radius-md;
+.fileCard {
+  min-width: 0;
   overflow: hidden;
-  background: $surface;
-  transition: box-shadow $transition-fast;
-
-  &:hover {
-    box-shadow: $shadow-md;
-
-    .fileThumbActions {
-      opacity: 1;
-    }
-  }
-
-  @include dark {
-    border-color: $dark-border;
-    background: $dark-surface-elevated;
-  }
+  border: 1px solid var(--border-subtle, #e2e8f0);
+  border-radius: 14px;
+  background: var(--surface, #fff);
+  transition: transform 160ms ease, box-shadow 160ms ease, border-color 160ms ease;
 }
 
-.fileThumbPreview {
-  width: 100%;
-  height: 80px;
-  @include flex-center;
-  background: $background;
+.fileCard:hover {
+  transform: translateY(-1px);
+  border-color: #cbd5e1;
+  box-shadow: 0 8px 22px rgba(15, 23, 42, 0.08);
+}
+
+.fileCardPreview {
+  position: relative;
+  height: 112px;
+  display: grid;
+  place-items: center;
   overflow: hidden;
-
-  @include dark {
-    background: $dark-surface;
-  }
+  background: #f1f5f9;
 }
 
-.fileThumbImg {
+.fileCardImage {
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
 
-.fileThumbName {
-  font-size: 10px;
-  color: $text-secondary;
-  padding: 0 $space-2;
-  @include truncate;
+.fileCardDocumentIcon {
+  font-size: 34px;
+  color: #64748b;
+}
+
+.fileCardType {
+  position: absolute;
+  right: 8px;
+  top: 8px;
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #fff;
+  color: #16a34a;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.12);
+}
+
+.fileCardBody {
+  padding: 10px;
+}
+
+.fileCardName {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-
-  @include dark {
-    color: $dark-text-secondary;
-  }
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-primary, #0f172a);
 }
 
-.fileThumbActions {
+.fileCardMeta {
   display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: $space-1;
-  padding: $space-1 $space-2;
-  border-top: 1px solid $border;
-  opacity: 0;
-  transition: opacity $transition-fast;
+  gap: 5px;
+  margin-top: 3px;
+  font-size: 10px;
+  color: var(--text-secondary, #64748b);
+}
 
-  @include dark {
-    border-top-color: $dark-border;
-  }
+.fileCardActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 2px;
+  margin-top: 6px;
+  padding-top: 6px;
+  border-top: 1px solid var(--border-subtle, #e2e8f0);
 }
 
 .emptyFiles {
-  @include flex-center;
+  display: flex;
   flex-direction: column;
-  gap: $space-2;
-  padding: $space-8;
-  color: $text-muted;
-  font-size: $font-body-sm;
-  border: 2px dashed $border;
-  border-radius: $radius-md;
-
-  @include dark {
-    border-color: $dark-border;
-  }
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  min-height: 112px;
+  padding: 18px;
+  border: 1px dashed #cbd5e1;
+  border-radius: 14px;
+  background: #f8fafc;
+  text-align: center;
 }
 
-.noOperationAlert {
-  margin-top: $space-2;
+.emptyFilesIcon {
+  width: 38px;
+  height: 38px;
+  display: grid;
+  place-items: center;
+  border-radius: 10px;
+  background: #e2e8f0;
+  color: #94a3b8;
+  font-size: 18px;
 }
 
-.uploadArea {
-  .ant-upload-drag {
-    border-radius: $radius-md;
-    border: 2px dashed $border !important;
-    background: $background;
-    transition: border-color $transition-fast, background $transition-fast;
+.emptyFilesText {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-primary, #334155);
+}
 
-    &:hover {
-      border-color: $primary !important;
-      background: $primary-light;
-    }
-  }
+.emptyFilesHint {
+  font-size: 10px;
+  color: var(--text-secondary, #64748b);
+}
 
-  @include dark {
-    .ant-upload-drag {
-      background: $dark-surface;
-      border-color: $dark-border !important;
+.uploadArea .ant-upload-drag {
+  min-height: 145px;
+  border: 1.5px dashed #cbd5e1 !important;
+  border-radius: 14px;
+  background: #f8fafc;
+  transition: border-color 160ms ease, background 160ms ease;
+}
 
-      &:hover {
-        background: $dark-primary-light;
-      }
-    }
-  }
+.uploadArea .ant-upload-drag:hover {
+  border-color: #2563eb !important;
+  background: rgba(37, 99, 235, 0.04);
+}
+
+.uploadContent {
+  padding: 10px;
 }
 
 .uploadIcon {
-  font-size: 36px !important;
-  color: $text-muted !important;
-  margin-bottom: $space-2 !important;
+  width: 42px;
+  height: 42px;
+  display: grid;
+  place-items: center;
+  margin: 0 auto 8px;
+  border-radius: 12px;
+  background: #fff;
+  color: #2563eb;
+  font-size: 20px;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.06);
 }
 
-.uploadText {
-  font-size: $font-body-sm !important;
-  color: $text-secondary !important;
-  font-weight: $font-medium;
-
-  @include dark {
-    color: $dark-text-secondary !important;
-  }
+.uploadTitle {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-primary, #334155);
 }
 
 .uploadHint {
-  font-size: $font-caption !important;
-  color: $text-muted !important;
-  margin-top: $space-1 !important;
+  margin-top: 3px;
+  font-size: 10px;
+  color: var(--text-secondary, #64748b);
+}
+
+.uploadAction {
+  display: inline-flex;
+  margin-top: 8px;
+  padding: 4px 9px;
+  border-radius: 999px;
+  background: #e2e8f0;
+  font-size: 10px;
+  font-weight: 600;
+  color: #475569;
+}
+
+.filesDivider {
+  margin: 0 !important;
+}
+
+.noOperationAlert {
+  margin-top: 2px;
+}
+
+@media (max-width: 640px) {
+  .filesStep {
+    gap: 12px;
+  }
+
+  .filesIntro,
+  .fileSection {
+    padding: 14px;
+    border-radius: 14px;
+  }
+
+  .fileSectionSubtitle {
+    max-width: 210px;
+  }
+
+  .fileGallery {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .fileCardPreview {
+    height: 100px;
+  }
+
+  .uploadArea .ant-upload-drag {
+    min-height: 132px;
+  }
 }

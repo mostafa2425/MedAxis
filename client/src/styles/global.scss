@@ -329,7 +329,9 @@ ul, ol {
   .ant-modal-content {
     border-radius: $radius-lg !important;
   }
-
+.ant-drawer{
+  z-index: 1800 !important;
+}
   .ant-drawer-content-wrapper {
     max-width: 100% !important;
   }

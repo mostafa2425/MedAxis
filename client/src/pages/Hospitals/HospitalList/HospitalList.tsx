@@ -133,7 +133,7 @@ export default function HospitalList({
         title: t('hospitals.hospitalName'),
         dataIndex: 'name',
         key: 'name',
-        width: 280,
+        width: 380,
         ellipsis: true,
         render: (name: string, record) => {
           const status = getStatus(record);
@@ -148,10 +148,10 @@ export default function HospitalList({
                 <div className="hospitalListNameRow">
                   <span className="hospitalListName">{name}</span>
 
-                  <span className={`hospitalListStatus ${status.className}`}>
+                  {/* <span className={`hospitalListStatus ${status.className}`}>
                     <span className="hospitalListStatusDot" />
                     {status.label}
-                  </span>
+                  </span> */}
                 </div>
 
                 <span className="hospitalListNameHint">
@@ -193,18 +193,18 @@ export default function HospitalList({
           </div>
         ),
       },
-      {
-        title: t('common.date'),
-        dataIndex: 'createdAt',
-        key: 'createdAt',
-        width: 145,
-        render: (date: string) => (
-          <div className="hospitalListInfoCell hospitalListDate">
-            <CalendarOutlined />
-            <span>{formatDate(date)}</span>
-          </div>
-        ),
-      },
+      // {
+      //   title: t('common.date'),
+      //   dataIndex: 'createdAt',
+      //   key: 'createdAt',
+      //   width: 145,
+      //   render: (date: string) => (
+      //     <div className="hospitalListInfoCell hospitalListDate">
+      //       <CalendarOutlined />
+      //       <span>{formatDate(date)}</span>
+      //     </div>
+      //   ),
+      // },
       {
         title: t('common.actions'),
         key: 'actions',

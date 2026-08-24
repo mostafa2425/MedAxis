@@ -39,6 +39,9 @@ export const operationListInclude = {
       createdAt: true,
     },
   },
+  followUps: {
+    orderBy: { scheduledAt: 'asc' as const },
+  },
 } satisfies Prisma.OperationInclude;
 
 export const operationDetailInclude = {
@@ -49,7 +52,7 @@ export const operationDetailInclude = {
     orderBy: { createdAt: 'desc' as const },
   },
   timeline: {
-    include: { user: { select: { id: true, name: true } } },
+    include: { user: { select: { id: true, name: true } }, },
     orderBy: { createdAt: 'desc' as const },
   },
 } satisfies Prisma.OperationInclude;

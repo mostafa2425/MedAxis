@@ -1,5 +1,10 @@
 {
   "version": 2,
+  "git": {
+    "deploymentEnabled": {
+      "develop": false
+    }
+  },
   "builds": [
     {
       "src": "api/index.ts",
@@ -8,8 +13,16 @@
   ],
   "routes": [
     {
+      "src": "/api/auth/me/avatar",
+      "dest": "api/index.ts"
+    },
+    {
       "src": "/(.*)",
       "dest": "api/index.ts"
     }
+  ],
+  "crons": [
+    { "path": "/api/assistant/cron/daily", "schedule": "0 21 * * *" },
+    { "path": "/api/assistant/cron/weekly", "schedule": "0 21 * * 0" }
   ]
 }

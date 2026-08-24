@@ -3,23 +3,27 @@
   "private": true,
   "scripts": {
     "dev": "concurrently \"npm run dev:server\" \"npm run dev:client\"",
-
     "dev:server": "npm --prefix server run dev",
     "dev:client": "npm --prefix client run dev -- --port 3005",
-
     "build": "npm run build:client && npm run build:server",
     "build:client": "npm --prefix client run build",
     "build:server": "npm --prefix server run build",
-
+    "typecheck": "npm run typecheck:client && npm run typecheck:server",
+    "typecheck:client": "npm --prefix client run typecheck",
+    "typecheck:server": "npm --prefix server run typecheck",
+    "lint": "npm --prefix client run lint",
+    "verify": "npm run typecheck && npm run lint && npm run build",
+    "e2e": "playwright test",
+    "e2e:ui": "playwright test --ui",
+    "e2e:report": "playwright show-report",
     "start": "npm --prefix server run start",
-
     "seed": "npm --prefix server run seed",
-
     "prisma:generate": "npm --prefix server run db:generate",
     "prisma:push": "npm --prefix server run db:push",
     "prisma:studio": "npm --prefix server run prisma:studio"
   },
   "devDependencies": {
+    "@playwright/test": "^1.55.0",
     "concurrently": "^9.0.0"
   }
 }

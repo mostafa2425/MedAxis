@@ -9,12 +9,22 @@ import type { Doctor, Nurse } from '@/types';
 import type { WizardFormData, WizardStepProps } from '../wizardTypes';
 import './TeamStep.scss';
 
+type TeamStepProps = Pick<WizardStepProps, 'formData' | 'errors' | 'clearError'> & {
+  setFormData?: WizardStepProps['setFormData'];
+  onChange?: (patch: Partial<WizardFormData>) => void;
+  doctors?: Doctor[];
+  nurses?: Nurse[];
+};
+
 export default function TeamStep({
   formData,
   setFormData,
+  onChange,
   errors = {},
   clearError = () => {},
-}: WizardStepProps) {
+  doctors: providedDoctors,
+  nurses: providedNurses,
+}: TeamStepProps) {
   const { t } = useTranslation();
   const user = useAuthStore((s) => s.user);
 
@@ -22,16 +32,30 @@ export default function TeamStep({
     queryKey: ['doctors-active'],
     queryFn: () => doctorService.getActive(),
     staleTime: 60_000,
+    enabled: !providedDoctors,
   });
 
   const { data: nursesData, isLoading: nursesLoading } = useQuery({
     queryKey: ['nurses-active'],
     queryFn: () => nurseService.getActive(),
     staleTime: 60_000,
+    enabled: !providedNurses,
   });
 
-  const doctors: Doctor[] = doctorsData?.data?.data ?? [];
-  const nurses: Nurse[] = nursesData?.data?.data ?? [];
+  const doctors: Doctor[] = providedDoctors ?? doctorsData?.data?.data ?? [];
+  const nurses: Nurse[] = providedNurses ?? nursesData?.data?.data ?? [];
+
+  const applyPatch = useCallback(
+    (patch: Partial<WizardFormData>) => {
+      if (onChange) {
+        onChange(patch);
+      } else if (setFormData) {
+        setFormData((prev) => ({ ...prev, ...patch }));
+      }
+      Object.keys(patch).forEach((field) => clearError(field));
+    },
+    [onChange, setFormData, clearError],
+  );
 
   useEffect(() => {
     if (doctors.length === 0 || formData.doctorIds.length > 0) return;
@@ -39,28 +63,20 @@ export default function TeamStep({
       doctors.find((d) => d.id === user?.doctorId) ||
       doctors.find((d) => d.email && d.email === user?.email);
     if (matchDoctor) {
-      setFormData((prev) => ({
-        ...prev,
-        doctorIds: [matchDoctor.id],
-        primarySurgeonId: matchDoctor.id,
-      }));
+      applyPatch({ doctorIds: [matchDoctor.id], primarySurgeonId: matchDoctor.id });
     }
-  }, [doctors, user?.doctorId, user?.email, formData.doctorIds.length, setFormData]);
+  }, [doctors, user?.doctorId, user?.email, formData.doctorIds.length, applyPatch]);
 
   const updateField = useCallback(
-    (field: keyof WizardFormData, value: unknown) => {
-      setFormData((prev) => ({ ...prev, [field]: value }));
-      clearError(field as string);
-    },
-    [setFormData, clearError],
+    (field: keyof WizardFormData, value: unknown) => applyPatch({ [field]: value } as Partial<WizardFormData>),
+    [applyPatch],
   );
 
   const doctorOptions = useMemo(
-    () =>
-      doctors.map((d) => {
-        const specialtyNames = (d.specialties ?? []).map((specialty) => specialty.name).join(', ');
-        return { value: d.id, label: specialtyNames ? `${d.name} (${specialtyNames})` : d.name };
-      }),
+    () => doctors.map((d) => {
+      const specialtyNames = (d.specialties ?? []).map((specialty) => specialty.name).join(', ');
+      return { value: d.id, label: specialtyNames ? `${d.name} (${specialtyNames})` : d.name };
+    }),
     [doctors],
   );
 
@@ -80,10 +96,7 @@ export default function TeamStep({
               size="large"
               placeholder={t('operations.selectDoctors')}
               value={formData.doctorIds}
-              onChange={(ids: string[]) => {
-                updateField('doctorIds', ids);
-                updateField('primarySurgeonId', ids[0] ?? '');
-              }}
+              onChange={(ids: string[]) => applyPatch({ doctorIds: ids, primarySurgeonId: ids[0] ?? '' })}
               allowClear
               showSearch
               optionFilterProp="label"
