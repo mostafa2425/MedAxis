@@ -9,6 +9,8 @@ jobs:
   e2e:
     runs-on: ubuntu-latest
     timeout-minutes: 20
+    permissions:
+      contents: read
     env:
       # Stable Vercel branch alias for the current develop frontend.
       E2E_BASE_URL: https://med-axis-git-develop-gamalmostafa32s-projects.vercel.app
@@ -26,7 +28,7 @@ jobs:
           cache: npm
 
       - name: Install dependencies
-        run: npm install
+        run: npm ci
 
       - name: Install Playwright browser
         run: npx playwright install --with-deps chromium
@@ -34,7 +36,7 @@ jobs:
       - name: Preflight frontend
         run: |
           echo "E2E_BASE_URL=${E2E_BASE_URL}"
-          curl --fail --silent --show-error --location --max-time 20 "${E2E_BASE_URL}/login" -o /tmp/medaxis-login.html
+          curl --fail --silent --show-error --location --max-time 20             -H "x-vercel-protection-bypass: ${VERCEL_AUTOMATION_BYPASS_SECRET}"             -H "x-vercel-set-bypass-cookie: samesitenone"             "${E2E_BASE_URL}/login" -o /tmp/medaxis-login.html
           test -s /tmp/medaxis-login.html
           echo "Frontend /login is reachable."
 
