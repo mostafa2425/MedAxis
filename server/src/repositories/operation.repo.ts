@@ -82,10 +82,12 @@ export class OperationRepository {
   async deleteFile(fileId: string, uploadedBy: string) { const file = await prisma.operationFile.findFirst({ where: { id: fileId, operation: { createdBy: uploadedBy } } }); if (!file) return null; return prisma.operationFile.delete({ where: { id: fileId } }); }
 
   async addTimeline(operationId: string, data: { action: string; description?: string; userId: string; status?: string }) {
-    const status = data.status ?? data.action;
+    // operation_timeline does not have a status/occurredAt column in the Prisma schema.
+    // Keep the optional status input for backwards compatibility, but persist only
+    // columns that exist in production and in Prisma.
     const rows = await prisma.$queryRaw<Array<Record<string, unknown>>>(Prisma.sql`
-      INSERT INTO "operation_timeline" ("id", "operationId", "action", "status", "description", "userId", "createdAt", "occurredAt")
-      VALUES (gen_random_uuid(), ${operationId}, ${data.action}::"TimelineAction", ${status}, ${data.description ?? null}, ${data.userId}, now(), now()) RETURNING *
+      INSERT INTO "operation_timeline" ("id", "operationId", "action", "description", "userId", "createdAt")
+      VALUES (gen_random_uuid(), ${operationId}, ${data.action}::"TimelineAction", ${data.description ?? null}, ${data.userId}, now()) RETURNING *
     `);
     return rows[0];
   }
