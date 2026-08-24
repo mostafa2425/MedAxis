@@ -3,16 +3,19 @@ import { test, expect, request as playwrightRequest, APIRequestContext } from '@
 const apiBaseUrl = process.env.E2E_API_BASE_URL;
 const email = process.env.E2E_EMAIL;
 const password = process.env.E2E_PASSWORD;
-const patientId = process.env.E2E_PATIENT_ID;
-const hospitalId = process.env.E2E_HOSPITAL_ID;
-const operationCatalogId = process.env.E2E_OPERATION_CATALOG_ID;
-const doctorId = process.env.E2E_DOCTOR_ID;
-
 function requireEnv() {
-  test.skip(
-    !apiBaseUrl || !email || !password || !patientId || !hospitalId || !operationCatalogId || !doctorId,
-    'Set E2E_API_BASE_URL, E2E_EMAIL, E2E_PASSWORD, E2E_PATIENT_ID, E2E_HOSPITAL_ID, E2E_OPERATION_CATALOG_ID and E2E_DOCTOR_ID.',
-  );
+  test.skip(!apiBaseUrl || !email || !password, 'Set E2E_API_BASE_URL, E2E_EMAIL and E2E_PASSWORD.');
+}
+
+async function firstData(api: APIRequestContext, path: string, token: string) {
+  const response = await api.get(path, { headers: { Authorization: `Bearer ${token}` } });
+  expect(response.ok(), await response.text()).toBeTruthy();
+  const body = await response.json();
+  expect(body.success).toBeTruthy();
+  const data = body.data?.data ?? body.data;
+  expect(Array.isArray(data)).toBeTruthy();
+  expect(data.length).toBeGreaterThan(0);
+  return data[0];
 }
 
 async function login(api: APIRequestContext) {
@@ -31,6 +34,19 @@ test.describe('Operations business-flow E2E', () => {
     const api = await playwrightRequest.newContext({ baseURL: apiBaseUrl });
     const token = await login(api);
     const headers = { Authorization: `Bearer ${token}` };
+    const meResponse = await api.get('/api/auth/me', { headers });
+    expect(meResponse.ok()).toBeTruthy();
+    const meBody = await meResponse.json();
+    const doctorId = meBody.data?.doctorId;
+    expect(doctorId).toBeTruthy();
+
+    const patient = await firstData(api, '/api/patients?limit=1', token);
+    const hospital = await firstData(api, '/api/hospitals?limit=1', token);
+    const catalog = await firstData(api, '/api/operation-catalog?limit=1', token);
+
+    const patientId = patient.id as string;
+    const hospitalId = hospital.id as string;
+    const operationCatalogId = catalog.id as string;
 
     const createResponse = await api.post('/api/operations', {
       headers,
