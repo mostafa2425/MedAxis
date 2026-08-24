@@ -10,18 +10,18 @@ test.describe('Authentication smoke tests', () => {
   });
 
   test('demo doctor can sign in and reach the dashboard', async ({ page }) => {
-    await page.locator('input[type="email"]').first().fill(demoEmail!);
-    await page.locator('input[type="password"]').first().fill(demoPassword!);
-    await page.locator('button[type="submit"]').first().click();
+    await page.locator('#login-email').fill(demoEmail!);
+    await page.locator('#login-password').fill(demoPassword!);
+    await page.locator('button[type="submit"]').click();
 
-    await expect(page).not.toHaveURL(/\/login(?:\?|$)/, { timeout: 15000 });
-    await expect(page).toHaveURL(/dashboard|patients/i, { timeout: 15000 });
+    // LoginPage navigates to the protected dashboard route (/).
+    await expect(page).toHaveURL(/\/$/, { timeout: 15000 });
   });
 
   test('invalid credentials are rejected', async ({ page }) => {
-    await page.locator('input[type="email"]').first().fill(demoEmail!);
-    await page.locator('input[type="password"]').first().fill(`${demoPassword}-invalid`);
-    await page.locator('button[type="submit"]').first().click();
+    await page.locator('#login-email').fill(demoEmail!);
+    await page.locator('#login-password').fill(`${demoPassword}-invalid`);
+    await page.locator('button[type="submit"]').click();
 
     await expect(page).toHaveURL(/\/login(?:\?|$)/, { timeout: 10000 });
   });
