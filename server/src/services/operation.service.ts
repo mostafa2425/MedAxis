@@ -74,14 +74,13 @@ class OperationService {
     const { teamMembers, medicalTeam } = await this.buildTeam(createdBy, data.medicalTeam);
     const first = catalogItems[0];
     const { cost, ...rest } = data;
-    const operation = await operationRepo.create({
+    const operation = await operationRepo.createAtomic({
       name: catalogItems.map((item) => item.name).join(' + '), catalogId: first.id, specialtyId: first.specialtyId ?? data.specialtyId,
       diagnosis: data.diagnosis ?? null, hospitalId: rest.hospitalId, operationDate: new Date(data.operationDate), operationTime: data.operationTime,
       operationRoom: data.operationRoom, duration: data.duration, status: data.status || 'COMPLETED', notes: data.notes, patientId: data.patientId, createdBy,
       procedures: catalogItems.map((item, index) => ({ catalogId: item.id, name: item.name, nameAr: item.nameAr ?? null, specialtyId: item.specialtyId ?? null, sortOrder: index })),
       teamMembers, medicalTeam, cost: cost ? normalizeOperationCost(cost) : undefined,
-    });
-    await operationRepo.addTimeline(operation.id, { action: 'OPERATION_CREATED', description: `Operation "${operation.name}" created`, userId: createdBy });
+    }, { action: 'OPERATION_CREATED', description: `Operation "${catalogItems.map((item) => item.name).join(' + ')}" created`, userId: createdBy });
     return this.getById(operation.id, createdBy);
   }
 
