@@ -136,7 +136,7 @@ export async function createSignedDownloadUrl(storagePath: string) {
 }
 
 export async function deleteStoredFile(storagePath: string) {
-  const { bucket } = getConfig();
+  const bucket = getBucket(storagePath);
   await storageRequest(`/object/${encodeURIComponent(bucket)}`, {
     method: 'DELETE',
     body: JSON.stringify({ prefixes: [storagePath] }),
