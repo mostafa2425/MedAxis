@@ -68,6 +68,7 @@ model User {
   name                 String
   phone                String?
   avatarUrl            String?
+  emailVerifiedAt      DateTime?
   role                 String                @default("doctor")
   isActive             Boolean               @default(true)
   createdAt            DateTime              @default(now()) @db.Timestamptz(6)
