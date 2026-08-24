@@ -90,6 +90,10 @@ async function sendEmail(to: string, name: string, url: string) {
 }
 
 export class EmailVerificationService {
+  validateConfig() {
+    getConfig();
+  }
+
   async issue(userId: string, email: string, name: string, enforceCooldown = true) {
     getConfig();
     const latest = await prisma.$queryRaw<Array<{ createdAt: Date }>>`SELECT "createdAt" FROM "email_verification_tokens" WHERE "userId" = ${userId} ORDER BY "createdAt" DESC LIMIT 1`;
