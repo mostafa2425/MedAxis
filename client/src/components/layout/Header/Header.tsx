@@ -140,6 +140,29 @@ export default function Header({ onMenuClick }: HeaderProps) {
   }, []);
 
   useEffect(() => {
+    const onServiceWorkerMessage = (event: MessageEvent) => {
+      if (event.data?.type !== "MEDAXIS_NOTIFICATION_RECEIVED") return;
+      void loadNotifications();
+    };
+
+    const onVisibilityChange = () => {
+      if (!document.hidden) void loadNotifications();
+    };
+
+    const onWindowFocus = () => void loadNotifications();
+
+    navigator.serviceWorker?.addEventListener("message", onServiceWorkerMessage);
+    document.addEventListener("visibilitychange", onVisibilityChange);
+    window.addEventListener("focus", onWindowFocus);
+
+    return () => {
+      navigator.serviceWorker?.removeEventListener("message", onServiceWorkerMessage);
+      document.removeEventListener("visibilitychange", onVisibilityChange);
+      window.removeEventListener("focus", onWindowFocus);
+    };
+  }, []);
+
+  useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key !== "/" || event.metaKey || event.ctrlKey || event.altKey)
         return;
