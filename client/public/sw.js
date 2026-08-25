@@ -58,7 +58,16 @@ self.addEventListener('push', (event) => {
     data: { url: data.url || '/assistant', notificationId: data.notificationId || null },
   };
 
-  event.waitUntil(self.registration.showNotification(title, options));
+  event.waitUntil((async () => {
+    await self.registration.showNotification(title, options);
+    const clientList = await self.clients.matchAll({ type: 'window', includeUncontrolled: true });
+    for (const client of clientList) {
+      client.postMessage({
+        type: 'MEDAXIS_NOTIFICATION_RECEIVED',
+        notificationId: data.notificationId || null,
+      });
+    }
+  })());
 });
 
 self.addEventListener('notificationclick', (event) => {
