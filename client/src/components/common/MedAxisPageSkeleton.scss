@@ -1,0 +1,49 @@
+.medaxis-content-skeleton {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  animation: medaxisSkeletonIn .2s ease;
+}
+
+.medaxis-skeleton-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.medaxis-skeleton-header > div {
+  display: flex;
+  flex-direction: column;
+}
+
+.medaxis-skeleton-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.medaxis-skeleton-card,
+.medaxis-skeleton-list {
+  border: 1px solid var(--border-subtle, #e2e8f0);
+  border-radius: 16px;
+  background: var(--surface, #fff);
+  box-shadow: 0 3px 14px rgba(15, 23, 42, .035);
+}
+
+.medaxis-skeleton-list {
+  padding: 16px;
+}
+
+@media (max-width: 640px) {
+  .medaxis-content-skeleton { gap: 12px; }
+  .medaxis-skeleton-header { align-items: stretch; flex-direction: column; }
+  .medaxis-skeleton-grid { grid-template-columns: 1fr; }
+  .medaxis-skeleton-card,
+  .medaxis-skeleton-list { border-radius: 14px; }
+}
+
+@keyframes medaxisSkeletonIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
