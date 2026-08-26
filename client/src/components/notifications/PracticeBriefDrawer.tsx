@@ -17,6 +17,7 @@ import {
 } from "@/services/assistant.service";
 import type { SmartNotification } from "@/services/notification.service";
 import "./PracticeBriefDrawer.scss";
+import "./NotificationCenter.scss";
 
 interface PracticeBriefDrawerProps {
   notification: SmartNotification | null;
