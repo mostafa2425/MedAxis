@@ -42,19 +42,38 @@
 .timelineAction { font-size: $font-body-sm; font-weight: $font-semibold; color: $text-primary; }
 .timelineDate { font-size: $font-caption; color: $text-muted; }
 .timelineDescription { font-size: $font-body-sm; color: $text-secondary; margin-top: $space-1; }
-.case-timeline-card { overflow: hidden; }
-.case-timeline-card .ant-card-head { padding-inline: 20px; }
-.case-timeline-card .ant-timeline { padding: 10px 6px 4px; }
-.case-timeline-card .ant-timeline-item { padding-bottom: 24px; }
-.case-timeline-card .ant-timeline-item-tail { inset-inline-start: 23px; top: 48px; border-inline-start: 2px solid $border; }
+
+/* Tabs: remove click ambiguity caused by the scrollable tab navigation. */
+.operation-tabs .ant-tabs-nav-list,
+.operation-tabs .ant-tabs-tab,
+.operation-tabs .ant-tabs-tab-btn { position: relative; }
+.operation-tabs .ant-tabs-tab { z-index: 2; cursor: pointer !important; user-select: none; -webkit-tap-highlight-color: transparent; }
+.operation-tabs .ant-tabs-tab-btn { z-index: 3; cursor: pointer !important; }
+.operation-tabs .ant-tabs-tab:hover .ant-tabs-tab-btn { color: inherit; }
+.operation-tabs .ant-tabs-tab:focus-visible { outline: 2px solid $primary; outline-offset: -2px; }
+.operation-tabs .ant-tabs-tab + .ant-tabs-tab { margin-inline-start: 0 !important; }
+.operation-tabs .ant-tabs-nav-operations { z-index: 4; }
+
+/* Case Timeline: clearer hierarchy and faster scanning of case history. */
+.case-timeline-card { overflow: hidden; border-radius: $radius-lg; border: 1px solid $border; box-shadow: $shadow-sm; background: $surface; }
+.case-timeline-card .ant-card-head { padding-inline: 20px; min-height: 64px; border-bottom: 1px solid $border; }
+.case-timeline-card .ant-card-head-title { font-size: 16px; }
+.case-timeline-card .ant-card-body { padding: 24px; }
+.case-timeline-card .ant-timeline { padding: 6px 2px 2px; }
+.case-timeline-card .ant-timeline-item { padding-bottom: 26px; }
+.case-timeline-card .ant-timeline-item:last-child { padding-bottom: 2px; }
+.case-timeline-card .ant-timeline-item-tail { inset-inline-start: 23px; top: 52px; border-inline-start: 2px dashed rgba(148, 163, 184, 0.45); }
 .case-timeline-card .ant-timeline-item-head-custom { width: 52px; height: 52px; min-width: 52px; min-height: 52px; margin-inline-start: -2px; margin-top: -2px; padding: 0; border: 0; background: transparent; }
-.case-timeline-card .timelineDot { position: relative; display: inline-flex; align-items: center; justify-content: center; width: 48px; height: 48px; min-width: 48px; min-height: 48px; flex: 0 0 48px; border-radius: 16px; font-size: 23px; background: $primary-light; color: $primary; border: 2px solid rgba(22, 119, 255, 0.18); box-shadow: 0 8px 22px rgba(22, 119, 255, 0.16); }
-.case-timeline-card .timelineDot::after { content: ""; position: absolute; inset: 3px; border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.55); pointer-events: none; }
-.case-timeline-card .timelineDotLatest { width: 54px; height: 54px; min-width: 54px; min-height: 54px; flex: 0 0 54px; margin-top: -3px; font-size: 25px; color: $success; background: rgba(82, 196, 26, 0.12); border-color: rgba(82, 196, 26, 0.28); box-shadow: 0 10px 28px rgba(82, 196, 26, 0.2); }
-.case-timeline-card .timelineEvent { margin-inline-start: 14px; padding: 15px 17px; border: 1px solid $border; border-radius: 16px; background: $surface; box-shadow: 0 5px 18px rgba(15, 23, 42, 0.05); }
-.case-timeline-card .timelineEventLatest { border-color: rgba(82, 196, 26, 0.3); box-shadow: 0 9px 26px rgba(82, 196, 26, 0.08); }
-.case-timeline-card .timelineDescription { margin: 7px 0 9px; }
-.case-timeline-card .timelineTimestamp { font-size: 12px; }
+.case-timeline-card .timelineDot { position: relative; display: inline-flex; align-items: center; justify-content: center; width: 48px; height: 48px; min-width: 48px; min-height: 48px; flex: 0 0 48px; border-radius: 15px; font-size: 21px; background: $primary-light; color: $primary; border: 1px solid rgba(22, 119, 255, 0.18); }
+.case-timeline-card .timelineDot::after { content: ""; position: absolute; inset: 4px; border-radius: 11px; border: 1px solid rgba(255, 255, 255, 0.65); pointer-events: none; }
+.case-timeline-card .timelineDotLatest { width: 52px; height: 52px; min-width: 52px; min-height: 52px; flex-basis: 52px; color: $success; background: rgba(82, 196, 26, 0.12); border-color: rgba(82, 196, 26, 0.28); box-shadow: 0 6px 18px rgba(82, 196, 26, 0.12); }
+.case-timeline-card .timelineEvent { position: relative; margin-inline-start: 16px; padding: 16px 18px; border: 1px solid $border; border-radius: 14px; background: $surface; box-shadow: 0 3px 12px rgba(15, 23, 42, 0.04); transition: border-color 0.18s ease, box-shadow 0.18s ease, transform 0.18s ease; }
+.case-timeline-card .timelineEvent:hover { border-color: rgba(22, 119, 255, 0.22); box-shadow: $shadow-md; transform: translateY(-1px); }
+.case-timeline-card .timelineEventLatest { border-color: rgba(82, 196, 26, 0.3); background: linear-gradient(135deg, $surface 0%, rgba(82, 196, 26, 0.045) 100%); }
+.case-timeline-card .timelineDescription { margin: 8px 0 10px; line-height: 1.65; }
+.case-timeline-card .timelineTimestamp { padding-top: 9px; border-top: 1px solid rgba(148, 163, 184, 0.18); font-size: 12px; }
+.case-timeline-card .ant-tag { border-radius: $radius-full; font-weight: $font-medium; }
+
 @media (max-width: 767px) {
   .operation-detail-page.page { gap: 12px; }
   .operation-tabs .ant-tabs-nav { margin-bottom: 14px; }
@@ -81,14 +100,15 @@
   .financialsActions .ant-btn { width: 100%; }
   .doctorShareValue { font-size: 28px !important; }
   .moneyCurrency { min-width: 54px; padding-inline: 8px; }
-  .case-timeline-card .ant-card-head { padding-inline: 14px; }
+  .case-timeline-card .ant-card-head { padding-inline: 14px; min-height: 58px; }
+  .case-timeline-card .ant-card-body { padding: 16px 12px; }
   .case-timeline-card .ant-timeline { padding-inline: 2px; }
-  .case-timeline-card .ant-timeline-item { padding-bottom: 18px; }
+  .case-timeline-card .ant-timeline-item { padding-bottom: 20px; }
   .case-timeline-card .ant-timeline-item-head-custom { width: 46px; height: 46px; min-width: 46px; min-height: 46px; }
   .case-timeline-card .ant-timeline-item-tail { inset-inline-start: 20px; top: 43px; }
-  .case-timeline-card .timelineDot { width: 42px; height: 42px; min-width: 42px; min-height: 42px; flex-basis: 42px; border-radius: 13px; font-size: 20px; }
-  .case-timeline-card .timelineDotLatest { width: 48px; height: 48px; min-width: 48px; min-height: 48px; flex-basis: 48px; font-size: 22px; }
-  .case-timeline-card .timelineEvent { margin-inline-start: 8px; padding: 12px 13px; border-radius: 14px; }
+  .case-timeline-card .timelineDot { width: 42px; height: 42px; min-width: 42px; min-height: 42px; flex-basis: 42px; border-radius: 13px; font-size: 19px; }
+  .case-timeline-card .timelineDotLatest { width: 46px; height: 46px; min-width: 46px; min-height: 46px; flex-basis: 46px; font-size: 20px; }
+  .case-timeline-card .timelineEvent { margin-inline-start: 8px; padding: 13px 14px; border-radius: 13px; }
 }
 @media (max-width: 420px) {
   .caseMetaGrid { grid-template-columns: 1fr; }
