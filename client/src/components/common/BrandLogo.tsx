@@ -1,4 +1,5 @@
 import type { CSSProperties } from "react";
+import "./BrandLogo.scss";
 
 interface BrandLogoProps {
   compact?: boolean;
