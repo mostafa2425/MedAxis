@@ -1,37 +1,245 @@
-.profile-page { &.page { display: flex; flex-direction: column; gap: $space-4; } }
-.loadingContainer { display: flex; justify-content: center; padding: $space-16 0; }
-.profileCard { max-width: 760px; border-radius: $radius-lg; @include dark { background: $dark-surface; border-color: $dark-border; } }
-.profileSectionTitle { margin: 0 0 $space-3; font-size: $font-body-lg; font-weight: $font-semibold; color: $text-primary; @include dark { color: $dark-text-primary; } }
-.profileTags { display: flex; flex-wrap: wrap; align-items: center; gap: $space-1; margin-bottom: $space-4; }
-.profileTagLabel { width: 100%; margin-bottom: 2px; font-size: $font-caption; font-weight: $font-medium; color: $text-muted; }
-.profileReadonly { display: grid; gap: $space-3; margin-bottom: $space-5; }
-.profileReadonlyItem { display: flex; flex-direction: column; gap: 4px; }
-.profileReadonlyValue { display: inline-flex; align-items: center; gap: 8px; color: $text-primary; font-size: $font-body-sm; word-break: break-all; }
-.profilePageHeader { align-items: center; }
-.doctorProfileCard { max-width: 760px; overflow: hidden; border: 0; border-radius: 24px; background: linear-gradient(135deg, $primary 0%, #163f91 100%); color: #fff; box-shadow: $shadow-md; }
-.doctorProfileCard__top { display: flex; align-items: center; gap: 22px; padding: 28px; }
-.doctorProfileCard__avatarButton { display: flex; flex-direction: column; align-items: center; gap: 8px; border: 0; background: transparent; color: rgba(255,255,255,.9); cursor: pointer; }
-.doctorProfileCard__avatarButton .ant-avatar { border: 3px solid rgba(255,255,255,.8); box-shadow: 0 10px 24px rgba(0,0,0,.18); background: rgba(255,255,255,.16); }
-.doctorProfileCard__avatarButton span { font-size: 12px; font-weight: 600; }
-.doctorProfileCard__identity { min-width: 0; }
-.doctorProfileCard__eyebrow { display: block; margin-bottom: 5px; font-size: 12px; opacity: .78; }
-.doctorProfileCard__identity h2 { margin: 0; color: #fff; font-size: clamp(24px, 4vw, 34px); line-height: 1.15; }
-.doctorProfileCard__identity p { margin: 7px 0 12px; color: rgba(255,255,255,.84); }
-.doctorProfileCard__tags { display: flex; flex-wrap: wrap; gap: 6px; }
-.doctorProfileCard__tags .ant-tag { margin: 0; border: 0; background: rgba(255,255,255,.16); color: #fff; }
-.doctorProfileCard__details { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 1px; background: rgba(255,255,255,.16); }
-.doctorProfileCard__details > div { display: flex; align-items: center; gap: 8px; min-width: 0; padding: 14px 18px; background: rgba(0,0,0,.08); color: rgba(255,255,255,.92); font-size: 12px; }
-.doctorProfileCard__details span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-@media (max-width: 640px) {
-  .doctorProfileCard__top { align-items: flex-start; padding: 20px; gap: 14px; }
-  .doctorProfileCard__details { grid-template-columns: 1fr; }
-  .profilePageHeader { align-items: flex-start; gap: 10px; }
-  .profilePageHeader .ant-btn { width: 100%; }
+.profile-page {
+  &.page {
+    display: flex;
+    flex-direction: column;
+    gap: $space-4;
+  }
 }
+
+.loadingContainer {
+  display: flex;
+  justify-content: center;
+  padding: $space-16 0;
+}
+
+.profilePageHeader {
+  align-items: center;
+}
+
+.profileCard {
+  max-width: 760px;
+  border-radius: $radius-lg;
+
+  @include dark {
+    background: $dark-surface;
+    border-color: $dark-border;
+  }
+}
+
+.profileSectionTitle {
+  margin: 0;
+  font-size: $font-body-lg;
+  font-weight: $font-semibold;
+  color: $text-primary;
+
+  @include dark {
+    color: $dark-text-primary;
+  }
+}
+
+.profileSectionHint {
+  margin: 4px 0 0;
+  color: $text-muted;
+  font-size: $font-body-sm;
+  line-height: 1.5;
+}
+
+.profileSummaryHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: $space-4;
+  margin-bottom: $space-5;
+}
+
+.profileSummaryGroups {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: $space-5;
+}
+
+.profileTags {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: $space-1;
+}
+
+.profileTags--compact {
+  margin-top: $space-2;
+}
+
+.profileTagLabel {
+  display: block;
+  margin-bottom: 2px;
+  font-size: $font-caption;
+  font-weight: $font-medium;
+  color: $text-muted;
+}
+
+.profileReadonlyValue {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: $text-primary;
+  font-size: $font-body-sm;
+  word-break: break-all;
+
+  @include dark {
+    color: $dark-text-primary;
+  }
+}
+
+.profileEditCard .entityForm {
+  margin-top: $space-4;
+}
+
+.doctorProfileCard {
+  max-width: 760px;
+  overflow: hidden;
+  border: 0;
+  border-radius: 24px;
+  background: linear-gradient(135deg, $primary 0%, #163f91 100%);
+  color: #fff;
+  box-shadow: $shadow-md;
+}
+
+.doctorProfileCard__top {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 24px;
+}
+
+.doctorProfileCard__avatarButton {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 0 0 auto;
+  gap: 7px;
+  border: 0;
+  background: transparent;
+  color: rgba(255, 255, 255, .9);
+  cursor: pointer;
+}
+
+.doctorProfileCard__avatarButton .ant-avatar {
+  border: 3px solid rgba(255, 255, 255, .8);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, .18);
+  background: rgba(255, 255, 255, .16);
+}
+
+.doctorProfileCard__avatarButton span {
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.doctorProfileCard__identity {
+  min-width: 0;
+}
+
+.doctorProfileCard__eyebrow {
+  display: block;
+  margin-bottom: 5px;
+  font-size: 12px;
+  opacity: .78;
+}
+
+.doctorProfileCard__identity h2 {
+  margin: 0;
+  color: #fff;
+  font-size: clamp(24px, 4vw, 32px);
+  line-height: 1.15;
+}
+
+.doctorProfileCard__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 10px;
+}
+
+.doctorProfileCard__tags .ant-tag {
+  margin: 0;
+  border: 0;
+  background: rgba(255, 255, 255, .16);
+  color: #fff;
+}
+
+.doctorProfileCard__details {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1px;
+  background: rgba(255, 255, 255, .16);
+}
+
+.doctorProfileCard__details > div {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  padding: 13px 16px;
+  background: rgba(0, 0, 0, .08);
+  color: rgba(255, 255, 255, .92);
+  font-size: 12px;
+}
+
+.doctorProfileCard__details span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@media (max-width: 640px) {
+  .profileSummaryHeader {
+    flex-direction: column;
+  }
+
+  .profileSummaryHeader .ant-btn {
+    width: 100%;
+  }
+
+  .profileSummaryGroups {
+    grid-template-columns: 1fr;
+    gap: $space-4;
+  }
+
+  .doctorProfileCard__top {
+    align-items: flex-start;
+    padding: 20px;
+    gap: 14px;
+  }
+
+  .doctorProfileCard__details {
+    grid-template-columns: 1fr;
+  }
+}
+
 @media print {
-  .profile-page > .pageHeader, .profile-page > .profileCard, .app-layout > .mainArea > header, .app-layout > .mainArea > .content > *:not(.profile-page) { display: none !important; }
-  .profile-page { padding: 0 !important; }
-  .doctorProfileCard { display: block !important; max-width: none; margin: 0; box-shadow: none; break-inside: avoid; }
-  .doctorProfileCard__top { padding: 34px; }
-  body { background: #fff !important; }
+  .profile-page > .pageHeader,
+  .profile-page > .profileCard,
+  .app-layout > .mainArea > header,
+  .app-layout > .mainArea > .content > *:not(.profile-page) {
+    display: none !important;
+  }
+
+  .profile-page {
+    padding: 0 !important;
+  }
+
+  .doctorProfileCard {
+    display: block !important;
+    max-width: none;
+    margin: 0;
+    box-shadow: none;
+    break-inside: avoid;
+  }
+
+  .doctorProfileCard__top {
+    padding: 34px;
+  }
+
+  body {
+    background: #fff !important;
+  }
 }
