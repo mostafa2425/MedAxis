@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, Suspense } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { ConfigProvider, theme as antTheme } from 'antd';
-import { MedicineBoxOutlined, LoadingOutlined } from '@ant-design/icons';
+import { MedicineBoxOutlined } from '@ant-design/icons';
 import { useAppStore } from '@/stores/app.store';
 import { useAuthStore } from '@/stores/auth.store';
 import AppLayout from '@/components/layout/AppLayout/AppLayout';
@@ -74,6 +74,7 @@ function PageLoader() {
           display: grid;
           place-items: center;
           border-radius: 20px;
+          position: relative;
           color: #2563eb;
           background: linear-gradient(145deg, #eff6ff, #dbeafe);
           box-shadow: inset 0 0 0 1px rgba(37, 99, 235, 0.08);
@@ -138,7 +139,6 @@ function PageLoader() {
           <span className="medaxis-loader-dot" />
           <span className="medaxis-loader-dot" />
         </div>
-        <LoadingOutlined style={{ display: 'none' }} aria-hidden="true" />
       </div>
     </div>
   );
