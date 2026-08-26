@@ -17,13 +17,14 @@ type CostData = {
 };
 
 export class OperationRepository {
-  async findAll(params: { page: number; limit: number; search?: string; status?: OperationStatus; specialtyId?: string; hospitalId?: string; dateFrom?: string; dateTo?: string; sortBy?: string; sortOrder?: 'asc' | 'desc'; createdBy: string }) {
-    const { page, limit, search, status, specialtyId, hospitalId, dateFrom, dateTo, sortBy = 'operationDate', sortOrder = 'desc', createdBy } = params;
+  async findAll(params: { page: number; limit: number; search?: string; status?: OperationStatus; specialtyId?: string; surgicalProcedureId?: string; hospitalId?: string; dateFrom?: string; dateTo?: string; sortBy?: string; sortOrder?: 'asc' | 'desc'; createdBy: string }) {
+    const { page, limit, search, status, specialtyId, surgicalProcedureId, hospitalId, dateFrom, dateTo, sortBy = 'operationDate', sortOrder = 'desc', createdBy } = params;
     const skip = (page - 1) * limit;
     const where: Prisma.OperationWhereInput = { createdBy };
     if (search) where.OR = [{ name: { contains: search, mode: 'insensitive' } }, { diagnosis: { contains: search, mode: 'insensitive' } }, { patient: { fullName: { contains: search, mode: 'insensitive' } } }];
     if (status) where.status = status;
     if (specialtyId) where.specialtyId = specialtyId;
+    if (surgicalProcedureId) where.procedures = { some: { catalogId: surgicalProcedureId } };
     if (hospitalId) where.hospitalId = hospitalId;
     if (dateFrom || dateTo) {
       where.operationDate = {};
@@ -151,7 +152,7 @@ export class OperationRepository {
   async revenue(createdBy: string) { const result = await prisma.operationCost.aggregate({ where: { operation: { createdBy } }, _sum: { totalCost: true, paidAmount: true, remainingAmount: true } }); return { totalCost: result._sum.totalCost || 0, totalPaid: result._sum.paidAmount || 0, totalRemaining: result._sum.remainingAmount || 0 }; }
   async getTotalRevenue(createdBy: string) { return this.revenue(createdBy); }
 
-  async exportData(filters: { status?: OperationStatus; specialtyId?: string; hospitalId?: string; dateFrom?: string; dateTo?: string; createdBy: string }) {
+  async exportData(filters: { status?: OperationStatus; specialtyId?: string; surgicalProcedureId?: string; hospitalId?: string; dateFrom?: string; dateTo?: string; createdBy: string }) {
     const result = await this.findAll({ page: 1, limit: 10000, ...filters, sortBy: 'operationDate', sortOrder: 'desc' });
     return result.data;
   }
