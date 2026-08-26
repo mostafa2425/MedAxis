@@ -1,5 +1,6 @@
 .assistant-page { padding-bottom: 32px; }
 .assistantHero { display:flex; justify-content:space-between; gap:24px; align-items:flex-start; margin-bottom:24px; }
+.assistantHero > div:last-child { display:none !important; }
 .assistantEyebrow { display:inline-block; font-size:12px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:#2563eb; margin-bottom:6px; }
 .assistantHero h1 { margin:0; font-size:32px; line-height:1.15; }
 .assistantHero p { margin:8px 0 0; color:#64748b; max-width:720px; }
