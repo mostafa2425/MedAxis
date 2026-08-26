@@ -1,6 +1,6 @@
 import { NavLink, useNavigate } from 'react-router-dom';
 import { Drawer } from 'antd';
-import { DashboardOutlined, TeamOutlined, ScissorOutlined, UserOutlined, BankOutlined, TagOutlined, SearchOutlined, SettingOutlined, LogoutOutlined, CalendarOutlined, ScheduleOutlined, BellOutlined } from '@ant-design/icons';
+import { DashboardOutlined, TeamOutlined, ScissorOutlined, UserOutlined, BankOutlined, TagOutlined, SearchOutlined, SettingOutlined, LogoutOutlined, CalendarOutlined, ScheduleOutlined, BellOutlined, BarChartOutlined } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
 import { useAppStore } from '@/stores/app.store';
 import { useAuth } from '@/hooks/useAuth';
@@ -16,6 +16,7 @@ const mainMenuItems: MenuItem[] = [
   { key: '/follow-ups', icon: <ScheduleOutlined />, labelKey: 'sidebar.followUps' },
   { key: '/patients', icon: <TeamOutlined />, labelKey: 'sidebar.patients' },
   { key: '/operations', icon: <ScissorOutlined />, labelKey: 'sidebar.operations' },
+  { key: '/reports', icon: <BarChartOutlined />, labelKey: 'sidebar.reports' },
   { key: '/doctors', icon: <UserOutlined />, labelKey: 'sidebar.doctors' },
   { key: '/hospitals', icon: <BankOutlined />, labelKey: 'sidebar.hospitals' },
   { key: '/specialties', icon: <TagOutlined />, labelKey: 'sidebar.specialties' },
@@ -45,7 +46,12 @@ export default function Sidebar({ mobileOpen, onMobileClose }: SidebarProps) {
         {mainMenuItems.map((item) => (
           <NavLink key={item.key} to={item.key} end={item.key === '/'} className={({ isActive }) => `menuItem ${isActive ? 'menuItemActive' : ''} ${isCollapsed ? 'menuItemCollapsed' : ''}`} onClick={onMobileClose}>
             <span className="menuItemIcon">{item.icon}</span>
-            {!isCollapsed && <span className="menuItemLabel">{item.key === '/assistant' ? (i18n.language.startsWith('ar') ? 'المساعد الذكي' : 'Assistant') : item.key === '/follow-ups' ? (i18n.language.startsWith('ar') ? 'المتابعات' : 'Follow-ups') : t(item.labelKey)}</span>}
+            {!isCollapsed && <span className="menuItemLabel">
+              {item.key === '/assistant' ? (i18n.language.startsWith('ar') ? 'المساعد الذكي' : 'Assistant') :
+               item.key === '/follow-ups' ? (i18n.language.startsWith('ar') ? 'المتابعات' : 'Follow-ups') :
+               item.key === '/reports' ? (i18n.language.startsWith('ar') ? 'التقارير' : 'Reports') :
+               t(item.labelKey)}
+            </span>}
           </NavLink>
         ))}
       </nav>
