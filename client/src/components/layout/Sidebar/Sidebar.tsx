@@ -1,9 +1,10 @@
 import { NavLink, useNavigate } from 'react-router-dom';
 import { Drawer } from 'antd';
-import { DashboardOutlined, TeamOutlined, ScissorOutlined, UserOutlined, BankOutlined, TagOutlined, SearchOutlined, SettingOutlined, LogoutOutlined, MedicineBoxOutlined, CalendarOutlined, ScheduleOutlined, BellOutlined } from '@ant-design/icons';
+import { DashboardOutlined, TeamOutlined, ScissorOutlined, UserOutlined, BankOutlined, TagOutlined, SearchOutlined, SettingOutlined, LogoutOutlined, CalendarOutlined, ScheduleOutlined, BellOutlined } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
 import { useAppStore } from '@/stores/app.store';
 import { useAuth } from '@/hooks/useAuth';
+import BrandLogo from '@/components/common/BrandLogo';
 import './Sidebar.scss';
 
 interface MenuItem { key: string; icon: React.ReactNode; labelKey: string; }
@@ -33,7 +34,13 @@ export default function Sidebar({ mobileOpen, onMobileClose }: SidebarProps) {
 
   const renderSidebar = (isCollapsed: boolean) => (
     <div className="sidebar">
-      <div className="logo"><div className="logoIcon"><MedicineBoxOutlined /></div>{!isCollapsed && <span className="logoText">MedAxis</span>}</div>
+      <div className="logo" aria-label="MedAxis">
+        <BrandLogo
+          compact={isCollapsed}
+          dark={darkMode}
+          className={isCollapsed ? 'brandLogoCompact' : 'brandLogoExpanded'}
+        />
+      </div>
       <nav className="nav">
         {mainMenuItems.map((item) => (
           <NavLink key={item.key} to={item.key} end={item.key === '/'} className={({ isActive }) => `menuItem ${isActive ? 'menuItemActive' : ''} ${isCollapsed ? 'menuItemCollapsed' : ''}`} onClick={onMobileClose}>
