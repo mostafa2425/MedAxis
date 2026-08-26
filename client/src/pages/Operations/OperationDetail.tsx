@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { Button, Card, Descriptions, Empty, Flex, Select, Space, Spin, Tabs, Tag, Timeline, Typography, message } from 'antd';
+import { Button, Card, Descriptions, Empty, Flex, Select, Space, Skeleton, Tabs, Tag, Timeline, Typography, message } from 'antd';
 import { ArrowLeftOutlined, CalendarOutlined, EditOutlined, FileImageOutlined, FileAddOutlined, MedicineBoxOutlined, TeamOutlined, HistoryOutlined, PhoneOutlined, DollarOutlined, CheckCircleOutlined, UserOutlined, ClockCircleOutlined } from '@ant-design/icons';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
@@ -29,6 +29,10 @@ function StaffCard({ name, role, subtitle, phone }: { name: string; role: string
   return <Card size="small" className="medicalStaffCard" bordered><Flex align="center" gap={12}><Typography.Text strong>{getInitials(name)}</Typography.Text><Flex vertical gap={2} style={{ minWidth: 0, flex: 1 }}><Typography.Text strong ellipsis>{name}</Typography.Text><Tag className="staffRoleTag">{role}</Tag>{subtitle && <Typography.Text type="secondary" ellipsis>{subtitle}</Typography.Text>}{phone && <PhoneLink value={phone} />}</Flex></Flex></Card>;
 }
 
+function OperationDetailSkeleton() {
+  return <div className="operation-detail-page page operationDetailSkeleton" role="status" aria-label="Loading operation" aria-live="polite"><Card className="case-hero-card"><Skeleton active paragraph={{ rows: 2 }} /></Card><div className="operationSkeletonGrid"><Card><Skeleton active paragraph={{ rows: 6 }} /></Card><Card><Skeleton active paragraph={{ rows: 6 }} /></Card></div><Card><Skeleton active paragraph={{ rows: 8 }} /></Card></div>;
+}
+
 function timelineIcon(action?: string | null, description?: string | null) {
   const text = `${action ?? ''} ${description ?? ''}`.toLowerCase();
   if (text.includes('creat') || text.includes('case') || text.includes('patient')) return <FileAddOutlined />;
@@ -53,7 +57,7 @@ export default function OperationDetailPage() {
   const deleteFileMutation = useMutation({ mutationFn: (fileId: string) => operationService.deleteFile(id!, fileId), onSuccess: () => queryClient.invalidateQueries({ queryKey: ['operation-detail', id] }) });
   const doctors = useMemo(() => { const teamDoctors = (operation?.teamMembers ?? []).map((m) => m.doctor).filter(Boolean) as Doctor[]; return teamDoctors.length ? teamDoctors : [operation?.medicalTeam?.primarySurgeon, operation?.medicalTeam?.assistantSurgeon, operation?.medicalTeam?.anesthesiologist, operation?.medicalTeam?.assistantAnesthesia].filter(Boolean) as Doctor[]; }, [operation]);
   const nurses = useMemo(() => (operation?.teamMembers ?? []).map((m) => m.nurse).filter(Boolean) as Nurse[], [operation]);
-  if (isLoading) return <div className="operation-detail-page page"><Spin /></div>;
+  if (isLoading) return <OperationDetailSkeleton />;
   if (!operation) return <div className="operation-detail-page page"><Empty description={t('common.noData')} /></div>;
   const procedures = operation.procedures?.length ? operation.procedures : [{ id: 'legacy', name: operation.name, catalog: operation.catalog, specialty: operation.specialty, sortOrder: 0 }];
   const files = operation.files ?? [];
