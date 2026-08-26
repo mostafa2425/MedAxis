@@ -1,0 +1,42 @@
+.reports-page { width: 100%; }
+.reports-header { margin-bottom: 20px; }
+.reports-filter-card { margin-bottom: 16px; }
+.reports-filter-card .ant-select { min-width: 170px; }
+.report-tab-label { display: inline-flex; align-items: center; gap: 7px; }
+.report-summary-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-bottom: 12px; }
+.report-summary-card { min-width: 0; }
+.report-progress-card, .report-series-card, .report-table-card { margin-bottom: 12px; }
+.report-section-title { margin-bottom: 12px; }
+.report-series-card { overflow: hidden; }
+.report-bars { height: 190px; display: flex; align-items: flex-end; gap: 10px; overflow-x: auto; padding: 16px 4px 0; }
+.report-bar-item { min-width: 54px; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; gap: 5px; }
+.report-bar { width: 30px; min-height: 8px; max-height: 120px; border-radius: 7px 7px 3px 3px; background: linear-gradient(180deg, #60a5fa, #2563eb); }
+.report-bar-value { font-size: 11px; font-weight: 600; }
+.report-table-card .ant-table-wrapper { width: 100%; }
+
+@media (max-width: 767px) {
+  .reports-page { padding-bottom: 88px; }
+  .reports-header { align-items: flex-start; }
+  .reports-header .page-header { flex-direction: column; }
+  .reports-filter-card { padding: 12px; }
+  .reports-filter-card .ant-flex { width: 100%; }
+  .reports-filter-card .ant-picker,
+  .reports-filter-card .ant-select { width: 100%; min-width: 0; }
+  .reports-filter-card .ant-btn { flex: 1; }
+  .report-summary-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+  .report-summary-card { padding: 12px; }
+  .report-summary-card .ant-statistic-title { font-size: 11px; white-space: normal; }
+  .report-summary-card .ant-statistic-content { font-size: 20px; }
+  .ant-tabs-nav-wrap { overflow-x: auto; }
+  .ant-tabs-tab { padding-inline: 8px !important; }
+  .report-tab-label { white-space: nowrap; }
+  .report-series-card { padding: 12px; }
+  .report-bars { height: 160px; gap: 7px; }
+  .report-bar { width: 24px; }
+  .report-table-card { padding: 12px; }
+}
+
+@media (max-width: 420px) {
+  .report-summary-grid { grid-template-columns: 1fr 1fr; }
+  .report-summary-card .ant-statistic-content { font-size: 18px; }
+}
