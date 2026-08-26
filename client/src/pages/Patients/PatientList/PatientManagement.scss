@@ -21,7 +21,7 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   justify-content: flex-end;
 }
 
@@ -31,6 +31,45 @@
 
 .patientManagementGenderFilter {
   min-width: 150px;
+}
+
+// Prevent iOS Safari from zooming the viewport when an Ant Design Select
+// receives focus. Mobile form controls must use at least a 16px font size.
+@media (max-width: 767px) {
+  .patientManagementFilters {
+    width: 100%;
+    justify-content: stretch;
+    gap: 8px;
+    flex-wrap: nowrap;
+  }
+
+  .patientManagementProcedureFilter,
+  .patientManagementGenderFilter {
+    min-width: 0;
+    width: 0;
+    flex: 1 1 0;
+  }
+
+  .patientManagementProcedureFilter .ant-select-selector,
+  .patientManagementGenderFilter .ant-select-selector,
+  .patientManagementProcedureFilter .ant-select-selection-item,
+  .patientManagementProcedureFilter .ant-select-selection-placeholder,
+  .patientManagementGenderFilter .ant-select-selection-item,
+  .patientManagementGenderFilter .ant-select-selection-placeholder {
+    font-size: 16px !important;
+  }
+
+  .patientManagementProcedureFilter .ant-select-selector,
+  .patientManagementGenderFilter .ant-select-selector {
+    min-height: 40px;
+  }
+
+  .patientManagementProcedureFilter .ant-select-selection-item,
+  .patientManagementProcedureFilter .ant-select-selection-placeholder,
+  .patientManagementGenderFilter .ant-select-selection-item,
+  .patientManagementGenderFilter .ant-select-selection-placeholder {
+    line-height: 38px;
+  }
 }
 
 .patientManagementSummary {
@@ -260,8 +299,6 @@
 @media (max-width: 767px) {
   .patientManagementToolbar { align-items: stretch; flex-direction: column; }
   .patientManagementFilters { width: 100%; justify-content: stretch; }
-  .patientManagementProcedureFilter,
-  .patientManagementGenderFilter { flex: 1 1 180px; }
   .patientManagementSummary { display: flex; overflow-x: auto; padding-bottom: 2px; scrollbar-width: none; }
   .patientManagementSummary::-webkit-scrollbar { display: none; }
   .patientManagementSummary > .patientManagementStat { min-width: 125px; flex: 0 0 125px; }
