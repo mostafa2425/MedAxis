@@ -6,11 +6,12 @@ import {
   FileImageOutlined,
   PhoneOutlined,
   RightOutlined,
+  ScissorOutlined,
   TeamOutlined,
 } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
 import { getInitials } from '@/utils/helpers';
-import { Gender, type Patient } from '@/types';
+import { Gender, type OperationCatalogItem, type Patient } from '@/types';
 import PhoneLink from '@/components/common/PhoneLink';
 import './PatientList.scss';
 import './PatientManagement.scss';
@@ -23,7 +24,11 @@ export interface PatientListProps {
   pageSize: number;
   total: number;
   gender?: Gender;
+  surgicalProcedureId?: string;
+  surgicalProcedures?: OperationCatalogItem[];
+  isLoadingSurgicalProcedures?: boolean;
   onGenderChange?: (gender?: Gender) => void;
+  onSurgicalProcedureChange?: (id?: string) => void;
   onPageChange: (page: number) => void;
   onRowClick: (id: string) => void;
   onAdd: () => void;
@@ -47,7 +52,11 @@ export default function PatientList({
   pageSize,
   total,
   gender,
+  surgicalProcedureId,
+  surgicalProcedures = [],
+  isLoadingSurgicalProcedures = false,
   onGenderChange,
+  onSurgicalProcedureChange,
   onPageChange,
   onRowClick,
   onAdd,
@@ -116,11 +125,6 @@ export default function PatientList({
               </Tag>
             </div>
           )}
-
-          {/* <div className="patientManagementCardFooter">
-            <span>{t('patients.viewProfile', 'View patient profile')}</span>
-            <RightOutlined />
-          </div> */}
         </div>
       </Card>
     );
@@ -138,19 +142,38 @@ export default function PatientList({
     <div className="patientList">
       <div className="patientManagementToolbar">
         <div className="patientManagementResultCount"><strong>{total}</strong> {t('patients.patientRecords', 'patient records')}</div>
-        {onGenderChange && (
-          <Select
-            allowClear
-            value={gender}
-            placeholder={t('patients.filterGender', 'Filter by gender')}
-            onChange={(value: Gender | undefined) => onGenderChange(value)}
-            options={[
-              { value: Gender.Male, label: getGenderLabel(Gender.Male) },
-              { value: Gender.Female, label: getGenderLabel(Gender.Female) },
-            ]}
-            className="patientManagementGenderFilter"
-          />
-        )}
+        <div className="patientManagementFilters">
+          {onSurgicalProcedureChange && (
+            <Select
+              allowClear
+              showSearch
+              value={surgicalProcedureId}
+              placeholder={t('patients.filterSurgicalProcedure', 'Surgical Procedures')}
+              onChange={(value: string | undefined) => onSurgicalProcedureChange(value)}
+              loading={isLoadingSurgicalProcedures}
+              optionFilterProp="label"
+              suffixIcon={<ScissorOutlined />}
+              options={surgicalProcedures.map((procedure) => ({
+                value: procedure.id,
+                label: procedure.name,
+              }))}
+              className="patientManagementProcedureFilter"
+            />
+          )}
+          {onGenderChange && (
+            <Select
+              allowClear
+              value={gender}
+              placeholder={t('patients.filterGender', 'Filter by gender')}
+              onChange={(value: Gender | undefined) => onGenderChange(value)}
+              options={[
+                { value: Gender.Male, label: getGenderLabel(Gender.Male) },
+                { value: Gender.Female, label: getGenderLabel(Gender.Female) },
+              ]}
+              className="patientManagementGenderFilter"
+            />
+          )}
+        </div>
       </div>
 
       <div className="patientManagementSummary">
