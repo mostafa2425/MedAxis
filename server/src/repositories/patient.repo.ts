@@ -7,9 +7,10 @@ export class PatientRepository {
     limit: number;
     search?: string;
     gender?: 'MALE' | 'FEMALE';
+    surgicalProcedureId?: string;
     createdBy: string;
   }) {
-    const { page, limit, search, gender, createdBy } = params;
+    const { page, limit, search, gender, surgicalProcedureId, createdBy } = params;
     const skip = (page - 1) * limit;
 
     const where: Prisma.PatientWhereInput = { createdBy };
@@ -22,6 +23,17 @@ export class PatientRepository {
       ];
     }
     if (gender) where.gender = gender;
+    if (surgicalProcedureId) {
+      where.operations = {
+        some: {
+          createdBy,
+          OR: [
+            { catalogId: surgicalProcedureId },
+            { procedures: { some: { catalogId: surgicalProcedureId } } },
+          ],
+        },
+      };
+    }
 
     const [data, total] = await Promise.all([
       prisma.patient.findMany({

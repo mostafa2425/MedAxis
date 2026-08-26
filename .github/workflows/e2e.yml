@@ -3,7 +3,7 @@ name: Playwright E2E
 on:
   workflow_dispatch:
   push:
-    branches: [develop]
+    branches: [develop, main]
 
 jobs:
   e2e:
@@ -13,7 +13,8 @@ jobs:
       contents: read
     env:
       # Stable Vercel branch alias for the current develop frontend.
-      E2E_BASE_URL: https://med-axis-git-develop-gamalmostafa32s-projects.vercel.app
+      E2E_BASE_URL: https://med-axis-git-main-gamalmostafa32s-projects.vercel.app
+      E2E_API_BASE_URL: https://medaxis-api.vercel.app
       E2E_EMAIL: ${{ secrets.E2E_EMAIL }}
       E2E_PASSWORD: ${{ secrets.E2E_PASSWORD }}
       VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
@@ -27,8 +28,10 @@ jobs:
           node-version: 20
           cache: npm
 
+      # The repository lockfile predates the Playwright test dependency. Use npm install
+      # in CI so the E2E job can reconcile the lockfile before installing browsers/tests.
       - name: Install dependencies
-        run: npm ci
+        run: npm install --no-audit --no-fund
 
       - name: Install Playwright browser
         run: npx playwright install --with-deps chromium

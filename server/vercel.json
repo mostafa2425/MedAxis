@@ -22,7 +22,7 @@
     }
   ],
   "crons": [
-    { "path": "/api/assistant/cron/daily", "schedule": "0 21 * * *" },
-    { "path": "/api/assistant/cron/weekly", "schedule": "0 21 * * 0" }
+    { "path": "/api/assistant/cron/daily", "schedule": "0 18 * * *" },
+    { "path": "/api/assistant/cron/weekly", "schedule": "0 18 * * 5" }
   ]
 }

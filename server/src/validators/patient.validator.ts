@@ -15,6 +15,7 @@ export const patientQuerySchema = z.object({
   limit: z.coerce.number().int().positive().max(100).default(20),
   search: z.string().optional(),
   gender: z.enum(['MALE', 'FEMALE']).optional(),
+  surgicalProcedureId: z.string().uuid().optional(),
 });
 
 export type CreatePatientInput = z.infer<typeof createPatientSchema>;

@@ -6,6 +6,10 @@ export const operationCatalogService = {
     return api.get<ApiResponse<OperationCatalogItem[]>>('/operation-catalog');
   },
 
+  getUsed() {
+    return api.get<ApiResponse<OperationCatalogItem[]>>('/operation-catalog/used');
+  },
+
   createCustom(name: string) {
     return api.post<ApiResponse<OperationCatalogItem>>('/operation-catalog', { name });
   },

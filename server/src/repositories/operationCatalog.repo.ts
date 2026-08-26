@@ -45,6 +45,36 @@ export class OperationCatalogRepository {
     });
   }
 
+  async findUsedByDoctor(userId: string) {
+    const usedCatalogIds = await prisma.operationProcedure.findMany({
+      where: {
+        catalogId: { not: null },
+        operation: { createdBy: userId },
+      },
+      distinct: ['catalogId'],
+      select: { catalogId: true },
+    });
+
+    const directCatalogIds = await prisma.operation.findMany({
+      where: { createdBy: userId, catalogId: { not: null } },
+      distinct: ['catalogId'],
+      select: { catalogId: true },
+    });
+
+    const ids = [...new Set([
+      ...usedCatalogIds.map((item) => item.catalogId).filter((id): id is string => Boolean(id)),
+      ...directCatalogIds.map((item) => item.catalogId).filter((id): id is string => Boolean(id)),
+    ])];
+
+    if (ids.length === 0) return [];
+
+    return prisma.operationCatalog.findMany({
+      where: { id: { in: ids }, isActive: true },
+      include: catalogInclude,
+      orderBy: { name: 'asc' },
+    });
+  }
+
   async findById(id: string) {
     return prisma.operationCatalog.findUnique({
       where: { id },

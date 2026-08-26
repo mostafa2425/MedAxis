@@ -23,7 +23,7 @@ export class OperationController {
       const parsed = operationQuerySchema.safeParse(req.query);
       const params = parsed.success ? parsed.data : { page: 1, limit: 20, sortBy: 'operationDate', sortOrder: 'desc' as const };
       const userId = (req as any).user?.userId;
-      const { data, total } = await operationService.getAll({ page: params.page, limit: params.limit, sortBy: params.sortBy, sortOrder: params.sortOrder, search: 'search' in params ? params.search : undefined, status: 'status' in params ? params.status : undefined, specialtyId: 'specialtyId' in params ? params.specialtyId : undefined, hospitalId: 'hospitalId' in params ? params.hospitalId : undefined, dateFrom: 'dateFrom' in params ? params.dateFrom : undefined, dateTo: 'dateTo' in params ? params.dateTo : undefined, createdBy: userId });
+      const { data, total } = await operationService.getAll({ page: params.page, limit: params.limit, sortBy: params.sortBy, sortOrder: params.sortOrder, search: 'search' in params ? params.search : undefined, status: 'status' in params ? params.status : undefined, specialtyId: 'specialtyId' in params ? params.specialtyId : undefined, surgicalProcedureId: 'surgicalProcedureId' in params ? params.surgicalProcedureId : undefined, hospitalId: 'hospitalId' in params ? params.hospitalId : undefined, dateFrom: 'dateFrom' in params ? params.dateFrom : undefined, dateTo: 'dateTo' in params ? params.dateTo : undefined, createdBy: userId } as any);
       return sendPaginated(res, data, params.page, params.limit, total);
     } catch (err) { next(err); }
   }

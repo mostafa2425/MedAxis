@@ -15,6 +15,16 @@ export class OperationCatalogController {
     }
   }
 
+  async getUsed(req: Request, res: Response, next: NextFunction) {
+    try {
+      const userId = (req as any).user?.userId;
+      const items = await operationCatalogService.listUsedForUser(userId);
+      return sendSuccess(res, items);
+    } catch (err) {
+      next(err);
+    }
+  }
+
   async create(req: Request, res: Response, next: NextFunction) {
     try {
       const parsed = createCatalogItemSchema.safeParse(req.body);

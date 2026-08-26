@@ -63,6 +63,9 @@ class AuthService {
   }
 
   async register(email: string, password: string, name: string, specialtyIds: string[], phone?: string, subspecialtyIds?: string[]) {
+    // Fail before creating any database records when email verification is not configured.
+    emailVerificationService.validateConfig();
+
     const existingUser = await userRepo.findByEmail(email);
     if (existingUser) {
       if (await isEmailVerified(existingUser.id)) throw new ConflictError('User with this email');
@@ -77,6 +80,11 @@ class AuthService {
       await emailVerificationService.issue(user.id, user.email, user.name, false);
     } catch (error) {
       console.error('Registration email verification send failed:', error);
+      // Do not leave an unusable unverified account behind when SMTP is unavailable.
+      await Promise.allSettled([
+        prisma.doctor.delete({ where: { id: doctor.id } }),
+        prisma.user.delete({ where: { id: user.id } }),
+      ]);
       throw error;
     }
 

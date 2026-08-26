@@ -65,6 +65,11 @@ class OperationCatalogService {
       .map(toCatalogResponse);
   }
 
+  async listUsedForUser(userId: string) {
+    const items = await operationCatalogRepo.findUsedByDoctor(userId);
+    return items.map(toCatalogResponse);
+  }
+
   async createCustom(userId: string, name: string) {
     const trimmed = name.trim();
     const existing = await operationCatalogRepo.findCustomByName(userId, trimmed);

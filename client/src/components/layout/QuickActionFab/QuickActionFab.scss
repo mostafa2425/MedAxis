@@ -1,0 +1,56 @@
+.medaxis-quick-fab {
+  display: none;
+  position: fixed;
+  right: 18px;
+  bottom: calc(#{$bottom-nav-height} + #{$safe-area-bottom} + 18px);
+  z-index: $z-fixed - 1;
+  width: 60px;
+  height: 60px;
+  border: 0;
+  border-radius: 50%;
+  color: #fff;
+  background: #2563eb;
+  box-shadow: 0 10px 24px rgba(37, 99, 235, .28), 0 3px 8px rgba(15, 23, 42, .12);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: transform .18s ease, box-shadow .18s ease;
+}
+
+.medaxis-quick-fab .anticon {
+  font-size: 25px;
+  line-height: 1;
+}
+
+.medaxis-quick-fab:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 30px rgba(37, 99, 235, .32), 0 4px 10px rgba(15, 23, 42, .14);
+}
+
+.medaxis-quick-fab:active { transform: scale(.94); }
+.medaxis-quick-fab:focus-visible { outline: 3px solid rgba(37, 99, 235, .28); outline-offset: 3px; }
+
+@include responsive('md') {
+  .medaxis-quick-fab { display: grid; place-items: center; }
+}
+
+@include rtl {
+  .medaxis-quick-fab { right: auto; left: 18px; }
+}
+
+@media (max-width: 640px) {
+  .medaxis-quick-fab {
+    width: 56px;
+    height: 56px;
+    right: 16px;
+    bottom: calc(#{$bottom-nav-height} + #{$safe-area-bottom} + 16px);
+  }
+  .medaxis-quick-fab .anticon { font-size: 23px; }
+}
+
+@include dark {
+  .medaxis-quick-fab { background: #3b82f6; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .medaxis-quick-fab { transition: none; }
+}

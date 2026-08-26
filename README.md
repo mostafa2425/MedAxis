@@ -173,3 +173,7 @@ medaxis/
 
 ### Export
 - GET /api/export/operations?format=csv|json
+
+## Deployment
+
+Production deployments are triggered from the `main` branch through the project's Vercel Git integration.

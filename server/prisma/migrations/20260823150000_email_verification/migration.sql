@@ -7,7 +7,7 @@ UPDATE "users" SET "emailVerifiedAt" = COALESCE("emailVerifiedAt", "createdAt") 
 
 CREATE TABLE IF NOT EXISTS "email_verification_tokens" (
   "id" TEXT NOT NULL,
-  "userId" UUID NOT NULL,
+  "userId" TEXT NOT NULL,
   "tokenHash" TEXT NOT NULL,
   "expiresAt" TIMESTAMPTZ(6) NOT NULL,
   "createdAt" TIMESTAMPTZ(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,

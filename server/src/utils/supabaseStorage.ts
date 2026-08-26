@@ -8,7 +8,12 @@ const SIGNED_UPLOAD_EXPIRY_SECONDS = 60 * 60 * 2;
 function getConfig() {
   const baseUrl = process.env.SUPABASE_URL?.replace(/\/$/, '');
   const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-  const bucket = process.env.SUPABASE_STORAGE_BUCKET || 'clinical-files';
+  const legacyBucket = process.env.SUPABASE_STORAGE_BUCKET?.trim();
+  const buckets = {
+    avatars: process.env.SUPABASE_AVATAR_BUCKET?.trim() || legacyBucket || 'avatars',
+    files: process.env.SUPABASE_FILES_BUCKET?.trim() || legacyBucket || 'medaxis-files',
+    clinical: process.env.SUPABASE_CLINICAL_BUCKET?.trim() || legacyBucket || 'clinical-files',
+  };
 
   if (!baseUrl || !serviceRoleKey) {
     throw new AppError(
@@ -17,7 +22,14 @@ function getConfig() {
     );
   }
 
-  return { baseUrl, serviceRoleKey, bucket };
+  return { baseUrl, serviceRoleKey, buckets };
+}
+
+function getBucket(storagePath: string) {
+  const { buckets } = getConfig();
+  if (storagePath.startsWith('profiles/')) return buckets.avatars;
+  if (storagePath.startsWith('operations/')) return buckets.clinical;
+  return buckets.files;
 }
 
 function encodeStoragePath(value: string) {
@@ -79,7 +91,7 @@ export function validateFileMetadata(fileName: string, mimeType: string, fileSiz
 
 export async function uploadOperationFile(storagePath: string, file: { buffer: Buffer; mimetype: string; size: number }) {
   validateFileMetadata(storagePath, file.mimetype, file.size);
-  const { bucket } = getConfig();
+  const bucket = getBucket(storagePath);
   await storageRequest(`/object/${encodeURIComponent(bucket)}/${encodeStoragePath(storagePath)}`, {
     method: 'POST',
     headers: { 'Content-Type': file.mimetype || 'application/octet-stream', 'x-upsert': 'false', 'cache-control': '3600' },
@@ -90,7 +102,8 @@ export async function uploadOperationFile(storagePath: string, file: { buffer: B
 
 export async function createSignedUploadUrl(storagePath: string, mimeType: string, fileSize: number) {
   validateFileMetadata(storagePath, mimeType, fileSize);
-  const { bucket, baseUrl } = getConfig();
+  const { baseUrl } = getConfig();
+  const bucket = getBucket(storagePath);
   const encodedPath = encodeStoragePath(storagePath);
   const data = await storageRequest<{ url: string }>(`/object/upload/sign/${encodeURIComponent(bucket)}/${encodedPath}`, {
     method: 'POST',
@@ -103,7 +116,8 @@ export async function createSignedUploadUrl(storagePath: string, mimeType: strin
 }
 
 export async function assertStoredFileExists(storagePath: string) {
-  const { baseUrl, serviceRoleKey, bucket } = getConfig();
+  const { baseUrl, serviceRoleKey } = getConfig();
+  const bucket = getBucket(storagePath);
   const response = await fetch(`${baseUrl}/storage/v1/object/info/${encodeURIComponent(bucket)}/${encodeStoragePath(storagePath)}`, {
     method: 'HEAD',
     headers: { Authorization: `Bearer ${serviceRoleKey}`, apikey: serviceRoleKey },
@@ -112,7 +126,8 @@ export async function assertStoredFileExists(storagePath: string) {
 }
 
 export function createPublicFileUrl(storagePath: string) {
-  const { baseUrl, bucket } = getConfig();
+  const { baseUrl } = getConfig();
+  const bucket = getBucket(storagePath);
   return `${baseUrl}/storage/v1/object/public/${encodeURIComponent(bucket)}/${encodeStoragePath(storagePath)}`;
 }
 
@@ -121,7 +136,7 @@ export async function createSignedDownloadUrl(storagePath: string) {
 }
 
 export async function deleteStoredFile(storagePath: string) {
-  const { bucket } = getConfig();
+  const bucket = getBucket(storagePath);
   await storageRequest(`/object/${encodeURIComponent(bucket)}`, {
     method: 'DELETE',
     body: JSON.stringify({ prefixes: [storagePath] }),

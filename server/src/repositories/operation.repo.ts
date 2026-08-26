@@ -17,13 +17,14 @@ type CostData = {
 };
 
 export class OperationRepository {
-  async findAll(params: { page: number; limit: number; search?: string; status?: OperationStatus; specialtyId?: string; hospitalId?: string; dateFrom?: string; dateTo?: string; sortBy?: string; sortOrder?: 'asc' | 'desc'; createdBy: string }) {
-    const { page, limit, search, status, specialtyId, hospitalId, dateFrom, dateTo, sortBy = 'operationDate', sortOrder = 'desc', createdBy } = params;
+  async findAll(params: { page: number; limit: number; search?: string; status?: OperationStatus; specialtyId?: string; surgicalProcedureId?: string; hospitalId?: string; dateFrom?: string; dateTo?: string; sortBy?: string; sortOrder?: 'asc' | 'desc'; createdBy: string }) {
+    const { page, limit, search, status, specialtyId, surgicalProcedureId, hospitalId, dateFrom, dateTo, sortBy = 'operationDate', sortOrder = 'desc', createdBy } = params;
     const skip = (page - 1) * limit;
     const where: Prisma.OperationWhereInput = { createdBy };
     if (search) where.OR = [{ name: { contains: search, mode: 'insensitive' } }, { diagnosis: { contains: search, mode: 'insensitive' } }, { patient: { fullName: { contains: search, mode: 'insensitive' } } }];
     if (status) where.status = status;
     if (specialtyId) where.specialtyId = specialtyId;
+    if (surgicalProcedureId) where.procedures = { some: { catalogId: surgicalProcedureId } };
     if (hospitalId) where.hospitalId = hospitalId;
     if (dateFrom || dateTo) {
       where.operationDate = {};
@@ -47,6 +48,34 @@ export class OperationRepository {
   async create(data: { name: string; diagnosis?: string | null; hospitalId: string; operationDate: Date; operationTime: string; operationRoom?: string; duration?: number; status?: OperationStatus; notes?: string; patientId: string; createdBy: string; specialtyId?: string | null; catalogId?: string | null; procedures?: Array<{ catalogId?: string | null; name: string; nameAr?: string | null; specialtyId?: string | null; sortOrder: number }>; teamMembers?: Array<{ doctorId?: string | null; nurseId?: string | null; sortOrder: number }>; medicalTeam?: { primarySurgeonId?: string; assistantSurgeonId?: string; anesthesiologistId?: string; assistantAnesthesiaId?: string; nurse?: string; notes?: string }; cost?: CostData }) {
     const { medicalTeam, cost, procedures, teamMembers, ...operationData } = data;
     return prisma.operation.create({ data: { ...operationData, diagnosis: operationData.diagnosis ?? null, ...(procedures?.length ? { procedures: { create: procedures.map((p) => ({ catalogId: p.catalogId ?? null, name: p.name, nameAr: p.nameAr ?? null, specialtyId: p.specialtyId ?? null, sortOrder: p.sortOrder })) } } : {}), ...(teamMembers?.length ? { teamMembers: { create: teamMembers.map((m) => ({ doctorId: m.doctorId ?? null, nurseId: m.nurseId ?? null, sortOrder: m.sortOrder })) } } : {}), ...(medicalTeam ? { medicalTeam: { create: medicalTeam } } : {}), ...(cost ? { cost: { create: { totalCost: cost.totalCost, paidAmount: cost.paidAmount ?? 0, remainingAmount: cost.remainingAmount ?? (cost.totalCost - (cost.paidAmount ?? 0)), hospitalCost: cost.hospitalCost ?? 0, nursingCost: cost.nursingCost ?? 0, assistantDoctorsCost: cost.assistantDoctorsCost ?? 0, equipmentCost: cost.equipmentCost ?? 0, otherCost: cost.otherCost ?? 0, paymentMethod: cost.paymentMethod as any, paymentStatus: cost.paymentStatus as any, paymentNotes: cost.paymentNotes } } } : {}) }, include: operationListInclude });
+  }
+
+  /**
+   * Atomically creates the operation and its initial timeline entry.
+   * If any nested operation write or timeline write fails, the whole operation is rolled back.
+   */
+  async createAtomic(data: Parameters<OperationRepository['create']>[0], timeline: { action: string; description?: string; userId: string }) {
+    return prisma.$transaction(async (tx) => {
+      const { medicalTeam, cost, procedures, teamMembers, ...operationData } = data;
+      const operation = await tx.operation.create({
+        data: {
+          ...operationData,
+          diagnosis: operationData.diagnosis ?? null,
+          ...(procedures?.length ? { procedures: { create: procedures.map((p) => ({ catalogId: p.catalogId ?? null, name: p.name, nameAr: p.nameAr ?? null, specialtyId: p.specialtyId ?? null, sortOrder: p.sortOrder })) } } : {}),
+          ...(teamMembers?.length ? { teamMembers: { create: teamMembers.map((m) => ({ doctorId: m.doctorId ?? null, nurseId: m.nurseId ?? null, sortOrder: m.sortOrder })) } } : {}),
+          ...(medicalTeam ? { medicalTeam: { create: medicalTeam } } : {}),
+          ...(cost ? { cost: { create: { totalCost: cost.totalCost, paidAmount: cost.paidAmount ?? 0, remainingAmount: cost.remainingAmount ?? (cost.totalCost - (cost.paidAmount ?? 0)), hospitalCost: cost.hospitalCost ?? 0, nursingCost: cost.nursingCost ?? 0, assistantDoctorsCost: cost.assistantDoctorsCost ?? 0, equipmentCost: cost.equipmentCost ?? 0, otherCost: cost.otherCost ?? 0, paymentMethod: cost.paymentMethod as any, paymentStatus: cost.paymentStatus as any, paymentNotes: cost.paymentNotes } } } : {}),
+        },
+        include: operationListInclude,
+      });
+
+      await tx.$queryRaw<Array<Record<string, unknown>>>(Prisma.sql`
+        INSERT INTO "operation_timeline" ("id", "operationId", "action", "description", "userId", "createdAt")
+        VALUES (gen_random_uuid(), ${operation.id}, ${timeline.action}::"TimelineAction", ${timeline.description ?? null}, ${timeline.userId}, now())
+      `);
+
+      return operation;
+    });
   }
 
   async replaceProcedures(operationId: string, procedures: Array<{ catalogId?: string | null; name: string; nameAr?: string | null; specialtyId?: string | null; sortOrder: number }>) {
@@ -82,10 +111,12 @@ export class OperationRepository {
   async deleteFile(fileId: string, uploadedBy: string) { const file = await prisma.operationFile.findFirst({ where: { id: fileId, operation: { createdBy: uploadedBy } } }); if (!file) return null; return prisma.operationFile.delete({ where: { id: fileId } }); }
 
   async addTimeline(operationId: string, data: { action: string; description?: string; userId: string; status?: string }) {
-    const status = data.status ?? data.action;
+    // operation_timeline does not have a status/occurredAt column in the Prisma schema.
+    // Keep the optional status input for backwards compatibility, but persist only
+    // columns that exist in production and in Prisma.
     const rows = await prisma.$queryRaw<Array<Record<string, unknown>>>(Prisma.sql`
-      INSERT INTO "operation_timeline" ("id", "operationId", "action", "status", "description", "userId", "createdAt", "occurredAt")
-      VALUES (gen_random_uuid(), ${operationId}, ${data.action}::"TimelineAction", ${status}, ${data.description ?? null}, ${data.userId}, now(), now()) RETURNING *
+      INSERT INTO "operation_timeline" ("id", "operationId", "action", "description", "userId", "createdAt")
+      VALUES (gen_random_uuid(), ${operationId}, ${data.action}::"TimelineAction", ${data.description ?? null}, ${data.userId}, now()) RETURNING *
     `);
     return rows[0];
   }
@@ -121,7 +152,7 @@ export class OperationRepository {
   async revenue(createdBy: string) { const result = await prisma.operationCost.aggregate({ where: { operation: { createdBy } }, _sum: { totalCost: true, paidAmount: true, remainingAmount: true } }); return { totalCost: result._sum.totalCost || 0, totalPaid: result._sum.paidAmount || 0, totalRemaining: result._sum.remainingAmount || 0 }; }
   async getTotalRevenue(createdBy: string) { return this.revenue(createdBy); }
 
-  async exportData(filters: { status?: OperationStatus; specialtyId?: string; hospitalId?: string; dateFrom?: string; dateTo?: string; createdBy: string }) {
+  async exportData(filters: { status?: OperationStatus; specialtyId?: string; surgicalProcedureId?: string; hospitalId?: string; dateFrom?: string; dateTo?: string; createdBy: string }) {
     const result = await this.findAll({ page: 1, limit: 10000, ...filters, sortBy: 'operationDate', sortOrder: 'desc' });
     return result.data;
   }
