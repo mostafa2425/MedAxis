@@ -20,7 +20,7 @@ async function firstData(api: APIRequestContext, path: string, token: string) {
 
 async function login(api: APIRequestContext) {
   const response = await api.post('/api/auth/login', { data: { email, password } });
-  expect(response.ok()).toBeTruthy();
+  expect(response.ok(), await response.text()).toBeTruthy();
   const body = await response.json();
   expect(body.success).toBeTruthy();
   expect(body.data?.token).toBeTruthy();
@@ -35,7 +35,7 @@ test.describe('Operations business-flow E2E', () => {
     const token = await login(api);
     const headers = { Authorization: `Bearer ${token}` };
     const meResponse = await api.get('/api/auth/me', { headers });
-    expect(meResponse.ok()).toBeTruthy();
+    expect(meResponse.ok(), await meResponse.text()).toBeTruthy();
     const meBody = await meResponse.json();
     const doctorId = meBody.data?.doctorId;
     expect(doctorId).toBeTruthy();
@@ -85,14 +85,14 @@ test.describe('Operations business-flow E2E', () => {
     expect(operation.teamMembers?.some((m: { doctorId?: string }) => m.doctorId === doctorId)).toBeTruthy();
 
     const getResponse = await api.get(`/api/operations/${operation.id}`, { headers });
-    expect(getResponse.ok()).toBeTruthy();
+    expect(getResponse.ok(), await getResponse.text()).toBeTruthy();
     const getBody = await getResponse.json();
     expect(getBody.success).toBeTruthy();
     expect(getBody.data.id).toBe(operation.id);
     expect(getBody.data.procedures?.length).toBeGreaterThan(0);
 
     const timelineResponse = await api.get(`/api/operations/${operation.id}/timeline`, { headers });
-    expect(timelineResponse.ok()).toBeTruthy();
+    expect(timelineResponse.ok(), await timelineResponse.text()).toBeTruthy();
     const timelineBody = await timelineResponse.json();
     expect(timelineBody.success).toBeTruthy();
     expect(timelineBody.data.some((entry: { action: string }) => entry.action === 'OPERATION_CREATED')).toBeTruthy();
@@ -115,12 +115,15 @@ test.describe('Operations business-flow E2E', () => {
     const api = await playwrightRequest.newContext({ baseURL: apiBaseUrl });
     const token = await login(api);
 
+    const patient = await firstData(api, '/api/patients?limit=1', token);
+    const hospital = await firstData(api, '/api/hospitals?limit=1', token);
+
     const response = await api.post('/api/operations', {
       headers: { Authorization: `Bearer ${token}` },
       data: {
         operationIds: ['not-a-uuid'],
-        patientId,
-        hospitalId,
+        patientId: patient.id,
+        hospitalId: hospital.id,
         operationDate: '2030-01-15',
         operationTime: '10:30',
         status: 'SCHEDULED',
