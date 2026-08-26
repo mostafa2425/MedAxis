@@ -25,6 +25,7 @@ const SearchPage = React.lazy(() => import('@/pages/Search'));
 const CalendarPage = React.lazy(() => import('@/pages/Calendar'));
 const FollowUpsPage = React.lazy(() => import('@/pages/FollowUps'));
 const ProfilePage = React.lazy(() => import('@/pages/Profile'));
+const ReportsPage = React.lazy(() => import('@/pages/Reports'));
 
 function PageLoader() {
   return (
@@ -167,7 +168,7 @@ export default function App() {
     <Route path="/register" element={<RegisterPage />} />
     <Route path="/verify-email" element={<VerifyEmailPage />} />
     <Route element={<RequireAuth />}>
-      <Route path="/" element={<DashboardPage />} /><Route path="/assistant" element={<AssistantPage />} /><Route path="/patients" element={<PatientsPage />} /><Route path="/patients/new" element={<PatientFormPage />} /><Route path="/patients/:id" element={<PatientDetailPage />} /><Route path="/operations" element={<OperationsPage />} /><Route path="/operations/new" element={<OperationFormPage />} /><Route path="/operations/:id" element={<OperationDetailPage />} /><Route path="/operations/:id/edit" element={<OperationEditPage />} /><Route path="/doctors" element={<DoctorsPage />} /><Route path="/hospitals" element={<HospitalsPage />} /><Route path="/specialties" element={<SpecialtiesPage />} /><Route path="/search" element={<SearchPage />} /><Route path="/calendar" element={<CalendarPage />} /><Route path="/follow-ups" element={<FollowUpsPage />} /><Route path="/profile" element={<ProfilePage />} />
+      <Route path="/" element={<DashboardPage />} /><Route path="/assistant" element={<AssistantPage />} /><Route path="/patients" element={<PatientsPage />} /><Route path="/patients/new" element={<PatientFormPage />} /><Route path="/patients/:id" element={<PatientDetailPage />} /><Route path="/operations" element={<OperationsPage />} /><Route path="/operations/new" element={<OperationFormPage />} /><Route path="/operations/:id" element={<OperationDetailPage />} /><Route path="/operations/:id/edit" element={<OperationEditPage />} /><Route path="/doctors" element={<DoctorsPage />} /><Route path="/hospitals" element={<HospitalsPage />} /><Route path="/specialties" element={<SpecialtiesPage />} /><Route path="/search" element={<SearchPage />} /><Route path="/calendar" element={<CalendarPage />} /><Route path="/follow-ups" element={<FollowUpsPage />} /><Route path="/reports" element={<ReportsPage />} /><Route path="/profile" element={<ProfilePage />} />
     </Route>
     <Route path="*" element={<Navigate to="/" replace />} />
   </Routes></Suspense></ConfigProvider>;

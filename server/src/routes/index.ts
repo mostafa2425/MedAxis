@@ -12,6 +12,7 @@ import dashboardRoutes from './dashboard.routes';
 import assistantRoutes from './assistant.routes';
 import pushRoutes from './push.routes';
 import exportRoutes from './export.routes';
+import reportsRoutes from './reports.routes';
 
 const router = Router();
 
@@ -28,5 +29,6 @@ router.use('/dashboard', dashboardRoutes);
 router.use('/assistant', assistantRoutes);
 router.use('/push', pushRoutes);
 router.use('/export', exportRoutes);
+router.use('/reports', reportsRoutes);
 
 export default router;
