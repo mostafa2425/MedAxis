@@ -153,12 +153,11 @@ export class NotificationService {
 
   // Runs at 21:00 Egypt time every Friday and reports the next 7 days.
   async processWeekly() {
-    const { start, end: firstDayEnd } = egyptDayBounds(1);
+    const { start } = egyptDayBounds(1);
     const end = new Date(start.getTime() + 7 * 24 * 60 * 60 * 1000);
     const scheduledFor = start;
     const users = await prisma.user.findMany({ where: { isActive: true }, select: { id: true } });
     for (const user of users) await this.createBrief(user.id, 'WEEKLY_BRIEF', scheduledFor, start, end);
-    void firstDayEnd;
     return { processed: users.length, kind: 'weekly' as const, range: { start, end } };
   }
 }
