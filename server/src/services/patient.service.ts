@@ -7,6 +7,7 @@ class PatientService {
     limit: number;
     search?: string;
     gender?: 'MALE' | 'FEMALE';
+    surgicalProcedureId?: string;
     createdBy: string;
   }) {
     return patientRepo.findAll(params);
