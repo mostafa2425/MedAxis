@@ -9,7 +9,7 @@ import type {
 } from '@/types';
 
 export const patientService = {
-  getAll(params?: PaginatedQuery & { search?: string; gender?: string }) {
+  getAll(params?: PaginatedQuery & { search?: string; gender?: string; surgicalProcedureId?: string }) {
     return api.get<PaginatedResponse<Patient>>('/patients', { params });
   },
 
