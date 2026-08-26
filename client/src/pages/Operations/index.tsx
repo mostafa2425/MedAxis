@@ -15,13 +15,15 @@ import {
   PlusOutlined,
   SearchOutlined,
   ClearOutlined,
+  ScissorOutlined,
 } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
 import { operationService } from '@/services/operation.service';
+import { operationCatalogService } from '@/services/operationCatalog.service';
 import { specialtyService } from '@/services/specialty.service';
 import { useDebounce } from '@/hooks/useDebounce';
 import { OPERATION_STATUSES, DEFAULT_PAGINATION } from '@/utils/constants';
-import { OperationStatus, type Operation, type Specialty } from '@/types';
+import { OperationStatus, type Operation, type Specialty, type OperationCatalogItem } from '@/types';
 import dayjs from 'dayjs';
 import OperationList from './OperationList/OperationList';
 import './Operations.scss';
@@ -35,6 +37,7 @@ export default function OperationsPage() {
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState<OperationStatus | undefined>();
   const [specialtyFilter, setSpecialtyFilter] = useState<string | undefined>();
+  const [surgicalProcedureFilter, setSurgicalProcedureFilter] = useState<string | undefined>();
   const [dateRange, setDateRange] = useState<[dayjs.Dayjs | null, dayjs.Dayjs | null] | null>(null);
   const [page, setPage] = useState(DEFAULT_PAGINATION.page);
 
@@ -47,6 +50,7 @@ export default function OperationsPage() {
       debouncedSearch,
       statusFilter,
       specialtyFilter,
+      surgicalProcedureFilter,
       dateRange?.[0]?.toISOString(),
       dateRange?.[1]?.toISOString(),
     ],
@@ -57,6 +61,7 @@ export default function OperationsPage() {
         search: debouncedSearch || undefined,
         status: statusFilter,
         specialtyId: specialtyFilter,
+        surgicalProcedureId: surgicalProcedureFilter,
         dateFrom: dateRange?.[0]?.format('YYYY-MM-DD') ?? undefined,
         dateTo: dateRange?.[1]?.format('YYYY-MM-DD') ?? undefined,
         sortBy: 'operationDate',
@@ -69,10 +74,16 @@ export default function OperationsPage() {
     queryFn: () => specialtyService.getAll({ limit: 100 }),
   });
 
+  const { data: surgicalProceduresData, isLoading: isLoadingSurgicalProcedures } = useQuery({
+    queryKey: ['operation-catalog'],
+    queryFn: () => operationCatalogService.getAll(),
+  });
+
   const operations: Operation[] = data?.data?.data ?? [];
   const pagination = data?.data?.pagination;
   const total = pagination?.total ?? operations.length;
   const specialties: Specialty[] = specialtiesData?.data?.data ?? [];
+  const surgicalProcedures: OperationCatalogItem[] = surgicalProceduresData?.data?.data ?? [];
 
   const handleSearchChange = (e: ChangeEvent<HTMLInputElement>) => {
     setSearch(e.target.value);
@@ -83,12 +94,13 @@ export default function OperationsPage() {
     setSearch('');
     setStatusFilter(undefined);
     setSpecialtyFilter(undefined);
+    setSurgicalProcedureFilter(undefined);
     setDateRange(null);
     setPage(1);
   }, []);
 
   const hasActiveFilters = Boolean(
-    debouncedSearch || statusFilter || specialtyFilter || dateRange,
+    debouncedSearch || statusFilter || specialtyFilter || surgicalProcedureFilter || dateRange,
   );
 
   if (isError) {
@@ -179,8 +191,29 @@ export default function OperationsPage() {
               options={specialties
                 .filter((s) => !s.parentId)
                 .map((s) => ({
-                value: s.id,
-                label: s.name,
+                  value: s.id,
+                  label: s.name,
+                }))}
+              style={{ width: '100%' }}
+            />
+          </Col>
+          <Col xs={12} sm={12} lg={5} xl={4}>
+            <Select
+              placeholder="Surgical Procedures"
+              size="large"
+              value={surgicalProcedureFilter}
+              onChange={(value) => {
+                setSurgicalProcedureFilter(value);
+                setPage(1);
+              }}
+              allowClear
+              showSearch
+              loading={isLoadingSurgicalProcedures}
+              optionFilterProp="label"
+              suffixIcon={<ScissorOutlined />}
+              options={surgicalProcedures.map((procedure) => ({
+                value: procedure.id,
+                label: procedure.name,
               }))}
               style={{ width: '100%' }}
             />
