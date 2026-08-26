@@ -27,6 +27,7 @@ import {
   notificationService,
   type SmartNotification,
 } from "@/services/notification.service";
+import PracticeBriefDrawer from "@/components/notifications/PracticeBriefDrawer";
 import "./Header.scss";
 
 interface HeaderProps {
@@ -121,6 +122,7 @@ export default function Header({ onMenuClick }: HeaderProps) {
   const toggleLanguage = useAppStore((s) => s.toggleLanguage);
   const [notifications, setNotifications] = useState<SmartNotification[]>([]);
   const [notificationOpen, setNotificationOpen] = useState(false);
+  const [selectedNotification, setSelectedNotification] = useState<SmartNotification | null>(null);
 
   const pageMeta = useMemo(
     () => getPageMeta(location.pathname),
@@ -224,7 +226,7 @@ export default function Header({ onMenuClick }: HeaderProps) {
       try {
         await notificationService.markRead(item.id);
       } catch {
-        /* keep navigation responsive */
+        /* keep notification details responsive */
       }
       setNotifications((current) =>
         current.map((n) =>
@@ -232,7 +234,7 @@ export default function Header({ onMenuClick }: HeaderProps) {
         ),
       );
     }
-    navigate("/assistant");
+    setSelectedNotification(item);
     setNotificationOpen(false);
   };
 
@@ -284,7 +286,7 @@ export default function Header({ onMenuClick }: HeaderProps) {
             <button
               key={item.id}
               type="button"
-              className={`notificationItem ${item.read_at ? "notificationItemRead" : "notificationItemUnread"} ${item.priority === "important" ? "notificationItemImportant" : ""}`}
+              className={`notificationItem ${item.read_at ? "notificationItemRead" : "notificationItemUnread"} ${item.priority === "important" ? "notificationItemImportant" : ""} ${item.kind === "WEEKLY_BRIEF" ? "notificationItemWeekly" : "notificationItemDaily"}`}
               onClick={() => void handleNotificationClick(item)}
             >
               <span className="notificationItemIcon">
@@ -292,6 +294,9 @@ export default function Header({ onMenuClick }: HeaderProps) {
               </span>
               <span className="notificationItemBody">
                 <span className="notificationItemTopline">
+                  <span className="notificationItemKind">
+                    {item.kind === "WEEKLY_BRIEF" ? "WEEKLY" : "DAILY"}
+                  </span>
                   <strong>{item.title}</strong>
                   <span className="notificationItemTime">
                     {formatNotificationTime(
@@ -331,109 +336,117 @@ export default function Header({ onMenuClick }: HeaderProps) {
   );
 
   return (
-    <header
-      className={`app-header-root header ${collapsed ? "headerCollapsed" : ""}`}
-    >
-      <div className="headerLeft">
-        <button
-          className="menuTrigger"
-          onClick={onMenuClick}
-          type="button"
-          aria-label={t("layout.header")}
-        >
-          <MenuOutlined />
-        </button>
-      </div>
-      <div className="headerRight">
-        <Tooltip title={t("operations.addOperation")}>
-          <Button
-            type="primary"
-            className="quickAddBtn"
-            icon={<PlusOutlined />}
-            onClick={() => navigate("/operations/new")}
+    <>
+      <header
+        className={`app-header-root header ${collapsed ? "headerCollapsed" : ""}`}
+      >
+        <div className="headerLeft">
+          <button
+            className="menuTrigger"
+            onClick={onMenuClick}
+            type="button"
+            aria-label={t("layout.header")}
           >
-            <span className="quickAddLabel">
-              {t("operations.addOperation")}
-            </span>
-          </Button>
-        </Tooltip>
-        <div className="headerActions">
-          <Dropdown
-            dropdownRender={() => notificationDropdown}
-            trigger={["click"]}
-            open={notificationOpen}
-            onOpenChange={(open) => {
-              setNotificationOpen(open);
-              if (open) void loadNotifications();
-            }}
-            placement="bottom"
-          >
-            <Badge
-              count={unreadCount}
-              size="small"
-              offset={[-2, 2]}
-              overflowCount={99}
+            <MenuOutlined />
+          </button>
+        </div>
+        <div className="headerRight">
+          <Tooltip title={t("operations.addOperation")}>
+            <Button
+              type="primary"
+              className="quickAddBtn"
+              icon={<PlusOutlined />}
+              onClick={() => navigate("/operations/new")}
+            >
+              <span className="quickAddLabel">
+                {t("operations.addOperation")}
+              </span>
+            </Button>
+          </Tooltip>
+          <div className="headerActions">
+            <Dropdown
+              dropdownRender={() => notificationDropdown}
+              trigger={["click"]}
+              open={notificationOpen}
+              onOpenChange={(open) => {
+                setNotificationOpen(open);
+                if (open) void loadNotifications();
+              }}
+              placement="bottom"
+            >
+              <Badge
+                count={unreadCount}
+                size="small"
+                offset={[-2, 2]}
+                overflowCount={99}
+              >
+                <Button
+                  type="text"
+                  className="iconBtn notificationTrigger"
+                  icon={<BellOutlined />}
+                  aria-label={language === "ar" ? "الإشعارات" : "Notifications"}
+                />
+              </Badge>
+            </Dropdown>
+            <Tooltip
+              title={language === "en" ? t("layout.arabic") : t("layout.english")}
+            >
+              <button
+                type="button"
+                className="langBtn"
+                onClick={toggleLanguage}
+                aria-label={t("layout.language")}
+              >
+                <GlobalOutlined />
+                <span className="langCode">{language.toUpperCase()}</span>
+              </button>
+            </Tooltip>
+            <Tooltip
+              title={darkMode ? t("settings.lightMode") : t("settings.darkMode")}
             >
               <Button
                 type="text"
-                className="iconBtn notificationTrigger"
-                icon={<BellOutlined />}
-                aria-label={language === "ar" ? "الإشعارات" : "Notifications"}
+                className={`iconBtn ${darkMode ? "iconBtnActive" : ""}`}
+                icon={darkMode ? <SunOutlined /> : <MoonOutlined />}
+                onClick={toggleDarkMode}
+                aria-label={t("layout.darkMode")}
               />
-            </Badge>
-          </Dropdown>
-          <Tooltip
-            title={language === "en" ? t("layout.arabic") : t("layout.english")}
+            </Tooltip>
+          </div>
+          <Dropdown
+            menu={{ items: userMenuItems, onClick: handleUserMenuClick }}
+            trigger={["click"]}
+            placement="bottomRight"
+            overlayClassName="headerUserDropdown"
           >
-            <button
-              type="button"
-              className="langBtn"
-              onClick={toggleLanguage}
-              aria-label={t("layout.language")}
-            >
-              <GlobalOutlined />
-              <span className="langCode">{language.toUpperCase()}</span>
+            <button className="avatarBtn" type="button">
+              <Avatar
+                size={34}
+                className="userAvatar"
+                src={user?.avatarUrl || undefined}
+                style={{
+                  backgroundColor: user?.avatarUrl ? undefined : "#2563EB",
+                }}
+              >
+                {user ? getInitials(user.name) : "?"}
+              </Avatar>
+              <span className="userMeta">
+                <span className="userName">{user?.name}</span>
+                {user?.role && (
+                  <span className="userRole">{roleLabel(user.role)}</span>
+                )}
+              </span>
+              <DownOutlined className="userCaret" />
             </button>
-          </Tooltip>
-          <Tooltip
-            title={darkMode ? t("settings.lightMode") : t("settings.darkMode")}
-          >
-            <Button
-              type="text"
-              className={`iconBtn ${darkMode ? "iconBtnActive" : ""}`}
-              icon={darkMode ? <SunOutlined /> : <MoonOutlined />}
-              onClick={toggleDarkMode}
-              aria-label={t("layout.darkMode")}
-            />
-          </Tooltip>
+          </Dropdown>
         </div>
-        <Dropdown
-          menu={{ items: userMenuItems, onClick: handleUserMenuClick }}
-          trigger={["click"]}
-          placement="bottomRight"
-          overlayClassName="headerUserDropdown"
-        >
-          <button className="avatarBtn" type="button">
-            <Avatar
-              size={34}
-              className="userAvatar"
-              src={user?.avatarUrl || undefined}
-              style={{
-                backgroundColor: user?.avatarUrl ? undefined : "#2563EB",
-              }}
-            >
-              {user ? getInitials(user.name) : "?"}
-            </Avatar>
-            <span className="userMeta">
-              <span className="userName">{user?.name}</span>
-              {user?.role && (
-                <span className="userRole">{roleLabel(user.role)}</span>
-              )}
-            </span>
-            <DownOutlined className="userCaret" />
-          </button>
-        </Dropdown>
-      </div>
-    </header>
+      </header>
+
+      <PracticeBriefDrawer
+        notification={selectedNotification}
+        open={Boolean(selectedNotification)}
+        onClose={() => setSelectedNotification(null)}
+      />
+    </>
   );
 }
