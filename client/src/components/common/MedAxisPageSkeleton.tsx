@@ -1,4 +1,5 @@
 import { Card, Skeleton } from 'antd';
+import './MedAxisPageSkeleton.scss';
 
 interface MedAxisPageSkeletonProps {
   rows?: number;
