@@ -60,7 +60,7 @@ export const updateCostSchema = costSchema;
 export const updateStatusSchema = z.object({ status: z.enum(['SCHEDULED', 'IN_PROGRESS', 'COMPLETED', 'CANCELLED']) });
 export const operationQuerySchema = z.object({
   page: z.coerce.number().int().positive().default(1), limit: z.coerce.number().int().positive().max(100).default(20), search: z.string().optional(),
-  status: z.enum(['SCHEDULED', 'IN_PROGRESS', 'COMPLETED', 'CANCELLED']).optional(), specialtyId: z.string().uuid().optional(), hospitalId: z.string().uuid().optional(),
+  status: z.enum(['SCHEDULED', 'IN_PROGRESS', 'COMPLETED', 'CANCELLED']).optional(), specialtyId: z.string().uuid().optional(), hospitalId: z.string().uuid().optional(), surgicalProcedureId: z.string().uuid().optional(),
   dateFrom: z.string().optional(), dateTo: z.string().optional(), sortBy: z.enum(['operationDate', 'createdAt', 'name', 'duration']).default('operationDate'), sortOrder: z.enum(['asc', 'desc']).default('desc'),
 });
 export type CreateOperationInput = z.infer<typeof createOperationSchema>;
