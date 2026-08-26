@@ -16,6 +16,9 @@ import PhoneLink from '@/components/common/PhoneLink';
 import './PatientList.scss';
 import './PatientManagement.scss';
 
+// Production verification marker: Patients Surgical Procedures filter is intentionally kept in this bundle.
+export const PATIENTS_SURGICAL_PROCEDURE_FILTER_ENABLED = true;
+
 export interface PatientListProps {
   patients: Patient[];
   isLoading?: boolean;
