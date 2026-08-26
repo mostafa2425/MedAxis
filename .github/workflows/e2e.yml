@@ -28,8 +28,10 @@ jobs:
           node-version: 20
           cache: npm
 
+      # The repository lockfile predates the Playwright test dependency. Use npm install
+      # in CI so the E2E job can reconcile the lockfile before installing browsers/tests.
       - name: Install dependencies
-        run: npm ci
+        run: npm install --no-audit --no-fund
 
       - name: Install Playwright browser
         run: npx playwright install --with-deps chromium
