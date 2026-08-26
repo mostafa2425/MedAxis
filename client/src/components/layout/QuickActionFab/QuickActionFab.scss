@@ -1,0 +1,43 @@
+.medaxis-quick-fab {
+  display: none;
+  position: fixed;
+  right: 16px;
+  bottom: calc(#{$bottom-nav-height} + #{$safe-area-bottom} + 14px);
+  z-index: $z-fixed - 1;
+  width: 58px;
+  height: 58px;
+  border: 0;
+  border-radius: 50%;
+  color: #fff;
+  background: linear-gradient(145deg, #2563eb, #1d4ed8);
+  box-shadow: 0 12px 28px rgba(37, 99, 235, .30), 0 3px 8px rgba(15, 23, 42, .14);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: transform .18s ease, box-shadow .18s ease;
+}
+
+.medaxis-quick-fab:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 16px 32px rgba(37, 99, 235, .34), 0 4px 10px rgba(15, 23, 42, .16);
+}
+
+.medaxis-quick-fab:active { transform: scale(.95); }
+.medaxis-quick-fab:focus-visible { outline: 3px solid rgba(37, 99, 235, .28); outline-offset: 3px; }
+.medaxis-quick-fab-plus { position: absolute; inset: 0; display: grid; place-items: center; font-size: 25px; }
+.medaxis-quick-fab-icon { position: absolute; right: 7px; bottom: 7px; width: 18px; height: 18px; display: grid; place-items: center; border-radius: 50%; background: #fff; color: #2563eb; font-size: 9px; box-shadow: 0 1px 4px rgba(0,0,0,.16); }
+
+@include responsive('md') {
+  .medaxis-quick-fab { display: block; }
+}
+
+@include rtl {
+  .medaxis-quick-fab { right: auto; left: 16px; }
+}
+
+@include dark {
+  .medaxis-quick-fab-icon { background: #0f172a; color: #60a5fa; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .medaxis-quick-fab { transition: none; }
+}
