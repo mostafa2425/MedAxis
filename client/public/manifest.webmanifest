@@ -1,14 +1,16 @@
 {
   "name": "MedAxis",
   "short_name": "MedAxis",
-  "description": "MedAxis digital operation logbook for doctors",
+  "description": "MedAxis medical operations platform for doctors",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#2563eb",
+  "background_color": "#F2F5F9",
+  "theme_color": "#0D1B2A",
   "lang": "en",
   "icons": [
-    { "src": "/medaxis-icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+    { "src": "/brand/icon-192.svg", "sizes": "192x192", "type": "image/svg+xml", "purpose": "any" },
+    { "src": "/brand/icon-512.svg", "sizes": "512x512", "type": "image/svg+xml", "purpose": "any" },
+    { "src": "/brand/medaxis-icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
   ]
 }
