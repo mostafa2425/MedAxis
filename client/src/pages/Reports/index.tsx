@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { Button, Card, Col, DatePicker, Empty, Flex, Progress, Row, Select, Skeleton, Statistic, Table, Tabs, Tag, Typography, message } from 'antd';
+import { Button, Card, DatePicker, Empty, Flex, Progress, Select, Skeleton, Statistic, Table, Tabs, Tag, Typography, message } from 'antd';
 import { BarChartOutlined, CalendarOutlined, DownloadOutlined, FileDoneOutlined, ReloadOutlined, TeamOutlined, DollarOutlined, BankOutlined, MedicineBoxOutlined } from '@ant-design/icons';
 import dayjs, { type Dayjs } from 'dayjs';
 import { useTranslation } from 'react-i18next';
@@ -24,6 +24,9 @@ const STATUS_OPTIONS = [
   { value: 'COMPLETED', label: 'Completed', labelAr: 'مكتملة' },
   { value: 'CANCELLED', label: 'Cancelled', labelAr: 'ملغاة' },
 ];
+
+const DATE_KEYS = new Set(['date', 'scheduledAt', 'completedAt', 'createdAt']);
+const MONEY_KEYS = new Set(['totalCost', 'paidAmount', 'remainingAmount', 'total', 'paid', 'remaining', 'revenue']);
 
 function money(value: number, isAr: boolean) {
   return new Intl.NumberFormat(isAr ? 'ar-EG' : 'en-EG', { style: 'currency', currency: 'EGP', maximumFractionDigits: 0 }).format(value);
@@ -86,8 +89,8 @@ export default function ReportsPage() {
       dataIndex: key,
       key,
       render: (value: any) => {
-        if (key.toLowerCase().includes('date') || key.toLowerCase().includes('at')) return value ? dayjs(value).format('DD MMM YYYY · HH:mm') : '—';
-        if (['totalCost', 'paidAmount', 'remainingAmount', 'total', 'paid', 'remaining'].includes(key)) return money(Number(value), isAr);
+        if (DATE_KEYS.has(key)) return value ? dayjs(value).format('DD MMM YYYY · HH:mm') : '—';
+        if (MONEY_KEYS.has(key)) return money(Number(value), isAr);
         if (key === 'status' || key === 'paymentStatus') return <Tag>{String(value).replace('_', ' ')}</Tag>;
         return value ?? '—';
       },
@@ -115,7 +118,7 @@ export default function ReportsPage() {
           <Select allowClear showSearch optionFilterProp="label" value={specialtyId} onChange={setSpecialtyId} placeholder={isAr ? 'كل التخصصات' : 'All specialties'} options={specialtiesQuery.data?.map((item: any) => ({ value: item.id, label: isAr ? item.nameAr || item.name : item.name }))} />
           {(active === 'operations' || active === 'follow-ups') && <Select allowClear value={status} onChange={setStatus} placeholder={isAr ? 'كل الحالات' : 'All statuses'} options={STATUS_OPTIONS.map((item) => ({ value: item.value, label: isAr ? item.labelAr : item.label }))} />}
           {active === 'financial' && <Select allowClear value={paymentStatus} onChange={setPaymentStatus} placeholder={isAr ? 'كل حالات الدفع' : 'All payment statuses'} options={[{ value: 'PAID', label: isAr ? 'مدفوع' : 'Paid' }, { value: 'PARTIAL', label: isAr ? 'جزئي' : 'Partial' }, { value: 'UNPAID', label: isAr ? 'غير مدفوع' : 'Unpaid' }]} />}
-          <Button onClick={resetFilters}>{isAr ? 'مسح' : 'Clear'}</Button>
+          <Button className="reports-clear-button" onClick={resetFilters}>{isAr ? 'مسح' : 'Clear'}</Button>
         </Flex>
       </Card>
 
@@ -126,7 +129,7 @@ export default function ReportsPage() {
           <div className="report-summary-grid">
             {Object.entries(report.summary ?? {}).slice(0, 6).map(([key, value]) => (
               <Card bordered={false} className="report-summary-card" key={key}>
-                <Statistic title={key.replace(/([A-Z])/g, ' $1').replace(/^./, (value) => value.toUpperCase())} value={typeof value === 'number' && ['total', 'paid', 'remaining', 'revenue'].includes(key) ? money(value, isAr) : value as any} />
+                <Statistic title={key.replace(/([A-Z])/g, ' $1').replace(/^./, (value) => value.toUpperCase())} value={typeof value === 'number' && MONEY_KEYS.has(key) ? money(value, isAr) : value as any} />
               </Card>
             ))}
           </div>
