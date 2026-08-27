@@ -50,13 +50,14 @@ class ReportsService {
     }
   }
 
-  private operationWhere(filters: ReportFilters) {
+  private operationWhere(filters: ReportFilters, options: { includeDate?: boolean; includeStatus?: boolean } = {}) {
+    const { includeDate = true, includeStatus = true } = options;
     return {
       createdBy: filters.createdBy,
       ...(filters.hospitalId ? { hospitalId: filters.hospitalId } : {}),
       ...(filters.specialtyId ? { specialtyId: filters.specialtyId } : {}),
-      ...(filters.status ? { status: filters.status as any } : {}),
-      ...(dateWhere(filters) ? { operationDate: dateWhere(filters) } : {}),
+      ...(includeStatus && filters.status ? { status: filters.status as any } : {}),
+      ...(includeDate && dateWhere(filters) ? { operationDate: dateWhere(filters) } : {}),
     };
   }
 
@@ -79,11 +80,14 @@ class ReportsService {
 
   private async patients(filters: ReportFilters) {
     const createdAt = dateWhere(filters);
-    const [total, newPatients, patients] = await Promise.all([
-      prisma.patient.count({ where: { createdBy: filters.createdBy } }),
-      prisma.patient.count({ where: { createdBy: filters.createdBy, ...(createdAt ? { createdAt } : {}) } }),
-      prisma.patient.findMany({ where: { createdBy: filters.createdBy, ...(createdAt ? { createdAt } : {}) }, take: 5000, orderBy: { createdAt: 'desc' }, include: { _count: { select: { operations: true } } } }),
+    const operationScope = this.operationWhere(filters, { includeDate: false, includeStatus: false });
+    const operationFilter = filters.hospitalId || filters.specialtyId ? { operations: { some: operationScope } } : {};
+    const patientWhere = { createdBy: filters.createdBy, ...(createdAt ? { createdAt } : {}), ...operationFilter };
+    const [total, patients] = await Promise.all([
+      prisma.patient.count({ where: patientWhere }),
+      prisma.patient.findMany({ where: patientWhere, take: 5000, orderBy: { createdAt: 'desc' }, include: { _count: { select: { operations: true } } } }),
     ]);
+    const newPatients = patients.filter((item) => !createdAt || (item.createdAt >= (filters.dateFrom ?? new Date(0)) && item.createdAt <= (filters.dateTo ?? new Date(8640000000000000)))).length;
     const withOperations = patients.filter((item) => item._count.operations > 0).length;
     const byGender = patients.reduce<Record<string, number>>((acc, item) => { acc[item.gender] = (acc[item.gender] ?? 0) + 1; return acc; }, {});
     return {
@@ -95,8 +99,9 @@ class ReportsService {
   }
 
   private async followUps(filters: ReportFilters) {
+    const operationScope = this.operationWhere(filters, { includeDate: false, includeStatus: false });
     const where = {
-      operation: this.operationWhere(filters),
+      operation: operationScope,
       ...(dateWhere(filters) ? { scheduledAt: dateWhere(filters) } : {}),
       ...(filters.status ? { status: filters.status } : {}),
     };
