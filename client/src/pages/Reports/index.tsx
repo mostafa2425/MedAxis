@@ -34,9 +34,43 @@ const FOLLOW_UP_STATUS_OPTIONS = [
 
 const DATE_KEYS = new Set(['date', 'scheduledAt', 'completedAt', 'createdAt']);
 const MONEY_KEYS = new Set(['totalCost', 'paidAmount', 'remainingAmount', 'total', 'paid', 'remaining', 'revenue']);
+const HIDDEN_KEYS = new Set(['id', 'hospitalAr', 'specialtyAr', 'operationId', 'nameAr', 'governorateAr']);
 
 function money(value: number, isAr: boolean) {
   return new Intl.NumberFormat(isAr ? 'ar-EG' : 'en-EG', { style: 'currency', currency: 'EGP', maximumFractionDigits: 0 }).format(value);
+}
+
+function labelForKey(key: string, isAr: boolean) {
+  const labels: Record<string, [string, string]> = {
+    operation: ['Operation', 'العملية'],
+    patient: ['Patient', 'المريض'],
+    hospital: ['Hospital', 'المستشفى'],
+    specialty: ['Specialty', 'التخصص'],
+    procedure: ['Procedure', 'الإجراء'],
+    status: ['Status', 'الحالة'],
+    paymentStatus: ['Payment status', 'حالة الدفع'],
+    date: ['Date', 'التاريخ'],
+    scheduledAt: ['Scheduled', 'الموعد'],
+    completedAt: ['Completed', 'تاريخ الإكمال'],
+    createdAt: ['Created', 'تاريخ الإنشاء'],
+    totalCost: ['Total cost', 'التكلفة الإجمالية'],
+    paidAmount: ['Paid', 'المدفوع'],
+    remainingAmount: ['Remaining', 'المتبقي'],
+    revenue: ['Revenue', 'الإيرادات'],
+    total: ['Total', 'الإجمالي'],
+    paid: ['Paid', 'المدفوع'],
+    remaining: ['Remaining', 'المتبقي'],
+  };
+  if (labels[key]) return isAr ? labels[key][1] : labels[key][0];
+  return key.replace(/([A-Z])/g, ' $1').replace(/^./, (value) => value.toUpperCase());
+}
+
+function formatValue(value: unknown, key: string, isAr: boolean) {
+  if (value === null || value === undefined || value === '') return '—';
+  if (DATE_KEYS.has(key)) return dayjs(String(value)).isValid() ? dayjs(String(value)).format('DD MMM YYYY · HH:mm') : '—';
+  if (MONEY_KEYS.has(key)) return money(Number(value), isAr);
+  if (key === 'status' || key === 'paymentStatus') return String(value).replaceAll('_', ' ');
+  return String(value);
 }
 
 function exportCsv(report: any, type: ReportType) {
@@ -52,6 +86,41 @@ function exportCsv(report: any, type: ReportType) {
   anchor.download = `medaxis-${type}-report-${dayjs().format('YYYY-MM-DD')}.csv`;
   anchor.click();
   URL.revokeObjectURL(url);
+}
+
+function MobileReportList({ rows, isAr }: { rows: any[]; isAr: boolean }) {
+  if (!rows.length) return <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description={isAr ? 'لا توجد بيانات لهذا التقرير' : 'No data for this report'} />;
+
+  return (
+    <div className="mobile-report-list">
+      {rows.map((row, index) => {
+        const keys = Object.keys(row).filter((key) => !HIDDEN_KEYS.has(key));
+        const primaryKey = keys[0];
+        const secondaryKeys = keys.slice(1);
+        return (
+          <article className="mobile-report-card" key={row.id ?? `${primaryKey}-${index}`}>
+            <div className="mobile-report-card-header">
+              <div className="mobile-report-primary">
+                <Typography.Text className="mobile-report-primary-label">{labelForKey(primaryKey, isAr)}</Typography.Text>
+                <Typography.Text strong className="mobile-report-primary-value">{formatValue(row[primaryKey], primaryKey, isAr)}</Typography.Text>
+              </div>
+              {(row.status || row.paymentStatus) && (
+                <Tag className="mobile-report-status">{formatValue(row.status ?? row.paymentStatus, row.status ? 'status' : 'paymentStatus', isAr)}</Tag>
+              )}
+            </div>
+            <div className="mobile-report-details">
+              {secondaryKeys.map((key) => (
+                <div className="mobile-report-detail" key={key}>
+                  <Typography.Text type="secondary">{labelForKey(key, isAr)}</Typography.Text>
+                  <Typography.Text>{formatValue(row[key], key, isAr)}</Typography.Text>
+                </div>
+              ))}
+            </div>
+          </article>
+        );
+      })}
+    </div>
+  );
 }
 
 export default function ReportsPage() {
@@ -89,66 +158,67 @@ export default function ReportsPage() {
 
   const columns = useMemo(() => {
     if (!rows.length) return [];
-    const hidden = new Set(['id', 'hospitalAr', 'specialtyAr', 'operationId', 'nameAr', 'governorateAr']);
-    return Object.keys(rows[0]).filter((key) => !hidden.has(key)).map((key) => ({
-      title: key.replace(/([A-Z])/g, ' $1').replace(/^./, (value) => value.toUpperCase()),
+    return Object.keys(rows[0]).filter((key) => !HIDDEN_KEYS.has(key)).map((key) => ({
+      title: labelForKey(key, isAr),
       dataIndex: key,
       key,
       render: (value: any) => {
-        if (DATE_KEYS.has(key)) return value ? dayjs(value).format('DD MMM YYYY · HH:mm') : '—';
+        if (DATE_KEYS.has(key)) return formatValue(value, key, isAr);
         if (MONEY_KEYS.has(key)) return money(Number(value), isAr);
-        if (key === 'status' || key === 'paymentStatus') return <Tag>{String(value).replace('_', ' ')}</Tag>;
+        if (key === 'status' || key === 'paymentStatus') return <Tag>{formatValue(value, key, isAr)}</Tag>;
         return value ?? '—';
       },
     }));
   }, [isAr, rows]);
 
   const activeStatusOptions = active === 'follow-ups' ? FOLLOW_UP_STATUS_OPTIONS : STATUS_OPTIONS;
+  const seriesMax = Math.max(1, ...(report?.series ?? []).map((item: any) => Number(item.value) || 0));
 
   return (
     <div className="reports-page page">
       {contextHolder}
       <div className="page-header reports-header">
-        <div>
+        <div className="reports-header-copy">
           <Typography.Title level={2}>{isAr ? 'التقارير' : 'Reports'}</Typography.Title>
           <Typography.Text type="secondary">{isAr ? 'رؤية واضحة لأداء عيادتك وحالاتك' : 'Understand your practice, cases and financial activity at a glance'}</Typography.Text>
         </div>
-        <Flex gap={8} wrap>
+        <Flex gap={8} wrap className="reports-header-actions">
           <Button icon={<ReloadOutlined />} loading={reportQuery.isFetching} onClick={() => reportQuery.refetch()}>{isAr ? 'تحديث' : 'Refresh'}</Button>
           <Button type="primary" icon={<DownloadOutlined />} disabled={!rows.length} onClick={() => { exportCsv(report, active); messageApi.success(isAr ? 'تم تصدير التقرير' : 'Report exported'); }}>{isAr ? 'تصدير CSV' : 'Export CSV'}</Button>
         </Flex>
       </div>
 
       <Card className="reports-filter-card" bordered={false}>
-        <Flex gap={10} wrap align="center">
+        <div className="reports-filter-grid">
           <DatePicker.RangePicker value={range} onChange={(value) => setRange(value as [Dayjs | null, Dayjs | null])} allowClear placeholder={[isAr ? 'من' : 'From', isAr ? 'إلى' : 'To']} />
           <Select allowClear showSearch optionFilterProp="label" value={hospitalId} onChange={setHospitalId} placeholder={isAr ? 'كل المستشفيات' : 'All hospitals'} options={hospitalsQuery.data?.map((item: any) => ({ value: item.id, label: isAr ? item.nameAr || item.name : item.name }))} />
           <Select allowClear showSearch optionFilterProp="label" value={specialtyId} onChange={setSpecialtyId} placeholder={isAr ? 'كل التخصصات' : 'All specialties'} options={specialtiesQuery.data?.map((item: any) => ({ value: item.id, label: isAr ? item.nameAr || item.name : item.name }))} />
           {(active === 'operations' || active === 'follow-ups') && <Select allowClear value={status} onChange={setStatus} placeholder={isAr ? 'كل الحالات' : 'All statuses'} options={activeStatusOptions.map((item) => ({ value: item.value, label: isAr ? item.labelAr : item.label }))} />}
           {active === 'financial' && <Select allowClear value={paymentStatus} onChange={setPaymentStatus} placeholder={isAr ? 'كل حالات الدفع' : 'All payment statuses'} options={[{ value: 'PAID', label: isAr ? 'مدفوع' : 'Paid' }, { value: 'PARTIAL', label: isAr ? 'جزئي' : 'Partial' }, { value: 'UNPAID', label: isAr ? 'غير مدفوع' : 'Unpaid' }]} />}
           <Button className="reports-clear-button" onClick={resetFilters}>{isAr ? 'مسح' : 'Clear'}</Button>
-        </Flex>
+        </div>
       </Card>
 
-      <Tabs activeKey={active} onChange={(key) => { setActive(key as ReportType); setStatus(undefined); setPaymentStatus(undefined); }} items={REPORTS.map((item) => ({ key: item.key, label: <span className="report-tab-label">{item.icon}<span>{isAr ? item.ar : item.en}</span></span> }))} />
+      <Tabs className="reports-tabs" activeKey={active} onChange={(key) => { setActive(key as ReportType); setStatus(undefined); setPaymentStatus(undefined); }} items={REPORTS.map((item) => ({ key: item.key, label: <span className="report-tab-label">{item.icon}<span>{isAr ? item.ar : item.en}</span></span> }))} />
 
       {reportQuery.isLoading ? <Skeleton active paragraph={{ rows: 10 }} /> : report ? (
         <>
           <div className="report-summary-grid">
             {Object.entries(report.summary ?? {}).slice(0, 6).map(([key, value]) => (
               <Card bordered={false} className="report-summary-card" key={key}>
-                <Statistic title={key.replace(/([A-Z])/g, ' $1').replace(/^./, (value) => value.toUpperCase())} value={typeof value === 'number' && MONEY_KEYS.has(key) ? money(value, isAr) : value as any} />
+                <Statistic title={labelForKey(key, isAr)} value={typeof value === 'number' && MONEY_KEYS.has(key) ? money(value, isAr) : value as any} />
               </Card>
             ))}
           </div>
 
           {active === 'financial' && typeof report.summary?.collectionRate === 'number' && <Card bordered={false} className="report-progress-card"><Typography.Text strong>{isAr ? 'نسبة التحصيل' : 'Collection rate'}</Typography.Text><Progress percent={report.summary.collectionRate} status={report.summary.collectionRate >= 80 ? 'success' : 'active'} /></Card>}
 
-          {report.series?.length ? <Card bordered={false} className="report-series-card"><Flex align="center" gap={8} className="report-section-title"><BarChartOutlined /><Typography.Text strong>{isAr ? 'النشاط عبر الوقت' : 'Activity over time'}</Typography.Text></Flex><div className="report-bars">{report.series.map((item: any) => <div className="report-bar-item" key={item.month || item.label}><div className="report-bar-value">{item.value}</div><div className="report-bar" style={{ height: `${Math.max(8, Math.min(100, Number(item.value) * 8))}%` }} /><Typography.Text type="secondary">{item.month || item.label}</Typography.Text></div>)}</div></Card> : null}
+          {report.series?.length ? <Card bordered={false} className="report-series-card"><Flex align="center" gap={8} className="report-section-title"><BarChartOutlined /><Typography.Text strong>{isAr ? 'النشاط عبر الوقت' : 'Activity over time'}</Typography.Text></Flex><div className="report-bars">{report.series.map((item: any) => <div className="report-bar-item" key={item.month || item.label}><div className="report-bar-value">{item.value}</div><div className="report-bar" style={{ height: `${Math.max(8, (Number(item.value) / seriesMax) * 100)}%` }} /><Typography.Text type="secondary">{item.month || item.label}</Typography.Text></div>)}</div></Card> : null}
 
           <Card bordered={false} className="report-table-card">
             <Flex justify="space-between" align="center" className="report-section-title"><div><Typography.Title level={4}>{isAr ? selected.ar : selected.en}</Typography.Title><Typography.Text type="secondary">{rows.length} {isAr ? 'سجل' : 'records'}</Typography.Text></div></Flex>
-            {rows.length ? <Table rowKey="id" columns={columns as any} dataSource={rows} scroll={{ x: 900 }} pagination={{ pageSize: 15, showSizeChanger: true, responsive: true }} size="middle" /> : <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description={isAr ? 'لا توجد بيانات لهذا التقرير' : 'No data for this report'} />}
+            <div className="desktop-report-table">{rows.length ? <Table rowKey="id" columns={columns as any} dataSource={rows} scroll={{ x: 900 }} pagination={{ pageSize: 15, showSizeChanger: true, responsive: true }} size="middle" /> : <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description={isAr ? 'لا توجد بيانات لهذا التقرير' : 'No data for this report'} />}</div>
+            <div className="mobile-report-table"><MobileReportList rows={rows} isAr={isAr} /></div>
           </Card>
         </>
       ) : <Empty description={isAr ? 'تعذر تحميل التقرير' : 'Unable to load report'} />}
