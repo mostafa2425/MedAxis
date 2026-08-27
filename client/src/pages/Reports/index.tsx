@@ -25,6 +25,13 @@ const STATUS_OPTIONS = [
   { value: 'CANCELLED', label: 'Cancelled', labelAr: 'ملغاة' },
 ];
 
+const FOLLOW_UP_STATUS_OPTIONS = [
+  { value: 'UPCOMING', label: 'Upcoming', labelAr: 'قادمة' },
+  { value: 'OVERDUE', label: 'Overdue', labelAr: 'متأخرة' },
+  { value: 'COMPLETED', label: 'Completed', labelAr: 'مكتملة' },
+  { value: 'CANCELLED', label: 'Cancelled', labelAr: 'ملغاة' },
+];
+
 const DATE_KEYS = new Set(['date', 'scheduledAt', 'completedAt', 'createdAt']);
 const MONEY_KEYS = new Set(['totalCost', 'paidAmount', 'remainingAmount', 'total', 'paid', 'remaining', 'revenue']);
 
@@ -63,8 +70,7 @@ export default function ReportsPage() {
     ...(range[1] ? { dateTo: range[1].endOf('day').toISOString() } : {}),
     ...(hospitalId ? { hospitalId } : {}),
     ...(specialtyId ? { specialtyId } : {}),
-    ...(status && active === 'operations' ? { status } : {}),
-    ...(status && active === 'follow-ups' ? { status } : {}),
+    ...(status && (active === 'operations' || active === 'follow-ups') ? { status } : {}),
     ...(paymentStatus && active === 'financial' ? { paymentStatus } : {}),
   }), [active, hospitalId, paymentStatus, range, specialtyId, status]);
 
@@ -97,6 +103,8 @@ export default function ReportsPage() {
     }));
   }, [isAr, rows]);
 
+  const activeStatusOptions = active === 'follow-ups' ? FOLLOW_UP_STATUS_OPTIONS : STATUS_OPTIONS;
+
   return (
     <div className="reports-page page">
       {contextHolder}
@@ -116,7 +124,7 @@ export default function ReportsPage() {
           <DatePicker.RangePicker value={range} onChange={(value) => setRange(value as [Dayjs | null, Dayjs | null])} allowClear placeholder={[isAr ? 'من' : 'From', isAr ? 'إلى' : 'To']} />
           <Select allowClear showSearch optionFilterProp="label" value={hospitalId} onChange={setHospitalId} placeholder={isAr ? 'كل المستشفيات' : 'All hospitals'} options={hospitalsQuery.data?.map((item: any) => ({ value: item.id, label: isAr ? item.nameAr || item.name : item.name }))} />
           <Select allowClear showSearch optionFilterProp="label" value={specialtyId} onChange={setSpecialtyId} placeholder={isAr ? 'كل التخصصات' : 'All specialties'} options={specialtiesQuery.data?.map((item: any) => ({ value: item.id, label: isAr ? item.nameAr || item.name : item.name }))} />
-          {(active === 'operations' || active === 'follow-ups') && <Select allowClear value={status} onChange={setStatus} placeholder={isAr ? 'كل الحالات' : 'All statuses'} options={STATUS_OPTIONS.map((item) => ({ value: item.value, label: isAr ? item.labelAr : item.label }))} />}
+          {(active === 'operations' || active === 'follow-ups') && <Select allowClear value={status} onChange={setStatus} placeholder={isAr ? 'كل الحالات' : 'All statuses'} options={activeStatusOptions.map((item) => ({ value: item.value, label: isAr ? item.labelAr : item.label }))} />}
           {active === 'financial' && <Select allowClear value={paymentStatus} onChange={setPaymentStatus} placeholder={isAr ? 'كل حالات الدفع' : 'All payment statuses'} options={[{ value: 'PAID', label: isAr ? 'مدفوع' : 'Paid' }, { value: 'PARTIAL', label: isAr ? 'جزئي' : 'Partial' }, { value: 'UNPAID', label: isAr ? 'غير مدفوع' : 'Unpaid' }]} />}
           <Button className="reports-clear-button" onClick={resetFilters}>{isAr ? 'مسح' : 'Clear'}</Button>
         </Flex>
