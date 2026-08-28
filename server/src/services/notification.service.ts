@@ -35,12 +35,19 @@ function egyptDayBounds(offsetDays: number) {
   return { start, end };
 }
 
-function compactOperationDetails(brief: Awaited<ReturnType<typeof assistantService.getBrief>>, max = 5) {
-  return brief.operations.slice(0, max).map((operation) => {
+function compactOperationDetails(
+  brief: Awaited<ReturnType<typeof assistantService.getBrief>>,
+  max = 3,
+) {
+  const operations = brief.operations.slice(0, max).map((operation) => {
     const time = operation.operationTime?.trim() ? ` ${operation.operationTime}` : '';
-    const patient = operation.patient?.fullName ? ` — ${operation.patient.fullName}` : '';
-    return `${operation.name}${time}${patient}`;
+    return `${operation.name}${time}`;
   });
+
+  const remaining = Math.max(brief.operations.length - operations.length, 0);
+  if (remaining > 0) operations.push(`+${remaining} more`);
+
+  return operations;
 }
 
 export class NotificationService {
@@ -97,25 +104,30 @@ export class NotificationService {
     const isDaily = kind === 'DAILY_BRIEF';
     const operationDetails = compactOperationDetails(brief);
     const operationLine = operationDetails.length
-      ? operationDetails.join(' | ')
-      : 'No operations scheduled';
+      ? `📋 ${operationDetails.join(' · ')}`
+      : '📋 No operations scheduled';
+
+    const summary = [
+      `👥 ${brief.summary.followUps} follow-up${brief.summary.followUps === 1 ? '' : 's'}`,
+      `⚠️ ${brief.summary.overdueFollowUps} overdue`,
+      `🔎 ${brief.summary.attention} need attention`,
+      `💰 ${brief.summary.paymentDue} payment${brief.summary.paymentDue === 1 ? '' : 's'} · EGP ${brief.summary.outstandingAmount.toLocaleString('en-EG')}`,
+    ].join(' · ');
 
     const message = isDaily
       ? [
-          `Tomorrow: ${brief.summary.operations} operation${brief.summary.operations === 1 ? '' : 's'}.`,
+          `📅 ${brief.summary.operations} operation${brief.summary.operations === 1 ? '' : 's'} tomorrow.`,
           operationLine,
-          `${brief.summary.followUps} follow-up${brief.summary.followUps === 1 ? '' : 's'} · ${brief.summary.overdueFollowUps} overdue · ${brief.summary.attention} items need attention.`,
-          `${brief.summary.paymentDue} outstanding payment${brief.summary.paymentDue === 1 ? '' : 's'} · EGP ${brief.summary.outstandingAmount.toLocaleString('en-EG')}.`,
+          summary,
         ].join(' ')
       : [
-          `Next 7 days: ${brief.summary.operations} operation${brief.summary.operations === 1 ? '' : 's'}.`,
+          `📅 ${brief.summary.operations} operation${brief.summary.operations === 1 ? '' : 's'} in the next 7 days.`,
           operationLine,
-          `${brief.summary.followUps} follow-up${brief.summary.followUps === 1 ? '' : 's'} · ${brief.summary.overdueFollowUps} overdue · ${brief.summary.attention} items need attention.`,
-          `${brief.summary.paymentDue} outstanding payment${brief.summary.paymentDue === 1 ? '' : 's'} · EGP ${brief.summary.outstandingAmount.toLocaleString('en-EG')}.`,
+          summary,
         ].join(' ');
 
     const priority = brief.summary.attention > 0 ? 'important' : 'normal';
-    const title = isDaily ? "Tomorrow's practice brief" : 'Weekly practice brief';
+    const title = isDaily ? "🩺 Tomorrow's Practice Brief" : '📊 Weekly Practice Brief';
 
     const inserted = await prisma.$queryRawUnsafe<Array<{ id: string }>>(
       `insert into public.smart_notifications (user_id, kind, title, message, priority, scheduled_for)
