@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Button, Upload, Alert, Divider, Popconfirm, Tag } from 'antd';
+import { Button, Upload, Alert, Divider, Popconfirm, Tag, Modal, Input } from 'antd';
 import {
   CameraOutlined,
   DeleteOutlined,
@@ -11,6 +11,8 @@ import {
   FileTextOutlined,
   PictureOutlined,
   CheckCircleFilled,
+  LinkOutlined,
+  CloudOutlined,
 } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
 import type { OperationFile } from '@/types';
@@ -24,6 +26,7 @@ export interface FilesStepProps {
   afterFiles: OperationFile[];
   onBeforeUpload: (file: File) => Promise<void>;
   onAfterUpload: (file: File) => Promise<void>;
+  onAddExternalLink: (fileType: 'before' | 'after', url: string, fileName: string) => Promise<void>;
   onDeleteFile: (fileId: string) => Promise<void>;
 }
 
@@ -40,17 +43,27 @@ function formatFileSize(size?: number | null) {
   return `${(size / (1024 * 1024)).toFixed(1)} MB`;
 }
 
+function isGoogleDriveLink(file: OperationFile) {
+  return /^https:\/\/(drive\.google\.com|docs\.google\.com)\//i.test(file.filePath || '');
+}
+
 export default function FilesStep({
   operationId,
   beforeFiles,
   afterFiles,
   onBeforeUpload,
   onAfterUpload,
+  onAddExternalLink,
   onDeleteFile,
 }: FilesStepProps) {
   const { t } = useTranslation();
   const [beforeUploading, setBeforeUploading] = useState(false);
   const [afterUploading, setAfterUploading] = useState(false);
+  const [externalModalOpen, setExternalModalOpen] = useState(false);
+  const [externalType, setExternalType] = useState<'before' | 'after'>('before');
+  const [externalUrl, setExternalUrl] = useState('');
+  const [externalFileName, setExternalFileName] = useState('');
+  const [externalSaving, setExternalSaving] = useState(false);
 
   const handleBeforeUpload = async (file: File) => {
     setBeforeUploading(true);
@@ -72,6 +85,31 @@ export default function FilesStep({
     return false;
   };
 
+  const openExternalModal = (type: 'before' | 'after') => {
+    setExternalType(type);
+    setExternalUrl('');
+    setExternalFileName('');
+    setExternalModalOpen(true);
+  };
+
+  const closeExternalModal = () => {
+    if (externalSaving) return;
+    setExternalModalOpen(false);
+  };
+
+  const saveExternalLink = async () => {
+    if (!externalUrl.trim() || !externalFileName.trim()) return;
+    setExternalSaving(true);
+    try {
+      await onAddExternalLink(externalType, externalUrl.trim(), externalFileName.trim());
+      setExternalModalOpen(false);
+      setExternalUrl('');
+      setExternalFileName('');
+    } finally {
+      setExternalSaving(false);
+    }
+  };
+
   const renderFileGallery = (files: OperationFile[]) => {
     if (files.length === 0) {
       return (
@@ -86,27 +124,30 @@ export default function FilesStep({
     return (
       <div className="fileGallery">
         {files.map((file) => {
-          const url = resolveMediaUrl(file.fileUrl || file.url, file.filePath);
-          const isImage = file.mimeType?.startsWith('image/');
+          const external = isGoogleDriveLink(file);
+          const url = external ? (file.fileUrl || file.url || file.filePath || '') : resolveMediaUrl(file.fileUrl || file.url, file.filePath);
+          const isImage = !external && file.mimeType?.startsWith('image/');
           return (
             <article key={file.id} className="fileCard">
               <div className="fileCardPreview">
                 {isImage ? (
                   <img src={url} alt={file.fileName} className="fileCardImage" />
                 ) : (
-                  <div className="fileCardDocumentIcon">{getFileIcon(file.mimeType)}</div>
+                  <div className="fileCardDocumentIcon">{external ? <CloudOutlined /> : getFileIcon(file.mimeType)}</div>
                 )}
                 <span className="fileCardType"><CheckCircleFilled /></span>
               </div>
               <div className="fileCardBody">
                 <div className="fileCardName" title={file.fileName}>{file.fileName}</div>
                 <div className="fileCardMeta">
-                  <span>{file.mimeType?.split('/').pop()?.toUpperCase() || 'FILE'}</span>
-                  {file.fileSize ? <span>• {formatFileSize(file.fileSize)}</span> : null}
+                  <span>{external ? 'Google Drive' : file.mimeType?.split('/').pop()?.toUpperCase() || 'FILE'}</span>
+                  {!external && file.fileSize ? <span>• {formatFileSize(file.fileSize)}</span> : null}
                 </div>
                 <div className="fileCardActions">
-                  <Button type="text" size="small" icon={<EyeOutlined />} onClick={() => window.open(url, '_blank')} aria-label={t('common.view')} />
-                  <Button type="text" size="small" icon={<DownloadOutlined />} onClick={() => { const anchor = document.createElement('a'); anchor.href = url; anchor.download = file.fileName; anchor.click(); }} aria-label={t('common.download')} />
+                  <Button type="text" size="small" icon={external ? <LinkOutlined /> : <EyeOutlined />} onClick={() => window.open(url, '_blank', 'noopener,noreferrer')} aria-label={t('common.view')} />
+                  {!external ? (
+                    <Button type="text" size="small" icon={<DownloadOutlined />} onClick={() => { const anchor = document.createElement('a'); anchor.href = url; anchor.download = file.fileName; anchor.click(); }} aria-label={t('common.download')} />
+                  ) : null}
                   <Popconfirm title={t('operations.deleteFile')} onConfirm={() => onDeleteFile(file.id)} okText={t('common.yes')} cancelText={t('common.no')}>
                     <Button type="text" size="small" danger icon={<DeleteOutlined />} aria-label={t('common.delete')} />
                   </Popconfirm>
@@ -120,21 +161,29 @@ export default function FilesStep({
   };
 
   const renderUploadArea = (type: 'before' | 'after', uploading: boolean, onUpload: (file: File) => Promise<void>) => (
-    <Upload.Dragger
-      accept={ACCEPTED_FILE_TYPES}
-      showUploadList={false}
-      multiple
-      beforeUpload={onUpload}
-      disabled={uploading}
-      className="uploadArea"
-    >
-      <div className="uploadContent">
-        <div className="uploadIcon"><InboxOutlined /></div>
-        <div className="uploadTitle">{uploading ? t('operations.uploading') : t('operations.uploadFiles')}</div>
-        <div className="uploadHint">JPG, PNG, PDF, DICOM, video</div>
-        <div className="uploadAction"><span>{t(type === 'before' ? 'operations.beforeOperation' : 'operations.afterOperation')}</span></div>
+    <>
+      <Upload.Dragger
+        accept={ACCEPTED_FILE_TYPES}
+        showUploadList={false}
+        multiple
+        beforeUpload={onUpload}
+        disabled={uploading}
+        className="uploadArea"
+      >
+        <div className="uploadContent">
+          <div className="uploadIcon"><InboxOutlined /></div>
+          <div className="uploadTitle">{uploading ? t('operations.uploading') : t('operations.uploadFiles')}</div>
+          <div className="uploadHint">JPG, PNG, PDF, DICOM, video</div>
+          <div className="uploadAction"><span>{t(type === 'before' ? 'operations.beforeOperation' : 'operations.afterOperation')}</span></div>
+        </div>
+      </Upload.Dragger>
+      <div className="externalFileOption">
+        <span className="externalFileHint"><CloudOutlined /> Google Drive</span>
+        <Button type="link" icon={<LinkOutlined />} onClick={() => openExternalModal(type)}>
+          {t('common.add')}
+        </Button>
       </div>
-    </Upload.Dragger>
+    </>
   );
 
   const renderSection = (type: 'before' | 'after', files: OperationFile[], uploading: boolean, onUpload: (file: File) => Promise<void>) => {
@@ -177,6 +226,32 @@ export default function FilesStep({
       {renderSection('before', beforeFiles, beforeUploading, handleBeforeUpload)}
       <Divider className="filesDivider" />
       {renderSection('after', afterFiles, afterUploading, handleAfterUpload)}
+
+      <Modal
+        open={externalModalOpen}
+        title="Google Drive"
+        onCancel={closeExternalModal}
+        onOk={saveExternalLink}
+        okText={t('common.add')}
+        cancelText={t('common.cancel')}
+        confirmLoading={externalSaving}
+        destroyOnHidden
+      >
+        <div className="externalLinkForm">
+          <Input
+            value={externalFileName}
+            onChange={(event) => setExternalFileName(event.target.value)}
+            placeholder={t('common.name')}
+            autoFocus
+          />
+          <Input
+            value={externalUrl}
+            onChange={(event) => setExternalUrl(event.target.value)}
+            placeholder="https://drive.google.com/..."
+            prefix={<LinkOutlined />}
+          />
+        </div>
+      </Modal>
     </div>
   );
 }
