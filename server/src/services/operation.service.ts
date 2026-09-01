@@ -13,6 +13,8 @@ import { assertStoredFileExists, createOperationStoragePath, createSignedDownloa
 type CatalogItem = { id: string; name: string; nameAr?: string | null; specialtyId?: string | null };
 type TeamInput = { doctorIds?: string[]; nurseIds?: string[]; primarySurgeonId?: string; assistantSurgeonId?: string; anesthesiologistId?: string; assistantAnesthesiaId?: string; nurse?: string; notes?: string };
 
+type ExternalFileInput = { url: string; fileName: string; fileType: FileType };
+
 function mapOperation<T extends { files?: Array<{ id: string; operationId: string; filePath: string }> }>(operation: T) {
   if (!operation.files) return operation;
   return { ...operation, files: operation.files.map(mapOperationFile) };
@@ -39,6 +41,9 @@ async function resolveProcedures(createdBy: string, operationIds: string[]) {
   const items: CatalogItem[] = [];
   for (const id of ids) items.push(await operationCatalogService.assertAccessible(createdBy, id));
   return items;
+}
+function isExternalFilePath(filePath?: string | null) {
+  return typeof filePath === 'string' && /^https:\/\/(drive\.google\.com|docs\.google\.com)\//i.test(filePath);
 }
 
 class OperationService {
@@ -110,7 +115,11 @@ class OperationService {
   }
   async delete(id: string, createdBy: string) {
     const operation = await this.getById(id, createdBy);
-    if (operation.files && operation.files.length > 0) for (const file of operation.files) await deleteStoredFile(file.filePath);
+    if (operation.files && operation.files.length > 0) {
+      for (const file of operation.files) {
+        if (!isExternalFilePath(file.filePath)) await deleteStoredFile(file.filePath);
+      }
+    }
     return operationRepo.delete(id, createdBy);
   }
   async updateCost(id: string, createdBy: string, data: { totalCost: number; paidAmount?: number; remainingAmount?: number; paymentMethod?: string; paymentStatus?: string; paymentNotes?: string }) {
@@ -128,6 +137,20 @@ class OperationService {
       } catch (error) { await deleteStoredFile(storagePath).catch(() => undefined); throw error; }
     }
     await operationRepo.addTimeline(id, { action: 'FILES_UPLOADED', description: `${files.length} file(s) uploaded as ${fileType}`, userId: createdBy }); return uploadedFiles;
+  }
+
+  async addExternalFile(id: string, createdBy: string, input: ExternalFileInput) {
+    await this.getById(id, createdBy);
+    const operationFile = await operationRepo.addFile(id, {
+      fileType: input.fileType,
+      fileName: input.fileName,
+      filePath: input.url,
+      fileSize: undefined,
+      mimeType: 'text/uri-list',
+      uploadedBy: createdBy,
+    });
+    await operationRepo.addTimeline(id, { action: 'FILES_UPLOADED', description: `External Google Drive file added: ${input.fileName}`, userId: createdBy });
+    return mapOperationFile(operationFile);
   }
 
   async createFileUploadUrl(id: string, createdBy: string, input: { fileName: string; mimeType: string; fileSize: number; fileType: FileType }) {
@@ -148,11 +171,14 @@ class OperationService {
 
   async getFileDownloadUrl(operationId: string, fileId: string, createdBy: string) {
     const operation = await operationRepo.findById(operationId, createdBy); if (!operation) throw new NotFoundError('Operation');
-    const file = operation.files?.find((item) => item.id === fileId); if (!file) throw new NotFoundError('File'); return createSignedDownloadUrl(file.filePath);
+    const file = operation.files?.find((item) => item.id === fileId); if (!file) throw new NotFoundError('File');
+    if (isExternalFilePath(file.filePath)) return { url: file.filePath };
+    return createSignedDownloadUrl(file.filePath);
   }
   async deleteFile(operationId: string, fileId: string, createdBy: string) {
     const operation = await this.getById(operationId, createdBy); const file = operation.files?.find((item) => item.id === fileId); if (!file) throw new NotFoundError('File');
-    await deleteStoredFile(file.filePath); const deleted = await operationRepo.deleteFile(fileId, createdBy); if (!deleted) throw new NotFoundError('File'); return { success: true, message: 'File deleted' };
+    if (!isExternalFilePath(file.filePath)) await deleteStoredFile(file.filePath);
+    const deleted = await operationRepo.deleteFile(fileId, createdBy); if (!deleted) throw new NotFoundError('File'); return { success: true, message: 'File deleted' };
   }
   async getTimeline(operationId: string, createdBy: string) { await this.getById(operationId, createdBy); return operationRepo.getTimeline(operationId); }
   async getRecent(createdBy: string, limit = 5) { return operationRepo.getRecent(createdBy, limit); }
