@@ -21,6 +21,7 @@ router.patch('/:id/status', authMiddleware, operationController.updateStatus.bin
 router.put('/:id/cost', authMiddleware, operationController.updateCost.bind(operationController));
 router.post('/:id/files/upload-url', authMiddleware, operationController.createFileUploadUrl.bind(operationController));
 router.post('/:id/files/complete', authMiddleware, operationController.completeFileUpload.bind(operationController));
+router.post('/:id/files/external', authMiddleware, operationController.addExternalFile.bind(operationController));
 router.post('/:id/files', authMiddleware, uploadOperationFiles, operationController.uploadFiles.bind(operationController));
 router.delete('/:operationId/files/:fileId', authMiddleware, operationController.deleteFile.bind(operationController));
 router.delete('/:id', authMiddleware, operationController.delete.bind(operationController));
