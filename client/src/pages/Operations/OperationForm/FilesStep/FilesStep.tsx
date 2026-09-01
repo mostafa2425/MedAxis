@@ -16,6 +16,7 @@ import {
 } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
 import type { OperationFile } from '@/types';
+import { operationService } from '@/services/operation.service';
 import { resolveMediaUrl } from '@/utils/helpers';
 import { ACCEPTED_FILE_TYPES } from '../wizardConstants';
 import './FilesStep.scss';
@@ -26,7 +27,7 @@ export interface FilesStepProps {
   afterFiles: OperationFile[];
   onBeforeUpload: (file: File) => Promise<void>;
   onAfterUpload: (file: File) => Promise<void>;
-  onAddExternalLink: (fileType: 'before' | 'after', url: string, fileName: string) => Promise<void>;
+  onAddExternalLink?: (fileType: 'before' | 'after', url: string, fileName: string) => Promise<void>;
   onDeleteFile: (fileId: string) => Promise<void>;
 }
 
@@ -98,10 +99,19 @@ export default function FilesStep({
   };
 
   const saveExternalLink = async () => {
-    if (!externalUrl.trim() || !externalFileName.trim()) return;
+    if (!operationId || !externalUrl.trim() || !externalFileName.trim()) return;
     setExternalSaving(true);
     try {
-      await onAddExternalLink(externalType, externalUrl.trim(), externalFileName.trim());
+      if (onAddExternalLink) {
+        await onAddExternalLink(externalType, externalUrl.trim(), externalFileName.trim());
+      } else {
+        await operationService.addExternalFile(operationId, {
+          url: externalUrl.trim(),
+          fileName: externalFileName.trim(),
+          fileType: externalType === 'before' ? 'BEFORE_IMAGE' : 'AFTER_IMAGE',
+        });
+        window.location.reload();
+      }
       setExternalModalOpen(false);
       setExternalUrl('');
       setExternalFileName('');
