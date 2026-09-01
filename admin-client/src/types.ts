@@ -1,24 +1,8 @@
-export interface AdminUser {
-  id: string;
-  email: string;
-  name: string;
-  phone?: string | null;
-  role: string;
-  isActive: boolean;
-}
-
-export interface AdminOverview {
-  users: number;
-  doctors: number;
-  patients: number;
-  operations: number;
-  hospitals: number;
-  activeUsers: number;
-  activeDoctors: number;
-  activeHospitals: number;
-  revenue: {
-    totalCost: string | number;
-    totalPaid: string | number;
-    totalRemaining: string | number;
-  };
-}
+export interface AdminUser { id:string; email:string; name:string; phone?:string|null; role:string; isActive:boolean; avatarUrl?:string|null; emailVerifiedAt?:string|null; createdAt:string; }
+export interface AdminOverview { users:number; doctors:number; patients:number; operations:number; hospitals:number; activeUsers:number; activeDoctors:number; activeHospitals:number; revenue:{totalCost:string|number;totalPaid:string|number;totalRemaining:string|number}; operationStatus:Array<{status:string;count:number}>; recentOperations:Array<{id:string;name:string;status:string;operationDate:string;patient:{fullName:string};hospital:{name:string}}>; }
+export interface Doctor { id:string; name:string; email?:string|null; phone?:string|null; isActive:boolean; user?:{email:string;role:string;isActive:boolean}|null; specialties:Array<{specialty:{name:string}}> }
+export interface Patient { id:string; fullName:string; age:number; gender:string; mobile?:string|null; notes?:string|null; _count:{operations:number} }
+export interface Hospital { id:string; name:string; nameAr?:string|null; city?:string|null; address?:string|null; phone?:string|null; isActive:boolean; governorate?:{nameEn:string;nameAr:string}|null; _count:{operations:number} }
+export interface Operation { id:string; name:string; diagnosis?:string|null; status:string; operationDate:string; operationTime:string; patient:{fullName:string}; hospital:{name:string}; specialty?:{name:string}|null; cost?:{totalCost:string|number;paidAmount:string|number;remainingAmount:string|number}|null }
+export interface Analytics { bySpecialty:Array<{name:string;count:number}>; byHospital:Array<{name:string;count:number}>; monthly:Array<{month:string;count:number}>; followUps:Array<{status:string;_count:{id:number}}>; files:number }
+export interface AuditLog { id:string; action:string; description?:string|null; createdAt:string; user:{name:string;email:string}; operation:{id:string;name:string} }
