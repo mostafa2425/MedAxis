@@ -282,6 +282,33 @@
   color: #475569;
 }
 
+.externalFileOption {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  min-height: 38px;
+  padding: 6px 10px;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  background: #f8fafc;
+}
+
+.externalFileHint {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #475569;
+}
+
+.externalLinkForm {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
 .filesDivider {
   margin: 0 !important;
 }
