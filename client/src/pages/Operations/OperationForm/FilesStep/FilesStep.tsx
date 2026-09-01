@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Button, Upload, Alert, Divider, Popconfirm, Tag, Modal, Input } from 'antd';
+import { useQueryClient } from '@tanstack/react-query';
 import {
   CameraOutlined,
   DeleteOutlined,
@@ -58,6 +59,7 @@ export default function FilesStep({
   onDeleteFile,
 }: FilesStepProps) {
   const { t } = useTranslation();
+  const queryClient = useQueryClient();
   const [beforeUploading, setBeforeUploading] = useState(false);
   const [afterUploading, setAfterUploading] = useState(false);
   const [externalModalOpen, setExternalModalOpen] = useState(false);
@@ -110,8 +112,12 @@ export default function FilesStep({
           fileName: externalFileName.trim(),
           fileType: externalType === 'before' ? 'BEFORE_IMAGE' : 'AFTER_IMAGE',
         });
-        window.location.reload();
       }
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ['operation-files-before', operationId] }),
+        queryClient.invalidateQueries({ queryKey: ['operation-files-after', operationId] }),
+        queryClient.invalidateQueries({ queryKey: ['operation-detail', operationId] }),
+      ]);
       setExternalModalOpen(false);
       setExternalUrl('');
       setExternalFileName('');
