@@ -188,7 +188,9 @@ export default function FilesStep({
         </div>
       </Upload.Dragger>
       <div className="externalFileOption">
-        <span className="externalFileHint"><CloudOutlined /> Google Drive</span>
+        <Button type="link" icon={<CloudOutlined />} onClick={() => window.open('https://drive.google.com/drive/my-drive', '_blank', 'noopener,noreferrer')}>
+          Google Drive
+        </Button>
         <Button type="link" icon={<LinkOutlined />} onClick={() => openExternalModal(type)}>
           {t('common.add')}
         </Button>
