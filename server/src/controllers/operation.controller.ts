@@ -17,6 +17,15 @@ function collectUploadedFiles(req: Request): Express.Multer.File[] {
   return files;
 }
 
+function isGoogleDriveUrl(value: string) {
+  try {
+    const url = new URL(value);
+    return url.protocol === 'https:' && ['drive.google.com', 'docs.google.com'].includes(url.hostname.toLowerCase());
+  } catch {
+    return false;
+  }
+}
+
 export class OperationController {
   async getAll(req: Request, res: Response, next: NextFunction) {
     try {
@@ -88,6 +97,21 @@ export class OperationController {
       if (!parsed.success) throw new AppError(parsed.error.issues[0]?.message || 'Validation error', 400, parsed.error.issues);
       const result = await operationService.completeFileUpload(req.params.id as string, (req as any).user?.userId, parsed.data as any);
       return sendSuccess(res, result, 'File upload completed', 201);
+    } catch (err) { next(err); }
+  }
+  async addExternalFile(req: Request, res: Response, next: NextFunction) {
+    try {
+      const fileType = resolveFileType(req.body?.fileType);
+      const url = typeof req.body?.url === 'string' ? req.body.url.trim() : '';
+      const fileName = typeof req.body?.fileName === 'string' ? req.body.fileName.trim() : '';
+      if (!isGoogleDriveUrl(url)) {
+        throw new AppError('Please enter a valid Google Drive link', 400, [{ path: ['url'], code: 'custom', message: 'A secure Google Drive link is required' }]);
+      }
+      if (!fileName) {
+        throw new AppError('File name is required', 400, [{ path: ['fileName'], code: 'custom', message: 'A file name is required' }]);
+      }
+      const result = await operationService.addExternalFile(req.params.id as string, (req as any).user?.userId, { url, fileName, fileType: fileType as FileType });
+      return sendSuccess(res, result, 'External file added', 201);
     } catch (err) { next(err); }
   }
   async downloadFile(req: Request, res: Response, next: NextFunction) {

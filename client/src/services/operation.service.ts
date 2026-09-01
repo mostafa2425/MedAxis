@@ -90,6 +90,9 @@ export const operationService = {
       fileType: resolvedFileType,
     });
   },
+  addExternalFile(id: string, data: { url: string; fileName: string; fileType: 'BEFORE_IMAGE' | 'AFTER_IMAGE' }) {
+    return api.post<ApiResponse<OperationFile>>(`/operations/${id}/files/external`, data);
+  },
   deleteFile(id: string, fileId: string) { return api.delete<ApiResponse<null>>(`/operations/${id}/files/${fileId}`); },
   getTimeline(id: string) { return api.get<ApiResponse<OperationTimeline[]>>(`/operations/${id}/timeline`); },
 };
