@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { Alert, Button, Divider, Input, Modal, Popconfirm, Select, Tag, Upload } from 'antd';
+import { Alert, Button, Input, Modal, Popconfirm, Select, Tag, Upload } from 'antd';
 import { CloudOutlined, DeleteOutlined, DownloadOutlined, FileImageOutlined, FilePdfOutlined, FileTextOutlined, FolderOpenOutlined, InboxOutlined, LinkOutlined, PictureOutlined, EyeOutlined } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
 import type { OperationFile } from '@/types';
@@ -8,6 +8,9 @@ import { operationService } from '@/services/operation.service';
 import { resolveMediaUrl } from '@/utils/helpers';
 import { ACCEPTED_FILE_TYPES } from '../wizardConstants';
 import './FilesStep.scss';
+
+type FileCategory = 'before' | 'after' | 'imaging' | 'labs' | 'documents';
+type UploadType = 'BEFORE_IMAGE' | 'BEFORE_XRAY' | 'BEFORE_MRI' | 'BEFORE_CT' | 'BEFORE_LAB' | 'BEFORE_PDF' | 'AFTER_IMAGE' | 'AFTER_REPORT' | 'AFTER_PDF' | 'AFTER_OTHER';
 
 export interface FilesStepProps {
   operationId: string | null;
@@ -18,9 +21,6 @@ export interface FilesStepProps {
   onAddExternalLink?: (fileType: 'before' | 'after', url: string, fileName: string) => Promise<void>;
   onDeleteFile: (fileId: string) => Promise<void>;
 }
-
-type FileCategory = 'before' | 'after' | 'imaging' | 'labs' | 'documents';
-type UploadType = 'BEFORE_IMAGE' | 'BEFORE_XRAY' | 'BEFORE_MRI' | 'BEFORE_CT' | 'BEFORE_LAB' | 'BEFORE_PDF' | 'AFTER_IMAGE' | 'AFTER_REPORT' | 'AFTER_PDF' | 'AFTER_OTHER';
 
 const FILE_TYPES: Array<{ value: UploadType; category: FileCategory; label: string; labelAr: string; icon: React.ReactNode }> = [
   { value: 'BEFORE_IMAGE', category: 'before', label: 'Before photo', labelAr: 'صورة قبل العملية', icon: <PictureOutlined /> },
@@ -54,18 +54,14 @@ function FileCard({ file, isAr, onDelete }: { file: OperationFile; isAr: boolean
   const meta = metaFor(String(file.fileType));
   return (
     <article className="fileCard">
-      <div className="fileCardPreview">
-        {image ? <img src={url} alt={file.fileName} className="fileCardImage" /> : <span className="fileCardDocumentIcon">{external ? <CloudOutlined /> : meta.icon}</span>}
-      </div>
+      <div className="fileCardPreview">{image ? <img src={url} alt={file.fileName} className="fileCardImage" /> : <span className="fileCardDocumentIcon">{external ? <CloudOutlined /> : meta.icon}</span>}</div>
       <div className="fileCardBody">
         <div className="fileCardName" title={file.fileName}>{file.fileName}</div>
         <div className="fileCardMeta"><span>{external ? 'Google Drive' : (isAr ? meta.labelAr : meta.label)}</span></div>
         <div className="fileCardActions">
           <Button type="text" size="small" icon={external ? <LinkOutlined /> : <EyeOutlined />} onClick={() => window.open(url, '_blank', 'noopener,noreferrer')} aria-label={isAr ? 'فتح' : 'Open'} />
           {!external && <Button type="text" size="small" icon={<DownloadOutlined />} href={url} target="_blank" aria-label={isAr ? 'تحميل' : 'Download'} />}
-          <Popconfirm title={isAr ? 'حذف هذا الملف؟' : 'Delete this file?'} onConfirm={() => onDelete(file.id)} okText={isAr ? 'نعم' : 'Yes'} cancelText={isAr ? 'إلغاء' : 'Cancel'}>
-            <Button type="text" danger size="small" icon={<DeleteOutlined />} aria-label={isAr ? 'حذف' : 'Delete'} />
-          </Popconfirm>
+          <Popconfirm title={isAr ? 'حذف هذا الملف؟' : 'Delete this file?'} onConfirm={() => onDelete(file.id)} okText={isAr ? 'نعم' : 'Yes'} cancelText={isAr ? 'إلغاء' : 'Cancel'}><Button type="text" danger size="small" icon={<DeleteOutlined />} aria-label={isAr ? 'حذف' : 'Delete'} /></Popconfirm>
         </div>
       </div>
     </article>
@@ -116,7 +112,6 @@ export default function FilesStep({ operationId, beforeFiles, afterFiles, onBefo
       fd.append('fileType', selectedType);
       await operationService.uploadFiles(operationId, fd);
       await refresh();
-      message.success?.('');
     } finally {
       setUploadingType(null);
     }
@@ -143,42 +138,35 @@ export default function FilesStep({ operationId, beforeFiles, afterFiles, onBefo
     }
   };
 
-  if (!operationId) {
-    return <Alert type="info" showIcon message={t('operations.step5Files')} description={t('operations.saveFirstToUpload') || 'Save the operation first to upload files.'} />;
-  }
+  if (!operationId) return <Alert type="info" showIcon message={t('operations.step5Files')} description={t('operations.saveFirstToUpload') || 'Save the operation first to upload files.'} />;
 
   return (
     <div className="stepContent filesStep">
-      <div className="filesIntro">
-        <div className="filesIntroIcon"><FileImageOutlined /></div>
-        <div><h2>{isAr ? 'الملفات الطبية' : 'Clinical Files'}</h2><p>{isAr ? 'نظّم صور وتقارير الحالة من قبل العملية إلى ما بعدها.' : 'Keep every case file organized from before surgery through follow-up.'}</p></div>
-        <Tag>{files.length} {isAr ? 'ملف' : files.length === 1 ? 'file' : 'files'}</Tag>
-      </div>
+      <div className="filesIntro"><div className="filesIntroIcon"><FileImageOutlined /></div><div><h2>{isAr ? 'الملفات الطبية' : 'Clinical Files'}</h2><p>{isAr ? 'نظّم صور وتقارير الحالة من قبل العملية إلى ما بعدها.' : 'Keep every case file organized from before surgery through follow-up.'}</p></div><Tag>{files.length} {isAr ? 'ملف' : files.length === 1 ? 'file' : 'files'}</Tag></div>
 
       <div className="clinicalUploadBar formClinicalUploadBar">
         <Select value={selectedType} onChange={setSelectedType} options={FILE_TYPES.map((item) => ({ value: item.value, label: isAr ? item.labelAr : item.label }))} className="clinicalUploadType" />
-        <Upload showUploadList={false} beforeUpload={upload} accept={ACCEPTED_FILE_TYPES}>
-          <Button type="primary" icon={<InboxOutlined />} loading={uploadingType === selectedType}>{isAr ? `رفع ${selectedMeta.labelAr}` : `Upload ${selectedMeta.label}`}</Button>
-        </Upload>
+        <Upload showUploadList={false} beforeUpload={upload} accept={ACCEPTED_FILE_TYPES}><Button type="primary" icon={<InboxOutlined />} loading={uploadingType === selectedType}>{isAr ? `رفع ${selectedMeta.labelAr}` : `Upload ${selectedMeta.label}`}</Button></Upload>
         <Button icon={<CloudOutlined />} onClick={() => window.open('https://drive.google.com/drive/my-drive', '_blank', 'noopener,noreferrer')}>{isAr ? 'فتح Google Drive' : 'Open Google Drive'}</Button>
         <Button icon={<LinkOutlined />} onClick={() => openDriveModal(selectedType)}>{isAr ? 'إضافة رابط' : 'Add Drive link'}</Button>
       </div>
 
-      {CATEGORY_META.map((category, index) => {
+      {CATEGORY_META.map((category) => {
         const categoryFiles = grouped.get(category.key) ?? [];
         const defaultType = FILE_TYPES.find((item) => item.category === category.key)?.value ?? 'BEFORE_IMAGE';
+        const categoryType = FILE_TYPES.find((item) => item.value === selectedType && item.category === category.key)?.value ?? defaultType;
         return (
           <section key={category.key} className={`fileSection fileSection--${category.key}`}>
             <div className="fileSectionHeader"><div className="fileSectionHeading"><div className="fileSectionIcon">{category.key === 'imaging' ? <FileImageOutlined /> : category.key === 'documents' ? <FilePdfOutlined /> : category.key === 'labs' ? <FileTextOutlined /> : <PictureOutlined />}</div><div><div className="fileSectionTitle">{isAr ? category.titleAr : category.title}</div><div className="fileSectionSubtitle">{isAr ? category.descriptionAr : category.description}</div></div></div><Tag>{categoryFiles.length}</Tag></div>
             {categoryFiles.length ? <div className="fileGallery">{categoryFiles.map((file) => <FileCard key={file.id} file={file} isAr={isAr} onDelete={onDeleteFile} />)}</div> : <div className="clinicalGroupEmpty clinicalGroupEmptyV2 compactEmpty"><FolderOpenOutlined /><span>{isAr ? 'لا توجد ملفات مضافة بعد' : 'No files added yet'}</span></div>}
-            <div className="sectionFileActions"><Select value={FILE_TYPES.some((item) => item.value === selectedType && item.category === category.key) ? selectedType : defaultType} onChange={setSelectedType} options={FILE_TYPES.filter((item) => item.category === category.key).map((item) => ({ value: item.value, label: isAr ? item.labelAr : item.label }))} /><Upload showUploadList={false} beforeUpload={upload} accept={ACCEPTED_FILE_TYPES}><Button icon={<InboxOutlined />} loading={uploadingType !== null && FILE_TYPES.some((item) => item.value === uploadingType && item.category === category.key)}>{isAr ? 'رفع ملف' : 'Upload file'}</Button></Upload><Button icon={<LinkOutlined />} onClick={() => openDriveModal((FILE_TYPES.find((item) => item.category === category.key)?.value ?? defaultType) as UploadType)}>{isAr ? 'إضافة من Google Drive' : 'Add Google Drive link'}</Button></div>
+            <div className="sectionFileActions"><Select value={categoryType} onChange={setSelectedType} options={FILE_TYPES.filter((item) => item.category === category.key).map((item) => ({ value: item.value, label: isAr ? item.labelAr : item.label }))} /><Upload showUploadList={false} beforeUpload={upload} accept={ACCEPTED_FILE_TYPES}><Button icon={<InboxOutlined />} loading={uploadingType !== null && FILE_TYPES.some((item) => item.value === uploadingType && item.category === category.key)}>{isAr ? 'رفع ملف' : 'Upload file'}</Button></Upload><Button icon={<LinkOutlined />} onClick={() => openDriveModal(categoryType)}>{isAr ? 'إضافة من Google Drive' : 'Add Google Drive link'}</Button></div>
           </section>
         );
       })}
 
       <Modal open={modalOpen} title={<span><CloudOutlined /> {isAr ? 'إضافة ملف من Google Drive' : 'Add Google Drive file'}</span>} onCancel={() => !savingDrive && setModalOpen(false)} onOk={saveDriveLink} okText={isAr ? 'إضافة الملف' : 'Add file'} cancelText={isAr ? 'إلغاء' : 'Cancel'} confirmLoading={savingDrive} destroyOnHidden>
         <div className="externalLinkForm">
-          <div className="driveModalType"><span>{isAr ? 'نوع الملف' : 'File type'}</span><Tag icon={selectedMeta.icon}>{isAr ? metaFor(modalType).labelAr : metaFor(modalType).label}</Tag></div>
+          <div className="driveModalType"><span>{isAr ? 'نوع الملف' : 'File type'}</span><Tag icon={metaFor(modalType).icon}>{isAr ? metaFor(modalType).labelAr : metaFor(modalType).label}</Tag></div>
           <Input value={fileName} onChange={(e) => setFileName(e.target.value)} placeholder={isAr ? 'اسم الملف' : 'File name'} prefix={<FileTextOutlined />} />
           <Input value={driveUrl} onChange={(e) => setDriveUrl(e.target.value)} placeholder="https://drive.google.com/..." prefix={<LinkOutlined />} />
           <Button type="default" block icon={<CloudOutlined />} onClick={() => window.open('https://drive.google.com/drive/my-drive', '_blank', 'noopener,noreferrer')}>{isAr ? 'فتح Google Drive لاختيار الملف' : 'Open Google Drive to choose the file'}</Button>
