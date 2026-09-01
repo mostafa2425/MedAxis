@@ -6,7 +6,12 @@ type OperationFileLike = Record<string, unknown> & {
   filePath?: string | null;
 };
 
+function isExternalFilePath(filePath?: string | null) {
+  return typeof filePath === 'string' && /^https:\/\/(drive\.google\.com|docs\.google\.com)\//i.test(filePath);
+}
+
 export function toPublicFileUrl(file: OperationFileLike) {
+  if (isExternalFilePath(file.filePath)) return file.filePath as string;
   if (file.filePath) {
     try {
       return createPublicFileUrl(file.filePath);
