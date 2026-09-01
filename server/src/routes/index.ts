@@ -13,6 +13,7 @@ import assistantRoutes from './assistant.routes';
 import pushRoutes from './push.routes';
 import exportRoutes from './export.routes';
 import reportsRoutes from './reports.routes';
+import adminRoutes from './admin.routes';
 
 const router = Router();
 
@@ -30,5 +31,6 @@ router.use('/assistant', assistantRoutes);
 router.use('/push', pushRoutes);
 router.use('/export', exportRoutes);
 router.use('/reports', reportsRoutes);
+router.use('/admin', adminRoutes);
 
 export default router;
